@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<robot name="small_ring"  xmlns:xacro="http://www.ros.org/wiki/xacro">
+	<xacro:include filename="./small_ring.gazebo"/>
+
+	<xacro:macro name="small_ring">
+		<link name="small_ring_link0">
+			<collision>
+				<origin xyz="0 0 -0.97" rpy="0 0 0"/>
+				<geometry>
+        			<mesh filename="package://ginko_description/meshes/roboone_ring/stl/small_ring.stl"/>
+				</geometry>
+			</collision>
+			<visual>
+				<origin xyz="0 0 0" rpy="0 0 0"/>
+				<geometry>
+					<mesh filename="package://ginko_description/meshes/roboone_ring/obj/small_ring.obj"/>
+				</geometry>
+			</visual>
+			<inertial>
+				<mass value="242.39250000"/>
+				<origin xyz="0 0 0.01500000" rpy="0 0 0"/>
+				<inertia
+					ixx="109.87392319"
+					ixy="0.00000000" iyy="109.87392319"
+					ixz="0.00000000" iyz="0.00000000" izz="219.71148750"/>
+			</inertial>
+		</link>
+	</xacro:macro>
+
+	<xacro:small_ring />
+	<xacro:small_ring_gazebo />
+</robot>

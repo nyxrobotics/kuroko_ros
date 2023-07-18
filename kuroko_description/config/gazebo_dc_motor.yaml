@@ -1,0 +1,160 @@
+
+gazebo_dc_motor:
+  motor_characteristics:
+    #body
+    body_joint1:
+      motor_model_type: Voltage
+      stall_effort: 5.50
+      noload_speed: 4.76
+      back_emf_lpf_time_constant: 0.0
+      out_torque_lpf_time_constant: 0.0
+    #arm right
+    arm_r_joint0:
+      motor_model_type: Voltage
+      stall_effort: 2.75
+      noload_speed: 9.52
+      back_emf_lpf_time_constant: 0.0
+      out_torque_lpf_time_constant: 0.0
+    arm_r_joint1:
+      motor_model_type: Voltage
+      stall_effort: 2.75
+      noload_speed: 9.52
+      back_emf_lpf_time_constant: 0.0
+      out_torque_lpf_time_constant: 0.0
+    arm_r_joint1_rev:
+      motor_model_type: Voltage
+      stall_effort: 2.75
+      noload_speed: 9.52
+      back_emf_lpf_time_constant: 0.0
+      out_torque_lpf_time_constant: 0.0
+    arm_r_joint2:
+      motor_model_type: Voltage
+      stall_effort: 2.75
+      noload_speed: 9.52
+      back_emf_lpf_time_constant: 0.0
+      out_torque_lpf_time_constant: 0.0
+    arm_r_joint3:
+      motor_model_type: Voltage
+      stall_effort: 2.75
+      noload_speed: 9.52
+      back_emf_lpf_time_constant: 0.0
+      out_torque_lpf_time_constant: 0.0
+    #arm left
+    arm_l_joint0:
+      motor_model_type: Voltage
+      stall_effort: 2.75
+      noload_speed: 9.52
+      back_emf_lpf_time_constant: 0.0
+      out_torque_lpf_time_constant: 0.0
+    arm_l_joint1:
+      motor_model_type: Voltage
+      stall_effort: 2.75
+      noload_speed: 9.52
+      back_emf_lpf_time_constant: 0.0
+      out_torque_lpf_time_constant: 0.0
+    arm_l_joint1_rev:
+      motor_model_type: Voltage
+      stall_effort: 2.75
+      noload_speed: 9.52
+      back_emf_lpf_time_constant: 0.0
+      out_torque_lpf_time_constant: 0.0
+    arm_l_joint2:
+      motor_model_type: Voltage
+      stall_effort: 2.75
+      noload_speed: 9.52
+      back_emf_lpf_time_constant: 0.0
+      out_torque_lpf_time_constant: 0.0
+    arm_l_joint3:
+      motor_model_type: Voltage
+      stall_effort: 2.75
+      noload_speed: 9.52
+      back_emf_lpf_time_constant: 0.0
+      out_torque_lpf_time_constant: 0.0
+
+    #Leg right
+    leg_r_joint0:
+      motor_model_type: Voltage
+      stall_effort: 5.50
+      noload_speed: 4.76
+      back_emf_lpf_time_constant: 0.0
+      out_torque_lpf_time_constant: 0.0
+    leg_r_joint1:
+      motor_model_type: Voltage
+      stall_effort: 2.75
+      noload_speed: 9.52
+      back_emf_lpf_time_constant: 0.0
+      out_torque_lpf_time_constant: 0.0
+    leg_r_joint3:
+      motor_model_type: Voltage
+      stall_effort: 2.75
+      noload_speed: 9.52
+      back_emf_lpf_time_constant: 0.0
+      out_torque_lpf_time_constant: 0.0
+    leg_r_joint4:
+      motor_model_type: Voltage
+      stall_effort: 2.75
+      noload_speed: 9.52
+      back_emf_lpf_time_constant: 0.0
+      out_torque_lpf_time_constant: 0.0
+    leg_r_joint6:
+      motor_model_type: Voltage
+      stall_effort: 2.75
+      noload_speed: 9.52
+      back_emf_lpf_time_constant: 0.0
+      out_torque_lpf_time_constant: 0.0
+    leg_r_joint7:
+      motor_model_type: Voltage
+      stall_effort: 5.50
+      noload_speed: 4.76
+      back_emf_lpf_time_constant: 0.0
+      out_torque_lpf_time_constant: 0.0
+    leg_r_joint8:
+      motor_model_type: Voltage
+      stall_effort: 2.75
+      noload_speed: 9.52
+      back_emf_lpf_time_constant: 0.0
+      out_torque_lpf_time_constant: 0.0
+    #Leg left
+    leg_l_joint0:
+      motor_model_type: Voltage
+      stall_effort: 5.50
+      noload_speed: 4.76
+      back_emf_lpf_time_constant: 0.0
+      out_torque_lpf_time_constant: 0.0
+    leg_l_joint1:
+      motor_model_type: Voltage
+      stall_effort: 2.75
+      noload_speed: 9.52
+      back_emf_lpf_time_constant: 0.0
+      out_torque_lpf_time_constant: 0.0
+    leg_l_joint3:
+      motor_model_type: Voltage
+      stall_effort: 2.75
+      noload_speed: 9.52
+      back_emf_lpf_time_constant: 0.0
+      out_torque_lpf_time_constant: 0.0
+    leg_l_joint4:
+      motor_model_type: Voltage
+      stall_effort: 2.75
+      noload_speed: 9.52
+      back_emf_lpf_time_constant: 0.0
+      out_torque_lpf_time_constant: 0.0
+    leg_l_joint6:
+      motor_model_type: Voltage
+      stall_effort: 2.75
+      noload_speed: 9.52
+      back_emf_lpf_time_constant: 0.0
+      out_torque_lpf_time_constant: 0.0
+    leg_l_joint7:
+      motor_model_type: Voltage
+      stall_effort: 5.50
+      noload_speed: 4.76
+      back_emf_lpf_time_constant: 0.0
+      out_torque_lpf_time_constant: 0.0
+    leg_l_joint8:
+      motor_model_type: Voltage
+      stall_effort: 2.75
+      noload_speed: 9.52
+      back_emf_lpf_time_constant: 0.0
+      out_torque_lpf_time_constant: 0.0
+

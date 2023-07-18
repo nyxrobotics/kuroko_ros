@@ -1,0 +1,87 @@
+
+
+# Publish all joint states -----------------------------------
+joint_state_controller:
+  type: joint_state_controller/JointStateController
+  publish_rate: 1000
+
+# Position Controllers ---------------------------------------
+body_joint1_position_controller:
+  type: position_controllers/JointPositionController
+  joint: body_joint1
+
+arm_r_joint0_position_controller:
+  type: position_controllers/JointPositionController
+  joint: arm_r_joint0
+arm_r_joint1_position_controller:
+  type: position_controllers/JointPositionController
+  joint: arm_r_joint1
+arm_r_joint1_rev_position_controller:
+  type: position_controllers/JointPositionController
+  joint: arm_r_joint1_rev
+arm_r_joint2_position_controller:
+  type: position_controllers/JointPositionController
+  joint: arm_r_joint2
+arm_r_joint3_position_controller:
+  type: position_controllers/JointPositionController
+  joint: arm_r_joint3
+
+arm_l_joint0_position_controller:
+  type: position_controllers/JointPositionController
+  joint: arm_l_joint0
+arm_l_joint1_position_controller:
+  type: position_controllers/JointPositionController
+  joint: arm_l_joint1
+arm_l_joint1_rev_position_controller:
+  type: position_controllers/JointPositionController
+  joint: arm_l_joint1_rev
+arm_l_joint2_position_controller:
+  type: position_controllers/JointPositionController
+  joint: arm_l_joint2
+arm_l_joint3_position_controller:
+  type: position_controllers/JointPositionController
+  joint: arm_l_joint3
+
+leg_r_joint0_position_controller:
+  type: position_controllers/JointPositionController
+  joint: leg_r_joint0
+leg_r_joint1_position_controller:
+  type: position_controllers/JointPositionController
+  joint: leg_r_joint1
+leg_r_joint3_position_controller:
+  type: position_controllers/JointPositionController
+  joint: leg_r_joint3
+leg_r_joint4_position_controller:
+  type: position_controllers/JointPositionController
+  joint: leg_r_joint4
+leg_r_joint6_position_controller:
+  type: position_controllers/JointPositionController
+  joint: leg_r_joint6
+leg_r_joint7_position_controller:
+  type: position_controllers/JointPositionController
+  joint: leg_r_joint7
+leg_r_joint8_position_controller:
+  type: position_controllers/JointPositionController
+  joint: leg_r_joint8
+
+leg_l_joint0_position_controller:
+  type: position_controllers/JointPositionController
+  joint: leg_l_joint0
+leg_l_joint1_position_controller:
+  type: position_controllers/JointPositionController
+  joint: leg_l_joint1
+leg_l_joint3_position_controller:
+  type: position_controllers/JointPositionController
+  joint: leg_l_joint3
+leg_l_joint4_position_controller:
+  type: position_controllers/JointPositionController
+  joint: leg_l_joint4
+leg_l_joint6_position_controller:
+  type: position_controllers/JointPositionController
+  joint: leg_l_joint6
+leg_l_joint7_position_controller:
+  type: position_controllers/JointPositionController
+  joint: leg_l_joint7
+leg_l_joint8_position_controller:
+  type: position_controllers/JointPositionController
+  joint: leg_l_joint8

@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:macro name="box_inertial" params="xyz:='0 0 0' rpy:='0 0 0' size mass inertia_min:=0.00001">
+    <xacro:property name="d" value="${float(size.split()[0])}" />
+    <xacro:property name="w" value="${float(size.split()[1])}" />
+    <xacro:property name="h" value="${float(size.split()[2])}" />
+    <xacro:property name="ixx" value="${mass * (w ** 2 + h ** 2) / 12}" />
+    <xacro:property name="iyy" value="${mass * (d ** 2 + h ** 2) / 12}" />
+    <xacro:property name="izz" value="${mass * (w ** 2 + d ** 2) / 12}" />
+    <xacro:if value="${int(inertia_min/ixx)}">
+      <xacro:property name="ixx" value="${inertia_min}" />
+    </xacro:if>
+    <xacro:if value="${int(inertia_min/iyy)}">
+      <xacro:property name="iyy" value="${inertia_min}" />
+    </xacro:if>
+    <xacro:if value="${int(inertia_min/izz)}">
+      <xacro:property name="izz" value="${inertia_min}" />
+    </xacro:if>
+    <inertial>
+      <origin xyz="${xyz}" rpy="${rpy}"/>
+      <mass value="${mass}"/>
+      <inertia ixx="${ixx}"
+               ixy="0.0" iyy="${iyy}"
+               ixz="0.0" iyz="0.0" izz="${izz}"/> 
+    </inertial>
+  </xacro:macro>
+  <xacro:macro name="box_collision" params="xyz:='0 0 0' rpy:='0 0 0' size">
+    <collision>
+      <origin xyz="${xyz}" rpy="${rpy}"/>
+      <geometry>
+        <box size="${size}"/>
+      </geometry>
+    </collision>
+  </xacro:macro>
+</robot>

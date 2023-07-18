@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:include filename="$(find kuroko_description)/xacro/physics/default_gazebo_params.xacro"/>
+	  <xacro:macro name="body_gazebo" params="gazebo_hw_interface">
+		<!-- chest -->
+		<xacro:default_link_collision link_name="chest_link01" friction="0.1"/>
+		<xacro:default_motor_transmission joint_name="chest_joint01" gazebo_hw_interface="$(arg gazebo_hw_interface)"/>
+		<!-- waist -->
+		<xacro:default_link_collision link_name="waist_link01" friction="0.1"/>
+	</xacro:macro>
+</robot>

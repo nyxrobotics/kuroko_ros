@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+	<xacro:include filename="$(find ginko_description)/xacro/physics/default_gazebo_params.xacro"/>
+	<xacro:macro name="small_ring_gazebo">
+		<!-- <xacro:default_link_collision link_name="small_ring_link0" friction="1.0"/> -->
+		<link name="world" />
+<!-- 		<joint name="world_joint"  type="fixed">
+			<origin xyz="0 0 0.5" rpy="0 0 0" />
+			<parent link="world"/>
+			<child link="small_ring_link0"/>
+		</joint> -->
+		<joint name="world_joint" type="revolute">
+			<parent link="world"/>
+			<child  link="small_ring_link0"/>
+			<origin xyz="0 0 0.3" rpy="0 0 0"/>
+			<axis xyz="0 0 1"/>
+			<limit effort="0.0" lower="0.0" upper="0.0" velocity="0.0"/>
+			<dynamics damping="0.1" friction="0.1"/>
+		</joint>
+		<gazebo reference="small_ring_link0">
+			<kp>1000000.00</kp>
+			<mu1>1000</mu1>
+			<mu2>500</mu2>
+			<maxVel>0.0</maxVel>
+			<minDepth>0.0</minDepth>
+			<maxContacts>20</maxContacts>
+			<selfCollide>true</selfCollide>
+			<dampingFactor>0.0</dampingFactor>
+		</gazebo>
+		<gazebo>
+			<static>true</static>
+		</gazebo>
+	</xacro:macro>
+</robot>

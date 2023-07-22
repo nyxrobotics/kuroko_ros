@@ -1,18 +1,19 @@
 <?xml version="1.0"?>
 <robot name="kuroko" xmlns:xacro="http://www.ros.org/wiki/xacro">
-  <xacro:arg name="model_mode" default="rviz"/>
-  <xacro:arg name="gazebo_motor_model" default="dc"/>
+  <xacro:arg name="model_mode" default="rviz" />
+  <xacro:arg name="gazebo_motor_model" default="dc" />
   <!-- <xacro:arg name="gazebo_motor_model" default="kuroko"/> -->
-  <xacro:arg name="gazebo_hw_interface" default="position"/>
+  <xacro:arg name="gazebo_hw_interface" default="position" />
 
-  <xacro:include filename="$(find kuroko_description)/xacro/kuroko/parts/body.xacro"/>
-  <xacro:include filename="$(find kuroko_description)/xacro/kuroko/transmission/body.gazebo"/>
-  <xacro:include filename="$(find kuroko_description)/xacro/kuroko/parts/arm_r.xacro"/>
-  <xacro:include filename="$(find kuroko_description)/xacro/kuroko/transmission/arm_r.gazebo"/>
-  <xacro:include filename="$(find kuroko_description)/xacro/kuroko/parts/arm_l.xacro"/>
-  <xacro:include filename="$(find kuroko_description)/xacro/kuroko/transmission/arm_l.gazebo"/>
-  <!-- <xacro:include filename="$(find kuroko_description)/xacro/kuroko/parts/leg_r.xacro"/>
-  <xacro:include filename="$(find kuroko_description)/xacro/kuroko/transmission/leg_r.gazebo"/>
+  <xacro:include filename="$(find kuroko_description)/xacro/kuroko/parts/body.xacro" />
+  <xacro:include filename="$(find kuroko_description)/xacro/kuroko/transmission/body.gazebo" />
+  <xacro:include filename="$(find kuroko_description)/xacro/kuroko/parts/arm_r.xacro" />
+  <xacro:include filename="$(find kuroko_description)/xacro/kuroko/transmission/arm_r.gazebo" />
+  <xacro:include filename="$(find kuroko_description)/xacro/kuroko/parts/arm_l.xacro" />
+  <xacro:include filename="$(find kuroko_description)/xacro/kuroko/transmission/arm_l.gazebo" />
+  <xacro:include filename="$(find kuroko_description)/xacro/kuroko/parts/leg_r.xacro" />
+  <xacro:include filename="$(find kuroko_description)/xacro/kuroko/transmission/leg_r.gazebo" />
+  <!-- 
   <xacro:include filename="$(find kuroko_description)/xacro/kuroko/parts/leg_l.xacro"/>
   <xacro:include filename="$(find kuroko_description)/xacro/kuroko/transmission/leg_l.gazebo"/>-->
 
@@ -21,19 +22,19 @@
   <xacro:macro name="gazebo_plugin_xacro" params="gazebo_motor_model">
     <xacro:if value="${gazebo_motor_model=='default'}">
       <gazebo>
-        <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so"> 
-          <robotNamespace>kuroko</robotNamespace> 
+        <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+          <robotNamespace>kuroko</robotNamespace>
           <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
-          <legacyModeNS>true</legacyModeNS> 
+          <legacyModeNS>true</legacyModeNS>
         </plugin>
       </gazebo>
     </xacro:if>
     <xacro:if value="${gazebo_motor_model=='dc'}">
       <gazebo>
-        <plugin name="gazebo_ros_control" filename="libgazebo_dc_motor.so"> 
-          <robotNamespace>kuroko</robotNamespace> 
+        <plugin name="gazebo_ros_control" filename="libgazebo_dc_motor.so">
+          <robotNamespace>kuroko</robotNamespace>
           <robotSimType>gazebo_dc_motor/DefaultRobotHWSim</robotSimType>
-          <legacyModeNS>false</legacyModeNS> 
+          <legacyModeNS>false</legacyModeNS>
         </plugin>
       </gazebo>
     </xacro:if>
@@ -41,29 +42,33 @@
 
   <!-- MACRO:Setting up a Robot Model -->
   <xacro:macro name="kuroko_xacro" params="model_mode gazebo_hw_interface">
-    <link name="root_link"/>
+    <link name="root_link" />
     <joint name="root_joint" type="fixed">
-        <parent link="root_link"/>
-        <child  link="chest"/>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
+      <parent link="root_link" />
+      <child link="chest" />
+      <origin xyz="0 0 0" rpy="0 0 0" />
     </joint>
-    <xacro:body_xacro/>
-    <xacro:body_gazebo gazebo_hw_interface="${gazebo_hw_interface}"/>
-    <xacro:arm_r_xacro/>
-    <xacro:arm_r_gazebo gazebo_hw_interface="${gazebo_hw_interface}"/>
-    <xacro:arm_l_xacro/>
-    <xacro:arm_l_gazebo gazebo_hw_interface="${gazebo_hw_interface}"/>
-    <!-- <xacro:leg_r_xacro/>
-    <xacro:leg_r_gazebo gazebo_hw_interface="${gazebo_hw_interface}"/>
+    <xacro:body_xacro />
+    <xacro:body_gazebo gazebo_hw_interface="${gazebo_hw_interface}" />
+    <xacro:arm_r_xacro />
+    <xacro:arm_r_gazebo gazebo_hw_interface="${gazebo_hw_interface}" />
+    <xacro:arm_l_xacro />
+    <xacro:arm_l_gazebo gazebo_hw_interface="${gazebo_hw_interface}" />
+    <xacro:leg_r_xacro />
+    <xacro:leg_r_gazebo gazebo_hw_interface="${gazebo_hw_interface}" />
+    <!-- 
     <xacro:leg_l_xacro/>
     <xacro:leg_l_gazebo gazebo_hw_interface="${gazebo_hw_interface}"/>-->
   </xacro:macro>
 
   <!-- Load Macros -->
-  <xacro:kuroko_xacro model_mode="$(arg model_mode)" gazebo_hw_interface="$(arg gazebo_hw_interface)"/>
-  <xacro:gazebo_plugin_xacro gazebo_motor_model="$(arg gazebo_motor_model)"/>
+  <xacro:kuroko_xacro model_mode="$(arg model_mode)"
+    gazebo_hw_interface="$(arg gazebo_hw_interface)" />
+  <xacro:gazebo_plugin_xacro gazebo_motor_model="$(arg gazebo_motor_model)" />
   <!-- <xacro:imu_xacro model_mode="$(arg model_mode)"/> -->
-  <!-- <xacro:urg_xacro firame_id="arm_r_urg_link" topic_name="/sensor/urg/right/scan_raw" sensor_name="urg_right"/> -->
-  <!-- <xacro:urg_xacro firame_id="arm_l_urg_link" topic_name="/sensor/urg/left/scan_raw" sensor_name="urg_left"/> -->
+  <!-- <xacro:urg_xacro firame_id="arm_r_urg_link" topic_name="/sensor/urg/right/scan_raw"
+  sensor_name="urg_right"/> -->
+  <!-- <xacro:urg_xacro firame_id="arm_l_urg_link" topic_name="/sensor/urg/left/scan_raw"
+  sensor_name="urg_left"/> -->
 
 </robot>

@@ -32,7 +32,8 @@
 				</geometry>
 			</visual>
 			<xacro:box_collision xyz="0.00125 0 -0.04875" rpy="0 0 0" size="0.092 0.0325 0.0975" />
-			<xacro:box_inertial xyz="0.00125 0 -0.04875" rpy="0 0 0" size="0.092 0.0325 0.0975" mass="0.337" />
+			<xacro:box_inertial xyz="0.00125 0 -0.04875" rpy="0 0 0" size="0.092 0.0325 0.0975"
+				mass="0.337" />
 		</link>
 	</xacro:macro>
 </robot>

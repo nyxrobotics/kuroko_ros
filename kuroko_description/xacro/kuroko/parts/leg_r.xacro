@@ -61,7 +61,7 @@
 		<joint name="thigh_r_03_joint" type="revolute">
 			<parent link="thigh_r_01" />
 			<child link="thigh_r_03" />
-			<origin xyz="-0.015 -0.02925 -0.0305" rpy="0 0 0" />
+			<origin xyz="-0.0185 -0.02925 -0.0305" rpy="0 0 0" />
 			<axis xyz="0 1 0" />
 			<limit effort="1000.0" lower="-3.1" upper="3.1" velocity="10.0" />
 			<dynamics damping="0.0" friction="0.0" />
@@ -80,11 +80,11 @@
 		<joint name="thigh_r_04_joint" type="revolute">
 			<parent link="thigh_r_01" />
 			<child link="thigh_r_04" />
-			<origin xyz="-0.015 -0.02925 -0.0305" rpy="0 0 0" />
+			<origin xyz="-0.0185 -0.02925 -0.0305" rpy="0 0 0" />
 			<axis xyz="0 1 0" />
 			<limit effort="1000.0" lower="-3.1" upper="3.1" velocity="10.0" />
 			<dynamics damping="0.0" friction="0.0" />
-			<mimic joint="thigh_r_02_joint" multiplier="1" offset="0"/>
+			<mimic joint="thigh_r_02_joint" multiplier="1" offset="0" />
 		</joint>
 		<link name="thigh_r_04">
 			<visual>
@@ -97,6 +97,55 @@
 			<xacro:box_inertial xyz="0 0 -0.05" rpy="0 0 0" size="0.014 0.0345 0.114" mass="0.011" />
 		</link>
 
+		<joint name="thigh_r_05_mimic_joint" type="revolute">
+			<parent link="thigh_r_03" />
+			<child link="thigh_r_05_mimic" />
+			<origin xyz="0 0 -0.03" rpy="0 0 0" />
+			<axis xyz="0 1 0" />
+			<limit effort="1000.0" lower="-3.1" upper="3.1" velocity="10.0" />
+			<dynamics damping="0.0" friction="0.0" />
+			<mimic joint="thigh_r_03_joint" multiplier="-1" offset="0" />
+		</joint>
+		<link name="thigh_r_05_mimic" />
+		<joint name="thigh_r_05_joint" type="revolute">
+			<parent link="thigh_r_05_mimic" />
+			<child link="thigh_r_05" />
+			<origin xyz="0 0 0" rpy="0 0 0" />
+			<axis xyz="0 1 0" />
+			<limit effort="1000.0" lower="-3.1" upper="3.1" velocity="10.0" />
+			<dynamics damping="0.0" friction="0.0" />
+			<mimic joint="thigh_r_02_joint" multiplier="1" offset="0" />
+		</joint>
+		<link name="thigh_r_05">
+			<visual>
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry>
+					<mesh filename="package://kuroko_description/meshes/kuroko/obj/thigh_r_05.obj" />
+				</geometry>
+			</visual>
+			<xacro:box_collision xyz="0 0 -0.05" rpy="0 0 0" size="0.014 0.0285 0.114" />
+			<xacro:box_inertial xyz="0 0 -0.05" rpy="0 0 0" size="0.014 0.0285 0.114" mass="0.011" />
+		</link>
+
+		<joint name="knee_r_joint" type="revolute">
+			<parent link="thigh_r_02" />
+			<child link="knee_r" />
+			<origin xyz="0 0 -0.1" rpy="0 0 0" />
+			<axis xyz="0 1 0" />
+			<limit effort="1000.0" lower="-3.1" upper="3.1" velocity="10.0" />
+			<dynamics damping="0.0" friction="0.0" />
+			<mimic joint="thigh_r_02_joint" multiplier="-1" offset="0" />
+		</joint>
+		<link name="knee_r">
+			<visual>
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry>
+					<mesh filename="package://kuroko_description/meshes/kuroko/obj/knee_r.obj" />
+				</geometry>
+			</visual>
+			<xacro:box_collision xyz="-0.01675 0 0" rpy="0 0 0" size="0.0475 0.0505 0.014" />
+			<xacro:box_inertial xyz="-0.01675 0 0" rpy="0 0 0" size="0.0475 0.0505 0.014" mass="0.0054" />
+		</link>
 	</xacro:macro>
 
 </robot>

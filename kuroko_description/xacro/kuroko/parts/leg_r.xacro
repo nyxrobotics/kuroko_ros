@@ -77,6 +77,7 @@
 			<xacro:box_inertial xyz="-0.004745 0 -0.015" rpy="0 0 0" size="0.02349 0.0445 0.044"
 				mass="0.008" />
 		</link>
+
 		<joint name="thigh_r_04_joint" type="revolute">
 			<parent link="thigh_r_01" />
 			<child link="thigh_r_04" />
@@ -86,6 +87,10 @@
 			<dynamics damping="0.0" friction="0.0" />
 			<mimic joint="thigh_r_02_joint" multiplier="1" offset="0" />
 		</joint>
+		<xacro:if value="$(arg gazebo)">
+			<xacro:gazebo_poassive_joint name="thigh_r_04_loop" xyz="-0.0335 0 0"
+				parent="knee_r" child="thigh_r_04" />
+		</xacro:if>
 		<link name="thigh_r_04">
 			<visual>
 				<origin xyz="0 0 0" rpy="0 0 0" />
@@ -118,7 +123,6 @@
 				<mimic joint="thigh_r_02_joint" multiplier="1" offset="0" />
 			</joint>
 		</xacro:unless>
-
 		<xacro:if value="$(arg gazebo)">
 			<joint name="thigh_r_05_joint" type="revolute">
 				<parent link="thigh_r_03" />
@@ -128,37 +132,9 @@
 				<limit effort="1000.0" lower="-3.1" upper="3.1" velocity="10.0" />
 				<dynamics damping="0.0" friction="0.0" />
 			</joint>
-			<gazebo>
-				<joint name="thigh_r_05_loop" type="revolute">
-					<parent>thigh_r_05</parent>
-					<child>leg_r_02</child>
-					<pose>-0.00765471 0 -0.02897777 0 0 0</pose>
-					<axis>
-						<xyz>0 1 0</xyz>
-						<limit>
-							<lower>-3.1</lower>
-							<upper>3.1</upper>
-						</limit>
-						<dynamics>
-							<spring_reference>0</spring_reference>
-							<spring_stiffness>0</spring_stiffness>
-						</dynamics>
-						<use_parent_model_frame>1</use_parent_model_frame>
-					</axis>
-					<physics>
-						<ode>
-							<implicit_spring_damper>1</implicit_spring_damper>
-							<cfm_damping>0</cfm_damping>
-							<limit>
-								<cfm>1e-7</cfm>
-								<erp>0.8</erp>
-							</limit>
-						</ode>
-					</physics>
-				</joint>
-			</gazebo>
+			<xacro:gazebo_poassive_joint name="thigh_r_05_loop" xyz="-0.00765471 0 -0.02897777"
+				parent="leg_r_02" child="thigh_r_05" />
 		</xacro:if>
-
 		<link name="thigh_r_05">
 			<visual>
 				<origin xyz="0 0 0" rpy="0 0 0" />
@@ -189,7 +165,6 @@
 			<xacro:box_collision xyz="-0.01675 0 0" rpy="0 0 0" size="0.0475 0.0505 0.014" />
 			<xacro:box_inertial xyz="-0.01675 0 0" rpy="0 0 0" size="0.0475 0.0505 0.014" mass="0.007" />
 		</link>
-
 		<joint name="leg_r_01_joint" type="revolute">
 			<parent link="knee_r" />
 			<child link="leg_r_01" />
@@ -218,6 +193,10 @@
 			<dynamics damping="0.0" friction="0.0" />
 			<mimic joint="thigh_r_03_joint" multiplier="1" offset="0" />
 		</joint>
+		<xacro:if value="$(arg gazebo)">
+			<xacro:gazebo_poassive_joint name="leg_r_02_loop" xyz="-0.0335 0 0"
+				parent="ankle_r_01" child="leg_r_02" />
+		</xacro:if>
 		<link name="leg_r_02">
 			<visual>
 				<origin xyz="0 0 0" rpy="0 0 0" />

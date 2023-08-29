@@ -5,6 +5,9 @@
   <!-- <xacro:arg name="gazebo_motor_model" default="kuroko"/> -->
   <xacro:arg name="gazebo_hw_interface" default="position" />
 
+	<xacro:include filename="$(find kuroko_description)/xacro/physics/box_physics.xacro" />
+
+	<xacro:include filename="$(find kuroko_description)/xacro/physics/gazebo_passive_joint.xacro" />
   <xacro:include filename="$(find kuroko_description)/xacro/kuroko/parts/body.xacro" />
   <xacro:include filename="$(find kuroko_description)/xacro/kuroko/transmission/body.gazebo" />
   <xacro:include filename="$(find kuroko_description)/xacro/kuroko/parts/arm_r.xacro" />

@@ -1,17 +1,18 @@
 <?xml version="1.0"?>
 
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-	<xacro:macro name="gazebo_poassive_joint" params="parent child xyz:='0 0 0' rpy:='0 0 0' lower:=-3.1416 upper:=3.1416">
+	<xacro:macro name="gazebo_poassive_joint"
+		params="name:='joint' parent:='parent' child:='child' xyz:='0 0 0' rpy:='0 0 0' axis:='0 1 0' lower:=-3.1416 upper:=3.1416">
 		<gazebo>
-			<joint name="thigh_r_05_loop" type="revolute">
-				<parent>$(arg child)</parent>
-				<child>$(arg gazebo)</child>
-				<pose>$(arg xyz) $(arg rpy)</pose>
+			<joint name="${name}" type="revolute">
+				<parent>${child}</parent>
+				<child>${parent}</child>
+				<pose>${xyz} ${rpy}</pose>
 				<axis>
-					<xyz>0 1 0</xyz>
+					<xyz>${axis}</xyz>
 					<limit>
-						<lower>$(arg lower)</lower>
-						<upper>$(arg upper)</upper>
+						<lower>${lower}</lower>
+						<upper>${upper}</upper>
 					</limit>
 					<dynamics>
 						<spring_reference>0</spring_reference>

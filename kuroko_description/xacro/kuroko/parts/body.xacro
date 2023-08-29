@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-	<xacro:include filename="$(find kuroko_description)/xacro/physics/box_physics.xacro" />
 	<xacro:macro name="body_xacro">
 		<!-- chest -->
 		<link name="chest">

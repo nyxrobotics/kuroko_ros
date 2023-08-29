@@ -83,14 +83,14 @@ gazebo_dc_motor:
       antiwindup: false
       publish_state: true
     thigh_r_02_joint:
-      p: 10.0
+      p: 20.0
       i: 0.0
       d: 0.0
       i_clamp: 0.2
       antiwindup: false
       publish_state: true
     thigh_r_03_joint:
-      p: 10.0
+      p: 20.0
       i: 0.0
       d: 0.0
       i_clamp: 0.2
@@ -126,14 +126,14 @@ gazebo_dc_motor:
       antiwindup: false
       publish_state: true
     thigh_l_02_joint:
-      p: 10.0
+      p: 20.0
       i: 0.0
       d: 0.0
       i_clamp: 0.2
       antiwindup: false
       publish_state: true
     thigh_l_03_joint:
-      p: 10.0
+      p: 20.0
       i: 0.0
       d: 0.0
       i_clamp: 0.2

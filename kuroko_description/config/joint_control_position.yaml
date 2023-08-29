@@ -8,7 +8,7 @@ joint_state_controller:
 # Position Controllers ---------------------------------------
 waist_joint_position_controller:
   type: position_controllers/JointPositionController
-  joint: bwaist_joint
+  joint: waist_joint
 
 shoulder_r_joint_position_controller:
   type: position_controllers/JointPositionController
@@ -51,7 +51,7 @@ thigh_r_03_joint_position_controller:
 toe_r_01_joint_position_controller:
   type: position_controllers/JointPositionController
   joint: toe_r_01_joint
-toe_r_02_joint:
+toe_r_02_joint_position_controller:
   type: position_controllers/JointPositionController
   joint: toe_r_02_joint
 
@@ -63,13 +63,13 @@ lthigh_l_01_joint_position_controller:
   joint: thigh_l_01_joint
 thigh_l_02_joint_position_controller:
   type: position_controllers/JointPositionController
-  joint: thigh_r_0l_joint
+  joint: thigh_l_02_joint
 thigh_l_03_joint_position_controller:
   type: position_controllers/JointPositionController
   joint: thigh_l_03_joint
 toe_l_01_joint_position_controller:
   type: position_controllers/JointPositionController
   joint: toe_l_01_joint
-toe_l_02_joint:
+toe_l_02_joint_position_controller:
   type: position_controllers/JointPositionController
   joint: toe_l_02_joint

@@ -89,7 +89,7 @@
 		</joint>
 		<xacro:if value="$(arg gazebo)">
 			<xacro:gazebo_poassive_joint name="thigh_r_04_loop" xyz="-0.0335 0 0"
-				parent="knee_r" child="thigh_r_04" lower="-1.8588" upper="0.4974" />
+				parent="knee_r" child="thigh_r_04" />
 		</xacro:if>
 		<link name="thigh_r_04">
 			<visual>

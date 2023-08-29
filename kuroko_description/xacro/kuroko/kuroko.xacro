@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <robot name="kuroko" xmlns:xacro="http://www.ros.org/wiki/xacro">
-  <xacro:arg name="model_mode" default="rviz" />
+  <xacro:arg name="gazebo" default="false" />
   <xacro:arg name="gazebo_motor_model" default="dc" />
   <!-- <xacro:arg name="gazebo_motor_model" default="kuroko"/> -->
   <xacro:arg name="gazebo_hw_interface" default="position" />
@@ -41,7 +41,7 @@
   </xacro:macro>
 
   <!-- MACRO:Setting up a Robot Model -->
-  <xacro:macro name="kuroko_xacro" params="model_mode gazebo_hw_interface">
+  <xacro:macro name="kuroko_xacro" params="gazebo gazebo_hw_interface">
     <link name="root_link" />
     <joint name="root_joint" type="fixed">
       <parent link="root_link" />
@@ -54,7 +54,8 @@
     <xacro:arm_r_gazebo gazebo_hw_interface="${gazebo_hw_interface}" />
     <xacro:arm_l_xacro />
     <xacro:arm_l_gazebo gazebo_hw_interface="${gazebo_hw_interface}" />
-    <xacro:leg_r_xacro />
+    <xacro:leg_r_xacro gazebo="$(arg gazebo)" />
+
     <xacro:leg_r_gazebo gazebo_hw_interface="${gazebo_hw_interface}" />
     <!-- 
     <xacro:leg_l_xacro/>
@@ -62,7 +63,7 @@
   </xacro:macro>
 
   <!-- Load Macros -->
-  <xacro:kuroko_xacro model_mode="$(arg model_mode)"
+  <xacro:kuroko_xacro gazebo="$(arg gazebo)"
     gazebo_hw_interface="$(arg gazebo_hw_interface)" />
   <xacro:gazebo_plugin_xacro gazebo_motor_model="$(arg gazebo_motor_model)" />
   <!-- <xacro:imu_xacro model_mode="$(arg model_mode)"/> -->

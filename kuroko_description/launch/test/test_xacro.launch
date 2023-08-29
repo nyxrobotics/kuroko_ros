@@ -2,7 +2,7 @@
 <launch>
   <arg name="gui" default="True"/>
   <param name="robot_description"
-    command="$(find xacro)/xacro '$(find kuroko_description)/xacro/kuroko/kuroko.xacro' model_mode:=rviz" />
+    command="$(find xacro)/xacro '$(find kuroko_description)/xacro/kuroko/kuroko.xacro' gazebo:=true" />
   <param name="use_gui" value="$(arg gui)"/>
   
   <!-- <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"/> -->

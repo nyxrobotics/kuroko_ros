@@ -2,8 +2,8 @@
 
 
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-	<xacro:macro name="imu_xacro" params="model_mode">
-		<xacro:if value="${model_mode!='rviz'}">
+	<xacro:macro name="imu_xacro" params="gazebo">
+		<xacro:if value="$gazebo">
 			<link name="body_imu_attached_link">
 				<inertial>
 					<mass value="0.0005"/>
@@ -44,7 +44,7 @@
 		</xacro:if>
 
 
-		<xacro:if value="${model_mode=='rviz'}">
+		<xacro:unless value="gazebo">
 			<link name="body_imu_attached_link"/>
 			<joint name="body_imu_attached_joint" type="fixed">
 				<parent link="body_link1"/>
@@ -58,7 +58,7 @@
 				<child  link="body_imu_base_link"/>
 				<origin xyz="-0.09 0 -0.0379" rpy="0 0 0"/>
 			</joint>
-		</xacro:if>
+		</xacro:unless>
 
 
 		<gazebo>

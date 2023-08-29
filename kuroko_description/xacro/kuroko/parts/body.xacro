@@ -11,8 +11,8 @@
 					<mesh filename="package://kuroko_description/meshes/kuroko/obj/chest.obj" />
 				</geometry>
 			</visual>
-			<xacro:box_collision xyz="0 0 0.057" rpy="0 0 0" size="0.1 0.16 0.114" />
-			<xacro:box_inertial xyz="0 0 0.057" rpy="0 0 0" size="0.1 0.16 0.114" mass="0.991" />
+			<xacro:box_collision xyz="0 0 0.057" rpy="0 0 0" size="0.1 0.204 0.114" />
+			<xacro:box_inertial xyz="0 0 0.057" rpy="0 0 0" size="0.1 0.204 0.114" mass="0.991" />
 		</link>
 		<!-- Joint1 -->
 		<joint name="waist_joint" type="revolute">
@@ -31,8 +31,8 @@
 					<mesh filename="package://kuroko_description/meshes/kuroko/obj/waist.obj" />
 				</geometry>
 			</visual>
-			<xacro:box_collision xyz="0.00125 0 -0.04875" rpy="0 0 0" size="0.092 0.0325 0.0975" />
-			<xacro:box_inertial xyz="0.00125 0 -0.04875" rpy="0 0 0" size="0.092 0.0325 0.0975"
+			<xacro:box_collision xyz="0.00125 0 -0.04875" rpy="0 0 0" size="0.0705 0.0325 0.0975" />
+			<xacro:box_inertial xyz="0.00125 0 -0.04875" rpy="0 0 0" size="0.0705 0.0325 0.0975"
 				mass="0.337" />
 		</link>
 	</xacro:macro>

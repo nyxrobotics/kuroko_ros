@@ -1,0 +1,1309 @@
+<sdf version='1.7'>
+  <model name='kuroko'>
+    <link name='root_link'>
+      <inertial>
+        <pose>0 0 0.057 0 -0 0</pose>
+        <mass>0.991</mass>
+        <inertia>
+          <ixx>0.00451004</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.00189909</iyy>
+          <iyz>0</iyz>
+          <izz>0.00426262</izz>
+        </inertia>
+      </inertial>
+      <collision name='root_link_fixed_joint_lump__chest_collision'>
+        <pose>0 0 0.057 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.1 0.204 0.114</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode>
+              <kp>1e+06</kp>
+              <kd>100</kd>
+              <max_vel>10</max_vel>
+              <min_depth>0.0001</min_depth>
+            </ode>
+          </contact>
+          <friction>
+            <ode>
+              <mu>0.1</mu>
+            </ode>
+          </friction>
+        </surface>
+        <max_contacts>6</max_contacts>
+      </collision>
+      <visual name='root_link_fixed_joint_lump__chest_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://kuroko_description/meshes/kuroko/obj/chest.obj</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <velocity_decay>
+        <linear>0</linear>
+        <angular>0</angular>
+      </velocity_decay>
+      <self_collide>0</self_collide>
+    </link>
+    <joint name='shoulder_l_joint' type='revolute'>
+      <pose relative_to='root_link'>0 0.108 0.01275 0 -0 0</pose>
+      <parent>root_link</parent>
+      <child>shoulder_l</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-3.1</lower>
+          <upper>3.1</upper>
+          <effort>1000</effort>
+          <velocity>10</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+      <physics>
+        <ode>
+          <implicit_spring_damper>1</implicit_spring_damper>
+          <cfm_damping>1</cfm_damping>
+          <limit>
+            <cfm>0</cfm>
+            <erp>0.2</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <link name='shoulder_l'>
+      <pose relative_to='shoulder_l_joint'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 0.0205 0 0 -0 0</pose>
+        <mass>0.022</mass>
+        <inertia>
+          <ixx>1e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>1e-05</iyy>
+          <iyz>0</iyz>
+          <izz>1e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name='shoulder_l_collision'>
+        <pose>0 0.0205 0 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.042 0.041 0.04</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode>
+              <kp>1e+06</kp>
+              <kd>100</kd>
+              <max_vel>10</max_vel>
+              <min_depth>0.0001</min_depth>
+            </ode>
+          </contact>
+          <friction>
+            <ode>
+              <mu>0</mu>
+            </ode>
+          </friction>
+        </surface>
+        <max_contacts>6</max_contacts>
+      </collision>
+      <visual name='shoulder_l_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://kuroko_description/meshes/kuroko/obj/shoulder_l.obj</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <velocity_decay>
+        <linear>0</linear>
+        <angular>0</angular>
+      </velocity_decay>
+      <self_collide>0</self_collide>
+    </link>
+    <joint name='arm_l_joint' type='revolute'>
+      <pose relative_to='shoulder_l'>0 0.028 0 0 -0 0</pose>
+      <parent>shoulder_l</parent>
+      <child>arm_l</child>
+      <axis>
+        <xyz>-1 0 0</xyz>
+        <limit>
+          <lower>-3.1</lower>
+          <upper>3.1</upper>
+          <effort>1000</effort>
+          <velocity>10</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='arm_l'>
+      <pose relative_to='arm_l_joint'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 0.0385 -0.02575 0 -0 0</pose>
+        <mass>0.342</mass>
+        <inertia>
+          <ixx>0.000493627</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.000205549</iyy>
+          <iyz>0</iyz>
+          <izz>0.000334376</izz>
+        </inertia>
+      </inertial>
+      <collision name='arm_l_collision'>
+        <pose>0 0.0385 -0.02575 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.0285 0.1045 0.08</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name='arm_l_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://kuroko_description/meshes/kuroko/obj/arm_l.obj</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='scissor_lf_joint' type='revolute'>
+      <pose relative_to='arm_l'>0 0.0265 -0.0545 0 -0 0</pose>
+      <parent>arm_l</parent>
+      <child>scissor_lf</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-3.1</lower>
+          <upper>3.1</upper>
+          <effort>1000</effort>
+          <velocity>10</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='scissor_lf'>
+      <pose relative_to='scissor_lf_joint'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0.0043 0 -0.104 0 -0 0</pose>
+        <mass>0.032</mass>
+        <inertia>
+          <ixx>0.000124341</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.000120533</iyy>
+          <iyz>0</iyz>
+          <izz>1.41333e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name='scissor_lf_collision'>
+        <pose>0.0043 0 -0.104 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.01085 0.058 0.208</size>
+          </box>
+        </geometry>
+      </collision>
+      <collision name='scissor_lf_collision_1'>
+        <pose>-0.0206 0 -0.201 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.039 0.058 0.014</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name='scissor_lf_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://kuroko_description/meshes/kuroko/obj/scissor_lf.obj</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='scissor_lr_joint' type='revolute'>
+      <pose relative_to='arm_l'>0 0.0265 -0.0545 0 -0 0</pose>
+      <parent>arm_l</parent>
+      <child>scissor_lr</child>
+      <axis>
+        <xyz>0 -1 0</xyz>
+        <limit>
+          <lower>-3.1</lower>
+          <upper>3.1</upper>
+          <effort>1000</effort>
+          <velocity>10</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='scissor_lr'>
+      <pose relative_to='scissor_lr_joint'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>-0.0043 0 -0.1 0 -0 0</pose>
+        <mass>0.031</mass>
+        <inertia>
+          <ixx>0.000108335</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.000108335</iyy>
+          <iyz>0</iyz>
+          <izz>1.00027e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name='scissor_lr_collision'>
+        <pose>-0.0043 0 -0.1 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.01085 0.044 0.2</size>
+          </box>
+        </geometry>
+      </collision>
+      <collision name='scissor_lr_collision_1'>
+        <pose>0.0206 0 -0.193 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.039 0.044 0.014</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name='scissor_lr_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://kuroko_description/meshes/kuroko/obj/scissor_lr.obj</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='shoulder_r_joint' type='revolute'>
+      <pose relative_to='root_link'>0 -0.108 0.01275 0 -0 0</pose>
+      <parent>root_link</parent>
+      <child>shoulder_r</child>
+      <axis>
+        <xyz>0 -1 0</xyz>
+        <limit>
+          <lower>-3.1</lower>
+          <upper>3.1</upper>
+          <effort>1000</effort>
+          <velocity>10</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+      <physics>
+        <ode>
+          <implicit_spring_damper>1</implicit_spring_damper>
+          <cfm_damping>1</cfm_damping>
+          <limit>
+            <cfm>0</cfm>
+            <erp>0.2</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <link name='shoulder_r'>
+      <pose relative_to='shoulder_r_joint'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 -0.0205 0 0 -0 0</pose>
+        <mass>0.022</mass>
+        <inertia>
+          <ixx>1e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>1e-05</iyy>
+          <iyz>0</iyz>
+          <izz>1e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name='shoulder_r_collision'>
+        <pose>0 -0.0205 0 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.042 0.041 0.04</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode>
+              <kp>1e+06</kp>
+              <kd>100</kd>
+              <max_vel>10</max_vel>
+              <min_depth>0.0001</min_depth>
+            </ode>
+          </contact>
+          <friction>
+            <ode>
+              <mu>0</mu>
+            </ode>
+          </friction>
+        </surface>
+        <max_contacts>6</max_contacts>
+      </collision>
+      <visual name='shoulder_r_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://kuroko_description/meshes/kuroko/obj/shoulder_r.obj</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <velocity_decay>
+        <linear>0</linear>
+        <angular>0</angular>
+      </velocity_decay>
+      <self_collide>0</self_collide>
+    </link>
+    <joint name='arm_r_joint' type='revolute'>
+      <pose relative_to='shoulder_r'>0 -0.028 0 0 -0 0</pose>
+      <parent>shoulder_r</parent>
+      <child>arm_r</child>
+      <axis>
+        <xyz>-1 0 0</xyz>
+        <limit>
+          <lower>-3.1</lower>
+          <upper>3.1</upper>
+          <effort>1000</effort>
+          <velocity>10</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='arm_r'>
+      <pose relative_to='arm_r_joint'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 -0.0385 -0.02575 0 -0 0</pose>
+        <mass>0.342</mass>
+        <inertia>
+          <ixx>0.000493627</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.000205549</iyy>
+          <iyz>0</iyz>
+          <izz>0.000334376</izz>
+        </inertia>
+      </inertial>
+      <collision name='arm_r_collision'>
+        <pose>0 -0.0385 -0.02575 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.0285 0.1045 0.08</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name='arm_r_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://kuroko_description/meshes/kuroko/obj/arm_r.obj</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='scissor_rf_joint' type='revolute'>
+      <pose relative_to='arm_r'>0 -0.0265 -0.0545 0 -0 0</pose>
+      <parent>arm_r</parent>
+      <child>scissor_rf</child>
+      <axis>
+        <xyz>0 -1 0</xyz>
+        <limit>
+          <lower>-3.1</lower>
+          <upper>3.1</upper>
+          <effort>1000</effort>
+          <velocity>10</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='scissor_rf'>
+      <pose relative_to='scissor_rf_joint'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0.0043 0 -0.104 0 -0 0</pose>
+        <mass>0.032</mass>
+        <inertia>
+          <ixx>0.000124341</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.000120533</iyy>
+          <iyz>0</iyz>
+          <izz>1.41333e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name='scissor_rf_collision'>
+        <pose>0.0043 0 -0.104 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.01085 0.058 0.208</size>
+          </box>
+        </geometry>
+      </collision>
+      <collision name='scissor_rf_collision_1'>
+        <pose>-0.0206 0 -0.201 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.039 0.058 0.014</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name='scissor_rf_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://kuroko_description/meshes/kuroko/obj/scissor_rf.obj</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='scissor_rr_joint' type='revolute'>
+      <pose relative_to='arm_r'>0 -0.0265 -0.0545 0 -0 0</pose>
+      <parent>arm_r</parent>
+      <child>scissor_rr</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-3.1</lower>
+          <upper>3.1</upper>
+          <effort>1000</effort>
+          <velocity>10</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='scissor_rr'>
+      <pose relative_to='scissor_rr_joint'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>-0.0043 0 -0.1 0 -0 0</pose>
+        <mass>0.031</mass>
+        <inertia>
+          <ixx>0.000108335</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.000108335</iyy>
+          <iyz>0</iyz>
+          <izz>1.00027e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name='scissor_rr_collision'>
+        <pose>-0.0043 0 -0.1 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.01085 0.044 0.2</size>
+          </box>
+        </geometry>
+      </collision>
+      <collision name='scissor_rr_collision_1'>
+        <pose>0.0206 0 -0.193 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.039 0.044 0.014</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name='scissor_rr_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://kuroko_description/meshes/kuroko/obj/scissor_rr.obj</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='waist_joint' type='revolute'>
+      <pose relative_to='root_link'>0 0 0 0 -0 0</pose>
+      <parent>root_link</parent>
+      <child>waist</child>
+      <axis>
+        <xyz>0 0 -1</xyz>
+        <limit>
+          <lower>-3.1</lower>
+          <upper>3.1</upper>
+          <effort>1000</effort>
+          <velocity>10</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+      <physics>
+        <ode>
+          <implicit_spring_damper>1</implicit_spring_damper>
+          <cfm_damping>1</cfm_damping>
+          <limit>
+            <cfm>0</cfm>
+            <erp>0.2</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <link name='waist'>
+      <pose relative_to='waist_joint'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0.00125 0 -0.04875 0 -0 0</pose>
+        <mass>0.337</mass>
+        <inertia>
+          <ixx>0.00029663</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.000406548</iyy>
+          <iyz>0</iyz>
+          <izz>0.000169244</izz>
+        </inertia>
+      </inertial>
+      <collision name='waist_collision'>
+        <pose>0.00125 0 -0.04875 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.0705 0.0325 0.0975</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode>
+              <kp>1e+06</kp>
+              <kd>100</kd>
+              <max_vel>10</max_vel>
+              <min_depth>0.0001</min_depth>
+            </ode>
+          </contact>
+          <friction>
+            <ode>
+              <mu>0.1</mu>
+            </ode>
+          </friction>
+        </surface>
+        <max_contacts>6</max_contacts>
+      </collision>
+      <visual name='waist_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://kuroko_description/meshes/kuroko/obj/waist.obj</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <velocity_decay>
+        <linear>0</linear>
+        <angular>0</angular>
+      </velocity_decay>
+      <self_collide>0</self_collide>
+    </link>
+    <joint name='crotch_r_joint' type='revolute'>
+      <pose relative_to='waist'>0.00125 0 -0.08425 0 -0 0</pose>
+      <parent>waist</parent>
+      <child>crotch_r</child>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>-3.1</lower>
+          <upper>3.1</upper>
+          <effort>1000</effort>
+          <velocity>10</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='crotch_r'>
+      <pose relative_to='crotch_r_joint'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 -0.0065 -0.004125 0 -0 0</pose>
+        <mass>0.026</mass>
+        <inertia>
+          <ixx>1e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>2.11858e-05</iyy>
+          <iyz>0</iyz>
+          <izz>2.19808e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name='crotch_r_collision'>
+        <pose>0 -0.0065 -0.004125 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.092 0.041 0.03625</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name='crotch_r_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://kuroko_description/meshes/kuroko/obj/crotch_r.obj</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='thigh_r_01_joint' type='revolute'>
+      <pose relative_to='crotch_r'>0 -0.027 0 0 -0 0</pose>
+      <parent>crotch_r</parent>
+      <child>thigh_r_01</child>
+      <axis>
+        <xyz>0 -1 0</xyz>
+        <limit>
+          <lower>-3.1</lower>
+          <upper>3.1</upper>
+          <effort>1000</effort>
+          <velocity>10</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='thigh_r_01'>
+      <pose relative_to='thigh_r_01_joint'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>-0.00175 -0.049 -0.015 0 -0 0</pose>
+        <mass>0.478</mass>
+        <inertia>
+          <ixx>0.000518879</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.000315131</iyy>
+          <iyz>0</iyz>
+          <izz>0.000561371</izz>
+        </inertia>
+      </inertial>
+      <collision name='thigh_r_01_collision'>
+        <pose>-0.00175 -0.049 -0.015 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.067 0.098 0.0585</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name='thigh_r_01_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://kuroko_description/meshes/kuroko/obj/thigh_r_01.obj</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='thigh_r_02_joint' type='revolute'>
+      <pose relative_to='thigh_r_01'>0.015 -0.02925 -0.0305 0 -0.785398 0</pose>
+      <parent>thigh_r_01</parent>
+      <child>thigh_r_02</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-3.1</lower>
+          <upper>3.1</upper>
+          <effort>1000</effort>
+          <velocity>10</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='thigh_r_02'>
+      <pose relative_to='thigh_r_02_joint'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 0 -0.05 0 -0 0</pose>
+        <mass>0.012</mass>
+        <inertia>
+          <ixx>1.49763e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>1.3192e-05</iyy>
+          <iyz>0</iyz>
+          <izz>1e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name='thigh_r_02_collision'>
+        <pose>0 0 -0.05 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.014 0.0445 0.114</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name='thigh_r_02_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://kuroko_description/meshes/kuroko/obj/thigh_r_02.obj</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='knee_r_joint' type='revolute'>
+      <pose relative_to='thigh_r_02'>0 0 -0.1 0 0.785398 0</pose>
+      <parent>thigh_r_02</parent>
+      <child>knee_r</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-3.1</lower>
+          <upper>3.1</upper>
+          <effort>1000</effort>
+          <velocity>10</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='knee_r'>
+      <pose relative_to='knee_r_joint'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>-0.01675 0 0 0 -0 0</pose>
+        <mass>0.007</mass>
+        <inertia>
+          <ixx>1e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>1e-05</iyy>
+          <iyz>0</iyz>
+          <izz>1e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name='knee_r_collision'>
+        <pose>-0.01675 0 0 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.0475 0.0505 0.014</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name='knee_r_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://kuroko_description/meshes/kuroko/obj/knee_r.obj</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='leg_r_01_joint' type='revolute'>
+      <pose relative_to='knee_r'>0 0 0 0 0.785398 0</pose>
+      <parent>knee_r</parent>
+      <child>leg_r_01</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-3.1</lower>
+          <upper>3.1</upper>
+          <effort>1000</effort>
+          <velocity>10</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='leg_r_01'>
+      <pose relative_to='leg_r_01_joint'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 0 -0.05 0 -0 0</pose>
+        <mass>0.013</mass>
+        <inertia>
+          <ixx>1.56848e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>1.42913e-05</iyy>
+          <iyz>0</iyz>
+          <izz>1e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name='leg_r_01_collision'>
+        <pose>0 0 -0.05 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.014 0.0385 0.114</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name='leg_r_01_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://kuroko_description/meshes/kuroko/obj/leg_r_01.obj</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='ankle_r_01_joint' type='revolute'>
+      <pose relative_to='leg_r_01'>0 0 -0.1 0 -0.785398 0</pose>
+      <parent>leg_r_01</parent>
+      <child>ankle_r_01</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-3.1</lower>
+          <upper>3.1</upper>
+          <effort>1000</effort>
+          <velocity>10</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='ankle_r_01'>
+      <pose relative_to='ankle_r_01_joint'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>-0.0285 0 -0.013 0 -0 0</pose>
+        <mass>0.104</mass>
+        <inertia>
+          <ixx>2.78937e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>8.2095e-05</iyy>
+          <iyz>0</iyz>
+          <izz>7.25097e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name='ankle_r_01_collision'>
+        <pose>-0.0285 0 -0.013 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.0855 0.0325 0.0465</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name='ankle_r_01_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://kuroko_description/meshes/kuroko/obj/ankle_r_01.obj</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='toe_r_01_joint' type='revolute'>
+      <pose relative_to='ankle_r_01'>-0.015 0 -0.025 0 -0 0</pose>
+      <parent>ankle_r_01</parent>
+      <child>toe_r_01</child>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>-3.1</lower>
+          <upper>3.1</upper>
+          <effort>1000</effort>
+          <velocity>10</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='toe_r_01'>
+      <pose relative_to='toe_r_01_joint'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 -0.009375 -0.01175 0 -0 0</pose>
+        <mass>0.136</mass>
+        <inertia>
+          <ixx>5.3698e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>3.60542e-05</iyy>
+          <iyz>0</iyz>
+          <izz>4.78415e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name='toe_r_01_collision'>
+        <pose>0 -0.009375 -0.01175 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.0365 0.05375 0.043</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name='toe_r_01_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://kuroko_description/meshes/kuroko/obj/toe_r_01.obj</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='toe_r_02_joint' type='revolute'>
+      <pose relative_to='toe_r_01'>0 0 -0.03825 0 -0 0</pose>
+      <parent>toe_r_01</parent>
+      <child>toe_r_02</child>
+      <axis>
+        <xyz>0 0 -1</xyz>
+        <limit>
+          <lower>-3.1</lower>
+          <upper>3.1</upper>
+          <effort>1000</effort>
+          <velocity>10</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='toe_r_02'>
+      <pose relative_to='toe_r_02_joint'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 0 -0.0025 0 -0 0</pose>
+        <mass>0.043</mass>
+        <inertia>
+          <ixx>2.02458e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>5.16896e-05</iyy>
+          <iyz>0</iyz>
+          <izz>7.17562e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name='toe_r_02_collision'>
+        <pose>0 0 -0.0025 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.12 0.075 0.005</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name='toe_r_02_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://kuroko_description/meshes/kuroko/obj/toe_r_02.obj</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='leg_r_02_joint' type='revolute'>
+      <pose relative_to='knee_r'>-0.0335 0 0 0 0.785398 0</pose>
+      <parent>knee_r</parent>
+      <child>leg_r_02</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-3.1</lower>
+          <upper>3.1</upper>
+          <effort>1000</effort>
+          <velocity>10</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='leg_r_02'>
+      <pose relative_to='leg_r_02_joint'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 0 -0.05 0 -0 0</pose>
+        <mass>0.016</mass>
+        <inertia>
+          <ixx>1.99683e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>1.75893e-05</iyy>
+          <iyz>0</iyz>
+          <izz>1e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name='leg_r_02_collision'>
+        <pose>0 0 -0.05 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.014 0.0445 0.114</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name='leg_r_02_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://kuroko_description/meshes/kuroko/obj/leg_r_02.obj</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='thigh_r_03_joint' type='revolute'>
+      <pose relative_to='thigh_r_01'>-0.0185 -0.02925 -0.0305 0 1.0472 0</pose>
+      <parent>thigh_r_01</parent>
+      <child>thigh_r_03</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-3.1</lower>
+          <upper>3.1</upper>
+          <effort>1000</effort>
+          <velocity>10</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='thigh_r_03'>
+      <pose relative_to='thigh_r_03_joint'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>-0.004745 0 -0.015 0 -0 0</pose>
+        <mass>0.008</mass>
+        <inertia>
+          <ixx>1e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>1e-05</iyy>
+          <iyz>0</iyz>
+          <izz>1e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name='thigh_r_03_collision'>
+        <pose>-0.004745 0 -0.015 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.02349 0.0445 0.044</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name='thigh_r_03_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://kuroko_description/meshes/kuroko/obj/thigh_r_03.obj</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='thigh_r_05_mimic1' type='revolute'>
+      <pose relative_to='thigh_r_03'>0 0 -0.03 3.14159 -1.30899 3.14159</pose>
+      <parent>thigh_r_03</parent>
+      <child>thigh_r_05</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-3.1</lower>
+          <upper>3.1</upper>
+          <effort>1000</effort>
+          <velocity>10</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='thigh_r_05'>
+      <pose relative_to='thigh_r_05_mimic1'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 0 -0.05 0 -0 0</pose>
+        <mass>0.011</mass>
+        <inertia>
+          <ixx>1.26576e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>1.20927e-05</iyy>
+          <iyz>0</iyz>
+          <izz>1e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name='thigh_r_05_collision'>
+        <pose>0 0 -0.05 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.014 0.0285 0.114</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name='thigh_r_05_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://kuroko_description/meshes/kuroko/obj/thigh_r_05.obj</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='thigh_r_04_joint' type='revolute'>
+      <pose relative_to='thigh_r_01'>-0.0185 -0.02925 -0.0305 0 -0.785398 0</pose>
+      <parent>thigh_r_01</parent>
+      <child>thigh_r_04</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-3.1</lower>
+          <upper>3.1</upper>
+          <effort>1000</effort>
+          <velocity>10</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='thigh_r_04'>
+      <pose relative_to='thigh_r_04_joint'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 0 -0.05 0 -0 0</pose>
+        <mass>0.012</mass>
+        <inertia>
+          <ixx>1.41862e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>1.3192e-05</iyy>
+          <iyz>0</iyz>
+          <izz>1e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name='thigh_r_04_collision'>
+        <pose>0 0 -0.05 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.014 0.0345 0.114</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name='thigh_r_04_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://kuroko_description/meshes/kuroko/obj/thigh_r_04.obj</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='thigh_r_05_joint' type='revolute'>
+      <parent>thigh_r_03</parent>
+      <child>thigh_r_05</child>
+      <pose>-0.03 0 0 0 -0 0</pose>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-3.1</lower>
+          <upper>3.1</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+      <physics>
+        <ode>
+          <implicit_spring_damper>1</implicit_spring_damper>
+          <cfm_damping>0</cfm_damping>
+          <limit>
+            <cfm>1e-07</cfm>
+            <erp>0.8</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <plugin name='gazebo_ros_control' filename='libgazebo_dc_motor.so'>
+      <robotNamespace>kuroko</robotNamespace>
+      <robotSimType>gazebo_dc_motor/DefaultRobotHWSim</robotSimType>
+      <legacyModeNS>0</legacyModeNS>
+    </plugin>
+    <frame name='root_joint' attached_to='root_link'>
+      <pose>0 0 0 0 -0 0</pose>
+    </frame>
+    <frame name='chest' attached_to='root_joint'/>
+  </model>
+</sdf>

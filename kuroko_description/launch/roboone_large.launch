@@ -10,6 +10,7 @@
   <arg name="debug" default="false" />
   <arg name="robot_name" default="kuroko" />
   <arg name="use_trajectory_control" default="true" />
+  <arg name="use_small_ring" default="false" />
 
   <rosparam file="$(find kuroko_description)/config/gazebo_pid.yaml" ns="$(arg robot_name)"
     command="load" />
@@ -38,18 +39,21 @@
   <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
   <node name="robot_urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false"
     output="screen"
-    args="-urdf -model $(arg robot_name) -param robot_description_gazebo -x -0.9 -y 0.0 -z 0.7" />
+    args="-urdf -model $(arg robot_name) -param robot_description_gazebo -x -0.9 -y 0.0 -z 0.86" />
 
-  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
-    respawn="false" output="screen" ns="$(arg robot_name)">
-    <param name="publish_frequency" value="1000" />
-    <param name="ignore_timestamp" value="true" />
-    <param name="use_tf_static" value="false" />
-  </node>
-  <param name="ring_urdf"
-    command="$(find xacro)/xacro --inorder '$(find kuroko_description)/xacro/roboone_ring/large_ring.xacro'" />
-  <node name="ring_urdf_spawner" pkg="gazebo_ros" type="spawn_model" output="screen"
-    args="-urdf -param ring_urdf -model ring_model -x 0.0 -y 0.0 -z 0.0" />
+  <group if="$(arg use_small_ring)">
+    <param name="ring_urdf"
+      command="$(find xacro)/xacro --inorder '$(find kuroko_description)/xacro/roboone_ring/small_ring.xacro'" />
+    <node name="ring_urdf_spawner" pkg="gazebo_ros" type="spawn_model" output="screen"
+      args="-urdf -param ring_urdf -model ring_model -x 0.0 -y 0.0 -z 0.0" />
+  </group>
+  <group unless="$(arg use_small_ring)">
+    <param name="ring_urdf"
+      command="$(find xacro)/xacro --inorder '$(find kuroko_description)/xacro/roboone_ring/large_ring.xacro'" />
+    <node name="ring_urdf_spawner" pkg="gazebo_ros" type="spawn_model" output="screen"
+      args="-urdf -param ring_urdf -model ring_model -x -0.0 -y 0.0 -z 0.0" />
+  </group>
+
   <group unless="$(arg use_trajectory_control)">
     <rosparam file="$(find kuroko_description)/config/joint_control_position.yaml"
       ns="$(arg robot_name)"
@@ -95,5 +99,11 @@
         " />
   </group>
 
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
+    respawn="false" output="screen" ns="$(arg robot_name)">
+    <param name="publish_frequency" value="1000" />
+    <param name="ignore_timestamp" value="true" />
+    <param name="use_tf_static" value="false" />
+  </node>
 
 </launch>

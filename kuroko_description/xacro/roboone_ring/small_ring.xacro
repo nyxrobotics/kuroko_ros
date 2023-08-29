@@ -3,7 +3,7 @@
 	<xacro:include filename="./small_ring.gazebo" />
 
 	<xacro:macro name="small_ring">
-		<link name="small_ring_link0">
+		<link name="ring_link">
 			<collision>
 				<origin xyz="0 0 -0.97" rpy="0 0 0" />
 				<geometry>

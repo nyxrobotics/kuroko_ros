@@ -45,4 +45,12 @@
 			<implicitSpringDamper>1</implicitSpringDamper>
 		</gazebo>
 	</xacro:macro>
+
+	<xacro:macro name="preserve_fixed_joint" params="joint_name">
+		<gazebo reference="${joint_name}">
+			<disableFixedJointLumping>true</disableFixedJointLumping> 
+			<preserveFixedJoint>true</preserveFixedJoint>
+		</gazebo>
+	</xacro:macro>
+
 </robot>

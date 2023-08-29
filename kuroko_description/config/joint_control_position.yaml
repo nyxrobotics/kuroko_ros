@@ -6,82 +6,70 @@ joint_state_controller:
   publish_rate: 1000
 
 # Position Controllers ---------------------------------------
-body_joint1_position_controller:
+waist_joint_position_controller:
   type: position_controllers/JointPositionController
-  joint: body_joint1
+  joint: bwaist_joint
 
-arm_r_joint0_position_controller:
+shoulder_r_joint_position_controller:
   type: position_controllers/JointPositionController
-  joint: arm_r_joint0
-arm_r_joint1_position_controller:
+  joint: shoulder_r_joint
+arm_r_joint_position_controller:
   type: position_controllers/JointPositionController
-  joint: arm_r_joint1
-arm_r_joint1_rev_position_controller:
+  joint: arm_r_joint
+scissor_rf_joint_position_controller:
   type: position_controllers/JointPositionController
-  joint: arm_r_joint1_rev
-arm_r_joint2_position_controller:
+  joint: scissor_rf_joint
+scissor_rr_joint_position_controller:
   type: position_controllers/JointPositionController
-  joint: arm_r_joint2
-arm_r_joint3_position_controller:
-  type: position_controllers/JointPositionController
-  joint: arm_r_joint3
+  joint: scissor_rr_joint
 
-arm_l_joint0_position_controller:
+shoulder_l_joint_position_controller:
   type: position_controllers/JointPositionController
-  joint: arm_l_joint0
-arm_l_joint1_position_controller:
+  joint: shoulder_l_joint
+arm_l_joint_position_controller:
   type: position_controllers/JointPositionController
-  joint: arm_l_joint1
-arm_l_joint1_rev_position_controller:
+  joint: arm_l_joint
+scissor_lf_joint_position_controller:
   type: position_controllers/JointPositionController
-  joint: arm_l_joint1_rev
-arm_l_joint2_position_controller:
+  joint: scissor_lf_joint
+scissor_lr_joint_position_controller:
   type: position_controllers/JointPositionController
-  joint: arm_l_joint2
-arm_l_joint3_position_controller:
-  type: position_controllers/JointPositionController
-  joint: arm_l_joint3
+  joint: scissor_lr_joint
 
-leg_r_joint0_position_controller:
+crotch_r_joint_position_controller:
   type: position_controllers/JointPositionController
-  joint: leg_r_joint0
-leg_r_joint1_position_controller:
+  joint: crotch_r_joint
+lthigh_r_01_joint_position_controller:
   type: position_controllers/JointPositionController
-  joint: leg_r_joint1
-leg_r_joint3_position_controller:
+  joint: thigh_r_01_joint
+thigh_r_02_joint_position_controller:
   type: position_controllers/JointPositionController
-  joint: leg_r_joint3
-leg_r_joint4_position_controller:
+  joint: thigh_r_02_joint
+thigh_r_03_joint_position_controller:
   type: position_controllers/JointPositionController
-  joint: leg_r_joint4
-leg_r_joint6_position_controller:
+  joint: thigh_r_03_joint
+toe_r_01_joint_position_controller:
   type: position_controllers/JointPositionController
-  joint: leg_r_joint6
-leg_r_joint7_position_controller:
+  joint: toe_r_01_joint
+toe_r_02_joint:
   type: position_controllers/JointPositionController
-  joint: leg_r_joint7
-leg_r_joint8_position_controller:
-  type: position_controllers/JointPositionController
-  joint: leg_r_joint8
+  joint: toe_r_02_joint
 
-leg_l_joint0_position_controller:
+crotch_l_joint_position_controller:
   type: position_controllers/JointPositionController
-  joint: leg_l_joint0
-leg_l_joint1_position_controller:
+  joint: crotch_l_joint
+lthigh_l_01_joint_position_controller:
   type: position_controllers/JointPositionController
-  joint: leg_l_joint1
-leg_l_joint3_position_controller:
+  joint: thigh_l_01_joint
+thigh_l_02_joint_position_controller:
   type: position_controllers/JointPositionController
-  joint: leg_l_joint3
-leg_l_joint4_position_controller:
+  joint: thigh_r_0l_joint
+thigh_l_03_joint_position_controller:
   type: position_controllers/JointPositionController
-  joint: leg_l_joint4
-leg_l_joint6_position_controller:
+  joint: thigh_l_03_joint
+toe_l_01_joint_position_controller:
   type: position_controllers/JointPositionController
-  joint: leg_l_joint6
-leg_l_joint7_position_controller:
+  joint: toe_l_01_joint
+toe_l_02_joint:
   type: position_controllers/JointPositionController
-  joint: leg_l_joint7
-leg_l_joint8_position_controller:
-  type: position_controllers/JointPositionController
-  joint: leg_l_joint8
+  joint: toe_l_02_joint

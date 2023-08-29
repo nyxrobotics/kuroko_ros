@@ -1,39 +1,57 @@
 <?xml version="1.0"?>
 
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-    <xacro:include filename="$(find kuroko_description)/xacro/physics/default_gazebo_params.xacro"/>
+	<xacro:include filename="$(find kuroko_description)/xacro/physics/default_gazebo_params.xacro" />
 	<xacro:macro name="leg_l_gazebo" params="gazebo_hw_interface">
-		<!-- <xacro:default_passive_joint joint_name="leg_l_joint01"/> -->
-		<xacro:default_motor_transmission joint_name="leg_l_joint01" gazebo_hw_interface="${gazebo_hw_interface}"/>
-		<!-- <xacro:default_passive_joint joint_name="leg_l_joint02"/> -->
-		<xacro:default_motor_transmission joint_name="leg_l_joint02" gazebo_hw_interface="${gazebo_hw_interface}"/>
-		<!-- <xacro:default_passive_joint joint_name="leg_l_joint03"/> -->
-		<xacro:default_motor_transmission joint_name="leg_l_joint03" gazebo_hw_interface="${gazebo_hw_interface}"/>
-		<!-- <xacro:default_passive_joint joint_name="leg_l_joint04"/> -->
-		<xacro:default_motor_transmission joint_name="leg_l_joint04" gazebo_hw_interface="${gazebo_hw_interface}"/>
-		<xacro:default_passive_joint joint_name="leg_l_joint05"/>
-		<xacro:default_passive_joint joint_name="leg_l_joint06"/>
-		<xacro:default_passive_joint joint_name="leg_l_joint07"/>
-		<xacro:default_passive_joint joint_name="leg_l_joint08"/>
-		<xacro:default_passive_joint joint_name="leg_l_joint09"/>
-		<xacro:default_passive_joint joint_name="leg_l_joint10"/>
-		<!-- <xacro:default_passive_joint joint_name="leg_l_joint11"/> -->
-		<xacro:default_motor_transmission joint_name="leg_l_joint11" gazebo_hw_interface="${gazebo_hw_interface}"/>
-		<!-- <xacro:default_passive_joint joint_name="leg_l_joint12"/> -->
-		<xacro:default_motor_transmission joint_name="leg_l_joint12" gazebo_hw_interface="${gazebo_hw_interface}"/>
-		<xacro:default_passive_joint joint_name="leg_l_ft_sensor_joint"/>
-		<xacro:default_link_collision link_name="leg_l_link01" friction="0.0"/>
-		<xacro:default_link_collision link_name="leg_l_link02" friction="0.1"/>
-		<xacro:default_link_collision link_name="leg_l_link03" friction="0.0"/>
-		<xacro:default_link_collision link_name="leg_l_link04" friction="0.0"/>
-		<xacro:default_link_collision link_name="leg_l_link05" friction="0.0"/>
-		<xacro:default_link_collision link_name="leg_l_link06" friction="0.0"/>
-		<xacro:default_link_collision link_name="leg_l_link07" friction="0.01"/>
-		<xacro:default_link_collision link_name="leg_l_link08" friction="0.0"/>
-		<xacro:default_link_collision link_name="leg_l_link09" friction="0.0"/>
-		<xacro:default_link_collision link_name="leg_l_link10" friction="0.1"/>
-		<xacro:default_link_collision link_name="leg_l_link11" friction="0.0"/>
-		<xacro:default_link_collision link_name="leg_l_link12_1" friction="0.0"/>
-		<xacro:default_link_collision link_name="leg_l_link12_2" friction="0.5"/>
+		<xacro:default_motor_transmission joint_name="crotch_l_joint"
+			gazebo_hw_interface="${gazebo_hw_interface}" />
+		<xacro:default_motor_transmission joint_name="thigh_l_01_joint"
+			gazebo_hw_interface="${gazebo_hw_interface}" />
+		<xacro:default_motor_transmission joint_name="thigh_l_02_joint"
+			gazebo_hw_interface="${gazebo_hw_interface}" />
+		<xacro:default_motor_transmission joint_name="thigh_l_03_joint"
+			gazebo_hw_interface="${gazebo_hw_interface}" />
+		<xacro:default_motor_transmission joint_name="toe_l_01_joint"
+			gazebo_hw_interface="${gazebo_hw_interface}" />
+		<xacro:default_motor_transmission joint_name="toe_l_02_joint"
+			gazebo_hw_interface="${gazebo_hw_interface}" />
+
+		<xacro:implicit_joint joint_name="thigh_l_04_joint" />
+		<xacro:implicit_joint joint_name="thigh_l_05_joint" />
+		<xacro:implicit_joint joint_name="knee_l_joint" />
+		<xacro:implicit_joint joint_name="leg_l_01_joint" />
+		<xacro:implicit_joint joint_name="leg_l_02_joint" />
+		<xacro:implicit_joint joint_name="ankle_l_01_joint" />
+
+		<xacro:default_link_collision link_name="crotch_l" friction="0.01" />
+		<gazebo reference="thigh_l_01">
+			<kp>1000000.0</kp>
+			<kd>100.0</kd>
+			<mu1>0.01</mu1>
+			<maxVel>10.0</maxVel>
+			<minDepth>0.0001</minDepth>
+			<maxContacts>6</maxContacts>
+			<selfCollide>false</selfCollide>
+			<dampingFactor>0</dampingFactor>
+		</gazebo>
+		<xacro:default_link_collision link_name="thigh_l_02" friction="0.0" />
+		<xacro:default_link_collision link_name="thigh_l_03" friction="0.01" />
+		<xacro:default_link_collision link_name="thigh_l_04" friction="0.0" />
+		<xacro:default_link_collision link_name="thigh_l_05" friction="0.0" />
+		<xacro:default_link_collision link_name="knee_l" friction="0.01" />
+		<xacro:default_link_collision link_name="leg_l_01" friction="0.0" />
+		<xacro:default_link_collision link_name="leg_l_02" friction="0.0" />
+		<xacro:default_link_collision link_name="ankle_l_01" friction="0.01" />
+		<xacro:default_link_collision link_name="toe_l_01" friction="0.0" />
+		<gazebo reference="toe_l_02">
+			<kp>2000000.0</kp>
+			<kd>200.0</kd>
+			<mu1>1.0</mu1>
+			<maxVel>1.0</maxVel>
+			<minDepth>0.0001</minDepth>
+			<maxContacts>5</maxContacts>
+			<selfCollide>true</selfCollide>
+			<dampingFactor>0.0</dampingFactor>
+		</gazebo>
 	</xacro:macro>
 </robot>

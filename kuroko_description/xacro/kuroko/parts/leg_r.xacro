@@ -133,7 +133,7 @@
 				<dynamics damping="0.0" friction="0.0" />
 			</joint>
 			<xacro:gazebo_poassive_joint name="thigh_r_05_loop" xyz="-0.00765471 0 -0.02897777"
-				parent="leg_r_02" child="thigh_r_05"/>
+				parent="leg_r_02" child="thigh_r_05" />
 		</xacro:if>
 		<link name="thigh_r_05">
 			<visual>
@@ -265,7 +265,6 @@
 			<xacro:box_collision xyz="0 0 -0.0025" rpy="0 0 0" size="0.12 0.075 0.005" />
 			<xacro:box_inertial xyz="0 0 -0.0025" rpy="0 0 0" size="0.12 0.075 0.005" mass="0.043" />
 		</link>
-
 
 	</xacro:macro>
 </robot>

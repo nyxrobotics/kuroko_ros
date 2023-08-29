@@ -3,7 +3,7 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 	<xacro:macro name="default_motor_transmission" params="joint_name gazebo_hw_interface">
 		<gazebo reference="${joint_name}">
-  		    <implicitSpringDamper>1</implicitSpringDamper>
+			<implicitSpringDamper>1</implicitSpringDamper>
 		</gazebo>
 		<transmission name="${joint_name}_trans">
 			<type>transmission_interface/SimpleTransmission</type>
@@ -20,7 +20,7 @@
 					<hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
 				</xacro:if>
 				<xacro:if value="${gazebo_hw_interface=='position'}">
-                    <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+					<hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
 				</xacro:if>
 				<mechanicalReduction>1</mechanicalReduction>
 			</actuator>
@@ -40,9 +40,9 @@
 		</gazebo>
 	</xacro:macro>
 
-	<xacro:macro name="default_passive_joint" params="joint_name">
+	<xacro:macro name="implicit_joint" params="joint_name">
 		<gazebo reference="${joint_name}">
-  		    <implicitSpringDamper>1</implicitSpringDamper>
+			<implicitSpringDamper>1</implicitSpringDamper>
 		</gazebo>
 	</xacro:macro>
 </robot>

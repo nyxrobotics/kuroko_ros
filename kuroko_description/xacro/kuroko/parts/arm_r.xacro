@@ -25,7 +25,7 @@
 			<child link="arm_r" />
 			<origin xyz="0 -0.028 0" rpy="0 0 0" />
 			<axis xyz="-1 0 0" />
-			<limit effort="1000.0" lower="-3.1" upper="3.1" velocity="10.0" />
+			<limit effort="1000.0" lower="-1.0472" upper="2.0071" velocity="10.0" />
 			<dynamics damping="0.0" friction="0.0" />
 		</joint>
 		<link name="arm_r">
@@ -43,8 +43,8 @@
 			<parent link="arm_r" />
 			<child link="scissor_rf" />
 			<origin xyz="0 -0.0265 -0.0545" rpy="0 0 0" />
-			<axis xyz="0 -1 0" />
-			<limit effort="1000.0" lower="-3.1" upper="3.1" velocity="10.0" />
+			<axis xyz="0 1 0" />
+			<limit effort="1000.0" lower="-2.6180" upper="2.6180" velocity="10.0" />
 			<dynamics damping="0.0" friction="0.0" />
 		</joint>
 		<link name="scissor_rf">
@@ -62,8 +62,8 @@
 			<parent link="arm_r" />
 			<child link="scissor_rr" />
 			<origin xyz="0 -0.0265 -0.0545" rpy="0 0 0" />
-			<axis xyz="0 1 0" />
-			<limit effort="1000.0" lower="-3.1" upper="3.1" velocity="10.0" />
+			<axis xyz="0 -1 0" />
+			<limit effort="1000.0" lower="-2.6180" upper="2.6180" velocity="10.0" />
 			<dynamics damping="0.0" friction="0.0" />
 		</joint>
 		<link name="scissor_rr">

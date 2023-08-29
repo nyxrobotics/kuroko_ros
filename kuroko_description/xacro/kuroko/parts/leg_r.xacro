@@ -7,7 +7,7 @@
 			<child link="crotch_r" />
 			<origin xyz="0.00125 0 -0.08425" rpy="0 0 0" />
 			<axis xyz="1 0 0" />
-			<limit effort="1000.0" lower="-3.1" upper="3.1" velocity="10.0" />
+			<limit effort="1000.0" lower="-0.5550" upper="1.8640" velocity="10.0" />
 			<dynamics damping="0.0" friction="0.0" />
 		</joint>
 		<link name="crotch_r">
@@ -45,7 +45,7 @@
 			<child link="thigh_r_02" />
 			<origin xyz="0.015 -0.02925 -0.0305" rpy="0 -0.785398163 0" />
 			<axis xyz="0 1 0" />
-			<limit effort="1000.0" lower="-3.1" upper="3.1" velocity="10.0" />
+			<limit effort="1000.0" lower="-0.4974" upper="1.8588" velocity="10.0" />
 			<dynamics damping="0.0" friction="0.0" />
 		</joint>
 		<link name="thigh_r_02">
@@ -63,7 +63,7 @@
 			<child link="thigh_r_03" />
 			<origin xyz="-0.0185 -0.02925 -0.0305" rpy="0 1.047197551 0" />
 			<axis xyz="0 1 0" />
-			<limit effort="1000.0" lower="-3.1" upper="3.1" velocity="10.0" />
+			<limit effort="1000.0" lower="-1.8588" upper="0.4974" velocity="10.0" />
 			<dynamics damping="0.0" friction="0.0" />
 		</joint>
 		<link name="thigh_r_03">
@@ -89,7 +89,7 @@
 		</joint>
 		<xacro:if value="$(arg gazebo)">
 			<xacro:gazebo_poassive_joint name="thigh_r_04_loop" xyz="-0.0335 0 0"
-				parent="knee_r" child="thigh_r_04" />
+				parent="knee_r" child="thigh_r_04" lower="-1.8588" upper="0.4974" />
 		</xacro:if>
 		<link name="thigh_r_04">
 			<visual>
@@ -129,11 +129,11 @@
 				<child link="thigh_r_05" />
 				<origin xyz="0 0 -0.03" rpy="0 -1.832597551 0" />
 				<axis xyz="0 1 0" />
-				<limit effort="1000.0" lower="-3.1" upper="3.1" velocity="10.0" />
+				<limit effort="1000.0" lower="-0.7767" upper="1.5708" velocity="10.0" />
 				<dynamics damping="0.0" friction="0.0" />
 			</joint>
 			<xacro:gazebo_poassive_joint name="thigh_r_05_loop" xyz="-0.00765471 0 -0.02897777"
-				parent="leg_r_02" child="thigh_r_05" />
+				parent="leg_r_02" child="thigh_r_05"/>
 		</xacro:if>
 		<link name="thigh_r_05">
 			<visual>
@@ -151,7 +151,7 @@
 			<child link="knee_r" />
 			<origin xyz="0 0 -0.1" rpy="0 0.785398163 0" />
 			<axis xyz="0 1 0" />
-			<limit effort="1000.0" lower="-3.1" upper="3.1" velocity="10.0" />
+			<limit effort="1000.0" lower="-1.8588" upper="0.4974" velocity="10.0" />
 			<dynamics damping="0.0" friction="0.0" />
 			<mimic joint="thigh_r_02_joint" multiplier="-1" offset="0" />
 		</joint>
@@ -170,7 +170,7 @@
 			<child link="leg_r_01" />
 			<origin xyz="0 0 0" rpy="0 0.785398163 0" />
 			<axis xyz="0 1 0" />
-			<limit effort="1000.0" lower="-3.1" upper="3.1" velocity="10.0" />
+			<limit effort="1000.0" lower="-1.8588" upper="0.4974" velocity="10.0" />
 			<dynamics damping="0.0" friction="0.0" />
 			<mimic joint="thigh_r_03_joint" multiplier="1" offset="0" />
 		</joint>
@@ -189,7 +189,7 @@
 			<child link="leg_r_02" />
 			<origin xyz="-0.0335 0 0" rpy="0 0.785398163 0" />
 			<axis xyz="0 1 0" />
-			<limit effort="1000.0" lower="-3.1" upper="3.1" velocity="10.0" />
+			<limit effort="1000.0" lower="-1.8588" upper="0.4974" velocity="10.0" />
 			<dynamics damping="0.0" friction="0.0" />
 			<mimic joint="thigh_r_03_joint" multiplier="1" offset="0" />
 		</joint>
@@ -213,7 +213,7 @@
 			<child link="ankle_r_01" />
 			<origin xyz="0 0 -0.1" rpy="0 -0.785398163 0" />
 			<axis xyz="0 1 0" />
-			<limit effort="1000.0" lower="-3.1" upper="3.1" velocity="10.0" />
+			<limit effort="1000.0" lower="-0.4974" upper="1.8588" velocity="10.0" />
 			<dynamics damping="0.0" friction="0.0" />
 			<mimic joint="thigh_r_03_joint" multiplier="-1" offset="0" />
 		</joint>
@@ -233,7 +233,7 @@
 			<child link="toe_r_01" />
 			<origin xyz="-0.015 0 -0.025" rpy="0 0 0" />
 			<axis xyz="1 0 0" />
-			<limit effort="1000.0" lower="-3.1" upper="3.1" velocity="10.0" />
+			<limit effort="1000.0" lower="-0.3704" upper="1.5708" velocity="10.0" />
 			<dynamics damping="0.0" friction="0.0" />
 		</joint>
 		<link name="toe_r_01">

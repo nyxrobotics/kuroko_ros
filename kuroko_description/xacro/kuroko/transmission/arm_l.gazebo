@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:include filename="$(find kuroko_description)/xacro/physics/default_gazebo_params.xacro"/>
+    <xacro:macro name="arm_l_gazebo" params="gazebo_hw_interface">
+      <xacro:default_motor_transmission joint_name="shoulder_l_joint" gazebo_hw_interface="${gazebo_hw_interface}"/>
+      <xacro:default_motor_transmission joint_name="arm_l_joint" gazebo_hw_interface="${gazebo_hw_interface}"/>
+      <xacro:default_motor_transmission joint_name="scissor_lf_joint" gazebo_hw_interface="${gazebo_hw_interface}"/>
+      <xacro:default_motor_transmission joint_name="scissor_lr_joint" gazebo_hw_interface="${gazebo_hw_interface}"/>
+      <xacro:default_link_collision link_name="shoulder_l" friction="0.01"/>
+      <xacro:default_link_collision link_name="arm_l" friction="0.01"/>
+      <xacro:default_link_collision link_name="scissor_lf" friction="0.01"/>
+      <xacro:default_link_collision link_name="scissor_lr" friction="0.01"/>
+    </xacro:macro>
+</robot>

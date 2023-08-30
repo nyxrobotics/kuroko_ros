@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+  xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+  xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+  xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:include filename="n100mini_gazebo.xacro" />
+  <xacro:macro name="n100mini_imu" params="name parent:='base_link' update_rate:=400 *origin">
+    <xacro:property name="depth" value="0.0245" />
+    <xacro:property name="width" value="0.0245" />
+    <xacro:property name="height" value="0.0145" />
+    <joint name="${name}_joint" type="fixed">
+      <parent link="${parent}" />
+      <child link="${name}_link" />
+      <xacro:insert_block name="origin" />
+    </joint>
+    <link name="${name}_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <box size="${depth} ${width} ${height}" />
+        </geometry>
+        <material name="gray">
+          <color rgba="0.5 0.5 0.5 1" />
+        </material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <box size="${depth} ${width} ${height}" />
+        </geometry>
+      </collision>
+      <xacro:box_inertial xyz="0 0 0" rpy="0 0 0" size="${depth} ${width} ${height}" mass="0.013" />
+    </link>
+    <!-- gazebo extensions -->
+    <gazebo reference="${name}_joint">
+      <disableFixedJointLumping>true</disableFixedJointLumping>
+      <preserveFixedJoint>true</preserveFixedJoint>
+    </gazebo>
+    <xacro:n100mini_gazebo name="${name}" update_rate="${update_rate}" />
+  </xacro:macro>
+</robot>

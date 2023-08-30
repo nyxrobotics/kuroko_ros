@@ -1,0 +1,32 @@
+
+
+# Publish all joint states -----------------------------------
+joint_state_controller:
+  type: joint_state_controller/JointStateController
+  publish_rate: 1000
+
+# Position Controllers ---------------------------------------
+body_controller:
+  type: "position_controllers/JointTrajectoryController"
+  joints:
+    - waist_joint
+    - shoulder_r_joint
+    - arm_r_joint
+    - scissor_rf_joint
+    - scissor_rr_joint
+    - shoulder_l_joint
+    - arm_l_joint
+    - scissor_lf_joint
+    - scissor_lr_joint
+    - crotch_r_joint
+    - thigh_r_01_joint
+    - thigh_r_02_joint
+    - thigh_r_03_joint
+    - toe_r_01_joint
+    - toe_r_02_joint
+    - crotch_l_joint
+    - thigh_l_01_joint
+    - thigh_l_02_joint
+    - thigh_l_03_joint
+    - toe_l_01_joint
+    - toe_l_02_joint

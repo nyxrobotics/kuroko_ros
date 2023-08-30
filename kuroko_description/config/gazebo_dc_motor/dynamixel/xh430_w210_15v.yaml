@@ -1,0 +1,5 @@
+motor_model_type: Voltage
+stall_effort: 3.1
+noload_speed: 6.5
+back_emf_lpf_time_constant: 0.0
+out_torque_lpf_time_constant: 0.0

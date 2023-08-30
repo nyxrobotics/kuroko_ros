@@ -1,0 +1,39 @@
+<package>
+  <name>kuroko_description</name>
+  <version>2.3.11</version>
+  <description>
+     URDF(for Rviz) and SDF(for Gazebo) files for kuroko.
+  </description>
+  <author>nyxrobotics</author>
+  <author email="a@gmail.com">nyxrobotics</author>
+  <maintainer email="a@gmail.com">nyxrobotics</maintainer>
+  <license>BSD</license>
+  <url type="website">http://</url>
+  <url type="repository">https://github.com/nyxrobotics/kuroko_ros</url>
+  <url type="bugtracker">https://github.com/nyxrobotics/kuroko_ros/issues</url>
+  
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>roscpp</build_depend>
+  <build_depend>rospy</build_depend>
+
+  <run_depend>controller_manager</run_depend>
+  <run_depend>gazebo_ros</run_depend>
+  <run_depend>hector_gazebo_plugins</run_depend>
+  <run_depend>joint_trajectory_controller</run_depend>
+  <run_depend>robot_state_publisher</run_depend>
+  <run_depend>rqt_joint_trajectory_controller</run_depend>
+  <run_depend>urdf</run_depend>
+  <run_depend>xacro</run_depend>
+
+  <test_depend>rostest</test_depend>
+  <test_depend>roslaunch</test_depend>
+  <export>
+    <!-- gazebo_ros_paths_plugin automatically adds these to
+        GAZEBO_PLUGIN_PATH and GAZEBO_MODEL_PATH when you do this export inside
+        the package.xml file. You can than use URIs of type model://my_package/stuff. -->
+    <gazebo_ros                                                                 
+        gazebo_plugin_path="${prefix}/lib"
+        gazebo_model_path="${prefix}/.." /> 
+  </export>
+</package>

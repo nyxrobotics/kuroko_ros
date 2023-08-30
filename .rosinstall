@@ -1,0 +1,4 @@
+- git:
+    local-name: gazebo_dc_motor
+    uri: git@github.com:nyxrobotics/gazebo_dc_motor.git
+    version: develop

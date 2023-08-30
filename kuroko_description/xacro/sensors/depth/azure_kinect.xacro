@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!-- Parameterised in part by the values in properties.xacro -->
+  <xacro:include filename="azure_kinect_gazebo.xacro"/>
+  <xacro:macro name="azure_rgbd" params="parent *origin name:='camera'">
+    <joint name="${name}_joint" type="fixed">
+      <xacro:insert_block name="origin"/>
+      <parent link="${parent}"/>
+      <child link="${name}_base"/>
+    </joint>
+    <link name="${name}_base">
+      <visual>
+        <origin xyz="-0.013 0. 0."/>
+        <geometry>
+          <box size="0.026 0.103 0.039"/>
+        </geometry>
+        <material name="grey">
+          <color rgba="0.6 0.6 0.6 1"/>
+        </material>
+      </visual>
+      <collision>
+        <origin xyz="-0.013 0. 0."/>
+        <geometry>
+          <box size="0.026 0.103 0.039"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="${name}_base_to_body" type="fixed">
+      <parent link="${name}_base"/>
+      <child link="${name}_body"/>
+      <origin xyz="-0.0757 0. 0.008" rpy="0. 0. 0."/>
+    </joint>
+    <link name="${name}_body">
+      <visual>
+        <geometry>
+          <box size="0.0994 0.0996 0.023"/>
+        </geometry>
+        <material name="white">
+          <color rgba="0.9 0.9 0.9 1"/>
+        </material>
+      </visual>
+      <collision>
+        <geometry>
+          <box size="0.0994 0.0996 0.023"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="${name}_base_to_visor" type="fixed">
+      <parent link="${name}_base"/>
+      <child link="${name}_visor"/>
+      <origin xyz="0. 0. 0." rpy="0. 0. 0."/>
+    </joint>
+    <link name="${name}_visor">
+      <visual>
+        <origin xyz="-0.0128 0. 0."/>
+        <geometry>
+          <box size="0.026 0.101 0.037"/>
+        </geometry>
+        <material name="black">
+          <color rgba="0. 0. 0. 1"/>
+        </material>
+      </visual>
+      <collision>
+        <origin xyz="-0.0128 0. 0."/>
+        <geometry>
+          <box size="0.026 0.101 0.037"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="${name}_depth_optical_joint" type="fixed">
+      <origin xyz="0 0 0.0018" rpy="${-pi/2-0.10471} 0 ${-pi/2}"/>
+      <parent link="${name}_base"/>
+      <child link="${name}_depth_optical_frame"/>
+    </joint>
+    <link name="${name}_depth_optical_frame"/>
+    <joint name="${name}_depth_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="0 ${-pi/2} ${pi/2}"/>
+      <parent link="${name}_depth_optical_frame"/>
+      <child link="${name}_depth_frame"/>
+    </joint>
+    <link name="${name}_depth_frame"/>
+
+    <joint name="${name}_rgb_optical_joint" type="fixed">
+      <origin xyz="0.032 0.0018 -0.00634" rpy="0.10471 0 0"/>
+      <parent link="${name}_depth_optical_frame"/>
+      <child link="${name}_rgb_optical_frame"/>
+    </joint>
+    <link name="${name}_rgb_optical_frame"/>
+    <joint name="${name}_rgb_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="0 ${-pi/2} ${pi/2}"/>
+      <parent link="${name}_rgb_optical_frame"/>
+      <child link="${name}_rgb_frame"/>
+    </joint>
+    <link name="${name}_rgb_frame"/>
+
+    <joint name="${name}_imu_joint" type="fixed">
+      <origin xyz="0.0 0.0 -0.05" rpy="0 ${pi/2-0.10471} ${pi/2}"/>
+      <parent link="${name}_depth_optical_frame"/>
+      <child link="${name}_imu_link"/>
+    </joint>
+    <link name="${name}_imu_link"/>
+
+    <!-- gazebo extensions -->
+    <xacro:azure_gazebo name="${name}"/>
+  </xacro:macro>
+</robot>

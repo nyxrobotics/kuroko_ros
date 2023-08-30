@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<robot name="large_ring" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:include filename="./large_ring.gazebo" />
+  <xacro:macro name="large_ring">
+    <link name="ring_link">
+      <collision>
+        <origin xyz="0 0 -0.97" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://kuroko_description/meshes/roboone_ring/stl/large_ring.stl" />
+        </geometry>
+      </collision>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://kuroko_description/meshes/roboone_ring/obj/large_ring.obj" />
+        </geometry>
+      </visual>
+      <inertial>
+        <mass value="484.78500000" />
+        <origin xyz="0 0 0.01500000" rpy="0 0 0" />
+        <inertia
+          ixx="439.45933388"
+          ixy="0.00000000" iyy="439.45933388"
+          ixz="0.00000000" iyz="0.00000000" izz="878.84595000" />
+      </inertial>
+    </link>
+  </xacro:macro>
+
+  <xacro:large_ring />
+  <xacro:large_ring_gazebo />
+</robot>

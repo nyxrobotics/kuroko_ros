@@ -1,0 +1,96 @@
+
+
+# Publish all joint states -----------------------------------
+joint_state_controller:
+  type: joint_state_controller/JointStateController
+  publish_rate: 1000
+
+# Position Controllers ---------------------------------------
+waist_joint_position_controller:
+  type: effort_controllers/JointPositionController
+  pid: {p: 40.0, i: 0.0, d: 0.1}
+  joint: waist_joint
+
+shoulder_r_joint_position_controller:
+  type: effort_controllers/JointPositionController
+  pid: {p: 40.0, i: 0.0, d: 0.1}
+  joint: shoulder_r_joint
+arm_r_joint_position_controller:
+  type: effort_controllers/JointPositionController
+  pid: {p: 40.0, i: 0.0, d: 0.1}
+  joint: arm_r_joint
+scissor_rf_joint_position_controller:
+  type: effort_controllers/JointPositionController
+  pid: {p: 40.0, i: 0.0, d: 0.1}
+  joint: scissor_rf_joint
+scissor_rr_joint_position_controller:
+  type: effort_controllers/JointPositionController
+  pid: {p: 40.0, i: 0.0, d: 0.1}
+  joint: scissor_rr_joint
+
+shoulder_l_joint_position_controller:
+  type: effort_controllers/JointPositionController
+  pid: {p: 40.0, i: 0.0, d: 0.1}
+  joint: shoulder_l_joint
+arm_l_joint_position_controller:
+  type: effort_controllers/JointPositionController
+  pid: {p: 40.0, i: 0.0, d: 0.1}
+  joint: arm_l_joint
+scissor_lf_joint_position_controller:
+  type: effort_controllers/JointPositionController
+  pid: {p: 40.0, i: 0.0, d: 0.1}
+  joint: scissor_lf_joint
+scissor_lr_joint_position_controller:
+  type: effort_controllers/JointPositionController
+  pid: {p: 40.0, i: 0.0, d: 0.1}
+  joint: scissor_lr_joint
+
+crotch_r_joint_position_controller:
+  type: effort_controllers/JointPositionController
+  pid: {p: 40.0, i: 0.0, d: 0.1}
+  joint: crotch_r_joint
+lthigh_r_01_joint_position_controller:
+  type: effort_controllers/JointPositionController
+  pid: {p: 40.0, i: 0.0, d: 0.1}
+  joint: thigh_r_01_joint
+thigh_r_02_joint_position_controller:
+  type: effort_controllers/JointPositionController
+  pid: {p: 40.0, i: 0.0, d: 0.1}
+  joint: thigh_r_02_joint
+thigh_r_03_joint_position_controller:
+  type: effort_controllers/JointPositionController
+  pid: {p: 40.0, i: 0.0, d: 0.1}
+  joint: thigh_r_03_joint
+toe_r_01_joint_position_controller:
+  type: effort_controllers/JointPositionController
+  pid: {p: 40.0, i: 0.0, d: 0.1}
+  joint: toe_r_01_joint
+toe_r_02_joint_position_controller:
+  type: effort_controllers/JointPositionController
+  pid: {p: 40.0, i: 0.0, d: 0.1}
+  joint: toe_r_02_joint
+
+crotch_l_joint_position_controller:
+  type: effort_controllers/JointPositionController
+  pid: {p: 40.0, i: 0.0, d: 0.1}
+  joint: crotch_l_joint
+lthigh_l_01_joint_position_controller:
+  type: effort_controllers/JointPositionController
+  pid: {p: 40.0, i: 0.0, d: 0.1}
+  joint: thigh_l_01_joint
+thigh_l_02_joint_position_controller:
+  type: effort_controllers/JointPositionController
+  pid: {p: 40.0, i: 0.0, d: 0.1}
+  joint: thigh_l_02_joint
+thigh_l_03_joint_position_controller:
+  type: effort_controllers/JointPositionController
+  pid: {p: 40.0, i: 0.0, d: 0.1}
+  joint: thigh_l_03_joint
+toe_l_01_joint_position_controller:
+  type: effort_controllers/JointPositionController
+  pid: {p: 40.0, i: 0.0, d: 0.1}
+  joint: toe_l_01_joint
+toe_l_02_joint_position_controller:
+  type: effort_controllers/JointPositionController
+  pid: {p: 40.0, i: 0.0, d: 0.1}
+  joint: toe_l_02_joint

@@ -1,0 +1,109 @@
+<?xml version="1.0"?>
+<launch>
+  <param name="use_sim_time" value="true" />
+
+  <!-- these are the arguments you can pass this launch file, for example paused:=true -->
+  <arg name="paused" default="true" />
+  <arg name="use_sim_time" default="true" />
+  <arg name="gui" default="true" />
+  <arg name="headless" default="false" />
+  <arg name="debug" default="false" />
+  <arg name="robot_name" default="kuroko" />
+  <arg name="use_trajectory_control" default="true" />
+  <arg name="use_small_ring" default="false" />
+
+  <rosparam file="$(find kuroko_description)/config/gazebo_pid.yaml" ns="$(arg robot_name)"
+    command="load" />
+  <rosparam file="$(find kuroko_description)/config/gazebo_dc_motor.yaml" ns="$(arg robot_name)"
+    command="load" />
+
+  <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <!-- add file path to kuroko -->
+    <env name="GAZEBO_MODEL_PATH" value="$(find kuroko_description)/../:$(optenv GAZEBO_MODEL_PATH)" />
+    <arg name="world_name" value="$(find kuroko_description)/worlds/default.world" />
+    <arg name="debug" value="$(arg debug)" />
+    <arg name="gui" value="$(arg gui)" />
+    <arg name="paused" value="$(arg paused)" />
+    <arg name="use_sim_time" value="$(arg use_sim_time)" />
+    <arg name="headless" value="$(arg headless)" />
+  </include>
+  <!-- load model with sdf for simulation,urdf for vizualization -->
+  <!-- Load the URDF into the ROS Parameter Server -->
+  <!-- Convert xacro and put on parameter server -->
+  <param name="robot_description"
+    command="$(find xacro)/xacro '$(find kuroko_description)/xacro/kuroko/kuroko.xacro' gazebo:=false" />
+  <param name="robot_description_gazebo"
+    command="$(find xacro)/xacro '$(find kuroko_description)/xacro/kuroko/kuroko.xacro' gazebo:=true" />
+  <!-- Spawn a robot into Gazebo -->
+  <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
+  <node name="robot_urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false"
+    output="screen"
+    args="-urdf -model $(arg robot_name) -param robot_description_gazebo -x -0.9 -y 0.0 -z 0.86" />
+
+  <group if="$(arg use_small_ring)">
+    <param name="ring_urdf"
+      command="$(find xacro)/xacro --inorder '$(find kuroko_description)/xacro/roboone_ring/small_ring.xacro'" />
+    <node name="ring_urdf_spawner" pkg="gazebo_ros" type="spawn_model" output="screen"
+      args="-urdf -param ring_urdf -model ring_model -x 0.0 -y 0.0 -z 0.0" />
+  </group>
+  <group unless="$(arg use_small_ring)">
+    <param name="ring_urdf"
+      command="$(find xacro)/xacro --inorder '$(find kuroko_description)/xacro/roboone_ring/large_ring.xacro'" />
+    <node name="ring_urdf_spawner" pkg="gazebo_ros" type="spawn_model" output="screen"
+      args="-urdf -param ring_urdf -model ring_model -x -0.0 -y 0.0 -z 0.0" />
+  </group>
+
+  <group unless="$(arg use_trajectory_control)">
+    <rosparam file="$(find kuroko_description)/config/joint_control_position.yaml"
+      ns="$(arg robot_name)"
+      command="load" />
+    <node name="controller_spawner"
+      pkg="controller_manager"
+      type="spawner" respawn="false" output="screen" ns="$(arg robot_name)"
+      args="
+          joint_state_controller
+          waist_joint_position_controller
+          shoulder_r_joint_position_controller
+          arm_r_joint_position_controller
+          scissor_rf_joint_position_controller
+          scissor_rr_joint_position_controller
+          shoulder_l_joint_position_controller
+          arm_l_joint_position_controller
+          scissor_lf_joint_position_controller
+          scissor_lr_joint_position_controller
+          crotch_r_joint_position_controller
+          lthigh_r_01_joint_position_controller
+          thigh_r_02_joint_position_controller
+          thigh_r_03_joint_position_controller
+          toe_r_01_joint_position_controller
+          toe_r_02_joint_position_controller
+          crotch_l_joint_position_controller
+          lthigh_l_01_joint_position_controller
+          thigh_l_02_joint_position_controller
+          thigh_l_03_joint_position_controller
+          toe_l_01_joint_position_controller
+          toe_l_02_joint_position_controller
+        " />
+  </group>
+  <group if="$(arg use_trajectory_control)">
+    <rosparam file="$(find kuroko_description)/config/joint_control_trajectory.yaml"
+      ns="$(arg robot_name)"
+      command="load" />
+    <node name="controller_spawner"
+      pkg="controller_manager"
+      type="spawner" respawn="false" output="screen" ns="$(arg robot_name)"
+      args="
+          joint_state_controller
+          body_controller
+        " />
+  </group>
+
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
+    respawn="false" output="screen" ns="$(arg robot_name)">
+    <param name="publish_frequency" value="1000" />
+    <param name="ignore_timestamp" value="true" />
+    <param name="use_tf_static" value="false" />
+  </node>
+
+</launch>

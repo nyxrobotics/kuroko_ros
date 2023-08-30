@@ -6,8 +6,8 @@
   <xacro:arg name="gazebo_hw_interface" default="position" />
 
   <xacro:include filename="$(find kuroko_description)/xacro/physics/box_physics.xacro" />
-
   <xacro:include filename="$(find kuroko_description)/xacro/physics/gazebo_passive_joint.xacro" />
+
   <xacro:include filename="$(find kuroko_description)/xacro/kuroko/parts/body.xacro" />
   <xacro:include filename="$(find kuroko_description)/xacro/kuroko/transmission/body.gazebo" />
   <xacro:include filename="$(find kuroko_description)/xacro/kuroko/parts/arm_r.xacro" />
@@ -18,6 +18,9 @@
   <xacro:include filename="$(find kuroko_description)/xacro/kuroko/transmission/leg_r.gazebo" />
   <xacro:include filename="$(find kuroko_description)/xacro/kuroko/parts/leg_l.xacro" />
   <xacro:include filename="$(find kuroko_description)/xacro/kuroko/transmission/leg_l.gazebo" />
+
+  <xacro:include filename="$(find kuroko_description)/xacro/sensors/imu/n100mini.xacro" />
+  <xacro:include filename="$(find kuroko_description)/xacro/sensors/depth/maixsense_a075v.xacro" />
 
 
   <!-- MACRO:Loading Gazebo Controllers for joints -->
@@ -60,16 +63,18 @@
     <xacro:leg_r_gazebo gazebo_hw_interface="${gazebo_hw_interface}" />
     <xacro:leg_l_xacro gazebo="$(arg gazebo)" />
     <xacro:leg_l_gazebo gazebo_hw_interface="${gazebo_hw_interface}" />
+    <xacro:n100mini_imu parent="chest" name="imu">
+      <origin xyz="-0.05 0 0.04425" rpy="0 0 0"/>
+    </xacro:n100mini_imu>
+    <xacro:maixsense_rgbd parent="chest" name="rgbd">
+      <origin xyz="0.04425 0 0.017" rpy="0 0 0"/>
+    </xacro:maixsense_rgbd>
   </xacro:macro>
 
   <!-- Load Macros -->
   <xacro:kuroko_xacro gazebo="$(arg gazebo)"
     gazebo_hw_interface="$(arg gazebo_hw_interface)" />
   <xacro:gazebo_plugin_xacro gazebo_motor_model="$(arg gazebo_motor_model)" />
-  <!-- <xacro:imu_xacro model_mode="$(arg model_mode)"/> -->
-  <!-- <xacro:urg_xacro firame_id="arm_r_urg_link" topic_name="/sensor/urg/right/scan_raw"
-  sensor_name="urg_right"/> -->
-  <!-- <xacro:urg_xacro firame_id="arm_l_urg_link" topic_name="/sensor/urg/left/scan_raw"
-  sensor_name="urg_left"/> -->
+
 
 </robot>

@@ -19,6 +19,7 @@
 
   <run_depend>controller_manager</run_depend>
   <run_depend>gazebo_ros</run_depend>
+  <run_depend>hector_gazebo_plugins</run_depend>
   <run_depend>joint_trajectory_controller</run_depend>
   <run_depend>robot_state_publisher</run_depend>
   <run_depend>rqt_joint_trajectory_controller</run_depend>

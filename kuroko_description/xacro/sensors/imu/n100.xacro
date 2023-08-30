@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+  xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+  xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+  xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:include filename="n100_gazebo.xacro" />
+  <xacro:macro name="n100_imu" params="name parent:='base_link' update_rate *origin">
+    <xacro:property name="depth" value="0.05" />
+    <xacro:property name="width" value="0.05" />
+    <xacro:property name="height" value="0.01" />
+    <joint name="${name}_joint" type="fixed">
+      <parent link="${parent}" />
+      <child link="${name}_link" />
+      <xacro:insert_block name="origin" />
+    </joint>
+    <link name="${name}_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <box size="${depth} ${width} ${height}" />
+        </geometry>
+        <material name="gray">
+          <color rgba="0.5 0.5 0.5 1" />
+        </material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <box size="${depth} ${width} ${height}" />
+        </geometry>
+      </collision>
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <mass value="0.001" />
+        <inertia ixx="0.00000002" ixy="0" iyy="0.00000002" ixz="0" iyz="0" izz="0.00000002" />
+      </inertial>
+    </link>
+    <!-- gazebo extensions -->
+    <xacro:n100_gazebo name="${name}" update_rate="${update_rate}" />
+  </xacro:macro>
+</robot>

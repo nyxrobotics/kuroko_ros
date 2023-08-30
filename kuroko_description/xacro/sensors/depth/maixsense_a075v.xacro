@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!-- Parameterised in part by the values in properties.xacro -->
+  <xacro:include filename="maixsense_a075v_gazebo.xacro" />
+  <xacro:macro name="maixsense_rgbd" params="parent *origin name:='camera'">
+		<xacro:property name="depth" value="0.014" />
+		<xacro:property name="width" value="0.036" />
+		<xacro:property name="height" value="0.036" />
+		<xacro:property name="xyz_rgb" value="0.007 -0.0055 0.0055" />
+		<xacro:property name="xyz_depth" value="0.007 0.0055 -0.0055" />
+    <joint name="${name}_joint" type="fixed">
+      <xacro:insert_block name="origin" />
+      <parent link="${parent}" />
+      <child link="${name}_body" />
+    </joint>
+    <link name="${name}_body">
+      <visual>
+        <origin xyz="0 0 0" />
+        <geometry>
+          <box size="${depth} ${width} ${height}" />
+        </geometry>
+        <material name="gray">
+          <color rgba="0.5 0.5 0.5 1" />
+        </material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" />
+        <geometry>
+          <box size="${depth} ${width} ${height}" />
+        </geometry>
+      </collision>
+			<xacro:box_inertial xyz="0 0 0" rpy="0 0 0" size="${depth} ${width} ${height}" mass="0.043" />
+    </link>
+
+    <joint name="${name}_depth_optical_joint" type="fixed">
+      <origin xyz="${xyz_depth}" rpy="${-pi/2} 0 ${-pi/2}" />
+      <parent link="${name}_body" />
+      <child link="${name}_depth_optical_frame" />
+    </joint>
+    <link name="${name}_depth_optical_frame" />
+    <joint name="${name}_depth_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="0 ${-pi/2} ${pi/2}" />
+      <parent link="${name}_depth_optical_frame" />
+      <child link="${name}_depth_frame" />
+    </joint>
+    <link name="${name}_depth_frame" />
+
+    <joint name="${name}_rgb_optical_joint" type="fixed">
+      <origin xyz="${xyz_rgb}" rpy="0 0 0" />
+      <parent link="${name}_body" />
+      <child link="${name}_rgb_optical_frame" />
+    </joint>
+    <link name="${name}_rgb_optical_frame" />
+    <joint name="${name}_rgb_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="0 ${-pi/2} ${pi/2}" />
+      <parent link="${name}_rgb_optical_frame" />
+      <child link="${name}_rgb_frame" />
+    </joint>
+    <link name="${name}_rgb_frame" />
+
+    <!-- gazebo extensions -->
+    <xacro:maixsense_gazebo name="${name}" />
+  </xacro:macro>
+</robot>

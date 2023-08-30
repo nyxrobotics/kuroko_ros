@@ -42,13 +42,24 @@
 
 	<xacro:macro name="implicit_joint" params="joint_name">
 		<gazebo reference="${joint_name}">
-			<implicitSpringDamper>1</implicitSpringDamper>
+			<physics>
+				<ode>
+					<implicit_spring_damper>1</implicit_spring_damper>
+					<cfm_damping>0</cfm_damping>
+					<cfm>1e-7</cfm>
+					<erp>0.8</erp>
+					<limit>
+						<cfm>1e-7</cfm>
+						<erp>0.8</erp>
+					</limit>
+				</ode>
+			</physics>
 		</gazebo>
 	</xacro:macro>
 
 	<xacro:macro name="preserve_fixed_joint" params="joint_name">
 		<gazebo reference="${joint_name}">
-			<disableFixedJointLumping>true</disableFixedJointLumping> 
+			<disableFixedJointLumping>true</disableFixedJointLumping>
 			<preserveFixedJoint>true</preserveFixedJoint>
 		</gazebo>
 	</xacro:macro>

@@ -1,9 +1,8 @@
 <?xml version="1.0"?>
-
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
   <xacro:macro name="urg_xacro" params="firame_id topic_name sensor_name">
     <gazebo reference="${firame_id}">
-      <sensor name="${sensor_name}" type="gpu_ray">          
+      <sensor name="${sensor_name}" type="gpu_ray">
         <update_rate>10.0</update_rate>
         <pose>0 0 0 0 0 0</pose>
         <!-- <visualize>true</visualize> -->
@@ -32,6 +31,6 @@
           <topicName>${topic_name}</topicName>
         </plugin>
       </sensor>
-	  </gazebo>
+    </gazebo>
   </xacro:macro>
 </robot>

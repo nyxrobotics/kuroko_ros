@@ -1,49 +1,49 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-	<xacro:macro name="imu_xacro" params="gazebo">
-		<xacro:property name="depth" value="0.0245" />
-		<xacro:property name="width" value="0.0245" />
-		<xacro:property name="height" value="0.0145" />
-		<joint name="${name}_joint" type="fixed">
-			<parent link="${parent}" />
-			<child link="${name}_link" />
-			<xacro:insert_block name="origin" />
-		</joint>
-		<link name="${name}_link">
-			<visual>
-				<origin xyz="0 0 0" rpy="0 0 0" />
-				<geometry>
-					<box size="${depth} ${width} ${height}" />
-				</geometry>
-				<material name="gray">
-					<color rgba="0.5 0.5 0.5 1" />
-				</material>
-			</visual>
-			<collision>
-				<origin xyz="0 0 0" rpy="0 0 0" />
-				<geometry>
-					<box size="${depth} ${width} ${height}" />
-				</geometry>
-			</collision>
-			<inertial>
-				<origin xyz="0 0 0" rpy="0 0 0" />
-				<mass value="0.001" />
-				<inertia ixx="0.00000002" ixy="0" iyy="0.00000002" ixz="0" iyz="0" izz="0.00000002" />
-			</inertial>
-		</link>
-		<gazebo reference="${name}_joint">
-			<disableFixedJointLumping>true</disableFixedJointLumping>
-			<preserveFixedJoint>true</preserveFixedJoint>
-		</gazebo>
-		<gazebo>
-			<plugin name="imu_plugin" filename="libgazebo_ros_imu.so">
-				<alwaysOn>true</alwaysOn>
-				<bodyName>${name}_link</bodyName>
-				<topicName>/sensor/imu/raw/gazebo</topicName>
-				<serviceName>gazebo_imu_service</serviceName>
-				<gaussianNoise>0.0</gaussianNoise>
-				<updateRate>400.0</updateRate>
-			</plugin>
-		</gazebo>
-	</xacro:macro>
+  <xacro:macro name="imu_xacro" params="gazebo">
+    <xacro:property name="depth" value="0.0245" />
+    <xacro:property name="width" value="0.0245" />
+    <xacro:property name="height" value="0.0145" />
+    <joint name="${name}_joint" type="fixed">
+      <parent link="${parent}" />
+      <child link="${name}_link" />
+      <xacro:insert_block name="origin" />
+    </joint>
+    <link name="${name}_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <box size="${depth} ${width} ${height}" />
+        </geometry>
+        <material name="gray">
+          <color rgba="0.5 0.5 0.5 1" />
+        </material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <box size="${depth} ${width} ${height}" />
+        </geometry>
+      </collision>
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <mass value="0.001" />
+        <inertia ixx="0.00000002" ixy="0" iyy="0.00000002" ixz="0" iyz="0" izz="0.00000002" />
+      </inertial>
+    </link>
+    <gazebo reference="${name}_joint">
+      <disableFixedJointLumping>true</disableFixedJointLumping>
+      <preserveFixedJoint>true</preserveFixedJoint>
+    </gazebo>
+    <gazebo>
+      <plugin name="imu_plugin" filename="libgazebo_ros_imu.so">
+        <alwaysOn>true</alwaysOn>
+        <bodyName>${name}_link</bodyName>
+        <topicName>/sensor/imu/raw/gazebo</topicName>
+        <serviceName>gazebo_imu_service</serviceName>
+        <gaussianNoise>0.0</gaussianNoise>
+        <updateRate>400.0</updateRate>
+      </plugin>
+    </gazebo>
+  </xacro:macro>
 </robot>

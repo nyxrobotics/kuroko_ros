@@ -1,38 +1,38 @@
 <?xml version="1.0"?>
 
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-	<xacro:macro name="gazebo_poassive_joint"
-		params="name:='joint' parent:='parent' child:='child' xyz:='0 0 0' rpy:='0 0 0' axis:='0 1 0' lower:=-3.1416 upper:=3.1416">
-		<gazebo>
-			<joint name="${name}" type="revolute">
-				<parent>${child}</parent>
-				<child>${parent}</child>
-				<pose>${xyz} ${rpy}</pose>
-				<axis>
-					<xyz>${axis}</xyz>
-					<limit>
-						<lower>${lower}</lower>
-						<upper>${upper}</upper>
-					</limit>
-					<dynamics>
-						<spring_reference>0</spring_reference>
-						<spring_stiffness>0</spring_stiffness>
-					</dynamics>
-					<use_parent_model_frame>1</use_parent_model_frame>
-				</axis>
-				<physics>
-					<ode>
-						<implicit_spring_damper>1</implicit_spring_damper>
-						<cfm_damping>0</cfm_damping>
-						<cfm>1e-7</cfm>
-						<erp>0.8</erp>
-						<limit>
-							<cfm>1e-7</cfm>
-							<erp>0.8</erp>
-						</limit>
-					</ode>
-				</physics>
-			</joint>
-		</gazebo>
-	</xacro:macro>
+  <xacro:macro name="gazebo_poassive_joint"
+    params="name:='joint' parent:='parent' child:='child' xyz:='0 0 0' rpy:='0 0 0' axis:='0 1 0' lower:=-3.1416 upper:=3.1416">
+    <gazebo>
+      <joint name="${name}" type="revolute">
+        <parent>${child}</parent>
+        <child>${parent}</child>
+        <pose>${xyz} ${rpy}</pose>
+        <axis>
+          <xyz>${axis}</xyz>
+          <limit>
+            <lower>${lower}</lower>
+            <upper>${upper}</upper>
+          </limit>
+          <dynamics>
+            <spring_reference>0</spring_reference>
+            <spring_stiffness>0</spring_stiffness>
+          </dynamics>
+          <use_parent_model_frame>1</use_parent_model_frame>
+        </axis>
+        <physics>
+          <ode>
+            <implicit_spring_damper>1</implicit_spring_damper>
+            <cfm_damping>0</cfm_damping>
+            <cfm>1e-7</cfm>
+            <erp>0.8</erp>
+            <limit>
+              <cfm>1e-7</cfm>
+              <erp>0.8</erp>
+            </limit>
+          </ode>
+        </physics>
+      </joint>
+    </gazebo>
+  </xacro:macro>
 </robot>

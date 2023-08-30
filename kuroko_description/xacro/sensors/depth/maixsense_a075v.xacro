@@ -3,11 +3,11 @@
   <!-- Parameterised in part by the values in properties.xacro -->
   <xacro:include filename="maixsense_a075v_gazebo.xacro" />
   <xacro:macro name="maixsense_rgbd" params="parent *origin name:='camera'">
-		<xacro:property name="depth" value="0.014" />
-		<xacro:property name="width" value="0.036" />
-		<xacro:property name="height" value="0.036" />
-		<xacro:property name="xyz_rgb" value="0.007 -0.0055 0.0055" />
-		<xacro:property name="xyz_depth" value="0.007 0.0055 -0.0055" />
+    <xacro:property name="depth" value="0.014" />
+    <xacro:property name="width" value="0.036" />
+    <xacro:property name="height" value="0.036" />
+    <xacro:property name="xyz_rgb" value="0.007 -0.0055 0.0055" />
+    <xacro:property name="xyz_depth" value="0.007 0.0055 -0.0055" />
     <joint name="${name}_joint" type="fixed">
       <xacro:insert_block name="origin" />
       <parent link="${parent}" />
@@ -29,7 +29,7 @@
           <box size="${depth} ${width} ${height}" />
         </geometry>
       </collision>
-			<xacro:box_inertial xyz="0 0 0" rpy="0 0 0" size="${depth} ${width} ${height}" mass="0.043" />
+      <xacro:box_inertial xyz="0 0 0" rpy="0 0 0" size="${depth} ${width} ${height}" mass="0.043" />
     </link>
 
     <joint name="${name}_depth_optical_joint" type="fixed">

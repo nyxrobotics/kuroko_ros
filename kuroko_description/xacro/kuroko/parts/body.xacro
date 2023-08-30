@@ -1,38 +1,38 @@
 <?xml version="1.0"?>
 
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-	<xacro:macro name="body_xacro">
-		<!-- chest -->
-		<link name="chest">
-			<visual>
-				<origin xyz="0 0 0" rpy="0 0 0" />
-				<geometry>
-					<mesh filename="package://kuroko_description/meshes/kuroko/obj/chest.obj" />
-				</geometry>
-			</visual>
-			<xacro:box_collision xyz="0 0 0.057" rpy="0 0 0" size="0.1 0.204 0.114" />
-			<xacro:box_inertial xyz="0 0 0.057" rpy="0 0 0" size="0.1 0.204 0.114" mass="0.991" />
-		</link>
-		<!-- Joint1 -->
-		<joint name="waist_joint" type="revolute">
-			<parent link="chest" />
-			<child link="waist" />
-			<origin xyz="0 0 0" rpy="0 0 0" />
-			<axis xyz="0 0 -1" />
-			<limit effort="1000.0" lower="-3.1" upper="3.1" velocity="10.0" />
-			<dynamics damping="0.0" friction="0.0" />
-		</joint>
-		<!-- waist -->
-		<link name="waist">
-			<visual>
-				<origin xyz="0 0 0" rpy="0 0 0" />
-				<geometry>
-					<mesh filename="package://kuroko_description/meshes/kuroko/obj/waist.obj" />
-				</geometry>
-			</visual>
-			<xacro:box_collision xyz="0.00125 0 -0.04875" rpy="0 0 0" size="0.0705 0.0325 0.0975" />
-			<xacro:box_inertial xyz="0.00125 0 -0.04875" rpy="0 0 0" size="0.0705 0.0325 0.0975"
-				mass="0.337" />
-		</link>
-	</xacro:macro>
+  <xacro:macro name="body_xacro">
+    <!-- chest -->
+    <link name="chest">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://kuroko_description/meshes/kuroko/obj/chest.obj" />
+        </geometry>
+      </visual>
+      <xacro:box_collision xyz="0 0 0.057" rpy="0 0 0" size="0.1 0.204 0.114" />
+      <xacro:box_inertial xyz="0 0 0.057" rpy="0 0 0" size="0.1 0.204 0.114" mass="0.991" />
+    </link>
+    <!-- Joint1 -->
+    <joint name="waist_joint" type="revolute">
+      <parent link="chest" />
+      <child link="waist" />
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <axis xyz="0 0 -1" />
+      <limit effort="1000.0" lower="-3.1" upper="3.1" velocity="10.0" />
+      <dynamics damping="0.0" friction="0.0" />
+    </joint>
+    <!-- waist -->
+    <link name="waist">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://kuroko_description/meshes/kuroko/obj/waist.obj" />
+        </geometry>
+      </visual>
+      <xacro:box_collision xyz="0.00125 0 -0.04875" rpy="0 0 0" size="0.0705 0.0325 0.0975" />
+      <xacro:box_inertial xyz="0.00125 0 -0.04875" rpy="0 0 0" size="0.0705 0.0325 0.0975"
+        mass="0.337" />
+    </link>
+  </xacro:macro>
 </robot>

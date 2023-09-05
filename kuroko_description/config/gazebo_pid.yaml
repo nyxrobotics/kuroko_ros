@@ -3,7 +3,7 @@ gazebo_dc_motor:
   pid_gains:
     #body
     waist_joint:
-      p: 10.0
+      p: 80.42
       i: 0.0
       d: 0.0
       i_clamp: 0.2
@@ -11,28 +11,28 @@ gazebo_dc_motor:
       publish_state: true
     #arm right
     shoulder_r_joint:
-      p: 10.0
+      p: 80.42
       i: 0.0
       d: 0.0
       i_clamp: 0.2
       antiwindup: false
       publish_state: true
     arm_r_joint:
-      p: 10.0
+      p: 80.42
       i: 0.0
       d: 0.0
       i_clamp: 0.2
       antiwindup: false
       publish_state: true
     scissor_rf_joint:
-      p: 10.0
+      p: 80.42
       i: 0.0
       d: 0.0
       i_clamp: 0.2
       antiwindup: false
       publish_state: true
     scissor_rr_joint:
-      p: 10.0
+      p: 80.42
       i: 0.0
       d: 0.0
       i_clamp: 0.2
@@ -40,28 +40,28 @@ gazebo_dc_motor:
       publish_state: true
     #arm left
     shoulder_l_joint:
-      p: 10.0
+      p: 80.42
       i: 0.0
       d: 0.0
       i_clamp: 0.2
       antiwindup: false
       publish_state: true
     arm_l_joint:
-      p: 10.0
+      p: 80.42
       i: 0.0
       d: 0.0
       i_clamp: 0.2
       antiwindup: false
       publish_state: true
     scissor_lf_joint:
-      p: 10.0
+      p: 80.42
       i: 0.0
       d: 0.0
       i_clamp: 0.2
       antiwindup: false
       publish_state: true
     scissor_lr_joint:
-      p: 10.0
+      p: 80.42
       i: 0.0
       d: 0.0
       i_clamp: 0.2
@@ -69,42 +69,42 @@ gazebo_dc_motor:
       publish_state: true
     #Leg right
     crotch_r_joint:
-      p: 10.0
+      p: 80.42
       i: 0.0
       d: 0.0
       i_clamp: 0.2
       antiwindup: false
       publish_state: true
     thigh_r_01_joint:
-      p: 10.0
+      p: 80.42
       i: 0.0
       d: 0.0
       i_clamp: 0.2
       antiwindup: false
       publish_state: true
     thigh_r_02_joint:
-      p: 20.0
+      p: 71.48
       i: 0.0
       d: 0.0
       i_clamp: 0.2
       antiwindup: false
       publish_state: true
     thigh_r_03_joint:
-      p: 20.0
+      p: 71.48
       i: 0.0
       d: 0.0
       i_clamp: 0.2
       antiwindup: false
       publish_state: true
     toe_r_01_joint:
-      p: 10.0
+      p: 80.42
       i: 0.0
       d: 0.0
       i_clamp: 0.2
       antiwindup: false
       publish_state: true
     toe_r_02_joint:
-      p: 10.0
+      p: 80.42
       i: 0.0
       d: 0.0
       i_clamp: 0.2
@@ -112,42 +112,42 @@ gazebo_dc_motor:
       publish_state: true
     #Leg left
     crotch_l_joint:
-      p: 10.0
+      p: 80.42
       i: 0.0
       d: 0.0
       i_clamp: 0.2
       antiwindup: false
       publish_state: true
     thigh_l_01_joint:
-      p: 10.0
+      p: 80.42
       i: 0.0
       d: 0.0
       i_clamp: 0.2
       antiwindup: false
       publish_state: true
     thigh_l_02_joint:
-      p: 20.0
+      p: 71.48
       i: 0.0
       d: 0.0
       i_clamp: 0.2
       antiwindup: false
       publish_state: true
     thigh_l_03_joint:
-      p: 20.0
+      p: 71.48
       i: 0.0
       d: 0.0
       i_clamp: 0.2
       antiwindup: false
       publish_state: true
     toe_l_01_joint:
-      p: 10.0
+      p: 80.42
       i: 0.0
       d: 0.0
       i_clamp: 0.2
       antiwindup: false
       publish_state: true
     toe_l_02_joint:
-      p: 10.0
+      p: 80.42
       i: 0.0
       d: 0.0
       i_clamp: 0.2

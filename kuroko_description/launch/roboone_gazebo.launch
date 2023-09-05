@@ -95,7 +95,7 @@
       type="spawner" respawn="false" output="screen" ns="$(arg robot_name)"
       args="
           joint_state_controller
-          body_controller
+          trajectory_controller
         " />
   </group>
 

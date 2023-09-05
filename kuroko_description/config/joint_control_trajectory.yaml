@@ -6,7 +6,7 @@ joint_state_controller:
   publish_rate: 1000
 
 # Position Controllers ---------------------------------------
-body_controller:
+trajectory_controller:
   type: "position_controllers/JointTrajectoryController"
   joints:
     - waist_joint

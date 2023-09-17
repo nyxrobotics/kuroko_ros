@@ -59,6 +59,10 @@
     <link name="${name}_rgb_frame" />
 
     <!-- gazebo extensions -->
+    <gazebo reference="${name}_joint">
+      <disableFixedJointLumping>true</disableFixedJointLumping>
+      <preserveFixedJoint>true</preserveFixedJoint>
+    </gazebo>
     <xacro:maixsense_gazebo name="${name}" />
   </xacro:macro>
 </robot>

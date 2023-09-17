@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="node_start_delay" default="0.1" />
+  <param name="/use_sim_time" value="true" />
+  <group if="$(eval arg('node_start_delay') == 0)">
+    <node name="home_position_publisher" pkg="rostopic" type="rostopic"
+      args="pub -1 /kuroko/trajectory_controller/command trajectory_msgs/JointTrajectory '{
+        header: {
+          stamp: {secs: 0, nsecs: 0},
+          seq: 0
+        },
+        joint_names: [
+          waist_joint,
+          shoulder_r_joint,
+          arm_r_joint,
+          scissor_rf_joint,
+          scissor_rr_joint,
+          shoulder_l_joint,
+          arm_l_joint,
+          scissor_lf_joint,
+          scissor_lr_joint,
+          crotch_r_joint,
+          thigh_r_01_joint,
+          thigh_r_02_joint,
+          thigh_r_03_joint,
+          toe_r_01_joint,
+          toe_r_02_joint,
+          crotch_l_joint,
+          thigh_l_01_joint,
+          thigh_l_02_joint,
+          thigh_l_03_joint,
+          toe_l_01_joint,
+          toe_l_02_joint
+        ],
+        points:[
+          {
+            positions: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            velocities: [],
+            accelerations: [],
+            effort: [],
+            time_from_start: {secs: 1, nsecs: 0}
+          }
+        ]
+      }'"
+    />
+  </group>
+
+  <group unless="$(eval arg('node_start_delay') == 0)">
+    <node name="home_position_publisher" pkg="rostopic" type="rostopic"
+      launch-prefix="bash -c 'sleep $(arg node_start_delay); $0 &quot;$@&quot;'"
+      args="pub -1 /kuroko/trajectory_controller/command trajectory_msgs/JointTrajectory '{
+        header: {
+          stamp: {secs: 0, nsecs: 0},
+          seq: 0
+        },
+        joint_names: [
+          waist_joint,
+          shoulder_r_joint,
+          arm_r_joint,
+          scissor_rf_joint,
+          scissor_rr_joint,
+          shoulder_l_joint,
+          arm_l_joint,
+          scissor_lf_joint,
+          scissor_lr_joint,
+          crotch_r_joint,
+          thigh_r_01_joint,
+          thigh_r_02_joint,
+          thigh_r_03_joint,
+          toe_r_01_joint,
+          toe_r_02_joint,
+          crotch_l_joint,
+          thigh_l_01_joint,
+          thigh_l_02_joint,
+          thigh_l_03_joint,
+          toe_l_01_joint,
+          toe_l_02_joint
+        ],
+        points:[
+          {
+            positions: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            velocities: [],
+            accelerations: [],
+            effort: [],
+            time_from_start: {secs: 1, nsecs: 0}
+          }
+        ]
+      }'"
+    />
+  </group>
+</launch>

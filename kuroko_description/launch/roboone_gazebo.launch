@@ -3,7 +3,7 @@
   <param name="use_sim_time" value="true" />
 
   <!-- these are the arguments you can pass this launch file, for example paused:=true -->
-  <arg name="paused" default="true" />
+  <arg name="paused" default="false" />
   <arg name="use_sim_time" default="true" />
   <arg name="gui" default="true" />
   <arg name="headless" default="false" />
@@ -106,4 +106,9 @@
     <param name="use_tf_static" value="false" />
   </node>
 
+  <group unless="$(arg paused)">
+    <include file="$(find kuroko_description)/launch/set_home_position.launch">
+      <arg name="node_start_delay" value="10.0" />
+    </include>
+  </group>
 </launch>

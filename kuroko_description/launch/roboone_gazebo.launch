@@ -108,7 +108,7 @@
 
   <group unless="$(arg paused)">
     <include file="$(find kuroko_description)/launch/set_home_position.launch">
-      <arg name="node_start_delay" value="10.0" />
+      <arg name="node_start_delay" value="6.0" />
     </include>
   </group>
 </launch>

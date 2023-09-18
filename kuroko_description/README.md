@@ -1,4 +1,4 @@
-kuroko_description  
+kuroko_description
 ====
   
 

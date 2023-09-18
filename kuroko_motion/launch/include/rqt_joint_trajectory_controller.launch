@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<launch>
+  <param name="use_sim_time" value="true" />
+
+  <!-- these are the arguments you can pass this launch file, for example paused:=true -->
+  <arg name="robot_name" default="kuroko" />
+  <arg name="controller_name" default="trajectory_controller" />
+
+  <!-- Bridge state to state_target -->
+  <node name="trajectory_state_bridge" ns="$(arg robot_name)" pkg="topic_tools" type="transform"
+    args="$(arg controller_name)/state $(arg controller_name)/state_target control_msgs/JointTrajectoryControllerState
+    'control_msgs.msg.JointTrajectoryControllerState(
+      header=m.header,
+      joint_names=m.joint_names,
+      desired=m.desired,
+      actual=trajectory_msgs.msg.JointTrajectoryPoint(
+        m.desired.positions,
+        m.actual.velocities,
+        m.actual.accelerations,
+        m.actual.effort,
+        m.actual.time_from_start
+      ),
+      error=trajectory_msgs.msg.JointTrajectoryPoint(
+        numpy.zeros(len(m.error.positions)),
+        m.error.velocities,
+        m.error.accelerations,
+        m.error.effort,
+        m.error.time_from_start
+      )
+    )' --wait-for-start --import control_msgs trajectory_msgs numpy" />
+
+  <node name="rqt_joint_trajectory_controller" pkg="rqt_joint_trajectory_controller"
+    type="rqt_joint_trajectory_controller" respawn="false"
+    output="screen">
+    <remap from="$(arg robot_name)/$(arg controller_name)/state"
+      to="$(arg robot_name)/$(arg controller_name)/state_target" />
+  </node>
+
+
+</launch>

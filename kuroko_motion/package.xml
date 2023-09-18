@@ -20,6 +20,7 @@
 
   <run_depend>controller_manager</run_depend>
   <run_depend>joint_trajectory_controller</run_depend>
+  <run_depend>rqt_joint_trajectory_controller</run_depend>
 
   <test_depend>rostest</test_depend>
   <test_depend>roslaunch</test_depend>

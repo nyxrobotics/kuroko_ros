@@ -35,12 +35,8 @@
     command="$(find xacro)/xacro '$(find kuroko_description)/xacro/kuroko/kuroko.xacro' gazebo:=false" />
   <param name="robot_description_gazebo"
     command="$(find xacro)/xacro '$(find kuroko_description)/xacro/kuroko/kuroko.xacro' gazebo:=true" />
-  <!-- Spawn a robot into Gazebo -->
-  <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
-  <node name="robot_urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false"
-    output="screen"
-    args="-urdf -model $(arg robot_name) -param robot_description_gazebo -x -0.9 -y 0.0 -z 0.86" />
 
+  <!-- Spawn roboone ring into Gazebo -->
   <group if="$(arg use_small_ring)">
     <param name="ring_urdf"
       command="$(find xacro)/xacro --inorder '$(find kuroko_description)/xacro/roboone_ring/small_ring.xacro'" />
@@ -53,6 +49,11 @@
     <node name="ring_urdf_spawner" pkg="gazebo_ros" type="spawn_model" output="screen"
       args="-urdf -param ring_urdf -model ring_model -x -0.0 -y 0.0 -z 0.0" />
   </group>
+  <!-- Spawn a robot into Gazebo -->
+  <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
+  <node name="robot_urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false"
+    output="screen"
+    args="-urdf -model $(arg robot_name) -param robot_description_gazebo -x -0.9 -y 0.0 -z 0.86" />
 
   <group unless="$(arg use_trajectory_control)">
     <rosparam file="$(find kuroko_description)/config/joint_control_position.yaml"

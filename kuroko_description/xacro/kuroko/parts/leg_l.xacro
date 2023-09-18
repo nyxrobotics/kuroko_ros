@@ -129,7 +129,7 @@
         <child link="thigh_l_05" />
         <origin xyz="0 0 -0.03" rpy="0 -1.832597551 0" />
         <axis xyz="0 -1 0" />
-        <limit effort="1000.0" lower="-1.5708" upper="0.7767" velocity="10.0" />
+        <limit effort="1000.0" lower="-1.5708" upper="0.9948" velocity="10.0" />
         <dynamics damping="0.0" friction="0.0" />
       </joint>
       <xacro:gazebo_poassive_joint name="thigh_l_05_loop" xyz="-0.00765471 0 -0.02897777"

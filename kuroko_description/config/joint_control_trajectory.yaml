@@ -8,6 +8,10 @@ joint_state_controller:
 # Position Controllers ---------------------------------------
 trajectory_controller:
   type: "position_controllers/JointTrajectoryController"
+  stop_trajectory_duration: 100
+  state_publish_rate: 1000
+  action_monitor_rate: 100
+  allow_partial_joints_goal: True
   joints:
     - waist_joint
     - shoulder_r_joint

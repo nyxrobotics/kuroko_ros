@@ -1,0 +1,203 @@
+joint_names:
+  - arm_l_joint
+  - arm_r_joint
+  - crotch_l_joint
+  - crotch_r_joint
+  - scissor_lf_joint
+  - scissor_lr_joint
+  - scissor_rf_joint
+  - scissor_rr_joint
+  - shoulder_l_joint
+  - shoulder_r_joint
+  - thigh_l_01_joint
+  - thigh_l_02_joint
+  - thigh_l_03_joint
+  - thigh_r_01_joint
+  - thigh_r_02_joint
+  - thigh_r_03_joint
+  - toe_l_01_joint
+  - toe_l_02_joint
+  - toe_r_01_joint
+  - toe_r_02_joint
+  - waist_joint
+points:
+  - positions:
+      [
+        -1.57,
+        1.57,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -1.57,
+        1.57,
+        0.01,
+        -0.4,
+        -0.4974,
+        -0.01,
+        0.4,
+        0.49739999999999984,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+      ]
+    velocities: []
+    accelerations: []
+    effort: []
+    time_from_start:
+      secs: 1
+      nsecs: 0
+  - positions:
+      [
+        -1.57,
+        1.57,
+        0.0,
+        0.0,
+        1.57,
+        -1.57,
+        -1.57,
+        1.57,
+        -1.57,
+        1.57,
+        -0.4,
+        -1.0,
+        -0.4974,
+        0.4,
+        1.0,
+        0.49739999999999984,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+      ]
+    velocities: []
+    accelerations: []
+    effort: []
+    time_from_start:
+      secs: 1
+      nsecs: 0
+  - positions:
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        2.4,
+        -2.4,
+        -2.4,
+        2.4,
+        -0.9,
+        0.9,
+        -0.4,
+        -1.0,
+        -0.4974,
+        0.4,
+        1.0,
+        0.49739999999999984,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+      ]
+    velocities: []
+    accelerations: []
+    effort: []
+    time_from_start:
+      secs: 1
+      nsecs: 0
+  - positions:
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.4,
+        -0.4,
+        -0.4,
+        0.4,
+        -0.9,
+        0.9,
+        -0.6,
+        0.49739999999999984,
+        -0.4974,
+        0.6,
+        -0.4974,
+        0.49739999999999984,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+      ]
+    velocities: []
+    accelerations: []
+    effort: []
+    time_from_start:
+      secs: 1
+      nsecs: 0
+  - positions:
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -0.6,
+        0.6,
+        -0.1,
+        0.49739999999999984,
+        -0.4974,
+        0.1,
+        -0.4974,
+        0.49739999999999984,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+      ]
+    velocities: []
+    accelerations: []
+    effort: []
+    time_from_start:
+      secs: 1
+      nsecs: 0
+  - positions:
+      [
+        -0.4,
+        0.4,
+        0.0,
+        0.0,
+        2.4,
+        1.1,
+        -2.4,
+        -1.1,
+        -0.94,
+        0.94,
+        0.01,
+        0.0,
+        0.1,
+        -0.01,
+        0.0,
+        -0.1,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+      ]
+    velocities: []
+    accelerations: []
+    effort: []
+    time_from_start:
+      secs: 1
+      nsecs: 0

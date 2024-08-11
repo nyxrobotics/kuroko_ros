@@ -1,5 +1,3 @@
-
-
 # Publish all joint states -----------------------------------
 joint_state_controller:
   type: joint_state_controller/JointStateController
@@ -39,7 +37,7 @@ scissor_lr_joint_position_controller:
 crotch_r_joint_position_controller:
   type: position_controllers/JointPositionController
   joint: crotch_r_joint
-lthigh_r_01_joint_position_controller:
+thigh_r_01_joint_position_controller:
   type: position_controllers/JointPositionController
   joint: thigh_r_01_joint
 thigh_r_02_joint_position_controller:
@@ -58,7 +56,7 @@ toe_r_02_joint_position_controller:
 crotch_l_joint_position_controller:
   type: position_controllers/JointPositionController
   joint: crotch_l_joint
-lthigh_l_01_joint_position_controller:
+thigh_l_01_joint_position_controller:
   type: position_controllers/JointPositionController
   joint: thigh_l_01_joint
 thigh_l_02_joint_position_controller:

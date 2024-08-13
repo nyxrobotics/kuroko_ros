@@ -35,9 +35,10 @@ int main(int argc, char** argv)
     while (pub.getNumSubscribers() == 0 && ros::ok())
     {
       ROS_WARN_ONCE("Waiting for subscribers to connect to joint controllers.");
-      ros::Duration(0.1).sleep();
+      // ros::Duration(0.1).sleep();
     }
   }
+  ROS_INFO("Start move");
 
   // Publish the positions to the respective topics
   for (size_t i = 0; i < joint_names.size(); ++i)

@@ -8,7 +8,7 @@
   <arg name="headless" default="false"/>
   <arg name="debug" default="false"/>
   <arg name="robot_name" default="kuroko"/>
-  <arg name="use_trajectory_control" default="false"/>
+  <arg name="use_trajectory_control" default="true"/>
   <arg name="use_small_ring" default="false"/>
   <rosparam file="$(find kuroko_description)/config/gazebo_pid.yaml" ns="$(arg robot_name)" command="load"/>
   <rosparam file="$(find kuroko_description)/config/gazebo_dc_motor.yaml" ns="$(arg robot_name)" command="load"/>

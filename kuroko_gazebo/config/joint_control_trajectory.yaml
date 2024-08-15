@@ -1,5 +1,3 @@
-
-
 # Publish all joint states -----------------------------------
 joint_state_controller:
   type: joint_state_controller/JointStateController
@@ -22,14 +20,14 @@ trajectory_controller:
     - arm_l_joint
     - scissor_lf_joint
     - scissor_lr_joint
-    - crotch_r_joint
-    - thigh_r_01_joint
+    - hip_r_roll_joint
+    - hip_r_pitch_joint
     - thigh_r_02_joint
     - thigh_r_03_joint
     - toe_r_01_joint
     - toe_r_02_joint
-    - crotch_l_joint
-    - thigh_l_01_joint
+    - hip_l_roll_joint
+    - hip_l_pitch_joint
     - thigh_l_02_joint
     - thigh_l_03_joint
     - toe_l_01_joint

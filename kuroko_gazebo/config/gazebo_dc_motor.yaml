@@ -1,4 +1,3 @@
-
 gazebo_dc_motor:
   motor_characteristics:
     #body
@@ -59,13 +58,13 @@ gazebo_dc_motor:
       back_emf_lpf_time_constant: 0.0
       out_torque_lpf_time_constant: 0.0
     #Leg right
-    crotch_r_joint:
+    hip_r_roll_joint:
       motor_model_type: Voltage
       stall_effort: 3.1
       noload_speed: 6.5
       back_emf_lpf_time_constant: 0.0
       out_torque_lpf_time_constant: 0.0
-    thigh_r_01_joint:
+    hip_r_pitch_joint:
       motor_model_type: Voltage
       stall_effort: 3.1
       noload_speed: 6.5
@@ -96,13 +95,13 @@ gazebo_dc_motor:
       back_emf_lpf_time_constant: 0.0
       out_torque_lpf_time_constant: 0.0
     #Leg left
-    crotch_l_joint:
+    hip_l_roll_joint:
       motor_model_type: Voltage
       stall_effort: 3.1
       noload_speed: 6.5
       back_emf_lpf_time_constant: 0.0
       out_torque_lpf_time_constant: 0.0
-    thigh_l_01_joint:
+    hip_l_pitch_joint:
       motor_model_type: Voltage
       stall_effort: 3.1
       noload_speed: 6.5

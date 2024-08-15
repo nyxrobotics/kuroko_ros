@@ -1,7 +1,7 @@
 # Blender v2.79 (sub 0) OBJ File: ''
 # www.blender.org
-mtllib crotch_r.mtl
-o crotch_r
+mtllib hip_r_roll.mtl
+o hip_r_roll
 v 0.038000 -0.012992 -0.020264
 v 0.038000 -0.015053 -0.021353
 v 0.038000 -0.017285 -0.022024

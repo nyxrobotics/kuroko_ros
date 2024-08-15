@@ -1,4 +1,3 @@
-
 gazebo_dc_motor:
   pid_gains:
     #body
@@ -68,14 +67,14 @@ gazebo_dc_motor:
       antiwindup: false
       publish_state: true
     #Leg right
-    crotch_r_joint:
+    hip_r_roll_joint:
       p: 16.62
       i: 0.0
       d: 0.0
       i_clamp: 0.2
       antiwindup: false
       publish_state: true
-    thigh_r_01_joint:
+    hip_r_pitch_joint:
       p: 16.62
       i: 0.0
       d: 0.0
@@ -111,14 +110,14 @@ gazebo_dc_motor:
       antiwindup: false
       publish_state: true
     #Leg left
-    crotch_l_joint:
+    hip_l_roll_joint:
       p: 16.62
       i: 0.0
       d: 0.0
       i_clamp: 0.2
       antiwindup: false
       publish_state: true
-    thigh_l_01_joint:
+    hip_l_pitch_joint:
       p: 16.62
       i: 0.0
       d: 0.0

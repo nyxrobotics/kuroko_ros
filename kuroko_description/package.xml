@@ -6,7 +6,7 @@
     URDF(for Rviz) and SDF(for Gazebo) files for kuroko
   </description>
   <maintainer email="nyxroboticss@gmail.com">nyxrobotics</maintainer>
-  <license>BSD</license>
+  <license>Apache 2.0</license>
   <url type="website">https://github.com/nyxrobotics</url>
   <url type="repository">https://github.com/nyxrobotics/kuroko_ros</url>
   <url type="bugtracker">https://github.com/nyxrobotics/kuroko_ros/issues</url>

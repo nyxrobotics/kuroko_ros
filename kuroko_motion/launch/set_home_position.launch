@@ -4,17 +4,17 @@
   <arg name="node_start_delay" default="0.1"/>
   <param name="/use_sim_time" value="true"/>
   <!-- Load home position parameters into the motion_player/home_position namespace -->
-  <rosparam file="$(find kuroko_description)/config/home_position.yaml" command="load" ns="motion_player/home_position"/>
+  <rosparam file="$(find kuroko_motion)/config/home_position.yaml" command="load" ns="motion_player/home_position"/>
   <!-- If use_trajectory_control is true, publish trajectory commands -->
   <group if="$(arg use_trajectory_control)">
-    <node name="home_position_publisher" pkg="kuroko_description" type="publish_trajectory" output="screen">
+    <node name="home_position_publisher" pkg="kuroko_motion" type="publish_trajectory" output="screen">
       <param name="node_start_delay" value="$(arg node_start_delay)"/>
     </node>
   </group>
 
   <!-- If use_trajectory_control is false, publish position control commands -->
   <group unless="$(arg use_trajectory_control)">
-    <node name="home_position_publisher" pkg="kuroko_description" type="publish_position" output="screen">
+    <node name="home_position_publisher" pkg="kuroko_motion" type="publish_position" output="screen">
       <param name="node_start_delay" value="$(arg node_start_delay)"/>
     </node>
   </group>

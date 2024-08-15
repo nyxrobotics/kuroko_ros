@@ -46,12 +46,12 @@ thigh_r_active_joint_position_controller:
 shin_r_active_joint_position_controller:
   type: position_controllers/JointPositionController
   joint: shin_r_active_joint
-toe_r_01_joint_position_controller:
+ankle_r_roll_joint_position_controller:
   type: position_controllers/JointPositionController
-  joint: toe_r_01_joint
-toe_r_02_joint_position_controller:
+  joint: ankle_r_roll_joint
+ankle_r_yaw_joint_position_controller:
   type: position_controllers/JointPositionController
-  joint: toe_r_02_joint
+  joint: ankle_r_yaw_joint
 
 hip_l_roll_joint_position_controller:
   type: position_controllers/JointPositionController
@@ -65,9 +65,9 @@ thigh_l_active_joint_position_controller:
 shin_l_active_joint_position_controller:
   type: position_controllers/JointPositionController
   joint: shin_l_active_joint
-toe_l_01_joint_position_controller:
+ankle_l_roll_joint_position_controller:
   type: position_controllers/JointPositionController
-  joint: toe_l_01_joint
-toe_l_02_joint_position_controller:
+  joint: ankle_l_roll_joint
+ankle_l_yaw_joint_position_controller:
   type: position_controllers/JointPositionController
-  joint: toe_l_02_joint
+  joint: ankle_l_yaw_joint

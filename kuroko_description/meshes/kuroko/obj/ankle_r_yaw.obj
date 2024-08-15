@@ -1,7 +1,7 @@
 # Blender v2.79 (sub 0) OBJ File: ''
 # www.blender.org
-mtllib toe_r_02.mtl
-o toe_r_02
+mtllib ankle_r_yaw.mtl
+o ankle_r_yaw
 v 0.000000 -0.004050 0.000000
 v 0.002603 -0.003102 0.000000
 v 0.003988 -0.000703 0.000000

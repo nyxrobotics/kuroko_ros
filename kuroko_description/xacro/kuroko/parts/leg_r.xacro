@@ -133,7 +133,7 @@
         <dynamics damping="0.0" friction="0.0"/>
       </joint>
       <xacro:gazebo_poassive_joint name="thigh_r_passive_rear_loop" xyz="-0.00765471 0 -0.02897777"
-        parent="leg_r_02" child="thigh_r_passive_rear"/>
+        parent="shin_r_passive_rear" child="thigh_r_passive_rear"/>
     </xacro:if>
     <link name="thigh_r_passive_rear">
       <visual>
@@ -165,28 +165,28 @@
       <xacro:box_collision xyz="-0.01675 0 0" rpy="0 0 0" size="0.0475 0.0505 0.014"/>
       <xacro:box_inertial xyz="-0.01675 0 0" rpy="0 0 0" size="0.0475 0.0505 0.014" mass="0.007"/>
     </link>
-    <joint name="leg_r_01_joint" type="revolute">
+    <joint name="shin_r_passive_front_joint" type="revolute">
       <parent link="knee_r"/>
-      <child link="leg_r_01"/>
+      <child link="shin_r_passive_front"/>
       <origin xyz="0 0 0" rpy="0 0.785398163 0"/>
       <axis xyz="0 1 0"/>
       <limit effort="1000.0" lower="-1.8588" upper="0.4974" velocity="10.0"/>
       <dynamics damping="0.0" friction="0.0"/>
       <mimic joint="shin_r_active_joint" multiplier="1" offset="0"/>
     </joint>
-    <link name="leg_r_01">
+    <link name="shin_r_passive_front">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="package://kuroko_description/meshes/kuroko/obj/leg_r_01.obj"/>
+          <mesh filename="package://kuroko_description/meshes/kuroko/obj/shin_r_passive_front.obj"/>
         </geometry>
       </visual>
       <xacro:box_collision xyz="0 0 -0.05" rpy="0 0 0" size="0.014 0.0385 0.114"/>
       <xacro:box_inertial xyz="0 0 -0.05" rpy="0 0 0" size="0.014 0.0385 0.114" mass="0.013"/>
     </link>
-    <joint name="leg_r_02_joint" type="revolute">
+    <joint name="shin_r_passive_rear_joint" type="revolute">
       <parent link="knee_r"/>
-      <child link="leg_r_02"/>
+      <child link="shin_r_passive_rear"/>
       <origin xyz="-0.0335 0 0" rpy="0 0.785398163 0"/>
       <axis xyz="0 1 0"/>
       <limit effort="1000.0" lower="-1.8588" upper="0.4974" velocity="10.0"/>
@@ -194,72 +194,72 @@
       <mimic joint="shin_r_active_joint" multiplier="1" offset="0"/>
     </joint>
     <xacro:if value="$(arg gazebo)">
-      <xacro:gazebo_poassive_joint name="leg_r_02_loop" xyz="-0.0335 0 0"
-        parent="ankle_r_01" child="leg_r_02"/>
+      <xacro:gazebo_poassive_joint name="shin_r_passive_rear_loop" xyz="-0.0335 0 0"
+        parent="ankle_r_pitch_passive" child="shin_r_passive_rear"/>
     </xacro:if>
-    <link name="leg_r_02">
+    <link name="shin_r_passive_rear">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="package://kuroko_description/meshes/kuroko/obj/leg_r_02.obj"/>
+          <mesh filename="package://kuroko_description/meshes/kuroko/obj/shin_r_passive_rear.obj"/>
         </geometry>
       </visual>
       <xacro:box_collision xyz="0 0 -0.05" rpy="0 0 0" size="0.014 0.0445 0.114"/>
       <xacro:box_inertial xyz="0 0 -0.05" rpy="0 0 0" size="0.014 0.0445 0.114" mass="0.016"/>
     </link>
 
-    <joint name="ankle_r_01_joint" type="revolute">
-      <parent link="leg_r_01"/>
-      <child link="ankle_r_01"/>
+    <joint name="ankle_r_pitch_passive_joint" type="revolute">
+      <parent link="shin_r_passive_front"/>
+      <child link="ankle_r_pitch_passive"/>
       <origin xyz="0 0 -0.1" rpy="0 -0.785398163 0"/>
       <axis xyz="0 1 0"/>
       <limit effort="1000.0" lower="-0.4974" upper="1.8588" velocity="10.0"/>
       <dynamics damping="0.0" friction="0.0"/>
       <mimic joint="shin_r_active_joint" multiplier="-1" offset="0"/>
     </joint>
-    <link name="ankle_r_01">
+    <link name="ankle_r_pitch_passive">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="package://kuroko_description/meshes/kuroko/obj/ankle_r_01.obj"/>
+          <mesh filename="package://kuroko_description/meshes/kuroko/obj/ankle_r_pitch_passive.obj"/>
         </geometry>
       </visual>
       <xacro:box_collision xyz="-0.0285 0 -0.013" rpy="0 0 0" size="0.0855 0.0325 0.0465"/>
       <xacro:box_inertial xyz="-0.0285 0 -0.013" rpy="0 0 0" size="0.0855 0.0325 0.0465"
         mass="0.104"/>
     </link>
-    <joint name="toe_r_01_joint" type="revolute">
-      <parent link="ankle_r_01"/>
-      <child link="toe_r_01"/>
+    <joint name="ankle_r_roll_joint" type="revolute">
+      <parent link="ankle_r_pitch_passive"/>
+      <child link="ankle_r_roll"/>
       <origin xyz="-0.015 0 -0.025" rpy="0 0 0"/>
       <axis xyz="1 0 0"/>
       <limit effort="1000.0" lower="-0.3704" upper="1.5708" velocity="10.0"/>
       <dynamics damping="0.0" friction="0.0"/>
     </joint>
-    <link name="toe_r_01">
+    <link name="ankle_r_roll">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="package://kuroko_description/meshes/kuroko/obj/toe_r_01.obj"/>
+          <mesh filename="package://kuroko_description/meshes/kuroko/obj/ankle_r_roll.obj"/>
         </geometry>
       </visual>
       <xacro:box_collision xyz="0 -0.009375 -0.01175" rpy="0 0 0" size="0.0365 0.05375 0.043"/>
       <xacro:box_inertial xyz="0 -0.009375 -0.01175" rpy="0 0 0" size="0.0365 0.05375 0.043"
         mass="0.136"/>
     </link>
-    <joint name="toe_r_02_joint" type="revolute">
-      <parent link="toe_r_01"/>
-      <child link="toe_r_02"/>
+    <joint name="ankle_r_yaw_joint" type="revolute">
+      <parent link="ankle_r_roll"/>
+      <child link="ankle_r_yaw"/>
       <origin xyz="0 0 -0.03825" rpy="0 0 0"/>
       <axis xyz="0 0 -1"/>
       <limit effort="1000.0" lower="-3.1" upper="3.1" velocity="10.0"/>
       <dynamics damping="0.0" friction="0.0"/>
     </joint>
-    <link name="toe_r_02">
+    <link name="ankle_r_yaw">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="package://kuroko_description/meshes/kuroko/obj/toe_r_02.obj"/>
+          <mesh filename="package://kuroko_description/meshes/kuroko/obj/ankle_r_yaw.obj"/>
         </geometry>
       </visual>
       <xacro:box_collision xyz="0 0 -0.0025" rpy="0 0 0" size="0.12 0.075 0.005"/>

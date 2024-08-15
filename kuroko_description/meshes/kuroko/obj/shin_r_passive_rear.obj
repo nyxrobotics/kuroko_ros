@@ -1,7 +1,7 @@
 # Blender v2.79 (sub 0) OBJ File: ''
 # www.blender.org
-mtllib leg_r_02.mtl
-o leg_r_02
+mtllib shin_r_passive_rear.mtl
+o shin_r_passive_rear
 v -0.007000 -0.020250 -0.013537
 v -0.007270 -0.020250 -0.015843
 v -0.008064 -0.020250 -0.018025

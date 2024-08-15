@@ -24,11 +24,11 @@ trajectory_controller:
     - hip_r_pitch_joint
     - thigh_r_active_joint
     - shin_r_active_joint
-    - toe_r_01_joint
-    - toe_r_02_joint
+    - ankle_r_roll_joint
+    - ankle_r_yaw_joint
     - hip_l_roll_joint
     - hip_l_pitch_joint
     - thigh_l_active_joint
     - shin_l_active_joint
-    - toe_l_01_joint
-    - toe_l_02_joint
+    - ankle_l_roll_joint
+    - ankle_l_yaw_joint

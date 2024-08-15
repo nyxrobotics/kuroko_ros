@@ -7,7 +7,7 @@ Panels:
         - /Global Options1
         - /Status1
         - /RobotModel1
-        - /TF1
+        - /RobotModel1/Links1
       Splitter Ratio: 0.5
     Tree Height: 1598
   - Class: rviz/Selection
@@ -63,12 +63,32 @@ Visualization Manager:
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
-        ankle_l_01:
+        ankle_l_pitch_passive:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        ankle_r_01:
+        ankle_l_roll:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        ankle_l_yaw:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        ankle_r_pitch_passive:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        ankle_r_roll:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        ankle_r_yaw:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -123,22 +143,7 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        leg_l_01:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
         leg_l_02:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        leg_r_01:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        leg_r_02:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -188,6 +193,31 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        shin_l_active:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        shin_l_passive_front:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        shin_r_active:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        shin_r_passive_front:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        shin_r_passive_rear:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         shoulder_l:
           Alpha: 1
           Show Axes: false
@@ -203,12 +233,7 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        shin_l_active:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        thigh_r_passive_middle:
+        thigh_l_passive_middle:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -227,11 +252,6 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        shin_r_active:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
         thigh_r_passive_middle:
           Alpha: 1
           Show Axes: false
@@ -246,26 +266,6 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-        toe_l_01:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        toe_l_02:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        toe_r_01:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        toe_r_02:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
         waist:
           Alpha: 1
           Show Axes: false
@@ -284,9 +284,17 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: true
-        ankle_l_01:
+        ankle_l_pitch_passive:
           Value: true
-        ankle_r_01:
+        ankle_l_roll:
+          Value: true
+        ankle_l_yaw:
+          Value: true
+        ankle_r_pitch_passive:
+          Value: true
+        ankle_r_roll:
+          Value: true
+        ankle_r_yaw:
           Value: true
         arm_l:
           Value: true
@@ -308,13 +316,7 @@ Visualization Manager:
           Value: true
         knee_r:
           Value: true
-        leg_l_01:
-          Value: true
         leg_l_02:
-          Value: true
-        leg_r_01:
-          Value: true
-        leg_r_02:
           Value: true
         rgbd_body:
           Value: true
@@ -336,15 +338,23 @@ Visualization Manager:
           Value: true
         scissor_rr:
           Value: true
+        shin_l_active:
+          Value: true
+        shin_l_passive_front:
+          Value: true
+        shin_r_active:
+          Value: true
+        shin_r_passive_front:
+          Value: true
+        shin_r_passive_rear:
+          Value: true
         shoulder_l:
           Value: true
         shoulder_r:
           Value: true
         thigh_l_active:
           Value: true
-        shin_l_active:
-          Value: true
-        thigh_r_passive_middle:
+        thigh_l_passive_middle:
           Value: true
         thigh_l_passive_rear:
           Value: true
@@ -352,21 +362,11 @@ Visualization Manager:
           Value: true
         thigh_r_active:
           Value: true
-        shin_r_active:
-          Value: true
         thigh_r_passive_middle:
           Value: true
         thigh_r_passive_rear:
           Value: true
         thigh_r_passive_rear_mimic:
-          Value: true
-        toe_l_01:
-          Value: true
-        toe_l_02:
-          Value: true
-        toe_r_01:
-          Value: true
-        toe_r_02:
           Value: true
         waist:
           Value: true
@@ -379,52 +379,67 @@ Visualization Manager:
       Tree:
         root_link:
           chest:
-            imu_link: {}
+            imu_link:
+              {}
             rgbd_body:
               rgbd_depth_optical_frame:
-                rgbd_depth_frame: {}
+                rgbd_depth_frame:
+                  {}
               rgbd_rgb_optical_frame:
-                rgbd_rgb_frame: {}
+                rgbd_rgb_frame:
+                  {}
             shoulder_l:
               arm_l:
-                scissor_lf: {}
-                scissor_lr: {}
+                scissor_lf:
+                  {}
+                scissor_lr:
+                  {}
             shoulder_r:
               arm_r:
-                scissor_rf: {}
-                scissor_rr: {}
+                scissor_rf:
+                  {}
+                scissor_rr:
+                  {}
             waist:
               hip_l_roll:
                 hip_l_pitch:
-                  thigh_l_active:
-                    knee_l:
-                      leg_l_01:
-                        ankle_l_01:
-                          toe_l_01:
-                            toe_l_02: {}
-                      leg_l_02: {}
                   shin_l_active:
                     thigh_l_passive_rear_mimic:
-                      thigh_l_passive_rear: {}
-                  thigh_r_passive_middle: {}
+                      thigh_l_passive_rear:
+                        {}
+                  thigh_l_active:
+                    knee_l:
+                      leg_l_02:
+                        {}
+                      shin_l_passive_front:
+                        ankle_l_pitch_passive:
+                          ankle_l_roll:
+                            ankle_l_yaw:
+                              {}
+                  thigh_l_passive_middle:
+                    {}
               hip_r_roll:
                 hip_r_pitch:
-                  thigh_r_active:
-                    knee_r:
-                      leg_r_01:
-                        ankle_r_01:
-                          toe_r_01:
-                            toe_r_02: {}
-                      leg_r_02: {}
                   shin_r_active:
                     thigh_r_passive_rear_mimic:
-                      thigh_r_passive_rear: {}
-                  thigh_r_passive_middle: {}
+                      thigh_r_passive_rear:
+                        {}
+                  thigh_r_active:
+                    knee_r:
+                      shin_r_passive_front:
+                        ankle_r_pitch_passive:
+                          ankle_r_roll:
+                            ankle_r_yaw:
+                              {}
+                      shin_r_passive_rear:
+                        {}
+                  thigh_r_passive_middle:
+                    {}
       Update Interval: 0
       Value: true
   Enabled: true
   Global Options:
-    Background Color: 48; 48; 48
+    Background Color: 85; 87; 83
     Default Light: true
     Fixed Frame: waist
     Frame Rate: 30
@@ -450,7 +465,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 0.48755693435668945
+      Distance: 0.7948150634765625
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -458,17 +473,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 0.26550549268722534
-        Y: 0.1436978578567505
-        Z: 0.005989994388073683
+        X: -0.1711382418870926
+        Y: -0.035113316029310226
+        Z: -0.12710735201835632
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.41039803624153137
+      Pitch: 0.2653980553150177
       Target Frame: <Fixed Frame>
-      Yaw: 0.46040207147598267
+      Yaw: 0.370408296585083
     Saved: ~
 Window Geometry:
   Displays:
@@ -476,7 +491,7 @@ Window Geometry:
   Height: 2086
   Hide Left Dock: false
   Hide Right Dock: false
-  QMainWindow State: 000000ff00000000fd0000000400000000000001f20000072efc0200000008fb0000001200530065006c0065006300740069006f006e00000001e10000009b000000ac00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000acfb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000006a0000072e0000017a00fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c0000026100000001000001580000072efc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073010000006a0000072e0000012600fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e1000001970000000300000f0000000058fc0100000002fb0000000800540069006d0065010000000000000f000000060600fffffffb0000000800540069006d0065010000000000000450000000000000000000000b9e0000072e00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd00000004000000000000044e0000072efc0200000008fb0000001200530065006c0065006300740069006f006e00000001e10000009b000000ac00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000acfb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000006a0000072e0000017a00fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c0000026100000001000001580000072efc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073010000006a0000072e0000012600fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e1000001970000000300000f0000000058fc0100000002fb0000000800540069006d0065010000000000000f000000060600fffffffb0000000800540069006d00650100000000000004500000000000000000000009420000072e00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   Time:

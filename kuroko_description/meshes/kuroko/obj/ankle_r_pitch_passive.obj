@@ -1,7 +1,7 @@
 # Blender v2.79 (sub 0) OBJ File: ''
 # www.blender.org
-mtllib ankle_r_01.mtl
-o ankle_r_01
+mtllib ankle_r_pitch_passive.mtl
+o ankle_r_pitch_passive
 v -0.071250 -0.013850 -0.004000
 v -0.071250 -0.013850 0.008084
 v -0.071250 -0.012084 0.009850

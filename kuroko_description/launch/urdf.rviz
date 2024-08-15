@@ -198,12 +198,12 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        thigh_l_02:
+        thigh_l_active:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        thigh_l_03:
+        shin_l_active:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -222,12 +222,12 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-        thigh_r_02:
+        thigh_r_active:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        thigh_r_03:
+        shin_r_active:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -340,9 +340,9 @@ Visualization Manager:
           Value: true
         shoulder_r:
           Value: true
-        thigh_l_02:
+        thigh_l_active:
           Value: true
-        thigh_l_03:
+        shin_l_active:
           Value: true
         thigh_l_04:
           Value: true
@@ -350,9 +350,9 @@ Visualization Manager:
           Value: true
         thigh_l_05_mimic:
           Value: true
-        thigh_r_02:
+        thigh_r_active:
           Value: true
-        thigh_r_03:
+        shin_r_active:
           Value: true
         thigh_r_04:
           Value: true
@@ -379,62 +379,47 @@ Visualization Manager:
       Tree:
         root_link:
           chest:
-            imu_link:
-              {}
+            imu_link: {}
             rgbd_body:
               rgbd_depth_optical_frame:
-                rgbd_depth_frame:
-                  {}
+                rgbd_depth_frame: {}
               rgbd_rgb_optical_frame:
-                rgbd_rgb_frame:
-                  {}
+                rgbd_rgb_frame: {}
             shoulder_l:
               arm_l:
-                scissor_lf:
-                  {}
-                scissor_lr:
-                  {}
+                scissor_lf: {}
+                scissor_lr: {}
             shoulder_r:
               arm_r:
-                scissor_rf:
-                  {}
-                scissor_rr:
-                  {}
+                scissor_rf: {}
+                scissor_rr: {}
             waist:
               hip_l_roll:
                 hip_l_pitch:
-                  thigh_l_02:
+                  thigh_l_active:
                     knee_l:
                       leg_l_01:
                         ankle_l_01:
                           toe_l_01:
-                            toe_l_02:
-                              {}
-                      leg_l_02:
-                        {}
-                  thigh_l_03:
+                            toe_l_02: {}
+                      leg_l_02: {}
+                  shin_l_active:
                     thigh_l_05_mimic:
-                      thigh_l_05:
-                        {}
-                  thigh_l_04:
-                    {}
+                      thigh_l_05: {}
+                  thigh_l_04: {}
               hip_r_roll:
                 hip_r_pitch:
-                  thigh_r_02:
+                  thigh_r_active:
                     knee_r:
                       leg_r_01:
                         ankle_r_01:
                           toe_r_01:
-                            toe_r_02:
-                              {}
-                      leg_r_02:
-                        {}
-                  thigh_r_03:
+                            toe_r_02: {}
+                      leg_r_02: {}
+                  shin_r_active:
                     thigh_r_05_mimic:
-                      thigh_r_05:
-                        {}
-                  thigh_r_04:
-                    {}
+                      thigh_r_05: {}
+                  thigh_r_04: {}
       Update Interval: 0
       Value: true
   Enabled: true

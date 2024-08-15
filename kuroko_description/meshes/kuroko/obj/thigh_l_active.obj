@@ -1,7 +1,7 @@
 # Blender v2.79 (sub 0) OBJ File: ''
 # www.blender.org
-mtllib thigh_l_02.mtl
-o thigh_l_02
+mtllib thigh_l_active.mtl
+o thigh_l_active
 v -0.005794 -0.022250 -0.059342
 v -0.006461 -0.022250 -0.057114
 v -0.006865 -0.022250 -0.054824

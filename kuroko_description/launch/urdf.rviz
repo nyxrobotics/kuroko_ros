@@ -208,17 +208,17 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        thigh_l_04:
+        thigh_r_passive_middle:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        thigh_l_05:
+        thigh_l_passive_rear:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        thigh_l_05_mimic:
+        thigh_l_passive_rear_mimic:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -232,17 +232,17 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        thigh_r_04:
+        thigh_r_passive_middle:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        thigh_r_05:
+        thigh_r_passive_rear:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        thigh_r_05_mimic:
+        thigh_r_passive_rear_mimic:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -344,21 +344,21 @@ Visualization Manager:
           Value: true
         shin_l_active:
           Value: true
-        thigh_l_04:
+        thigh_r_passive_middle:
           Value: true
-        thigh_l_05:
+        thigh_l_passive_rear:
           Value: true
-        thigh_l_05_mimic:
+        thigh_l_passive_rear_mimic:
           Value: true
         thigh_r_active:
           Value: true
         shin_r_active:
           Value: true
-        thigh_r_04:
+        thigh_r_passive_middle:
           Value: true
-        thigh_r_05:
+        thigh_r_passive_rear:
           Value: true
-        thigh_r_05_mimic:
+        thigh_r_passive_rear_mimic:
           Value: true
         toe_l_01:
           Value: true
@@ -404,9 +404,9 @@ Visualization Manager:
                             toe_l_02: {}
                       leg_l_02: {}
                   shin_l_active:
-                    thigh_l_05_mimic:
-                      thigh_l_05: {}
-                  thigh_l_04: {}
+                    thigh_l_passive_rear_mimic:
+                      thigh_l_passive_rear: {}
+                  thigh_r_passive_middle: {}
               hip_r_roll:
                 hip_r_pitch:
                   thigh_r_active:
@@ -417,9 +417,9 @@ Visualization Manager:
                             toe_r_02: {}
                       leg_r_02: {}
                   shin_r_active:
-                    thigh_r_05_mimic:
-                      thigh_r_05: {}
-                  thigh_r_04: {}
+                    thigh_r_passive_rear_mimic:
+                      thigh_r_passive_rear: {}
+                  thigh_r_passive_middle: {}
       Update Interval: 0
       Value: true
   Enabled: true

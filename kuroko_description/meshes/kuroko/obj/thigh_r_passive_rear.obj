@@ -1,7 +1,7 @@
 # Blender v2.79 (sub 0) OBJ File: ''
 # www.blender.org
-mtllib thigh_r_05.mtl
-o thigh_r_05
+mtllib thigh_r_passive_rear.mtl
+o thigh_r_passive_rear
 v 0.005000 -0.012250 -0.011069
 v 0.005025 -0.012250 -0.010359
 v 0.005101 -0.012250 -0.009654

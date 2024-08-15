@@ -51,14 +51,14 @@ lhip_r_pitch_joint_position_controller:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
   joint: hip_r_pitch_joint
-thigh_r_02_joint_position_controller:
+thigh_r_active_joint_position_controller:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
-  joint: thigh_r_02_joint
-thigh_r_03_joint_position_controller:
+  joint: thigh_r_active_joint
+shin_r_active_joint_position_controller:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
-  joint: thigh_r_03_joint
+  joint: shin_r_active_joint
 toe_r_01_joint_position_controller:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
@@ -76,14 +76,14 @@ lhip_l_pitch_joint_position_controller:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
   joint: hip_l_pitch_joint
-thigh_l_02_joint_position_controller:
+thigh_l_active_joint_position_controller:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
-  joint: thigh_l_02_joint
-thigh_l_03_joint_position_controller:
+  joint: thigh_l_active_joint
+shin_l_active_joint_position_controller:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
-  joint: thigh_l_03_joint
+  joint: shin_l_active_joint
 toe_l_01_joint_position_controller:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }

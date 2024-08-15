@@ -7,17 +7,17 @@
       gazebo_hw_interface="${gazebo_hw_interface}"/>
     <xacro:default_motor_transmission joint_name="hip_r_pitch_joint"
       gazebo_hw_interface="${gazebo_hw_interface}"/>
-    <xacro:default_motor_transmission joint_name="thigh_r_02_joint"
+    <xacro:default_motor_transmission joint_name="thigh_r_active_joint"
       gazebo_hw_interface="${gazebo_hw_interface}"/>
-    <xacro:default_motor_transmission joint_name="thigh_r_03_joint"
+    <xacro:default_motor_transmission joint_name="shin_r_active_joint"
       gazebo_hw_interface="${gazebo_hw_interface}"/>
     <xacro:default_motor_transmission joint_name="toe_r_01_joint"
       gazebo_hw_interface="${gazebo_hw_interface}"/>
     <xacro:default_motor_transmission joint_name="toe_r_02_joint"
       gazebo_hw_interface="${gazebo_hw_interface}"/>
 
-    <xacro:implicit_joint joint_name="thigh_r_04_joint"/>
-    <xacro:implicit_joint joint_name="thigh_r_05_joint"/>
+    <xacro:implicit_joint joint_name="thigh_r_passive_middle_joint"/>
+    <xacro:implicit_joint joint_name="thigh_r_passive_rear_joint"/>
     <xacro:implicit_joint joint_name="knee_r_joint"/>
     <xacro:implicit_joint joint_name="leg_r_01_joint"/>
     <xacro:implicit_joint joint_name="leg_r_02_joint"/>
@@ -34,10 +34,10 @@
       <selfCollide>false</selfCollide>
       <dampingFactor>0</dampingFactor>
     </gazebo>
-    <xacro:default_link_collision link_name="thigh_r_02" friction="0.0"/>
-    <xacro:default_link_collision link_name="thigh_r_03" friction="0.01"/>
-    <xacro:default_link_collision link_name="thigh_r_04" friction="0.0"/>
-    <xacro:default_link_collision link_name="thigh_r_05" friction="0.0"/>
+    <xacro:default_link_collision link_name="thigh_r_active" friction="0.0"/>
+    <xacro:default_link_collision link_name="shin_r_active" friction="0.01"/>
+    <xacro:default_link_collision link_name="thigh_r_passive_middle" friction="0.0"/>
+    <xacro:default_link_collision link_name="thigh_r_passive_rear" friction="0.0"/>
     <xacro:default_link_collision link_name="knee_r" friction="0.01"/>
     <xacro:default_link_collision link_name="leg_r_01" friction="0.0"/>
     <xacro:default_link_collision link_name="leg_r_02" friction="0.0"/>

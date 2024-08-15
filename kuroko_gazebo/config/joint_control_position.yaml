@@ -40,12 +40,12 @@ hip_r_roll_joint_position_controller:
 hip_r_pitch_joint_position_controller:
   type: position_controllers/JointPositionController
   joint: hip_r_pitch_joint
-thigh_r_02_joint_position_controller:
+thigh_r_active_joint_position_controller:
   type: position_controllers/JointPositionController
-  joint: thigh_r_02_joint
-thigh_r_03_joint_position_controller:
+  joint: thigh_r_active_joint
+shin_r_active_joint_position_controller:
   type: position_controllers/JointPositionController
-  joint: thigh_r_03_joint
+  joint: shin_r_active_joint
 toe_r_01_joint_position_controller:
   type: position_controllers/JointPositionController
   joint: toe_r_01_joint
@@ -59,12 +59,12 @@ hip_l_roll_joint_position_controller:
 hip_l_pitch_joint_position_controller:
   type: position_controllers/JointPositionController
   joint: hip_l_pitch_joint
-thigh_l_02_joint_position_controller:
+thigh_l_active_joint_position_controller:
   type: position_controllers/JointPositionController
-  joint: thigh_l_02_joint
-thigh_l_03_joint_position_controller:
+  joint: thigh_l_active_joint
+shin_l_active_joint_position_controller:
   type: position_controllers/JointPositionController
-  joint: thigh_l_03_joint
+  joint: shin_l_active_joint
 toe_l_01_joint_position_controller:
   type: position_controllers/JointPositionController
   joint: toe_l_01_joint

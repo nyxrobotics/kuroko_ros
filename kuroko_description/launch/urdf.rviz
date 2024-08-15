@@ -143,7 +143,7 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        leg_l_02:
+        shin_l_passive_rear:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -316,7 +316,7 @@ Visualization Manager:
           Value: true
         knee_r:
           Value: true
-        leg_l_02:
+        shin_l_passive_rear:
           Value: true
         rgbd_body:
           Value: true
@@ -379,62 +379,47 @@ Visualization Manager:
       Tree:
         root_link:
           chest:
-            imu_link:
-              {}
+            imu_link: {}
             rgbd_body:
               rgbd_depth_optical_frame:
-                rgbd_depth_frame:
-                  {}
+                rgbd_depth_frame: {}
               rgbd_rgb_optical_frame:
-                rgbd_rgb_frame:
-                  {}
+                rgbd_rgb_frame: {}
             shoulder_l:
               arm_l:
-                scissor_lf:
-                  {}
-                scissor_lr:
-                  {}
+                scissor_lf: {}
+                scissor_lr: {}
             shoulder_r:
               arm_r:
-                scissor_rf:
-                  {}
-                scissor_rr:
-                  {}
+                scissor_rf: {}
+                scissor_rr: {}
             waist:
               hip_l_roll:
                 hip_l_pitch:
                   shin_l_active:
                     thigh_l_passive_rear_mimic:
-                      thigh_l_passive_rear:
-                        {}
+                      thigh_l_passive_rear: {}
                   thigh_l_active:
                     knee_l:
-                      leg_l_02:
-                        {}
+                      shin_l_passive_rear: {}
                       shin_l_passive_front:
                         ankle_l_pitch_passive:
                           ankle_l_roll:
-                            ankle_l_yaw:
-                              {}
-                  thigh_l_passive_middle:
-                    {}
+                            ankle_l_yaw: {}
+                  thigh_l_passive_middle: {}
               hip_r_roll:
                 hip_r_pitch:
                   shin_r_active:
                     thigh_r_passive_rear_mimic:
-                      thigh_r_passive_rear:
-                        {}
+                      thigh_r_passive_rear: {}
                   thigh_r_active:
                     knee_r:
                       shin_r_passive_front:
                         ankle_r_pitch_passive:
                           ankle_r_roll:
-                            ankle_r_yaw:
-                              {}
-                      shin_r_passive_rear:
-                        {}
-                  thigh_r_passive_middle:
-                    {}
+                            ankle_r_yaw: {}
+                      shin_r_passive_rear: {}
+                  thigh_r_passive_middle: {}
       Update Interval: 0
       Value: true
   Enabled: true

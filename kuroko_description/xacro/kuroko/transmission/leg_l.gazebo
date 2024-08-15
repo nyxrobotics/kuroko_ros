@@ -20,7 +20,7 @@
     <xacro:implicit_joint joint_name="thigh_l_passive_rear_joint"/>
     <xacro:implicit_joint joint_name="knee_l_joint"/>
     <xacro:implicit_joint joint_name="shin_l_passive_front_joint"/>
-    <xacro:implicit_joint joint_name="leg_l_02_joint"/>
+    <xacro:implicit_joint joint_name="shin_l_passive_rear_joint"/>
     <xacro:implicit_joint joint_name="ankle_l_pitch_passive_joint"/>
 
     <xacro:default_link_collision link_name="hip_l_roll" friction="0.01"/>
@@ -40,7 +40,7 @@
     <xacro:default_link_collision link_name="thigh_l_passive_rear" friction="0.0"/>
     <xacro:default_link_collision link_name="knee_l" friction="0.01"/>
     <xacro:default_link_collision link_name="shin_l_passive_front" friction="0.0"/>
-    <xacro:default_link_collision link_name="leg_l_02" friction="0.0"/>
+    <xacro:default_link_collision link_name="shin_l_passive_rear" friction="0.0"/>
     <xacro:default_link_collision link_name="ankle_l_pitch_passive" friction="0.01"/>
     <xacro:default_link_collision link_name="ankle_l_roll" friction="0.0"/>
     <gazebo reference="ankle_l_yaw">

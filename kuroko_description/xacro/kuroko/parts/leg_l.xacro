@@ -133,7 +133,7 @@
         <dynamics damping="0.0" friction="0.0"/>
       </joint>
       <xacro:gazebo_poassive_joint name="thigh_l_passive_rear_loop" xyz="-0.00765471 0 -0.02897777"
-        parent="leg_l_02" child="thigh_l_passive_rear" axis="0 -1 0"/>
+        parent="shin_l_passive_rear" child="thigh_l_passive_rear" axis="0 -1 0"/>
     </xacro:if>
     <link name="thigh_l_passive_rear">
       <visual>
@@ -184,9 +184,9 @@
       <xacro:box_collision xyz="0 0 -0.05" rpy="0 0 0" size="0.014 0.0385 0.114"/>
       <xacro:box_inertial xyz="0 0 -0.05" rpy="0 0 0" size="0.014 0.0385 0.114" mass="0.013"/>
     </link>
-    <joint name="leg_l_02_joint" type="revolute">
+    <joint name="shin_l_passive_rear_joint" type="revolute">
       <parent link="knee_l"/>
-      <child link="leg_l_02"/>
+      <child link="shin_l_passive_rear"/>
       <origin xyz="-0.0335 0 0" rpy="0 0.785398163 0"/>
       <axis xyz="0 -1 0"/>
       <limit effort="1000.0" lower="-0.4974" upper="1.8588" velocity="10.0"/>
@@ -194,10 +194,10 @@
       <mimic joint="shin_l_active_joint" multiplier="1" offset="0"/>
     </joint>
     <xacro:if value="$(arg gazebo)">
-      <xacro:gazebo_poassive_joint name="leg_l_02_loop" xyz="-0.0335 0 0"
-        parent="ankle_l_pitch_passive" child="leg_l_02" axis="0 -1 0"/>
+      <xacro:gazebo_poassive_joint name="shin_l_passive_rear_loop" xyz="-0.0335 0 0"
+        parent="ankle_l_pitch_passive" child="shin_l_passive_rear" axis="0 -1 0"/>
     </xacro:if>
-    <link name="leg_l_02">
+    <link name="shin_l_passive_rear">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>

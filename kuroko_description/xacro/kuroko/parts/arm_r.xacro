@@ -20,19 +20,19 @@
       <xacro:box_collision xyz="0 -0.0205 0" rpy="0 0 0" size="0.042 0.041 0.04"/>
       <xacro:box_inertial xyz="0 -0.0205 0" rpy="0 0 0" size="0.042 0.041 0.04" mass="0.022"/>
     </link>
-    <joint name="arm_r_joint" type="revolute">
+    <joint name="shoulder_r_roll_joint" type="revolute">
       <parent link="shoulder_r_pitch"/>
-      <child link="arm_r"/>
+      <child link="shoulder_r_roll"/>
       <origin xyz="0 -0.028 0" rpy="0 0 0"/>
       <axis xyz="-1 0 0"/>
       <limit effort="1000.0" lower="-1.0472" upper="2.0071" velocity="10.0"/>
       <dynamics damping="0.0" friction="0.0"/>
     </joint>
-    <link name="arm_r">
+    <link name="shoulder_r_roll">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="package://kuroko_description/meshes/kuroko/obj/arm_r.obj"/>
+          <mesh filename="package://kuroko_description/meshes/kuroko/obj/shoulder_r_roll.obj"/>
         </geometry>
       </visual>
       <xacro:box_collision xyz="0 -0.0385 -0.02575" rpy="0 0 0" size="0.0285 0.1045 0.08"/>
@@ -40,7 +40,7 @@
         mass="0.342"/>
     </link>
     <joint name="scissor_rf_joint" type="revolute">
-      <parent link="arm_r"/>
+      <parent link="shoulder_r_roll"/>
       <child link="scissor_rf"/>
       <origin xyz="0 -0.0265 -0.0545" rpy="0 0 0"/>
       <axis xyz="0 1 0"/>
@@ -59,7 +59,7 @@
       <xacro:box_inertial xyz="0.0043 0 -0.104" rpy="0 0 0" size="0.044 0.058 0.208" mass="0.032"/>
     </link>
     <joint name="scissor_rr_joint" type="revolute">
-      <parent link="arm_r"/>
+      <parent link="shoulder_r_roll"/>
       <child link="scissor_rr"/>
       <origin xyz="0 -0.0265 -0.0545" rpy="0 0 0"/>
       <axis xyz="0 -1 0"/>

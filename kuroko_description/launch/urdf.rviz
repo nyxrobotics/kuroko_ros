@@ -93,12 +93,12 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        arm_l:
+        shoulder_l_roll:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        arm_r:
+        shoulder_r_roll:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -296,9 +296,9 @@ Visualization Manager:
           Value: true
         ankle_r_yaw:
           Value: true
-        arm_l:
+        shoulder_l_roll:
           Value: true
-        arm_r:
+        shoulder_r_roll:
           Value: true
         chest:
           Value: true
@@ -386,11 +386,11 @@ Visualization Manager:
               rgbd_rgb_optical_frame:
                 rgbd_rgb_frame: {}
             shoulder_l_pitch:
-              arm_l:
+              shoulder_l_roll:
                 scissor_lf: {}
                 scissor_lr: {}
             shoulder_r_pitch:
-              arm_r:
+              shoulder_r_roll:
                 scissor_rf: {}
                 scissor_rr: {}
             waist:

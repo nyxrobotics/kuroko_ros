@@ -16,7 +16,7 @@ gazebo_dc_motor:
       i_clamp: 0.2
       antiwindup: false
       publish_state: true
-    arm_r_joint:
+    shoulder_r_roll_joint:
       p: 16.62
       i: 0.0
       d: 0.0
@@ -45,7 +45,7 @@ gazebo_dc_motor:
       i_clamp: 0.2
       antiwindup: false
       publish_state: true
-    arm_l_joint:
+    shoulder_l_roll_joint:
       p: 16.62
       i: 0.0
       d: 0.0

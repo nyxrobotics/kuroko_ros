@@ -12,11 +12,11 @@ via_pose:
   2: [0.0] # hip_r_roll_joint
   2: [53.9] # shoulder_r_pitch_joint
   16: [0.0] # hip_l_roll_joint
-  3: [22.9] # arm_r_joint
+  3: [22.9] # shoulder_r_roll_joint
   4: [-137.5] # scissor_rf_joint
   5: [-63.0] # scissor_rr_joint
   6: [-53.9] # shoulder_l_pitch_joint
-  7: [-22.9] # arm_l_joint
+  7: [-22.9] # shoulder_l_roll_joint
   8: [137.5] # scissor_lf_joint
   9: [63.0] # scissor_lr_joint
   11: [-0.57] # hip_r_pitch_joint
@@ -35,11 +35,11 @@ via_pose:
 tar_pose:
   1: 0 # waist_joint
   2: 53.9 # shoulder_r_pitch_joint
-  3: 22.9 # arm_r_joint
+  3: 22.9 # shoulder_r_roll_joint
   4: -137.5 # scissor_rf_joint
   5: -63.0 # scissor_rr_joint
   6: -53.9 # shoulder_l_pitch_joint
-  7: -22.9 # arm_l_joint
+  7: -22.9 # shoulder_l_roll_joint
   8: 137.5 # scissor_lf_joint
   9: 63.0 # scissor_lr_joint
   10: 0.0 # hip_r_roll_joint

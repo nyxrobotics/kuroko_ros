@@ -1,7 +1,7 @@
 # Blender v2.79 (sub 0) OBJ File: ''
 # www.blender.org
-mtllib arm_l.mtl
-o arm_l.001
+mtllib shoulder_l_roll.mtl
+o shoulder_l_roll.001
 v -0.017000 0.021000 0.013850
 v -0.017000 0.033084 0.013850
 v -0.017000 0.034850 0.012084

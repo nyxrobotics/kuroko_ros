@@ -2,11 +2,11 @@ joint_names:
   [
     waist_joint,
     shoulder_r_pitch_joint,
-    arm_r_joint,
+    shoulder_r_roll_joint,
     scissor_rf_joint,
     scissor_rr_joint,
     shoulder_l_pitch_joint,
-    arm_l_joint,
+    shoulder_l_roll_joint,
     scissor_lf_joint,
     scissor_lr_joint,
     crotch_r_joint,

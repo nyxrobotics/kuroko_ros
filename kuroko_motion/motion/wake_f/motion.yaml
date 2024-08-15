@@ -1,6 +1,6 @@
 joint_names:
-  - arm_l_joint
-  - arm_r_joint
+  - shoulder_l_roll_joint
+  - shoulder_r_roll_joint
   - hip_l_roll_joint
   - hip_r_roll_joint
   - scissor_lf_joint

@@ -9,7 +9,7 @@ gazebo_dc_motor:
       antiwindup: false
       publish_state: true
     #arm right
-    shoulder_r_joint:
+    shoulder_r_pitch_joint:
       p: 16.62
       i: 0.0
       d: 0.0
@@ -38,7 +38,7 @@ gazebo_dc_motor:
       antiwindup: false
       publish_state: true
     #arm left
-    shoulder_l_joint:
+    shoulder_l_pitch_joint:
       p: 16.62
       i: 0.0
       d: 0.0

@@ -218,12 +218,12 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        shoulder_l:
+        shoulder_l_pitch:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        shoulder_r:
+        shoulder_r_pitch:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -348,9 +348,9 @@ Visualization Manager:
           Value: true
         shin_r_passive_rear:
           Value: true
-        shoulder_l:
+        shoulder_l_pitch:
           Value: true
-        shoulder_r:
+        shoulder_r_pitch:
           Value: true
         thigh_l_active:
           Value: true
@@ -385,11 +385,11 @@ Visualization Manager:
                 rgbd_depth_frame: {}
               rgbd_rgb_optical_frame:
                 rgbd_rgb_frame: {}
-            shoulder_l:
+            shoulder_l_pitch:
               arm_l:
                 scissor_lf: {}
                 scissor_lr: {}
-            shoulder_r:
+            shoulder_r_pitch:
               arm_r:
                 scissor_rf: {}
                 scissor_rr: {}

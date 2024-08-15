@@ -1,0 +1,56 @@
+# time parameter
+
+mov_time: 4.0 # movement time
+
+via_num: 0 # via-point number
+via_time: [4.0] # via-point time
+
+# via-point pose [deg]
+
+via_pose:
+  1: [0.0] # waist_joint
+  2: [0.0] # hip_r_roll_joint
+  2: [53.9] # shoulder_r_pitch_joint
+  16: [0.0] # hip_l_roll_joint
+  3: [22.9] # arm_r_joint
+  4: [-137.5] # scissor_rf_joint
+  5: [-63.0] # scissor_rr_joint
+  6: [-53.9] # shoulder_l_pitch_joint
+  7: [-22.9] # arm_l_joint
+  8: [137.5] # scissor_lf_joint
+  9: [63.0] # scissor_lr_joint
+  11: [-0.57] # hip_r_pitch_joint
+  12: [0.0] # thigh_r_active_joint
+  13: [-5.7] # shin_r_active_joint
+  14: [0.0] # ankle_r_roll_joint
+  15: [0.0] # ankle_r_yaw_joint
+  17: [0.57] # hip_l_pitch_joint
+  18: [0.0] # thigh_l_active_joint
+  19: [5.7] # shin_l_active_joint
+  20: [0.0] # ankle_l_roll_joint
+  21: [0.0] # ankle_l_yaw_joint
+
+# target pose [deg]
+
+tar_pose:
+  1: 0 # waist_joint
+  2: 53.9 # shoulder_r_pitch_joint
+  3: 22.9 # arm_r_joint
+  4: -137.5 # scissor_rf_joint
+  5: -63.0 # scissor_rr_joint
+  6: -53.9 # shoulder_l_pitch_joint
+  7: -22.9 # arm_l_joint
+  8: 137.5 # scissor_lf_joint
+  9: 63.0 # scissor_lr_joint
+  10: 0.0 # hip_r_roll_joint
+  11: -0.57 # hip_r_pitch_joint
+  12: 0.0 # thigh_r_active_joint
+  13: -5.7 # shin_r_active_joint
+  14: 0.0 # ankle_r_roll_joint
+  15: 0.0 # ankle_r_yaw_joint
+  16: 0.0 # hip_l_roll_joint
+  17: 0.57 # hip_l_pitch_joint
+  18: 0.0 # thigh_l_active_joint
+  19: 5.7 # shin_l_active_joint
+  20: 0.0 # ankle_l_roll_joint
+  21: 0.0 # ankle_l_yaw_joint

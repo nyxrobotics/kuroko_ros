@@ -12,11 +12,11 @@ trajectory_controller:
   allow_partial_joints_goal: True
   joints:
     - waist_joint
-    - shoulder_r_joint
+    - shoulder_r_pitch_joint
     - arm_r_joint
     - scissor_rf_joint
     - scissor_rr_joint
-    - shoulder_l_joint
+    - shoulder_l_pitch_joint
     - arm_l_joint
     - scissor_lf_joint
     - scissor_lr_joint

@@ -8,9 +8,9 @@ waist_joint_position_controller:
   type: position_controllers/JointPositionController
   joint: waist_joint
 
-shoulder_r_joint_position_controller:
+shoulder_r_pitch_joint_position_controller:
   type: position_controllers/JointPositionController
-  joint: shoulder_r_joint
+  joint: shoulder_r_pitch_joint
 arm_r_joint_position_controller:
   type: position_controllers/JointPositionController
   joint: arm_r_joint
@@ -21,9 +21,9 @@ scissor_rr_joint_position_controller:
   type: position_controllers/JointPositionController
   joint: scissor_rr_joint
 
-shoulder_l_joint_position_controller:
+shoulder_l_pitch_joint_position_controller:
   type: position_controllers/JointPositionController
-  joint: shoulder_l_joint
+  joint: shoulder_l_pitch_joint
 arm_l_joint_position_controller:
   type: position_controllers/JointPositionController
   joint: arm_l_joint

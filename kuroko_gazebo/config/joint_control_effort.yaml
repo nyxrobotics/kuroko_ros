@@ -17,14 +17,14 @@ shoulder_r_roll_joint_position_controller:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
   joint: shoulder_r_roll_joint
-scissor_rf_joint_position_controller:
+elbow_r_front_joint_position_controller:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
-  joint: scissor_rf_joint
-scissor_rr_joint_position_controller:
+  joint: elbow_r_front_joint
+elbow_r_rear_joint_position_controller:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
-  joint: scissor_rr_joint
+  joint: elbow_r_rear_joint
 
 shoulder_l_pitch_joint_position_controller:
   type: effort_controllers/JointPositionController
@@ -34,14 +34,14 @@ shoulder_l_roll_joint_position_controller:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
   joint: shoulder_l_roll_joint
-scissor_lf_joint_position_controller:
+elbow_l_front_joint_position_controller:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
-  joint: scissor_lf_joint
-scissor_lr_joint_position_controller:
+  joint: elbow_l_front_joint
+elbow_l_rear_joint_position_controller:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
-  joint: scissor_lr_joint
+  joint: elbow_l_rear_joint
 
 hip_r_roll_joint_position_controller:
   type: effort_controllers/JointPositionController

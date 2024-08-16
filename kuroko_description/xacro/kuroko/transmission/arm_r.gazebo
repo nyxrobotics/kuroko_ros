@@ -5,11 +5,11 @@
   <xacro:macro name="arm_r_gazebo" params="gazebo_hw_interface">
     <xacro:default_motor_transmission joint_name="shoulder_r_pitch_joint" gazebo_hw_interface="${gazebo_hw_interface}"/>
     <xacro:default_motor_transmission joint_name="shoulder_r_roll_joint" gazebo_hw_interface="${gazebo_hw_interface}"/>
-    <xacro:default_motor_transmission joint_name="scissor_rf_joint" gazebo_hw_interface="${gazebo_hw_interface}"/>
-    <xacro:default_motor_transmission joint_name="scissor_rr_joint" gazebo_hw_interface="${gazebo_hw_interface}"/>
+    <xacro:default_motor_transmission joint_name="elbow_r_front_joint" gazebo_hw_interface="${gazebo_hw_interface}"/>
+    <xacro:default_motor_transmission joint_name="elbow_r_rear_joint" gazebo_hw_interface="${gazebo_hw_interface}"/>
     <xacro:default_link_collision link_name="shoulder_r_pitch" friction="0.01"/>
     <xacro:default_link_collision link_name="shoulder_r_roll" friction="0.01"/>
-    <xacro:default_link_collision link_name="scissor_rf" friction="0.01"/>
-    <xacro:default_link_collision link_name="scissor_rr" friction="0.01"/>
+    <xacro:default_link_collision link_name="elbow_r_front" friction="0.01"/>
+    <xacro:default_link_collision link_name="elbow_r_rear" friction="0.01"/>
   </xacro:macro>
 </robot>

@@ -14,12 +14,12 @@ trajectory_controller:
     - waist_joint
     - shoulder_r_pitch_joint
     - shoulder_r_roll_joint
-    - scissor_rf_joint
-    - scissor_rr_joint
+    - elbow_r_front_joint
+    - elbow_r_rear_joint
     - shoulder_l_pitch_joint
     - shoulder_l_roll_joint
-    - scissor_lf_joint
-    - scissor_lr_joint
+    - elbow_l_front_joint
+    - elbow_l_rear_joint
     - hip_r_roll_joint
     - hip_r_pitch_joint
     - thigh_r_active_joint

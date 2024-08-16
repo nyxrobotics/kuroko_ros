@@ -1,7 +1,7 @@
 # Blender v2.79 (sub 0) OBJ File: ''
 # www.blender.org
-mtllib scissor_rf.mtl
-o scissor_rf
+mtllib elbow_r_front.mtl
+o elbow_r_front
 v 0.009750 -0.029000 -0.201720
 v 0.008931 -0.029000 -0.204813
 v 0.006687 -0.029000 -0.207096

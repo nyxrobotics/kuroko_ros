@@ -173,22 +173,22 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-        scissor_lf:
+        elbow_l_front:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        scissor_lr:
+        elbow_l_rear:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        scissor_rf:
+        elbow_r_front:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        scissor_rr:
+        elbow_r_rear:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -330,13 +330,13 @@ Visualization Manager:
           Value: true
         root_link:
           Value: true
-        scissor_lf:
+        elbow_l_front:
           Value: true
-        scissor_lr:
+        elbow_l_rear:
           Value: true
-        scissor_rf:
+        elbow_r_front:
           Value: true
-        scissor_rr:
+        elbow_r_rear:
           Value: true
         shin_l_active:
           Value: true
@@ -387,12 +387,12 @@ Visualization Manager:
                 rgbd_rgb_frame: {}
             shoulder_l_pitch:
               shoulder_l_roll:
-                scissor_lf: {}
-                scissor_lr: {}
+                elbow_l_front: {}
+                elbow_l_rear: {}
             shoulder_r_pitch:
               shoulder_r_roll:
-                scissor_rf: {}
-                scissor_rr: {}
+                elbow_r_front: {}
+                elbow_r_rear: {}
             waist:
               hip_l_roll:
                 hip_l_pitch:

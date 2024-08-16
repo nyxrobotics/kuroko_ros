@@ -8,7 +8,7 @@
   <arg name="headless" default="false"/>
   <arg name="debug" default="false"/>
   <arg name="robot_name" default="kuroko"/>
-  <arg name="use_trajectory_control" default="true"/>
+  <arg name="use_trajectory_control" default="false"/>
   <arg name="use_small_ring" default="false"/>
   <rosparam file="$(find kuroko_gazebo)/config/gazebo_pid.yaml" ns="$(arg robot_name)" command="load"/>
   <rosparam file="$(find kuroko_gazebo)/config/gazebo_dc_motor.yaml" ns="$(arg robot_name)" command="load"/>
@@ -42,11 +42,35 @@
   <node name="robot_urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -model $(arg robot_name) -param robot_description_gazebo -x -0.9 -y 0.0 -z 0.86"/>
   <group unless="$(arg use_trajectory_control)">
     <rosparam file="$(find kuroko_gazebo)/config/joint_control_position.yaml" ns="$(arg robot_name)" command="load"/>
-    <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" ns="$(arg robot_name)" args="           joint_state_controller           waist_joint_position_controller           shoulder_r_pitch_joint_position_controller           shoulder_r_roll_joint_position_controller           elbow_r_front_joint_position_controller           elbow_r_rear_joint_position_controller           shoulder_l_pitch_joint_position_controller           shoulder_l_roll_joint_position_controller           elbow_l_front_joint_position_controller           elbow_l_rear_joint_position_controller           hip_r_roll_joint_position_controller           hip_r_pitch_joint_position_controller           thigh_r_active_joint_position_controller           shin_r_active_joint_position_controller           ankle_r_roll_joint_position_controller           ankle_r_yaw_joint_position_controller           hip_l_roll_joint_position_controller           hip_l_pitch_joint_position_controller           thigh_l_active_joint_position_controller           shin_l_active_joint_position_controller           ankle_l_roll_joint_position_controller           ankle_l_yaw_joint_position_controller         "/>
+    <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" ns="$(arg robot_name)" args="
+      joint_state_controller
+      waist_joint_position
+      shoulder_r_pitch_joint_position
+      shoulder_r_roll_joint_position
+      elbow_r_front_joint_position
+      elbow_r_rear_joint_position
+      shoulder_l_pitch_joint_position
+      shoulder_l_roll_joint_position
+      elbow_l_front_joint_position
+      elbow_l_rear_joint_position
+      hip_r_roll_joint_position
+      hip_r_pitch_joint_position
+      thigh_r_active_joint_position
+      shin_r_active_joint_position
+      ankle_r_roll_joint_position
+      ankle_r_yaw_joint_position
+      hip_l_roll_joint_position
+      hip_l_pitch_joint_position
+      thigh_l_active_joint_position
+      shin_l_active_joint_position
+      ankle_l_roll_joint_position
+      ankle_l_yaw_joint_position"/>
   </group>
   <group if="$(arg use_trajectory_control)">
     <rosparam file="$(find kuroko_gazebo)/config/joint_control_trajectory.yaml" ns="$(arg robot_name)" command="load"/>
-    <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" ns="$(arg robot_name)" args="           joint_state_controller           trajectory_controller         "/>
+    <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" ns="$(arg robot_name)" args="
+      joint_state_controller
+      trajectory_controller"/>
   </group>
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen" ns="$(arg robot_name)">
     <param name="publish_frequency" value="1000"/>

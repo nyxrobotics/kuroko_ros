@@ -1,0 +1,76 @@
+#ifndef KUROKO_KINEMATICS_H_
+#define KUROKO_KINEMATICS_H_
+
+#include <eigen3/Eigen/Eigen>
+#include <vector>
+
+#include "kuroko_kinematics_define.h"
+#include "link_data.h"
+
+namespace motion_control
+{
+enum TreeSelect
+{
+  MANIPULATION,
+  WALKING,
+  WHOLE_BODY
+};
+
+class KurokoKinematics
+{
+public:
+  KurokoKinematics();
+  ~KurokoKinematics();
+  KurokoKinematics(TreeSelect tree);
+
+  std::vector<int> findRoute(int to);
+  std::vector<int> findRoute(int from, int to);
+
+  double calcTotalMass(int joint_id);
+  Eigen::MatrixXd calcMC(int joint_id);
+  Eigen::MatrixXd calcCOM(const Eigen::MatrixXd& mc);
+
+  void calcForwardKinematics(int joint_ID);
+
+  Eigen::MatrixXd calcJacobian(std::vector<int> idx);
+  Eigen::MatrixXd calcJacobianCOM(std::vector<int> idx);
+  Eigen::MatrixXd calcVWerr(const Eigen::MatrixXd& tar_position, const Eigen::MatrixXd& curr_position,
+                            const Eigen::MatrixXd& tar_orientation, Eigen::MatrixXd curr_orientation);
+
+  bool calcInverseKinematics(int to, const Eigen::MatrixXd& tar_position, const Eigen::MatrixXd& tar_orientation,
+                             int max_iter, double ik_err);
+  bool calcInverseKinematics(int from, int to, const Eigen::MatrixXd& tar_position,
+                             const Eigen::MatrixXd& tar_orientation, int max_iter, double ik_err);
+
+  // with weight
+  bool calcInverseKinematics(int to, const Eigen::MatrixXd& tar_position, const Eigen::MatrixXd& tar_orientation,
+                             int max_iter, double ik_err, const Eigen::MatrixXd& weight);
+  bool calcInverseKinematics(int from, int to, const Eigen::MatrixXd& tar_position,
+                             const Eigen::MatrixXd& tar_orientation, int max_iter, double ik_err,
+                             const Eigen::MatrixXd& weight);
+
+  bool calcInverseKinematicsForLeg(double* out, double x, double y, double z, double roll, double pitch, double yaw);
+  bool calcInverseKinematicsForRightLeg(double* out, double x, double y, double z, double roll, double pitch,
+                                        double yaw);
+  bool calcInverseKinematicsForLeftLeg(double* out, double x, double y, double z, double roll, double pitch, double yaw);
+
+  LinkData* kuroko_link_data_[ALL_JOINT_ID + 1];
+
+  LinkData* getLinkData(const std::string& link_name);
+  LinkData* getLinkData(const int link_id);
+  Eigen::MatrixXd getJointAxis(const std::string& link_name);
+  double getJointDirection(const std::string& link_name);
+  double getJointDirection(const int link_id);
+
+  Eigen::MatrixXd calcPreviewParam(double preview_time, double control_cycle, double lipm_height,
+                                   const Eigen::MatrixXd& K, const Eigen::MatrixXd& P);
+
+  double thigh_length_m_;
+  double calf_length_m_;
+  double ankle_length_m_;
+  double leg_side_offset_m_;
+};
+
+}  // namespace motion_control
+
+#endif /* KUROKO_KINEMATICS_H_ */

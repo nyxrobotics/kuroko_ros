@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="args" default=""/>
+  <param name="demo_config" value="$(find kuroko_walking_gui)/config/gui_config.yaml"/>
+
+  <node pkg="kuroko_walking_gui" type="kuroko_walking_gui" name="kuroko_demo_opc" output="screen"
+    args="$(arg args)">
+    <remap from="/kuroko_demo/ik_target_pose" to="/pose_panel/pose"/>
+  </node>
+
+  <!-- kuroko Localization -->
+  <node pkg="op3_localization" type="op3_localization" name="kuroko_localization" output="screen"/>
+
+  <!-- kuroko Footstep Planner -->
+  <include file="$(find op3_navigation)/launch/op3_footstep_planner.launch"/>
+</launch>

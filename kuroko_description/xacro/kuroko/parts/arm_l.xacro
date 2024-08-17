@@ -5,7 +5,7 @@
     <joint name="shoulder_l_pitch_joint" type="revolute">
       <parent link="chest"/>
       <child link="shoulder_l_pitch"/>
-      <origin xyz="0 0.108 0.01275" rpy="0 0 0"/>
+      <origin xyz="0 0.1275 0.01275" rpy="0 0 0"/>
       <axis xyz="0 1 0"/>
       <limit effort="1000.0" lower="-3.1" upper="3.1" velocity="10.0"/>
       <dynamics damping="0.0" friction="0.0"/>
@@ -17,13 +17,13 @@
           <mesh filename="package://kuroko_description/meshes/kuroko/obj/shoulder_l_pitch.obj"/>
         </geometry>
       </visual>
-      <xacro:box_collision xyz="0 0.0205 0" rpy="0 0 0" size="0.042 0.041 0.04"/>
-      <xacro:box_inertial xyz="0 0.0205 0" rpy="0 0 0" size="0.042 0.041 0.04" mass="0.022"/>
+      <xacro:box_collision xyz="0 0.024 0" rpy="0 0 0" size="0.042 0.048 0.04"/>
+      <xacro:box_inertial xyz="0 0.024 0" rpy="0 0 0" size="0.042 0.048 0.04" mass="0.022"/>
     </link>
     <joint name="shoulder_l_roll_joint" type="revolute">
       <parent link="shoulder_l_pitch"/>
       <child link="shoulder_l_roll"/>
-      <origin xyz="0 0.028 0" rpy="0 0 0"/>
+      <origin xyz="0 0.038 0" rpy="0 0 0"/>
       <axis xyz="-1 0 0"/>
       <limit effort="1000.0" lower="-2.0071" upper="1.0472" velocity="10.0"/>
       <dynamics damping="0.0" friction="0.0"/>
@@ -35,13 +35,13 @@
           <mesh filename="package://kuroko_description/meshes/kuroko/obj/shoulder_l_roll.obj"/>
         </geometry>
       </visual>
-      <xacro:box_collision xyz="0 0.0385 -0.02575" rpy="0 0 0" size="0.0285 0.1045 0.08"/>
-      <xacro:box_inertial xyz="0 0.0385 -0.02575" rpy="0 0 0" size="0.0285 0.1045 0.08" mass="0.342"/>
+      <xacro:box_collision xyz="0 0.016 -0.02575" rpy="0 0 0" size="0.0285 0.082 0.08"/>
+      <xacro:box_inertial xyz="0 0.016 -0.02575" rpy="0 0 0" size="0.0285 0.082 0.08" mass="0.342"/>
     </link>
     <joint name="elbow_l_front_joint" type="revolute">
       <parent link="shoulder_l_roll"/>
       <child link="elbow_l_front"/>
-      <origin xyz="0 0.0265 -0.0545" rpy="0 0 0"/>
+      <origin xyz="0 -0.008 -0.052" rpy="0 0 0"/>
       <axis xyz="0 -1 0"/>
       <limit effort="1000.0" lower="-2.6180" upper="2.6180" velocity="10.0"/>
       <dynamics damping="0.0" friction="0.0"/>
@@ -60,7 +60,7 @@
     <joint name="elbow_l_rear_joint" type="revolute">
       <parent link="shoulder_l_roll"/>
       <child link="elbow_l_rear"/>
-      <origin xyz="0 0.0265 -0.0545" rpy="0 0 0"/>
+      <origin xyz="0 -0.008 -0.052" rpy="0 0 0"/>
       <axis xyz="0 1 0"/>
       <limit effort="1000.0" lower="-2.6180" upper="2.6180" velocity="10.0"/>
       <dynamics damping="0.0" friction="0.0"/>

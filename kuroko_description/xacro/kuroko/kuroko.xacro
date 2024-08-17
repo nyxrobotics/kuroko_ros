@@ -64,11 +64,8 @@
     <xacro:leg_l_xacro gazebo="$(arg gazebo)" />
     <xacro:leg_l_gazebo gazebo_hw_interface="${gazebo_hw_interface}" />
     <xacro:n100mini_imu parent="chest" name="imu">
-      <origin xyz="-0.05 0 0.04425" rpy="0 0 0"/>
+      <origin xyz="0 0 0.008" rpy="0 0 0"/>
     </xacro:n100mini_imu>
-    <xacro:maixsense_rgbd parent="chest" name="rgbd">
-      <origin xyz="0.04425 0 0.017" rpy="0 0 0"/>
-    </xacro:maixsense_rgbd>
   </xacro:macro>
 
   <!-- Load Macros -->

@@ -5,7 +5,7 @@
     <joint name="hip_l_roll_joint" type="revolute">
       <parent link="waist"/>
       <child link="hip_l_roll"/>
-      <origin xyz="0.00125 0 -0.08425" rpy="0 0 0"/>
+      <origin xyz="0 0 -0.08425" rpy="0 0 0"/>
       <axis xyz="-1 0 0"/>
       <limit effort="1000.0" lower="-0.5550" upper="1.8640" velocity="10.0"/>
       <dynamics damping="0.0" friction="0.0"/>
@@ -17,8 +17,8 @@
           <mesh filename="package://kuroko_description/meshes/kuroko/obj/hip_l_roll.obj"/>
         </geometry>
       </visual>
-      <xacro:box_collision xyz="0 0.0065 -0.004125" rpy="0 0 0" size="0.092 0.041 0.03625"/>
-      <xacro:box_inertial xyz="0 0.0065 -0.004125" rpy="0 0 0" size="0.092 0.041 0.03625"
+      <xacro:box_collision xyz="0.00125 0.0065 -0.004125" rpy="0 0 0" size="0.092 0.041 0.03625"/>
+      <xacro:box_inertial xyz="0.00125 0.0065 -0.004125" rpy="0 0 0" size="0.092 0.041 0.03625"
         mass="0.026"/>
     </link>
     <joint name="hip_l_pitch_joint" type="revolute">
@@ -231,7 +231,7 @@
     <joint name="ankle_l_roll_joint" type="revolute">
       <parent link="ankle_l_pitch_passive"/>
       <child link="ankle_l_roll"/>
-      <origin xyz="-0.015 0 -0.025" rpy="0 0 0"/>
+      <origin xyz="-0.015 0 -0.027" rpy="0 0 0"/>
       <axis xyz="1 0 0"/>
       <limit effort="1000.0" lower="-1.5708" upper="0.3704" velocity="10.0"/>
       <dynamics damping="0.0" friction="0.0"/>
@@ -262,8 +262,8 @@
           <mesh filename="package://kuroko_description/meshes/kuroko/obj/ankle_r_yaw.obj"/>
         </geometry>
       </visual>
-      <xacro:box_collision xyz="0 0 -0.0025" rpy="0 0 0" size="0.12 0.075 0.005"/>
-      <xacro:box_inertial xyz="0 0 -0.0025" rpy="0 0 0" size="0.12 0.075 0.005" mass="0.043"/>
+      <xacro:box_collision xyz="0 0 -0.004" rpy="0 0 0" size="0.12 0.075 0.008"/>
+      <xacro:box_inertial xyz="0 0 -0.004" rpy="0 0 0" size="0.12 0.075 0.008" mass="0.043"/>
     </link>
 
 

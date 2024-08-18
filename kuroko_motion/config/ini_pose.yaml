@@ -8,17 +8,17 @@ via_time: [4.0] # via-point time
 # via-point pose [deg]
 
 via_pose:
-  1: [0.0] # waist_joint
+  1: [0.0] # waist
   2: [0.0] # hip_r_roll_joint
-  2: [53.9] # shoulder_r_pitch_joint
+  2: [53.9] # shoulder_r_pitch
   16: [0.0] # hip_l_roll_joint
-  3: [22.9] # shoulder_r_roll_joint
-  4: [-137.5] # elbow_r_front_joint
-  5: [-63.0] # elbow_r_rear_joint
-  6: [-53.9] # shoulder_l_pitch_joint
-  7: [-22.9] # shoulder_l_roll_joint
-  8: [137.5] # elbow_l_front_joint
-  9: [63.0] # elbow_l_rear_joint
+  3: [22.9] # shoulder_r_roll
+  4: [-137.5] # elbow_r_front
+  5: [-63.0] # elbow_r_rear
+  6: [-53.9] # shoulder_l_pitch
+  7: [-22.9] # shoulder_l_roll
+  8: [137.5] # elbow_l_front
+  9: [63.0] # elbow_l_rear
   11: [-0.57] # hip_r_pitch_joint
   12: [0.0] # thigh_r_front_active_joint
   13: [-5.7] # shin_r_active_joint
@@ -33,15 +33,15 @@ via_pose:
 # target pose [deg]
 
 tar_pose:
-  1: 0 # waist_joint
-  2: 53.9 # shoulder_r_pitch_joint
-  3: 22.9 # shoulder_r_roll_joint
-  4: -137.5 # elbow_r_front_joint
-  5: -63.0 # elbow_r_rear_joint
-  6: -53.9 # shoulder_l_pitch_joint
-  7: -22.9 # shoulder_l_roll_joint
-  8: 137.5 # elbow_l_front_joint
-  9: 63.0 # elbow_l_rear_joint
+  1: 0 # waist
+  2: 53.9 # shoulder_r_pitch
+  3: 22.9 # shoulder_r_roll
+  4: -137.5 # elbow_r_front
+  5: -63.0 # elbow_r_rear
+  6: -53.9 # shoulder_l_pitch
+  7: -22.9 # shoulder_l_roll
+  8: 137.5 # elbow_l_front
+  9: 63.0 # elbow_l_rear
   10: 0.0 # hip_r_roll_joint
   11: -0.57 # hip_r_pitch_joint
   12: 0.0 # thigh_r_front_active_joint

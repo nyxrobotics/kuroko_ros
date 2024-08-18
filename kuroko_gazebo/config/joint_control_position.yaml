@@ -4,35 +4,35 @@ joint_state_controller:
   publish_rate: 1000
 
 # Position Controllers ---------------------------------------
-waist_joint_position:
+waist_position:
   type: position_controllers/JointPositionController
-  joint: waist_joint
+  joint: waist
 
-shoulder_r_pitch_joint_position:
+shoulder_r_pitch_position:
   type: position_controllers/JointPositionController
-  joint: shoulder_r_pitch_joint
-shoulder_r_roll_joint_position:
+  joint: shoulder_r_pitch
+shoulder_r_roll_position:
   type: position_controllers/JointPositionController
-  joint: shoulder_r_roll_joint
-elbow_r_front_joint_position:
+  joint: shoulder_r_roll
+elbow_r_front_position:
   type: position_controllers/JointPositionController
-  joint: elbow_r_front_joint
-elbow_r_rear_joint_position:
+  joint: elbow_r_front
+elbow_r_rear_position:
   type: position_controllers/JointPositionController
-  joint: elbow_r_rear_joint
+  joint: elbow_r_rear
 
-shoulder_l_pitch_joint_position:
+shoulder_l_pitch_position:
   type: position_controllers/JointPositionController
-  joint: shoulder_l_pitch_joint
-shoulder_l_roll_joint_position:
+  joint: shoulder_l_pitch
+shoulder_l_roll_position:
   type: position_controllers/JointPositionController
-  joint: shoulder_l_roll_joint
-elbow_l_front_joint_position:
+  joint: shoulder_l_roll
+elbow_l_front_position:
   type: position_controllers/JointPositionController
-  joint: elbow_l_front_joint
-elbow_l_rear_joint_position:
+  joint: elbow_l_front
+elbow_l_rear_position:
   type: position_controllers/JointPositionController
-  joint: elbow_l_rear_joint
+  joint: elbow_l_rear
 
 hip_r_roll_joint_position:
   type: position_controllers/JointPositionController

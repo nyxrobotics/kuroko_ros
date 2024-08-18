@@ -3,7 +3,7 @@
   <xacro:macro name="leg_l_xacro" params="gazebo:=false">
     <!-- Link conencts from body. Femoral first. -->
     <joint name="hip_l_roll_joint" type="revolute">
-      <parent link="waist"/>
+      <parent link="waist_link"/>
       <child link="hip_l_roll"/>
       <origin xyz="0 0 -0.08425" rpy="0 0 0"/>
       <axis xyz="-1 0 0"/>

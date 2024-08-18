@@ -367,7 +367,7 @@ void InitialPoseModule::stop()
 
 void InitialPoseModule::onModuleEnable()
 {
-  ROS_INFO("Base Module is enabled");
+  ROS_INFO("Initial Pose Module is enabled");
 }
 
 void InitialPoseModule::onModuleDisable()

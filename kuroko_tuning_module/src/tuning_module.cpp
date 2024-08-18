@@ -103,6 +103,7 @@ bool TuningModule::parseOffsetData(const std::string& path)
   catch (const std::exception& e)
   {
     ROS_ERROR("Fail to load offset yaml file.");
+    ROS_ERROR("path : %s", path.c_str());
     return false;
   }
 

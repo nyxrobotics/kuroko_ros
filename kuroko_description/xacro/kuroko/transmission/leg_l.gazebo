@@ -49,8 +49,8 @@
       <mu1>1.0</mu1>
       <maxVel>1.0</maxVel>
       <minDepth>0.0001</minDepth>
-      <maxContacts>5</maxContacts>
-      <selfCollide>true</selfCollide>
+      <maxContacts>10</maxContacts>
+      <selfCollide>false</selfCollide>
       <dampingFactor>0.0</dampingFactor>
     </gazebo>
   </xacro:macro>

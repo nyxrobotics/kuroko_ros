@@ -1,6 +1,6 @@
 # time parameter
 
-mov_time: 4.0 # movement time
+mov_time: 2.0 # movement time
 
 via_num: 0 # via-point number
 via_time: [4.0] # via-point time
@@ -39,13 +39,13 @@ tar_pose:
   4: 49.0 # shoulder_r_pitch
   5: -49.0 # shoulder_l_pitch
   6: 0.0 # hip_r_pitch
-  7: 9.0 # thigh_r_front_active
-  8: 0.0 # shin_r_active
+  7: -5.0 # thigh_r_front_active
+  8: -10.0 # shin_r_active
   9: 0.0 # ankle_r_roll
   10: 0.0 # ankle_r_yaw
   11: 0.0 # hip_l_pitch
-  12: -9.0 # thigh_l_front_active
-  13: 0.0 # shin_l_active
+  12: 5.0 # thigh_l_front_active
+  13: 10.0 # shin_l_active
   14: 0.0 # ankle_l_roll
   15: 0.0 # ankle_l_yaw
   16: 0.0 # shoulder_r_roll

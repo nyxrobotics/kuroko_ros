@@ -33,7 +33,6 @@ shoulder_r_pitch:
   position_i_gain: 0
   position_p_gain: 900
   return_delay_time: 1
-  shutdown: 56
 
 shoulder_l_pitch:
   max_position_limit: 4095
@@ -43,7 +42,6 @@ shoulder_l_pitch:
   position_i_gain: 0
   position_p_gain: 900
   return_delay_time: 1
-  shutdown: 56
 
 hip_r_pitch:
   max_position_limit: 4095
@@ -143,7 +141,6 @@ shoulder_r_roll:
   position_i_gain: 0
   position_p_gain: 900
   return_delay_time: 1
-  shutdown: 56
 
 elbow_r_rear:
   max_position_limit: 4095
@@ -162,7 +159,6 @@ elbow_r_front:
   position_i_gain: 0
   position_p_gain: 900
   return_delay_time: 1
-  shutdown: 56
 
 shoulder_l_roll:
   max_position_limit: 4095
@@ -172,7 +168,6 @@ shoulder_l_roll:
   position_i_gain: 0
   position_p_gain: 900
   return_delay_time: 1
-  shutdown: 56
 
 elbow_l_rear:
   max_position_limit: 4095
@@ -191,4 +186,3 @@ elbow_l_front:
   position_i_gain: 0
   position_p_gain: 900
   return_delay_time: 1
-  shutdown: 56

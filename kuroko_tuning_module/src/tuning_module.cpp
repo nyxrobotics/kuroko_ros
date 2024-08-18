@@ -169,6 +169,7 @@ bool TuningModule::parseInitPoseData(const std::string& path)
     joint_name = yaml_it->first.as<std::string>();
     value = yaml_it->second.as<double>();
     int id = joint_name_to_id_[joint_name];
+    ROS_DEBUG("Set initial pose:joint_name: %s, id: %d, value: %f", joint_name.c_str(), id, value);
 
     tuning_module_state_->joint_ini_pose_.coeffRef(id, 0) = value * DEGREE2RADIAN;
 

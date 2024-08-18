@@ -2,8 +2,7 @@
 
 namespace kuroko_localization
 {
-KurokoLocalization::KurokoLocalization()
-  : ros_node_(), transform_tolerance_(0.0), err_tol_(0.2), is_moving_walking_(false)
+KurokoLocalization::KurokoLocalization() : ros_node_(), err_tol_(0.2), is_moving_walking_(false)
 {
   initialize();
 
@@ -82,11 +81,7 @@ void KurokoLocalization::process()
                    pelvis_pose_.pose.orientation.w);
 
   pelvis_trans_.setRotation(q);
-
-  ros::Duration transform_tolerance_duration(transform_tolerance_);
-  ros::Time transform_expiration = (pelvis_pose_.header.stamp + transform_tolerance_duration);
-
-  tf::StampedTransform tmp_tf_stamped(pelvis_trans_, transform_expiration, "world", "body_link");
+  tf::StampedTransform tmp_tf_stamped(pelvis_trans_, ros::Time::now(), "world", "body_link");
 
   broadcaster_.sendTransform(tmp_tf_stamped);
 }

@@ -36,7 +36,6 @@ private:
   geometry_msgs::PoseStamped pelvis_pose_base_walking_new_;
   geometry_msgs::PoseStamped pelvis_pose_offset_new_;
 
-  double transform_tolerance_;
   double err_tol_;
 
   bool is_moving_walking_;

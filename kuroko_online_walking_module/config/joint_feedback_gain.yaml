@@ -1,35 +1,35 @@
-r_hip_yaw_p_gain: 0.0
-r_hip_yaw_d_gain: 0.0
+ankle_r_yaw_p_gain: 0.0
+ankle_r_yaw_d_gain: 0.0
 
-r_hip_roll_p_gain: 0.0
-r_hip_roll_d_gain: 0.0
+hip_r_roll_p_gain: 0.0
+hip_r_roll_d_gain: 0.0
 
-r_hip_pitch_p_gain: 0.0
-r_hip_pitch_d_gain: 0.0
+hip_r_pitch_p_gain: 0.0
+hip_r_pitch_d_gain: 0.0
 
-r_knee_p_gain: 0.0
-r_knee_d_gain: 0.0
+thigh_r_front_active_p_gain: 0.0
+thigh_r_front_active_d_gain: 0.0
 
-r_ank_pitch_p_gain: 0.0
-r_ank_pitch_d_gain: 0.0
+shin_r_active_p_gain: 0.0
+shin_r_active_d_gain: 0.0
 
-r_ank_roll_p_gain: 0.0
-r_ank_roll_d_gain: 0.0
+ankle_r_roll_p_gain: 0.0
+ankle_r_roll_d_gain: 0.0
 
-l_hip_yaw_p_gain: 0.0
-l_hip_yaw_d_gain: 0.0
+ankle_l_yaw_p_gain: 0.0
+ankle_l_yaw_d_gain: 0.0
 
-l_hip_roll_p_gain: 0.0
-l_hip_roll_d_gain: 0.0
+hip_l_roll_p_gain: 0.0
+hip_l_roll_d_gain: 0.0
 
-l_hip_pitch_p_gain: 0.0
-l_hip_pitch_d_gain: 0.0
+hip_l_pitch_p_gain: 0.0
+hip_l_pitch_d_gain: 0.0
 
-l_knee_p_gain: 0.0
-l_knee_d_gain: 0.0
+thigh_l_front_active_p_gain: 0.0
+thigh_l_front_active_d_gain: 0.0
 
-l_ank_pitch_p_gain: 0.0
-l_ank_pitch_d_gain: 0.0
+shin_l_active_p_gain: 0.0
+shin_l_active_d_gain: 0.0
 
-l_ank_roll_p_gain: 0.0
-l_ank_roll_d_gain: 0.0
+ankle_l_roll_p_gain: 0.0
+ankle_l_roll_d_gain: 0.0

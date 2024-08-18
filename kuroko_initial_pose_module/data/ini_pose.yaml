@@ -8,47 +8,43 @@ via_time: [4.0] # via-point time
 # via-point pose [deg]
 
 via_pose:
-  1: [0.0] # r_sho_pitch
-  2: [0.0] # l_sho_pitch
-  3: [0.0] # r_sho_roll
-  4: [0.0] # l_sho_roll
+  1: [0.0] # shoulder_r_pitch
+  2: [0.0] # shoulder_l_pitch
+  3: [0.0] # shoulder_r_roll
+  4: [0.0] # shoulder_l_roll
   5: [0.0] # r_el
   6: [0.0] # l_el
-  7: [0.0] # r_hip_yaw
-  8: [0.0] # l_hip_yaw
-  9: [0.0] # r_hip_roll
-  10: [0.0] # l_hip_roll
-  11: [0.0] # r_hip_pitch
-  12: [0.0] # l_hip_pitch
-  13: [0.0] # r_knee
-  14: [0.0] # l_knee
-  15: [0.0] # r_ank_pitch
-  16: [0.0] # l_ank_pitch
-  17: [0.0] # r_ank_roll
-  18: [0.0] # l_ank_roll
-  19: [0.0] # head_pan
-  20: [0.0] # head_tilt
+  7: [0.0] # ankle_r_yaw
+  8: [0.0] # ankle_l_yaw
+  9: [0.0] # hip_r_roll
+  10: [0.0] # hip_l_roll
+  11: [0.0] # hip_r_pitch
+  12: [0.0] # hip_l_pitch
+  13: [0.0] # thigh_r_front_active
+  14: [0.0] # thigh_l_front_active
+  15: [0.0] # shin_r_active
+  16: [0.0] # shin_l_active
+  17: [0.0] # ankle_r_roll
+  18: [0.0] # ankle_l_roll
 
 # target pose [deg]
 
 tar_pose:
-  1: 0 # r_sho_pitch
-  2: 0 # l_sho_pitch
-  3: 60 # r_sho_roll
-  4: -60 # l_sho_roll
+  1: 0 # shoulder_r_pitch
+  2: 0 # shoulder_l_pitch
+  3: 60 # shoulder_r_roll
+  4: -60 # shoulder_l_roll
   5: 0 # r_el
   6: 0 # l_el
-  7: 0 # r_hip_yaw
-  8: 0 # l_hip_yaw
-  9: 0 # r_hip_roll
-  10: 0 # l_hip_roll
-  11: 60 # r_hip_pitch
-  12: -60 # l_hip_pitch
-  13: -146 # r_knee
-  14: 146 # l_knee
-  15: -60 # r_ank_pitch
-  16: 60 # l_ank_pitch
-  17: 0 # r_ank_roll
-  18: 0 # l_ank_roll
-  19: 0 # head_pan
-  20: -10 # head_tilt
+  7: 0 # ankle_r_yaw
+  8: 0 # ankle_l_yaw
+  9: 0 # hip_r_roll
+  10: 0 # hip_l_roll
+  11: 60 # hip_r_pitch
+  12: -60 # hip_l_pitch
+  13: -146 # thigh_r_front_active
+  14: 146 # thigh_l_front_active
+  15: -60 # shin_r_active
+  16: 60 # shin_l_active
+  17: 0 # ankle_r_roll
+  18: 0 # ankle_l_roll

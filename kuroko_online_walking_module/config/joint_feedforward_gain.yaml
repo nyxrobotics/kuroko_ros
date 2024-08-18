@@ -1,15 +1,15 @@
 # 1.0 -> 1 [deg]
 
-r_hip_yaw_gain: 0.0
-r_hip_roll_gain: 0.0
-r_hip_pitch_gain: 0.0
-r_knee_gain: 0.0
-r_ank_pitch_gain: 0.0
-r_ank_roll_gain: 0.0
+ankle_r_yaw_gain: 0.0
+hip_r_roll_gain: 0.0
+hip_r_pitch_gain: 0.0
+thigh_r_front_active_gain: 0.0
+shin_r_active_gain: 0.0
+ankle_r_roll_gain: 0.0
 
-l_hip_yaw_gain: 0.0
-l_hip_roll_gain: 0.0
-l_hip_pitch_gain: 0.0
-l_knee_gain: 0.0
-l_ank_pitch_gain: 0.0
-l_ank_roll_gain: 0.0
+ankle_l_yaw_gain: 0.0
+hip_l_roll_gain: 0.0
+hip_l_pitch_gain: 0.0
+thigh_l_front_active_gain: 0.0
+shin_l_active_gain: 0.0
+ankle_l_roll_gain: 0.0

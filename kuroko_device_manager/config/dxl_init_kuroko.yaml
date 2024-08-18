@@ -1,4 +1,4 @@
-head_pan:
+shin_l_active:
   max_position_limit: 4095
   min_position_limit: 0
   operating_mode: 3
@@ -6,7 +6,7 @@ head_pan:
   position_i_gain: 0
   position_p_gain: 800
   return_delay_time: 1
-head_tilt:
+ankle_l_roll:
   max_position_limit: 4095
   min_position_limit: 0
   operating_mode: 3
@@ -14,23 +14,7 @@ head_tilt:
   position_i_gain: 0
   position_p_gain: 800
   return_delay_time: 1
-l_ank_pitch:
-  max_position_limit: 4095
-  min_position_limit: 0
-  operating_mode: 3
-  position_d_gain: 0
-  position_i_gain: 0
-  position_p_gain: 800
-  return_delay_time: 1
-l_ank_roll:
-  max_position_limit: 4095
-  min_position_limit: 0
-  operating_mode: 3
-  position_d_gain: 0
-  position_i_gain: 0
-  position_p_gain: 800
-  return_delay_time: 1
-l_el_pitch:
+elbow_l_front:
   max_position_limit: 4095
   min_position_limit: 0
   operating_mode: 3
@@ -39,7 +23,7 @@ l_el_pitch:
   position_p_gain: 800
   return_delay_time: 1
   shutdown: 56
-l_hip_pitch:
+hip_l_pitch:
   max_position_limit: 4095
   min_position_limit: 0
   operating_mode: 3
@@ -47,7 +31,7 @@ l_hip_pitch:
   position_i_gain: 0
   position_p_gain: 800
   return_delay_time: 1
-l_hip_roll:
+hip_l_roll:
   max_position_limit: 4095
   min_position_limit: 0
   operating_mode: 3
@@ -55,7 +39,7 @@ l_hip_roll:
   position_i_gain: 0
   position_p_gain: 800
   return_delay_time: 1
-l_hip_yaw:
+ankle_l_yaw:
   max_position_limit: 4095
   min_position_limit: 0
   operating_mode: 3
@@ -63,7 +47,7 @@ l_hip_yaw:
   position_i_gain: 0
   position_p_gain: 800
   return_delay_time: 1
-l_knee:
+thigh_l_front_active:
   max_position_limit: 4095
   min_position_limit: 0
   operating_mode: 3
@@ -71,16 +55,7 @@ l_knee:
   position_i_gain: 0
   position_p_gain: 800
   return_delay_time: 1
-l_sho_pitch:
-  max_position_limit: 4095
-  min_position_limit: 0
-  operating_mode: 3
-  position_d_gain: 0
-  position_i_gain: 0
-  position_p_gain: 800
-  return_delay_time: 1
-  shutdown: 56
-l_sho_roll:
+shoulder_l_pitch:
   max_position_limit: 4095
   min_position_limit: 0
   operating_mode: 3
@@ -89,23 +64,7 @@ l_sho_roll:
   position_p_gain: 800
   return_delay_time: 1
   shutdown: 56
-r_ank_pitch:
-  max_position_limit: 4095
-  min_position_limit: 0
-  operating_mode: 3
-  position_d_gain: 0
-  position_i_gain: 0
-  position_p_gain: 800
-  return_delay_time: 1
-r_ank_roll:
-  max_position_limit: 4095
-  min_position_limit: 0
-  operating_mode: 3
-  position_d_gain: 0
-  position_i_gain: 0
-  position_p_gain: 800
-  return_delay_time: 1
-r_el_pitch:
+shoulder_l_roll:
   max_position_limit: 4095
   min_position_limit: 0
   operating_mode: 3
@@ -114,7 +73,7 @@ r_el_pitch:
   position_p_gain: 800
   return_delay_time: 1
   shutdown: 56
-r_hip_pitch:
+shin_r_active:
   max_position_limit: 4095
   min_position_limit: 0
   operating_mode: 3
@@ -122,7 +81,7 @@ r_hip_pitch:
   position_i_gain: 0
   position_p_gain: 800
   return_delay_time: 1
-r_hip_roll:
+ankle_r_roll:
   max_position_limit: 4095
   min_position_limit: 0
   operating_mode: 3
@@ -130,23 +89,7 @@ r_hip_roll:
   position_i_gain: 0
   position_p_gain: 800
   return_delay_time: 1
-r_hip_yaw:
-  max_position_limit: 4095
-  min_position_limit: 0
-  operating_mode: 3
-  position_d_gain: 0
-  position_i_gain: 0
-  position_p_gain: 800
-  return_delay_time: 1
-r_knee:
-  max_position_limit: 4095
-  min_position_limit: 0
-  operating_mode: 3
-  position_d_gain: 0
-  position_i_gain: 0
-  position_p_gain: 800
-  return_delay_time: 1
-r_sho_pitch:
+elbow_r_front:
   max_position_limit: 4095
   min_position_limit: 0
   operating_mode: 3
@@ -155,7 +98,48 @@ r_sho_pitch:
   position_p_gain: 800
   return_delay_time: 1
   shutdown: 56
-r_sho_roll:
+hip_r_pitch:
+  max_position_limit: 4095
+  min_position_limit: 0
+  operating_mode: 3
+  position_d_gain: 0
+  position_i_gain: 0
+  position_p_gain: 800
+  return_delay_time: 1
+hip_r_roll:
+  max_position_limit: 4095
+  min_position_limit: 0
+  operating_mode: 3
+  position_d_gain: 0
+  position_i_gain: 0
+  position_p_gain: 800
+  return_delay_time: 1
+ankle_r_yaw:
+  max_position_limit: 4095
+  min_position_limit: 0
+  operating_mode: 3
+  position_d_gain: 0
+  position_i_gain: 0
+  position_p_gain: 800
+  return_delay_time: 1
+thigh_r_front_active:
+  max_position_limit: 4095
+  min_position_limit: 0
+  operating_mode: 3
+  position_d_gain: 0
+  position_i_gain: 0
+  position_p_gain: 800
+  return_delay_time: 1
+shoulder_r_pitch:
+  max_position_limit: 4095
+  min_position_limit: 0
+  operating_mode: 3
+  position_d_gain: 0
+  position_i_gain: 0
+  position_p_gain: 800
+  return_delay_time: 1
+  shutdown: 56
+shoulder_r_roll:
   max_position_limit: 4095
   min_position_limit: 0
   operating_mode: 3

@@ -152,7 +152,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     /*----- right arm -----*/
 
     // right arm shoulder pitch
-    kuroko_link_data_[1]->name_ = "r_sho_pitch";
+    kuroko_link_data_[1]->name_ = "shoulder_r_pitch";
     kuroko_link_data_[1]->parent_ = 29;
     kuroko_link_data_[1]->sibling_ = 2;
     kuroko_link_data_[1]->child_ = 3;
@@ -165,7 +165,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     kuroko_link_data_[1]->inertia_ = robotis_framework::getInertiaXYZ(0.00018, 0.0, 0.0, 0.00058, -0.00004, 0.00057);
 
     // right arm shoulder roll
-    kuroko_link_data_[3]->name_ = "r_sho_roll";
+    kuroko_link_data_[3]->name_ = "shoulder_r_roll";
     kuroko_link_data_[3]->parent_ = 1;
     kuroko_link_data_[3]->sibling_ = -1;
     kuroko_link_data_[3]->child_ = 5;
@@ -179,7 +179,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
         robotis_framework::getInertiaXYZ(0.00043, 0.00000, 0.00000, 0.00112, 0.00000, 0.00113);
 
     // right arm elbow
-    kuroko_link_data_[5]->name_ = "r_el_pitch";
+    kuroko_link_data_[5]->name_ = "elbow_r_front";
     kuroko_link_data_[5]->parent_ = 3;
     kuroko_link_data_[5]->sibling_ = -1;
     kuroko_link_data_[5]->child_ = 21;
@@ -193,7 +193,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
         robotis_framework::getInertiaXYZ(0.00277, 0.00002, -0.00001, 0.00090, 0.00004, 0.00255);
 
     // right arm end effector
-    kuroko_link_data_[21]->name_ = "r_arm_end";
+    kuroko_link_data_[21]->name_ = "elbow_r_rear";
     kuroko_link_data_[21]->parent_ = 5;
     kuroko_link_data_[21]->sibling_ = -1;
     kuroko_link_data_[21]->child_ = -1;
@@ -208,7 +208,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     /*----- left arm -----*/
 
     // left arm shoulder pitch
-    kuroko_link_data_[2]->name_ = "l_sho_pitch";
+    kuroko_link_data_[2]->name_ = "shoulder_l_pitch";
     kuroko_link_data_[2]->parent_ = 29;
     kuroko_link_data_[2]->sibling_ = -1;
     kuroko_link_data_[2]->child_ = 4;
@@ -222,7 +222,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
         robotis_framework::getInertiaXYZ(0.00018, 0.00000, 0.00000, 0.00058, 0.00004, 0.00057);
 
     // left arm shoulder roll
-    kuroko_link_data_[4]->name_ = "l_sho_roll";
+    kuroko_link_data_[4]->name_ = "shoulder_l_roll";
     kuroko_link_data_[4]->parent_ = 2;
     kuroko_link_data_[4]->sibling_ = -1;
     kuroko_link_data_[4]->child_ = 6;
@@ -236,7 +236,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
         robotis_framework::getInertiaXYZ(0.00043, 0.00000, 0.00000, 0.00112, 0.00000, 0.00113);
 
     // left arm elbow
-    kuroko_link_data_[6]->name_ = "l_el_pitch";
+    kuroko_link_data_[6]->name_ = "elbow_l_front";
     kuroko_link_data_[6]->parent_ = 4;
     kuroko_link_data_[6]->sibling_ = -1;
     kuroko_link_data_[6]->child_ = 22;
@@ -250,7 +250,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
         robotis_framework::getInertiaXYZ(0.00277, -0.00002, -0.00001, 0.00090, -0.00004, 0.00255);
 
     // left arm end effector
-    kuroko_link_data_[22]->name_ = "l_arm_end";
+    kuroko_link_data_[22]->name_ = "elbow_l_rear";
     kuroko_link_data_[22]->parent_ = 6;
     kuroko_link_data_[22]->sibling_ = -1;
     kuroko_link_data_[22]->child_ = -1;
@@ -265,7 +265,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     /* ----- right leg -----*/
 
     // right leg hip yaw
-    kuroko_link_data_[7]->name_ = "r_hip_yaw";
+    kuroko_link_data_[7]->name_ = "ankle_r_yaw";
     kuroko_link_data_[7]->parent_ = 29;
     kuroko_link_data_[7]->sibling_ = 8;
     kuroko_link_data_[7]->child_ = 9;
@@ -279,7 +279,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
         robotis_framework::getInertiaXYZ(0.00024, 0.00000, 0.00000, 0.00101, 0.00000, 0.00092);
 
     // right leg hip roll
-    kuroko_link_data_[9]->name_ = "r_hip_roll";
+    kuroko_link_data_[9]->name_ = "hip_r_roll";
     kuroko_link_data_[9]->parent_ = 7;
     kuroko_link_data_[9]->sibling_ = -1;
     kuroko_link_data_[9]->child_ = 11;
@@ -293,7 +293,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
         robotis_framework::getInertiaXYZ(0.00056, 0.00000, 0.00000, 0.00168, 0.00000, 0.00171);
 
     // right leg hip pitch
-    kuroko_link_data_[11]->name_ = "r_hip_pitch";
+    kuroko_link_data_[11]->name_ = "hip_r_pitch";
     kuroko_link_data_[11]->parent_ = 9;
     kuroko_link_data_[11]->sibling_ = -1;
     kuroko_link_data_[11]->child_ = 13;
@@ -307,7 +307,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
         robotis_framework::getInertiaXYZ(0.04329, -0.00027, 0.00286, 0.04042, 0.00203, 0.00560);
 
     // right leg knee
-    kuroko_link_data_[13]->name_ = "r_knee";
+    kuroko_link_data_[13]->name_ = "thigh_r_front_active";
     kuroko_link_data_[13]->parent_ = 11;
     kuroko_link_data_[13]->sibling_ = -1;
     kuroko_link_data_[13]->child_ = 15;
@@ -321,7 +321,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
         robotis_framework::getInertiaXYZ(0.01971, -0.00031, -0.00294, 0.01687, -0.00140, 0.00574);
 
     // right leg ankle pitch
-    kuroko_link_data_[15]->name_ = "r_ank_pitch";
+    kuroko_link_data_[15]->name_ = "shin_r_active";
     kuroko_link_data_[15]->parent_ = 13;
     kuroko_link_data_[15]->sibling_ = -1;
     kuroko_link_data_[15]->child_ = 17;
@@ -335,7 +335,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
         robotis_framework::getInertiaXYZ(0.00056, 0.00000, 0.00000, 0.00168, 0.00000, 0.00171);
 
     // right leg ankle roll
-    kuroko_link_data_[17]->name_ = "r_ank_roll";
+    kuroko_link_data_[17]->name_ = "ankle_r_roll";
     kuroko_link_data_[17]->parent_ = 15;
     kuroko_link_data_[17]->sibling_ = -1;
     kuroko_link_data_[17]->child_ = 31;
@@ -364,7 +364,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     /* ----- left leg -----*/
 
     // left leg hip yaw
-    kuroko_link_data_[8]->name_ = "l_hip_yaw";
+    kuroko_link_data_[8]->name_ = "ankle_l_yaw";
     kuroko_link_data_[8]->parent_ = 29;
     kuroko_link_data_[8]->sibling_ = -1;
     kuroko_link_data_[8]->child_ = 10;
@@ -378,7 +378,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
         robotis_framework::getInertiaXYZ(0.00024, 0.00000, 0.00000, 0.00101, 0.00000, 0.00092);
 
     // left leg hip roll
-    kuroko_link_data_[10]->name_ = "l_hip_roll";
+    kuroko_link_data_[10]->name_ = "hip_l_roll";
     kuroko_link_data_[10]->parent_ = 8;
     kuroko_link_data_[10]->sibling_ = -1;
     kuroko_link_data_[10]->child_ = 12;
@@ -392,7 +392,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
         robotis_framework::getInertiaXYZ(0.00056, 0.00000, 0.00000, 0.00168, 0.00000, 0.00171);
 
     // left leg hip pitch
-    kuroko_link_data_[12]->name_ = "l_hip_pitch";
+    kuroko_link_data_[12]->name_ = "hip_l_pitch";
     kuroko_link_data_[12]->parent_ = 10;
     kuroko_link_data_[12]->sibling_ = -1;
     kuroko_link_data_[12]->child_ = 14;
@@ -406,7 +406,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
         robotis_framework::getInertiaXYZ(0.04328, 0.00028, 0.00288, 0.04042, -0.00202, 0.00560);
 
     // left leg knee pitch
-    kuroko_link_data_[14]->name_ = "l_knee";
+    kuroko_link_data_[14]->name_ = "thigh_l_front_active";
     kuroko_link_data_[14]->parent_ = 12;
     kuroko_link_data_[14]->sibling_ = -1;
     kuroko_link_data_[14]->child_ = 16;
@@ -420,7 +420,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
         robotis_framework::getInertiaXYZ(0.01971, 0.00031, -0.00294, 0.01687, 0.00140, 0.00574);
 
     // left leg ankle pitch
-    kuroko_link_data_[16]->name_ = "l_ank_pitch";
+    kuroko_link_data_[16]->name_ = "shin_l_active";
     kuroko_link_data_[16]->parent_ = 14;
     kuroko_link_data_[16]->sibling_ = -1;
     kuroko_link_data_[16]->child_ = 18;
@@ -434,7 +434,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
         robotis_framework::getInertiaXYZ(0.00056, 0.00000, 0.00000, 0.00168, 0.00000, 0.00171);
 
     // left leg ankle roll
-    kuroko_link_data_[18]->name_ = "l_ank_roll";
+    kuroko_link_data_[18]->name_ = "ankle_l_roll";
     kuroko_link_data_[18]->parent_ = 16;
     kuroko_link_data_[18]->sibling_ = -1;
     kuroko_link_data_[18]->child_ = 30;

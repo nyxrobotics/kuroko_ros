@@ -17,40 +17,40 @@ WalkingModule::WalkingModule() : control_cycle_msec_(8), debug_(false)
   kuroko_kd_ = new KurokoKinematics(WHOLE_BODY);
 
   // result
-  result_["r_hip_yaw"] = new robotis_framework::DynamixelState();
-  result_["r_hip_roll"] = new robotis_framework::DynamixelState();
-  result_["r_hip_pitch"] = new robotis_framework::DynamixelState();
-  result_["r_knee"] = new robotis_framework::DynamixelState();
-  result_["r_ank_pitch"] = new robotis_framework::DynamixelState();
-  result_["r_ank_roll"] = new robotis_framework::DynamixelState();
+  result_["ankle_r_yaw"] = new robotis_framework::DynamixelState();
+  result_["hip_r_roll"] = new robotis_framework::DynamixelState();
+  result_["hip_r_pitch"] = new robotis_framework::DynamixelState();
+  result_["thigh_r_front_active"] = new robotis_framework::DynamixelState();
+  result_["shin_r_active"] = new robotis_framework::DynamixelState();
+  result_["ankle_r_roll"] = new robotis_framework::DynamixelState();
 
-  result_["l_hip_yaw"] = new robotis_framework::DynamixelState();
-  result_["l_hip_roll"] = new robotis_framework::DynamixelState();
-  result_["l_hip_pitch"] = new robotis_framework::DynamixelState();
-  result_["l_knee"] = new robotis_framework::DynamixelState();
-  result_["l_ank_pitch"] = new robotis_framework::DynamixelState();
-  result_["l_ank_roll"] = new robotis_framework::DynamixelState();
+  result_["ankle_l_yaw"] = new robotis_framework::DynamixelState();
+  result_["hip_l_roll"] = new robotis_framework::DynamixelState();
+  result_["hip_l_pitch"] = new robotis_framework::DynamixelState();
+  result_["thigh_l_front_active"] = new robotis_framework::DynamixelState();
+  result_["shin_l_active"] = new robotis_framework::DynamixelState();
+  result_["ankle_l_roll"] = new robotis_framework::DynamixelState();
 
-  result_["r_sho_pitch"] = new robotis_framework::DynamixelState();
-  result_["l_sho_pitch"] = new robotis_framework::DynamixelState();
+  result_["shoulder_r_pitch"] = new robotis_framework::DynamixelState();
+  result_["shoulder_l_pitch"] = new robotis_framework::DynamixelState();
 
   // joint table
-  joint_table_["r_hip_yaw"] = 0;
-  joint_table_["r_hip_roll"] = 1;
-  joint_table_["r_hip_pitch"] = 2;
-  joint_table_["r_knee"] = 3;
-  joint_table_["r_ank_pitch"] = 4;
-  joint_table_["r_ank_roll"] = 5;
+  joint_table_["ankle_r_yaw"] = 0;
+  joint_table_["hip_r_roll"] = 1;
+  joint_table_["hip_r_pitch"] = 2;
+  joint_table_["thigh_r_front_active"] = 3;
+  joint_table_["shin_r_active"] = 4;
+  joint_table_["ankle_r_roll"] = 5;
 
-  joint_table_["l_hip_yaw"] = 6;
-  joint_table_["l_hip_roll"] = 7;
-  joint_table_["l_hip_pitch"] = 8;
-  joint_table_["l_knee"] = 9;
-  joint_table_["l_ank_pitch"] = 10;
-  joint_table_["l_ank_roll"] = 11;
+  joint_table_["ankle_l_yaw"] = 6;
+  joint_table_["hip_l_roll"] = 7;
+  joint_table_["hip_l_pitch"] = 8;
+  joint_table_["thigh_l_front_active"] = 9;
+  joint_table_["shin_l_active"] = 10;
+  joint_table_["ankle_l_roll"] = 11;
 
-  joint_table_["r_sho_pitch"] = 12;
-  joint_table_["l_sho_pitch"] = 13;
+  joint_table_["shoulder_r_pitch"] = 12;
+  joint_table_["shoulder_l_pitch"] = 13;
 
   target_position_ = Eigen::MatrixXd::Zero(1, result_.size());
   goal_position_ = Eigen::MatrixXd::Zero(1, result_.size());
@@ -829,14 +829,14 @@ bool WalkingModule::computeLegAngle(double* leg_angle)
     // offset : rad
     double offset = 0;
 
-    if (i == joint_table_["r_hip_roll"])  // R_HIP_ROLL
-      offset += kuroko_kd_->getJointDirection("r_hip_roll") * pelvis_offset_r;
-    else if (i == joint_table_["l_hip_roll"])  // L_HIP_ROLL
-      offset += kuroko_kd_->getJointDirection("l_hip_roll") * pelvis_offset_l;
-    else if (i == joint_table_["r_hip_pitch"])
-      offset -= kuroko_kd_->getJointDirection("r_hip_pitch") * hit_pitch_offset_;
-    else if (i == joint_table_["l_hip_pitch"])  // R_HIP_PITCH or L_HIP_PITCH
-      offset -= kuroko_kd_->getJointDirection("l_hip_pitch") * hit_pitch_offset_;
+    if (i == joint_table_["hip_r_roll"])  // R_HIP_ROLL
+      offset += kuroko_kd_->getJointDirection("hip_r_roll") * pelvis_offset_r;
+    else if (i == joint_table_["hip_l_roll"])  // L_HIP_ROLL
+      offset += kuroko_kd_->getJointDirection("hip_l_roll") * pelvis_offset_l;
+    else if (i == joint_table_["hip_r_pitch"])
+      offset -= kuroko_kd_->getJointDirection("hip_r_pitch") * hit_pitch_offset_;
+    else if (i == joint_table_["hip_l_pitch"])  // R_HIP_PITCH or L_HIP_PITCH
+      offset -= kuroko_kd_->getJointDirection("hip_l_pitch") * hit_pitch_offset_;
 
     leg_angle[i] += offset;
   }
@@ -855,9 +855,9 @@ void WalkingModule::computeArmAngle(double* arm_angle)
   else
   {
     arm_angle[0] = wSin(time_, period_time_, M_PI * 1.5, -x_move_amplitude_ * arm_swing_gain_ * 1000, 0) *
-                   kuroko_kd_->getJointDirection("r_sho_pitch") * DEGREE2RADIAN;
+                   kuroko_kd_->getJointDirection("shoulder_r_pitch") * DEGREE2RADIAN;
     arm_angle[1] = wSin(time_, period_time_, M_PI * 1.5, x_move_amplitude_ * arm_swing_gain_ * 1000, 0) *
-                   kuroko_kd_->getJointDirection("l_sho_pitch") * DEGREE2RADIAN;
+                   kuroko_kd_->getJointDirection("shoulder_l_pitch") * DEGREE2RADIAN;
   }
 }
 
@@ -869,25 +869,27 @@ void WalkingModule::sensoryFeedback(const double& rlGyroErr, const double& fbGyr
 
   double internal_gain = 0.05;
 
-  balance_angle[joint_table_["r_hip_roll"]] = kuroko_kd_->getJointDirection("r_hip_roll") * internal_gain * rlGyroErr *
+  balance_angle[joint_table_["hip_r_roll"]] = kuroko_kd_->getJointDirection("hip_r_roll") * internal_gain * rlGyroErr *
                                               walking_param_.balance_hip_roll_gain;  // R_HIP_ROLL
-  balance_angle[joint_table_["l_hip_roll"]] = kuroko_kd_->getJointDirection("l_hip_roll") * internal_gain * rlGyroErr *
+  balance_angle[joint_table_["hip_l_roll"]] = kuroko_kd_->getJointDirection("hip_l_roll") * internal_gain * rlGyroErr *
                                               walking_param_.balance_hip_roll_gain;  // L_HIP_ROLL
 
-  balance_angle[joint_table_["r_knee"]] = -kuroko_kd_->getJointDirection("r_knee") * internal_gain * fbGyroErr *
-                                          walking_param_.balance_knee_gain;  // R_KNEE
-  balance_angle[joint_table_["l_knee"]] = -kuroko_kd_->getJointDirection("l_knee") * internal_gain * fbGyroErr *
-                                          walking_param_.balance_knee_gain;  // L_KNEE
+  balance_angle[joint_table_["thigh_r_front_active"]] = -kuroko_kd_->getJointDirection("thigh_r_front_active") *
+                                                        internal_gain * fbGyroErr *
+                                                        walking_param_.balance_knee_gain;  // R_KNEE
+  balance_angle[joint_table_["thigh_l_front_active"]] = -kuroko_kd_->getJointDirection("thigh_l_front_active") *
+                                                        internal_gain * fbGyroErr *
+                                                        walking_param_.balance_knee_gain;  // L_KNEE
 
-  balance_angle[joint_table_["r_ank_pitch"]] = -kuroko_kd_->getJointDirection("r_ank_pitch") * internal_gain *
-                                               fbGyroErr * walking_param_.balance_ankle_pitch_gain;  // R_ANKLE_PITCH
-  balance_angle[joint_table_["l_ank_pitch"]] = -kuroko_kd_->getJointDirection("l_ank_pitch") * internal_gain *
-                                               fbGyroErr * walking_param_.balance_ankle_pitch_gain;  // L_ANKLE_PITCH
+  balance_angle[joint_table_["shin_r_active"]] = -kuroko_kd_->getJointDirection("shin_r_active") * internal_gain *
+                                                 fbGyroErr * walking_param_.balance_ankle_pitch_gain;  // R_ANKLE_PITCH
+  balance_angle[joint_table_["shin_l_active"]] = -kuroko_kd_->getJointDirection("shin_l_active") * internal_gain *
+                                                 fbGyroErr * walking_param_.balance_ankle_pitch_gain;  // L_ANKLE_PITCH
 
-  balance_angle[joint_table_["r_ank_roll"]] = -kuroko_kd_->getJointDirection("r_ank_roll") * internal_gain * rlGyroErr *
-                                              walking_param_.balance_ankle_roll_gain;  // R_ANKLE_ROLL
-  balance_angle[joint_table_["l_ank_roll"]] = -kuroko_kd_->getJointDirection("l_ank_roll") * internal_gain * rlGyroErr *
-                                              walking_param_.balance_ankle_roll_gain;  // L_ANKLE_ROLL
+  balance_angle[joint_table_["ankle_r_roll"]] = -kuroko_kd_->getJointDirection("ankle_r_roll") * internal_gain *
+                                                rlGyroErr * walking_param_.balance_ankle_roll_gain;  // R_ANKLE_ROLL
+  balance_angle[joint_table_["ankle_l_roll"]] = -kuroko_kd_->getJointDirection("ankle_l_roll") * internal_gain *
+                                                rlGyroErr * walking_param_.balance_ankle_roll_gain;  // L_ANKLE_ROLL
 }
 
 void WalkingModule::loadWalkingParam(const std::string& path)

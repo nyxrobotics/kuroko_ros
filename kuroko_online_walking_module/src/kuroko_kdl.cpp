@@ -53,7 +53,7 @@ void KurokoKinematics::initialize(const Eigen::MatrixXd& pelvis_position, const 
       //                                     -0.035, -0.0907)),
       KDL::RigidBodyInertia(0.72235, KDL::Vector(0.0, 0.0, 0.0), KDL::RotationalInertia(0.0, 0.0, 0.0, 0.0, 0.0, 0.0))));
   rleg_chain_.addSegment(KDL::Segment(
-      "r_hip_yaw", KDL::Joint("minus_RotZ", KDL::Vector(0, 0, 0), KDL::Vector(0, 0, -1), KDL::Joint::RotAxis),
+      "ankle_r_yaw", KDL::Joint("minus_RotZ", KDL::Vector(0, 0, 0), KDL::Vector(0, 0, -1), KDL::Joint::RotAxis),
       KDL::Frame(KDL::Vector(0.000, 0.000, -0.0285)),
       KDL::RigidBodyInertia(0.01181, KDL::Vector(0.0, 0.0, 0.0), KDL::RotationalInertia(0.0, 0.0, 0.0, 0.0, 0.0, 0.0))));
   rleg_chain_.addSegment(KDL::Segment(

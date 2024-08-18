@@ -63,67 +63,81 @@ Visualization Manager:
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
-        ankle_l_pitch_passive:
+        ankle_l_pitch_passive_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        ankle_l_roll:
+        ankle_l_roll_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        ankle_l_yaw:
+        ankle_l_yaw_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        ankle_r_pitch_passive:
+        ankle_r_pitch_passive_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        ankle_r_roll:
+        ankle_r_roll_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        ankle_r_yaw:
+        ankle_r_yaw_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        shoulder_l_roll:
+        body_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        chest_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        shoulder_r_roll:
+        elbow_l_front_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        chest:
+        elbow_l_rear_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        hip_l_pitch:
+        elbow_r_front_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        hip_l_roll:
+        elbow_r_rear_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        hip_r_pitch:
+        hip_l_pitch_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        hip_r_roll:
+        hip_l_roll_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        hip_r_pitch_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        hip_r_roll_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -133,140 +147,105 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        knee_l_passive:
+        knee_l_passive_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        knee_r_passive:
+        knee_r_passive_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        shin_l_rear_passive:
+        shin_l_active_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        rgbd_body:
+        shin_l_front_passive_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        rgbd_depth_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        rgbd_depth_optical_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        rgbd_rgb_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        rgbd_rgb_optical_frame:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        root_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        elbow_l_front:
+        shin_l_rear_passive_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        elbow_l_rear:
+        shin_r_active_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        elbow_r_front:
+        shin_r_front_passive_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        elbow_r_rear:
+        shin_r_rear_passive_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        shin_l_active:
+        shoulder_l_pitch_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        shin_l_front_passive:
+        shoulder_l_roll_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        shin_r_active:
+        shoulder_r_pitch_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        shin_r_front_passive:
+        shoulder_r_roll_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        shin_r_rear_passive:
+        thigh_l_front_active_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        shoulder_l_pitch:
+        thigh_l_middle_passive_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        shoulder_r_pitch:
+        thigh_l_rear_passive_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        thigh_l_front_active:
+        thigh_l_rear_passive_mimic_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        thigh_r_front_active_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        thigh_l_middle_passive:
+        thigh_r_middle_passive_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        thigh_l_rear_passive:
+        thigh_r_rear_passive_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        thigh_l_rear_passive_mimic:
+        thigh_r_rear_passive_mimic_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-        thigh_r_front_active:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        thigh_r_middle_passive:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        thigh_r_rear_passive:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        thigh_r_rear_passive_mimic:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        waist:
+        waist_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -284,91 +263,81 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: true
-        ankle_l_pitch_passive:
+        ankle_l_pitch_passive_link:
           Value: true
-        ankle_l_roll:
+        ankle_l_roll_link:
           Value: true
-        ankle_l_yaw:
+        ankle_l_yaw_link:
           Value: true
-        ankle_r_pitch_passive:
+        ankle_r_pitch_passive_link:
           Value: true
-        ankle_r_roll:
+        ankle_r_roll_link:
           Value: true
-        ankle_r_yaw:
+        ankle_r_yaw_link:
           Value: true
-        shoulder_l_roll:
+        body_link:
           Value: true
-        shoulder_r_roll:
+        chest_link:
           Value: true
-        chest:
+        elbow_l_front_link:
           Value: true
-        hip_l_pitch:
+        elbow_l_rear_link:
           Value: true
-        hip_l_roll:
+        elbow_r_front_link:
           Value: true
-        hip_r_pitch:
+        elbow_r_rear_link:
           Value: true
-        hip_r_roll:
+        hip_l_pitch_link:
+          Value: true
+        hip_l_roll_link:
+          Value: true
+        hip_r_pitch_link:
+          Value: true
+        hip_r_roll_link:
           Value: true
         imu_link:
           Value: true
-        knee_l_passive:
+        knee_l_passive_link:
           Value: true
-        knee_r_passive:
+        knee_r_passive_link:
           Value: true
-        shin_l_rear_passive:
+        shin_l_active_link:
           Value: true
-        rgbd_body:
+        shin_l_front_passive_link:
           Value: true
-        rgbd_depth_frame:
+        shin_l_rear_passive_link:
           Value: true
-        rgbd_depth_optical_frame:
+        shin_r_active_link:
           Value: true
-        rgbd_rgb_frame:
+        shin_r_front_passive_link:
           Value: true
-        rgbd_rgb_optical_frame:
+        shin_r_rear_passive_link:
           Value: true
-        root_link:
+        shoulder_l_pitch_link:
           Value: true
-        elbow_l_front:
+        shoulder_l_roll_link:
           Value: true
-        elbow_l_rear:
+        shoulder_r_pitch_link:
           Value: true
-        elbow_r_front:
+        shoulder_r_roll_link:
           Value: true
-        elbow_r_rear:
+        thigh_l_front_active_link:
           Value: true
-        shin_l_active:
+        thigh_l_middle_passive_link:
           Value: true
-        shin_l_front_passive:
+        thigh_l_rear_passive_link:
           Value: true
-        shin_r_active:
+        thigh_l_rear_passive_mimic_link:
           Value: true
-        shin_r_front_passive:
+        thigh_r_front_active_link:
           Value: true
-        shin_r_rear_passive:
+        thigh_r_middle_passive_link:
           Value: true
-        shoulder_l_pitch:
+        thigh_r_rear_passive_link:
           Value: true
-        shoulder_r_pitch:
+        thigh_r_rear_passive_mimic_link:
           Value: true
-        thigh_l_front_active:
-          Value: true
-        thigh_l_middle_passive:
-          Value: true
-        thigh_l_rear_passive:
-          Value: true
-        thigh_l_rear_passive_mimic:
-          Value: true
-        thigh_r_front_active:
-          Value: true
-        thigh_r_middle_passive:
-          Value: true
-        thigh_r_rear_passive:
-          Value: true
-        thigh_r_rear_passive_mimic:
-          Value: true
-        waist:
+        waist_link:
           Value: true
       Marker Alpha: 1
       Marker Scale: 0.10000000149011612
@@ -377,56 +346,64 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
-        root_link:
-          chest:
-            imu_link: {}
-            rgbd_body:
-              rgbd_depth_optical_frame:
-                rgbd_depth_frame: {}
-              rgbd_rgb_optical_frame:
-                rgbd_rgb_frame: {}
-            shoulder_l_pitch:
-              shoulder_l_roll:
-                elbow_l_front: {}
-                elbow_l_rear: {}
-            shoulder_r_pitch:
-              shoulder_r_roll:
-                elbow_r_front: {}
-                elbow_r_rear: {}
-            waist:
-              hip_l_roll:
-                hip_l_pitch:
-                  shin_l_active:
-                    thigh_l_rear_passive_mimic:
-                      thigh_l_rear_passive: {}
-                  thigh_l_front_active:
-                    knee_l_passive:
-                      shin_l_rear_passive: {}
-                      shin_l_front_passive:
-                        ankle_l_pitch_passive:
-                          ankle_l_roll:
-                            ankle_l_yaw: {}
-                  thigh_l_middle_passive: {}
-              hip_r_roll:
-                hip_r_pitch:
-                  shin_r_active:
-                    thigh_r_rear_passive_mimic:
-                      thigh_r_rear_passive: {}
-                  thigh_r_front_active:
-                    knee_r_passive:
-                      shin_r_front_passive:
-                        ankle_r_pitch_passive:
-                          ankle_r_roll:
-                            ankle_r_yaw: {}
-                      shin_r_rear_passive: {}
-                  thigh_r_middle_passive: {}
+        body_link:
+          waist_link:
+            chest_link:
+              imu_link:
+                {}
+              shoulder_l_pitch_link:
+                shoulder_l_roll_link:
+                  elbow_l_front_link:
+                    {}
+                  elbow_l_rear_link:
+                    {}
+              shoulder_r_pitch_link:
+                shoulder_r_roll_link:
+                  elbow_r_front_link:
+                    {}
+                  elbow_r_rear_link:
+                    {}
+            hip_l_roll_link:
+              hip_l_pitch_link:
+                shin_l_active_link:
+                  thigh_l_rear_passive_mimic_link:
+                    thigh_l_rear_passive_link:
+                      {}
+                thigh_l_front_active_link:
+                  knee_l_passive_link:
+                    shin_l_front_passive_link:
+                      ankle_l_pitch_passive_link:
+                        ankle_l_roll_link:
+                          ankle_l_yaw_link:
+                            {}
+                    shin_l_rear_passive_link:
+                      {}
+                thigh_l_middle_passive_link:
+                  {}
+            hip_r_roll_link:
+              hip_r_pitch_link:
+                shin_r_active_link:
+                  thigh_r_rear_passive_mimic_link:
+                    thigh_r_rear_passive_link:
+                      {}
+                thigh_r_front_active_link:
+                  knee_r_passive_link:
+                    shin_r_front_passive_link:
+                      ankle_r_pitch_passive_link:
+                        ankle_r_roll_link:
+                          ankle_r_yaw_link:
+                            {}
+                    shin_r_rear_passive_link:
+                      {}
+                thigh_r_middle_passive_link:
+                  {}
       Update Interval: 0
       Value: true
   Enabled: true
   Global Options:
     Background Color: 85; 87; 83
     Default Light: true
-    Fixed Frame: waist
+    Fixed Frame: body_link
     Frame Rate: 30
   Name: root
   Tools:
@@ -476,7 +453,7 @@ Window Geometry:
   Height: 2086
   Hide Left Dock: false
   Hide Right Dock: false
-  QMainWindow State: 000000ff00000000fd00000004000000000000044e0000072efc0200000008fb0000001200530065006c0065006300740069006f006e00000001e10000009b000000ac00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000acfb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000006a0000072e0000017a00fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c0000026100000001000001580000072efc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073010000006a0000072e0000012600fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e1000001970000000300000f0000000058fc0100000002fb0000000800540069006d0065010000000000000f000000060600fffffffb0000000800540069006d00650100000000000004500000000000000000000009420000072e00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000400000000000002f50000072efc0200000008fb0000001200530065006c0065006300740069006f006e00000001e10000009b000000ac00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000acfb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000006a0000072e0000017a00fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c0000026100000001000001580000072efc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073010000006a0000072e0000012600fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e1000001970000000300000f0000000058fc0100000002fb0000000800540069006d0065010000000000000f000000060600fffffffb0000000800540069006d0065010000000000000450000000000000000000000a9b0000072e00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   Time:
@@ -486,5 +463,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 3840
-  X: 7680
+  X: 0
   Y: 0

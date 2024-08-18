@@ -2,14 +2,18 @@
 <launch>
   <arg name="gui" default="True"/>
   <param name="robot_description"
-    command="$(find xacro)/xacro '$(find kuroko_description)/xacro/kuroko/kuroko.xacro' gazebo:=false" />
+    command="$(find xacro)/xacro '$(find kuroko_description)/xacro/kuroko/kuroko.xacro' gazebo:=false"/>
   <param name="use_gui" value="$(arg gui)"/>
-  
-  <!-- <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"/> -->
-  <node if="$(arg gui)" name="joint_state_publisher_gui" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui" />
 
-  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
- 
+  <!-- <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"/> -->
+  <node if="$(arg gui)" name="joint_state_publisher_gui" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui"/>
+
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher">
+    <param name="publish_frequency" value="200"/>
+    <param name="ignore_timestamp" value="false"/>
+    <param name="use_tf_static" value="false"/>
+  </node>
+
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find kuroko_description)/launch/urdf.rviz"/>
 
 </launch>

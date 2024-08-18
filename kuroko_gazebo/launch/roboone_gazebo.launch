@@ -75,8 +75,8 @@
       trajectory_controller"/>
   </group>
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen" ns="$(arg robot_name)">
-    <param name="publish_frequency" value="1000"/>
-    <param name="ignore_timestamp" value="true"/>
+    <param name="publish_frequency" value="200"/>
+    <param name="ignore_timestamp" value="false"/>
     <param name="use_tf_static" value="false"/>
   </node>
 

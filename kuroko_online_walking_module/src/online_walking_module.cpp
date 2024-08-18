@@ -1657,10 +1657,7 @@ void OnlineWalkingModule::process(std::map<std::string, robotis_framework::Dynam
   for (auto& state_iter : result_)
   {
     std::string joint_name = state_iter.first;
-    //    result_[joint_name]->goal_position_ =
-    //    des_joint_pos_[joint_name_to_id_[joint_name]-1];
     result_[joint_name]->goal_position_ = des_joint_pos_to_robot_[joint_name_to_id_[joint_name] - 1];
-
     goal_joint_msg.name.push_back(joint_name);
     goal_joint_msg.position.push_back(des_joint_pos_[joint_name_to_id_[joint_name] - 1]);
   }

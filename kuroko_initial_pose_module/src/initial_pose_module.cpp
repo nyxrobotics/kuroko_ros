@@ -50,6 +50,7 @@ void InitialPoseModule::initialize(const int control_cycle_msec, robotis_framewo
 void InitialPoseModule::parseInitPoseData(const std::string& path)
 {
   YAML::Node doc;
+  ROS_INFO("InitialPoseModule - Loading: %s", path.c_str());
   try
   {
     // load yaml

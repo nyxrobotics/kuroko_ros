@@ -36,7 +36,7 @@ void QNodeKuroko::initPreviewWalking(ros::NodeHandle& ros_node)
 }
 
 bool QNodeKuroko::transformPose(const std::string& from_id, const std::string& to_id,
-                               const geometry_msgs::Pose& from_pose, geometry_msgs::Pose& to_pose, bool inverse)
+                                const geometry_msgs::Pose& from_pose, geometry_msgs::Pose& to_pose, bool inverse)
 {
   tf::StampedTransform desired_transform;
 
@@ -125,7 +125,8 @@ void QNodeKuroko::interactiveMarkerFeedback(const visualization_msgs::Interactiv
     case visualization_msgs::InteractiveMarkerFeedback::MENU_SELECT:
       break;
 
-    case visualization_msgs::InteractiveMarkerFeedback::POSE_UPDATE: {
+    case visualization_msgs::InteractiveMarkerFeedback::POSE_UPDATE:
+    {
       // transform : world to local
       geometry_msgs::Pose local_pose;
       bool result = transformPose("/world", "/body_link", feedback->pose, local_pose);
@@ -670,6 +671,7 @@ void QNodeKuroko::sendWholebodyBalanceMsg(const std_msgs::String& msg)
 void QNodeKuroko::parseIniPoseData(const std::string& path)
 {
   YAML::Node doc;
+  ROS_INFO("QNodeKuroko::parseIniPoseData - Loading: %s", path.c_str());
   try
   {
     // load yaml

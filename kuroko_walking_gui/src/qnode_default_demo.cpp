@@ -230,6 +230,7 @@ void QNodeKuroko::setModuleToDemo()
 void QNodeKuroko::parseMotionMapFromYaml(const std::string& path)
 {
   YAML::Node doc;
+  ROS_INFO("QNodeKuroko::parseMotionMapFromYaml - Loading : %s", path.c_str());
   try
   {
     // load yaml

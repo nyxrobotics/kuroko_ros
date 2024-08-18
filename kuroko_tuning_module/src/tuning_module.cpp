@@ -95,6 +95,7 @@ void TuningModule::moveToTunePose(const std::string& pose_name)
 bool TuningModule::parseOffsetData(const std::string& path)
 {
   YAML::Node doc;
+  ROS_INFO("TuningModule::parseOffsetData - Loading: %s", path.c_str());
   try
   {
     // load yaml
@@ -126,9 +127,9 @@ bool TuningModule::parseOffsetData(const std::string& path)
 
 bool TuningModule::parseInitPoseData(const std::string& path)
 {
-  ROS_INFO("parse pose for moving init pose");
-
   YAML::Node doc;
+  ROS_INFO("parse pose for moving init pose");
+  ROS_INFO("TuningModule::parseInitPoseData - Loading: %s", path.c_str());
   try
   {
     // load yaml
@@ -186,6 +187,7 @@ bool TuningModule::parseInitPoseData(const std::string& path)
 bool TuningModule::parseTunePoseData(const std::string& path, const std::string& pose_name)
 {
   YAML::Node doc;
+  ROS_INFO("TuningModule::parseTunePoseData - Loading: %s", path.c_str());
   try
   {
     // load yaml
@@ -919,8 +921,9 @@ void TuningModule::saveOffsetToYaml(const std::string& path)
 
 void TuningModule::parseDxlInit(const std::string& path)
 {
-  ROS_WARN("Get the init gain from Dxl init file");
   YAML::Node doc;
+  ROS_INFO("Get the init gain from Dxl init file");
+  ROS_INFO("TuningModule::parseDxlInit - Loading: %s", path.c_str());
   try
   {
     // load yaml
@@ -960,6 +963,7 @@ void TuningModule::parseDxlInit(const std::string& path)
 void TuningModule::saveDxlInit(const std::string& path)
 {
   YAML::Node doc;
+  ROS_INFO("TuningModule::saveDxlInit - Loading: %s", path.c_str());
   try
   {
     // load yaml

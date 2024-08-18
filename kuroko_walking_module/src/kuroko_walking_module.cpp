@@ -895,6 +895,7 @@ void WalkingModule::sensoryFeedback(const double& rlGyroErr, const double& fbGyr
 void WalkingModule::loadWalkingParam(const std::string& path)
 {
   YAML::Node doc;
+  ROS_INFO("WAlkingModule::loadWalkingParam - Loading: %s", path.c_str());
   try
   {
     // load yaml

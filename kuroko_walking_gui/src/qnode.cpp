@@ -91,6 +91,7 @@ void QNodeKuroko::run()
 void QNodeKuroko::parseJointNameFromYaml(const std::string& path)
 {
   YAML::Node doc;
+  ROS_INFO("QNodeKuroko::parseJointNameFromYaml - Loading: %s", path.c_str());
   try
   {
     // load yaml
@@ -401,27 +402,32 @@ void QNodeKuroko::log(const LogLevel& level, const std::string& msg, const std::
 
   switch (level)
   {
-    case (DEBUG): {
+    case (DEBUG):
+    {
       ROS_DEBUG_STREAM(msg);
       logging_model_msg << "[DEBUG] [" << min_str.str() << ":" << sec_str.str() << "]: " << sender_ss.str() << msg;
       break;
     }
-    case (INFO): {
+    case (INFO):
+    {
       ROS_INFO_STREAM(msg);
       logging_model_msg << "[INFO] [" << min_str.str() << ":" << sec_str.str() << "]: " << sender_ss.str() << msg;
       break;
     }
-    case (WARN): {
+    case (WARN):
+    {
       ROS_WARN_STREAM(msg);
       logging_model_msg << "[WARN] [" << min_str.str() << ":" << sec_str.str() << "]: " << sender_ss.str() << msg;
       break;
     }
-    case (ERROR): {
+    case (ERROR):
+    {
       ROS_ERROR_STREAM(msg);
       logging_model_msg << "<ERROR> [" << min_str.str() << ":" << sec_str.str() << "]: " << sender_ss.str() << msg;
       break;
     }
-    case (FATAL): {
+    case (FATAL):
+    {
       ROS_FATAL_STREAM(msg);
       logging_model_msg << "[FATAL] [" << min_str.str() << ":" << sec_str.str() << "]: " << sender_ss.str() << msg;
       break;

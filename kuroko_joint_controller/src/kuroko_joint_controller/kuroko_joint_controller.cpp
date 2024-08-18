@@ -305,7 +305,7 @@ void KurokoJointController::initializeDevice(const std::string& init_file_path)
   // device initialize
   if (debug_print_)
     ROS_WARN("INIT FILE LOAD");
-
+  ROS_INFO("KurokoJointController::initializeDevice - Loading: %s", init_file_path.c_str());
   YAML::Node doc;
   try
   {
@@ -843,6 +843,8 @@ bool KurokoJointController::isTimerRunning()
 void KurokoJointController::loadOffset(const std::string& path)
 {
   YAML::Node doc;
+
+  ROS_INFO("KurokoJointController::loadOffset - Loading: %s", path.c_str());
   try
   {
     doc = YAML::LoadFile(path);

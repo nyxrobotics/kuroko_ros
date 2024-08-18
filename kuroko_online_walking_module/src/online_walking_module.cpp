@@ -266,6 +266,7 @@ void OnlineWalkingModule::resetBodyPose()
 void OnlineWalkingModule::parseBalanceGainData(const std::string& path)
 {
   YAML::Node doc;
+  ROS_INFO("OnlineWalkingModule::parseBalanceGainData - Loading: %s", path.c_str());
   try
   {
     // load yaml
@@ -323,6 +324,7 @@ void OnlineWalkingModule::parseBalanceGainData(const std::string& path)
 void OnlineWalkingModule::parseJointFeedbackGainData(const std::string& path)
 {
   YAML::Node doc;
+  ROS_INFO("OnlineWalkingModule::parseJointFeedbackGainData - Loading: %s", path.c_str());
   try
   {
     // load yaml
@@ -368,6 +370,7 @@ void OnlineWalkingModule::parseJointFeedbackGainData(const std::string& path)
 void OnlineWalkingModule::parseJointFeedforwardGainData(const std::string& path)
 {
   YAML::Node doc;
+  ROS_INFO("OnlineWalkingModule::parseJointFeedforwardGainData - Loading: %s", path.c_str());
   try
   {
     // load yaml

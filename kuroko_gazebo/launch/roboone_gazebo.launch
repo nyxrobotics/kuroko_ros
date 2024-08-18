@@ -23,6 +23,7 @@
     <arg name="use_sim_time" value="$(arg use_sim_time)"/>
     <arg name="headless" value="$(arg headless)"/>
   </include>
+  <param name="/use_sim_time" value="$(arg use_sim_time)"/>
   <!-- load model with sdf for simulation,urdf for vizualization -->
   <!-- Load the URDF into the ROS Parameter Server -->
   <!-- Convert xacro and put on parameter server -->
@@ -39,7 +40,7 @@
   </group>
   <!-- Spawn a robot into Gazebo -->
   <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
-  <node name="robot_urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -model $(arg robot_name) -param robot_description_gazebo -x -0.9 -y 0.0 -z 0.86"/>
+  <node name="robot_urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -model $(arg robot_name) -param robot_description_gazebo -x -0.9 -y 0.0 -z 0.89"/>
   <group unless="$(arg use_trajectory_control)">
     <rosparam file="$(find kuroko_gazebo)/config/joint_control_position.yaml" ns="$(arg robot_name)" command="load"/>
     <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" ns="$(arg robot_name)" args="
@@ -78,10 +79,8 @@
     <param name="use_tf_static" value="false"/>
   </node>
 
-  <group unless="$(arg paused)">
-    <include file="$(find kuroko_motion)/launch/set_home_position.launch">
-      <arg name="node_start_delay" value="6.0"/>
-      <arg name="use_trajectory_control" value="$(arg use_trajectory_control)"/>
-    </include>
-  </group>
+  <include file="$(find kuroko_motion)/launch/set_home_position.launch">
+    <arg name="node_start_delay" value="6.0"/>
+    <arg name="use_trajectory_control" value="$(arg use_trajectory_control)"/>
+  </include>
 </launch>

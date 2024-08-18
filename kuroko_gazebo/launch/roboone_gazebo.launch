@@ -55,13 +55,13 @@
       elbow_l_rear_joint_position
       hip_r_roll_joint_position
       hip_r_pitch_joint_position
-      thigh_r_active_joint_position
+      thigh_r_front_active_joint_position
       shin_r_active_joint_position
       ankle_r_roll_joint_position
       ankle_r_yaw_joint_position
       hip_l_roll_joint_position
       hip_l_pitch_joint_position
-      thigh_l_active_joint_position
+      thigh_l_front_active_joint_position
       shin_l_active_joint_position
       ankle_l_roll_joint_position
       ankle_l_yaw_joint_position"/>

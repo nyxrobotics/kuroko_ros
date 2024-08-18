@@ -4,91 +4,91 @@ joint_state_controller:
   publish_rate: 1000
 
 # Position Controllers ---------------------------------------
-waist_joint_position_controller:
+waist_joint_position:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
   joint: waist_joint
 
-shoulder_r_pitch_joint_position_controller:
+shoulder_r_pitch_joint_position:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
   joint: shoulder_r_pitch_joint
-shoulder_r_roll_joint_position_controller:
+shoulder_r_roll_joint_position:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
   joint: shoulder_r_roll_joint
-elbow_r_front_joint_position_controller:
+elbow_r_front_joint_position:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
   joint: elbow_r_front_joint
-elbow_r_rear_joint_position_controller:
+elbow_r_rear_joint_position:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
   joint: elbow_r_rear_joint
 
-shoulder_l_pitch_joint_position_controller:
+shoulder_l_pitch_joint_position:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
   joint: shoulder_l_pitch_joint
-shoulder_l_roll_joint_position_controller:
+shoulder_l_roll_joint_position:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
   joint: shoulder_l_roll_joint
-elbow_l_front_joint_position_controller:
+elbow_l_front_joint_position:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
   joint: elbow_l_front_joint
-elbow_l_rear_joint_position_controller:
+elbow_l_rear_joint_position:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
   joint: elbow_l_rear_joint
 
-hip_r_roll_joint_position_controller:
+hip_r_roll_joint_position:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
   joint: hip_r_roll_joint
-lhip_r_pitch_joint_position_controller:
+lhip_r_pitch_joint_position:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
   joint: hip_r_pitch_joint
-thigh_r_active_joint_position_controller:
+thigh_r_front_active_joint_position:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
-  joint: thigh_r_active_joint
-shin_r_active_joint_position_controller:
+  joint: thigh_r_front_active_joint
+shin_r_active_joint_position:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
   joint: shin_r_active_joint
-ankle_r_roll_joint_position_controller:
+ankle_r_roll_joint_position:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
   joint: ankle_r_roll_joint
-ankle_r_yaw_joint_position_controller:
+ankle_r_yaw_joint_position:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
   joint: ankle_r_yaw_joint
 
-hip_l_roll_joint_position_controller:
+hip_l_roll_joint_position:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
   joint: hip_l_roll_joint
-lhip_l_pitch_joint_position_controller:
+lhip_l_pitch_joint_position:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
   joint: hip_l_pitch_joint
-thigh_l_active_joint_position_controller:
+thigh_l_front_active_joint_position:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
-  joint: thigh_l_active_joint
-shin_l_active_joint_position_controller:
+  joint: thigh_l_front_active_joint
+shin_l_active_joint_position:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
   joint: shin_l_active_joint
-ankle_l_roll_joint_position_controller:
+ankle_l_roll_joint_position:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
   joint: ankle_l_roll_joint
-ankle_l_yaw_joint_position_controller:
+ankle_l_yaw_joint_position:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
   joint: ankle_l_yaw_joint

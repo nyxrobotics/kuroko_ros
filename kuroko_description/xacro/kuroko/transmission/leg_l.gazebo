@@ -7,7 +7,7 @@
       gazebo_hw_interface="${gazebo_hw_interface}"/>
     <xacro:default_motor_transmission joint_name="hip_l_pitch_joint"
       gazebo_hw_interface="${gazebo_hw_interface}"/>
-    <xacro:default_motor_transmission joint_name="thigh_l_active_joint"
+    <xacro:default_motor_transmission joint_name="thigh_l_front_active_joint"
       gazebo_hw_interface="${gazebo_hw_interface}"/>
     <xacro:default_motor_transmission joint_name="shin_l_active_joint"
       gazebo_hw_interface="${gazebo_hw_interface}"/>
@@ -16,11 +16,11 @@
     <xacro:default_motor_transmission joint_name="ankle_l_yaw_joint"
       gazebo_hw_interface="${gazebo_hw_interface}"/>
 
-    <xacro:implicit_joint joint_name="thigh_l_passive_middle_joint"/>
-    <xacro:implicit_joint joint_name="thigh_l_passive_rear_joint"/>
-    <xacro:implicit_joint joint_name="knee_l_joint"/>
-    <xacro:implicit_joint joint_name="shin_l_passive_front_joint"/>
-    <xacro:implicit_joint joint_name="shin_l_passive_rear_joint"/>
+    <xacro:implicit_joint joint_name="thigh_l_middle_passive_joint"/>
+    <xacro:implicit_joint joint_name="thigh_l_rear_passive_joint"/>
+    <xacro:implicit_joint joint_name="knee_l_passive_joint"/>
+    <xacro:implicit_joint joint_name="shin_l_front_passive_joint"/>
+    <xacro:implicit_joint joint_name="shin_l_rear_passive_joint"/>
     <xacro:implicit_joint joint_name="ankle_l_pitch_passive_joint"/>
 
     <xacro:default_link_collision link_name="hip_l_roll" friction="0.01"/>
@@ -34,13 +34,13 @@
       <selfCollide>false</selfCollide>
       <dampingFactor>0</dampingFactor>
     </gazebo>
-    <xacro:default_link_collision link_name="thigh_l_active" friction="0.0"/>
+    <xacro:default_link_collision link_name="thigh_l_front_active" friction="0.0"/>
     <xacro:default_link_collision link_name="shin_l_active" friction="0.01"/>
-    <xacro:default_link_collision link_name="thigh_l_passive_middle" friction="0.0"/>
-    <xacro:default_link_collision link_name="thigh_l_passive_rear" friction="0.0"/>
-    <xacro:default_link_collision link_name="knee_l" friction="0.01"/>
-    <xacro:default_link_collision link_name="shin_l_passive_front" friction="0.0"/>
-    <xacro:default_link_collision link_name="shin_l_passive_rear" friction="0.0"/>
+    <xacro:default_link_collision link_name="thigh_l_middle_passive" friction="0.0"/>
+    <xacro:default_link_collision link_name="thigh_l_rear_passive" friction="0.0"/>
+    <xacro:default_link_collision link_name="knee_l_passive" friction="0.01"/>
+    <xacro:default_link_collision link_name="shin_l_front_passive" friction="0.0"/>
+    <xacro:default_link_collision link_name="shin_l_rear_passive" friction="0.0"/>
     <xacro:default_link_collision link_name="ankle_l_pitch_passive" friction="0.01"/>
     <xacro:default_link_collision link_name="ankle_l_roll" friction="0.0"/>
     <gazebo reference="ankle_l_yaw">

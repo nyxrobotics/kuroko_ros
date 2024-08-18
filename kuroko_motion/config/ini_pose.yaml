@@ -20,12 +20,12 @@ via_pose:
   8: [137.5] # elbow_l_front_joint
   9: [63.0] # elbow_l_rear_joint
   11: [-0.57] # hip_r_pitch_joint
-  12: [0.0] # thigh_r_active_joint
+  12: [0.0] # thigh_r_front_active_joint
   13: [-5.7] # shin_r_active_joint
   14: [0.0] # ankle_r_roll_joint
   15: [0.0] # ankle_r_yaw_joint
   17: [0.57] # hip_l_pitch_joint
-  18: [0.0] # thigh_l_active_joint
+  18: [0.0] # thigh_l_front_active_joint
   19: [5.7] # shin_l_active_joint
   20: [0.0] # ankle_l_roll_joint
   21: [0.0] # ankle_l_yaw_joint
@@ -44,13 +44,13 @@ tar_pose:
   9: 63.0 # elbow_l_rear_joint
   10: 0.0 # hip_r_roll_joint
   11: -0.57 # hip_r_pitch_joint
-  12: 0.0 # thigh_r_active_joint
+  12: 0.0 # thigh_r_front_active_joint
   13: -5.7 # shin_r_active_joint
   14: 0.0 # ankle_r_roll_joint
   15: 0.0 # ankle_r_yaw_joint
   16: 0.0 # hip_l_roll_joint
   17: 0.57 # hip_l_pitch_joint
-  18: 0.0 # thigh_l_active_joint
+  18: 0.0 # thigh_l_front_active_joint
   19: 5.7 # shin_l_active_joint
   20: 0.0 # ankle_l_roll_joint
   21: 0.0 # ankle_l_yaw_joint

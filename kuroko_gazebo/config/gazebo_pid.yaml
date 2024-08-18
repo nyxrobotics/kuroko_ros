@@ -81,7 +81,7 @@ gazebo_dc_motor:
       i_clamp: 0.2
       antiwindup: false
       publish_state: true
-    thigh_r_active_joint:
+    thigh_r_front_active_joint:
       p: 42.41
       i: 0.0
       d: 0.0
@@ -124,7 +124,7 @@ gazebo_dc_motor:
       i_clamp: 0.2
       antiwindup: false
       publish_state: true
-    thigh_l_active_joint:
+    thigh_l_front_active_joint:
       p: 42.41
       i: 0.0
       d: 0.0

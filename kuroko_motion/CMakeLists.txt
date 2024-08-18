@@ -35,6 +35,7 @@ macro(
   endforeach()
   set(${result} ${dirlist})
 endmacro()
+
 # Get node names from subdirectories in src
 subdirlist(SUBDIRS "${CMAKE_CURRENT_SOURCE_DIR}/src")
 message(STATUS "SUBDIRS:${SUBDIRS}")

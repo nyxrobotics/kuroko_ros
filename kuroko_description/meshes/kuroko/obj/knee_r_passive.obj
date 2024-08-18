@@ -1,7 +1,7 @@
 # Blender v2.79 (sub 0) OBJ File: ''
 # www.blender.org
-mtllib knee_r.mtl
-o knee_r
+mtllib knee_r_passive.mtl
+o knee_r_passive
 v -0.000000 0.025250 -0.007000
 v -0.033500 0.025250 -0.007000
 v -0.037614 0.025250 -0.005663

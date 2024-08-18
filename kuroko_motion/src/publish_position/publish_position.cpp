@@ -24,8 +24,8 @@ int main(int argc, char** argv)
   std::vector<ros::Publisher> publishers;
   for (const auto& joint_name : joint_names)
   {
-    std::string topic_name = "/kuroko/" + joint_name + "_position_controller/command";
-    ros::Publisher pub = nh.advertise<std_msgs::Float64>(topic_name, 10);
+    std::string topic_name = "/kuroko/" + joint_name + "_position/command";
+    ros::Publisher pub = nh.advertise<std_msgs::Float64>(topic_name, 5);
     publishers.push_back(pub);
   }
 
@@ -35,7 +35,7 @@ int main(int argc, char** argv)
     while (pub.getNumSubscribers() == 0 && ros::ok())
     {
       ROS_WARN_ONCE("Waiting for subscribers to connect to joint controllers.");
-      // ros::Duration(0.1).sleep();
+      ros::Duration(0.1).sleep();
     }
   }
   ROS_INFO("Start move");

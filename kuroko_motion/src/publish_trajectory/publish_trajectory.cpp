@@ -31,7 +31,7 @@ int main(int argc, char** argv)
   traj.points.push_back(point);
 
   // Publish to the topic
-  ros::Publisher pub = nh.advertise<trajectory_msgs::JointTrajectory>("/kuroko/trajectory_controller/command", 10);
+  ros::Publisher pub = nh.advertise<trajectory_msgs::JointTrajectory>("/kuroko/trajectory_controller/command", 5);
 
   // Wait until the publisher is ready
   while (pub.getNumSubscribers() == 0 && ros::ok())

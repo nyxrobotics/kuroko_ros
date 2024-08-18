@@ -133,17 +133,17 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        knee_l:
+        knee_l_passive:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        knee_r:
+        knee_r_passive:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        shin_l_passive_rear:
+        shin_l_rear_passive:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -198,7 +198,7 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        shin_l_passive_front:
+        shin_l_front_passive:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -208,12 +208,12 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        shin_r_passive_front:
+        shin_r_front_passive:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        shin_r_passive_rear:
+        shin_r_rear_passive:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -228,41 +228,41 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        thigh_l_active:
+        thigh_l_front_active:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        thigh_l_passive_middle:
+        thigh_l_middle_passive:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        thigh_l_passive_rear:
+        thigh_l_rear_passive:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        thigh_l_passive_rear_mimic:
+        thigh_l_rear_passive_mimic:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-        thigh_r_active:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        thigh_r_passive_middle:
+        thigh_r_front_active:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        thigh_r_passive_rear:
+        thigh_r_middle_passive:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        thigh_r_passive_rear_mimic:
+        thigh_r_rear_passive:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        thigh_r_rear_passive_mimic:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -312,11 +312,11 @@ Visualization Manager:
           Value: true
         imu_link:
           Value: true
-        knee_l:
+        knee_l_passive:
           Value: true
-        knee_r:
+        knee_r_passive:
           Value: true
-        shin_l_passive_rear:
+        shin_l_rear_passive:
           Value: true
         rgbd_body:
           Value: true
@@ -340,33 +340,33 @@ Visualization Manager:
           Value: true
         shin_l_active:
           Value: true
-        shin_l_passive_front:
+        shin_l_front_passive:
           Value: true
         shin_r_active:
           Value: true
-        shin_r_passive_front:
+        shin_r_front_passive:
           Value: true
-        shin_r_passive_rear:
+        shin_r_rear_passive:
           Value: true
         shoulder_l_pitch:
           Value: true
         shoulder_r_pitch:
           Value: true
-        thigh_l_active:
+        thigh_l_front_active:
           Value: true
-        thigh_l_passive_middle:
+        thigh_l_middle_passive:
           Value: true
-        thigh_l_passive_rear:
+        thigh_l_rear_passive:
           Value: true
-        thigh_l_passive_rear_mimic:
+        thigh_l_rear_passive_mimic:
           Value: true
-        thigh_r_active:
+        thigh_r_front_active:
           Value: true
-        thigh_r_passive_middle:
+        thigh_r_middle_passive:
           Value: true
-        thigh_r_passive_rear:
+        thigh_r_rear_passive:
           Value: true
-        thigh_r_passive_rear_mimic:
+        thigh_r_rear_passive_mimic:
           Value: true
         waist:
           Value: true
@@ -397,29 +397,29 @@ Visualization Manager:
               hip_l_roll:
                 hip_l_pitch:
                   shin_l_active:
-                    thigh_l_passive_rear_mimic:
-                      thigh_l_passive_rear: {}
-                  thigh_l_active:
-                    knee_l:
-                      shin_l_passive_rear: {}
-                      shin_l_passive_front:
+                    thigh_l_rear_passive_mimic:
+                      thigh_l_rear_passive: {}
+                  thigh_l_front_active:
+                    knee_l_passive:
+                      shin_l_rear_passive: {}
+                      shin_l_front_passive:
                         ankle_l_pitch_passive:
                           ankle_l_roll:
                             ankle_l_yaw: {}
-                  thigh_l_passive_middle: {}
+                  thigh_l_middle_passive: {}
               hip_r_roll:
                 hip_r_pitch:
                   shin_r_active:
-                    thigh_r_passive_rear_mimic:
-                      thigh_r_passive_rear: {}
-                  thigh_r_active:
-                    knee_r:
-                      shin_r_passive_front:
+                    thigh_r_rear_passive_mimic:
+                      thigh_r_rear_passive: {}
+                  thigh_r_front_active:
+                    knee_r_passive:
+                      shin_r_front_passive:
                         ankle_r_pitch_passive:
                           ankle_r_roll:
                             ankle_r_yaw: {}
-                      shin_r_passive_rear: {}
-                  thigh_r_passive_middle: {}
+                      shin_r_rear_passive: {}
+                  thigh_r_middle_passive: {}
       Update Interval: 0
       Value: true
   Enabled: true

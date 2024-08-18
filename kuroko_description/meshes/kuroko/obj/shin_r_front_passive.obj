@@ -1,7 +1,7 @@
 # Blender v2.79 (sub 0) OBJ File: ''
 # www.blender.org
-mtllib shin_r_passive_front.mtl
-o shin_r_passive_front
+mtllib shin_r_front_passive.mtl
+o shin_r_front_passive
 v 0.006985 0.017250 -0.011125
 v 0.007789 0.017250 -0.010833
 v 0.008216 0.017250 -0.010093

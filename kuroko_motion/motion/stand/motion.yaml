@@ -10,10 +10,10 @@ joint_names:
   - shoulder_l_pitch_joint
   - shoulder_r_pitch_joint
   - hip_l_pitch_joint
-  - thigh_l_active_joint
+  - thigh_l_front_active_joint
   - shin_l_active_joint
   - hip_r_pitch_joint
-  - thigh_r_active_joint
+  - thigh_r_front_active_joint
   - shin_r_active_joint
   - ankle_l_roll_joint
   - ankle_l_yaw_joint

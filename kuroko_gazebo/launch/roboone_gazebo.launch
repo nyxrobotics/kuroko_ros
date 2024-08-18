@@ -45,7 +45,7 @@
     <rosparam file="$(find kuroko_gazebo)/config/joint_control_position.yaml" ns="$(arg robot_name)" command="load"/>
     <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" ns="$(arg robot_name)" args="
       joint_state_controller
-      waist_position
+      chest_position
       hip_r_roll_position
       hip_l_roll_position
       shoulder_r_pitch_position

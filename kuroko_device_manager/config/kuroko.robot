@@ -3,11 +3,11 @@ control_cycle = 10  # milliseconds
 
 [ port info ]
 # PORT NAME  | BAUDRATE  | DEFAULT JOINT
-/dev/ttyUSB0 | 57600     | waist
+/dev/ttyUSB0 | 57600     | chest
 
 [ device info ]
 # TYPE    | PORT NAME    | ID  | MODEL          | PROTOCOL | DEV NAME             | BULK READ ITEMS
-dynamixel | /dev/ttyUSB0 | 1   | XM430-W210     | 2.0      | waist                | present_position, position_p_gain, position_i_gain, position_d_gain
+dynamixel | /dev/ttyUSB0 | 1   | XM430-W210     | 2.0      | chest                | present_position, position_p_gain, position_i_gain, position_d_gain
 dynamixel | /dev/ttyUSB0 | 2   | XM430-W210     | 2.0      | hip_r_roll           | present_position, position_p_gain, position_i_gain, position_d_gain
 dynamixel | /dev/ttyUSB0 | 3   | XM430-W210     | 2.0      | hip_l_roll           | present_position, position_p_gain, position_i_gain, position_d_gain
 dynamixel | /dev/ttyUSB0 | 4   | XM430-W210     | 2.0      | shoulder_r_pitch     | present_position, position_p_gain, position_i_gain, position_d_gain

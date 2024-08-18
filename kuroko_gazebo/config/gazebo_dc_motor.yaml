@@ -1,7 +1,7 @@
 gazebo_dc_motor:
   motor_characteristics:
     #body
-    waist:
+    chest:
       motor_model_type: Voltage
       stall_effort: 3.1
       noload_speed: 6.5

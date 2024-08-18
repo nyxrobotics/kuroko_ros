@@ -4,7 +4,7 @@
 init_pose:
   move_time: 4.0 # sec
   target_pose: # degree
-    waist: 0.0
+    chest: 0.0
     hip_r_roll: 0.0
     hip_l_roll: 0.0
     shoulder_r_pitch: 0.0
@@ -50,7 +50,7 @@ tune_pose_04:
 #====================================
 pose_data:
   ready_pose: # DEG
-    waist: 0.0
+    chest: 0.0
     hip_r_roll: 0.0
     hip_l_roll: 0.0
     shoulder_r_pitch: 49.0
@@ -73,7 +73,7 @@ pose_data:
     elbow_l_front: 130.0
 
   init_pose: # degree
-    waist: 0.0
+    chest: 0.0
     hip_r_roll: 0.0
     hip_l_roll: 0.0
     shoulder_r_pitch: 0.0

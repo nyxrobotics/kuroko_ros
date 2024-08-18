@@ -1,4 +1,4 @@
-waist:
+chest:
   max_position_limit: 4095
   min_position_limit: 0
   operating_mode: 3

@@ -15,7 +15,7 @@
         mass="0.337"/>
     </link>
     <!-- Joint1 -->
-    <joint name="waist" type="revolute">
+    <joint name="chest" type="revolute">
       <parent link="waist_link"/>
       <child link="chest_link"/>
       <origin xyz="0 0 0" rpy="0 0 0"/>

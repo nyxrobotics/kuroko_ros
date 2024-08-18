@@ -4,9 +4,9 @@ joint_state_controller:
   publish_rate: 1000
 
 # Position Controllers ---------------------------------------
-waist_position:
+chest_position:
   type: position_controllers/JointPositionController
-  joint: waist
+  joint: chest
 
 shoulder_r_pitch_position:
   type: position_controllers/JointPositionController

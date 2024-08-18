@@ -1,7 +1,7 @@
 gazebo_dc_motor:
   pid_gains:
     #body
-    waist:
+    chest:
       p: 16.62
       i: 0.0
       d: 0.0

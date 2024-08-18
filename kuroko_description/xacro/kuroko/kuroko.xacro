@@ -47,9 +47,9 @@
 
   <!-- MACRO:Setting up a Robot Model -->
   <xacro:macro name="kuroko_xacro" params="gazebo gazebo_hw_interface">
-    <link name="root_link"/>
+    <link name="body_link"/>
     <joint name="root_joint" type="fixed">
-      <parent link="root_link"/>
+      <parent link="body_link"/>
       <child link="chest_link"/>
       <origin xyz="0 0 0" rpy="0 0 0"/>
     </joint>

@@ -3,7 +3,7 @@
 
 namespace motion_control
 {
-#define MAX_JOINT_ID (20)
+#define MAX_JOINT_ID (21)
 #define ALL_JOINT_ID (31)
 
 #define MAX_ARM_ID (3)

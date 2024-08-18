@@ -1,5 +1,5 @@
-#ifndef OP3_WALKING_PARAMETER_H_
-#define OP3_WALKING_PARAMETER_H_
+#ifndef KUROKO_WALKING_PARAMETER_H_
+#define KUROKO_WALKING_PARAMETER_H_
 
 class WalkingTimeParameter
 {
@@ -42,4 +42,4 @@ class WalkingBalanceParameter
 {
 };
 
-#endif /* OP3_WALKING_PARAMETER_H_ */
+#endif /* KUROKO_WALKING_PARAMETER_H_ */

@@ -244,7 +244,7 @@ private:
   std::map<std::string, bool> using_mode_table_;
 };
 
-}  // namespace robotis_op
+}  // namespace walking_gui
 
 template <typename T>
 T deg2rad(T deg)

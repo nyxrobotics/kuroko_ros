@@ -119,6 +119,6 @@ private:
   std::map<std::string, QList<QWidget*>> module_ui_table_;
 };
 
-}  // namespace robotis_op
+}  // namespace walking_gui
 
 #endif  // KUROKO_WALKING_GUI_MAIN_WINDOW_H

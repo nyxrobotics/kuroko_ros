@@ -9,7 +9,7 @@
   </node>
 
   <!-- kuroko Localization -->
-  <node pkg="op3_localization" type="op3_localization" name="kuroko_localization" output="screen"/>
+  <node pkg="kuroko_localization" type="kuroko_localization" name="kuroko_localization" output="screen"/>
 
   <!-- kuroko Footstep Planner -->
   <include file="$(find op3_navigation)/launch/op3_footstep_planner.launch"/>

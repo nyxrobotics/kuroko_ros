@@ -1,5 +1,5 @@
-#ifndef OP3_WALKING_MODULE_H_
-#define OP3_WALKING_MODULE_H_
+#ifndef KUROKO_WALKING_MODULE_H_
+#define KUROKO_WALKING_MODULE_H_
 
 #include "kuroko_walking_parameter.h"
 
@@ -197,4 +197,4 @@ private:
 
 }  // namespace motion_control
 
-#endif /* OP3_WALKING_MODULE_H_ */
+#endif /* KUROKO_WALKING_MODULE_H_ */

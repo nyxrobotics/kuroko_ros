@@ -43,52 +43,52 @@ elbow_l_rear_position:
   pid: { p: 40.0, i: 0.0, d: 0.1 }
   joint: elbow_l_rear
 
-hip_r_roll_joint_position:
+hip_r_roll_position:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
-  joint: hip_r_roll_joint
-lhip_r_pitch_joint_position:
+  joint: hip_r_roll
+lhip_r_pitch_position:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
-  joint: hip_r_pitch_joint
-thigh_r_front_active_joint_position:
+  joint: hip_r_pitch
+thigh_r_front_active_position:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
-  joint: thigh_r_front_active_joint
-shin_r_active_joint_position:
+  joint: thigh_r_front_active
+shin_r_active_position:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
-  joint: shin_r_active_joint
-ankle_r_roll_joint_position:
+  joint: shin_r_active
+ankle_r_roll_position:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
-  joint: ankle_r_roll_joint
-ankle_r_yaw_joint_position:
+  joint: ankle_r_roll
+ankle_r_yaw_position:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
-  joint: ankle_r_yaw_joint
+  joint: ankle_r_yaw
 
-hip_l_roll_joint_position:
+hip_l_roll_position:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
-  joint: hip_l_roll_joint
-lhip_l_pitch_joint_position:
+  joint: hip_l_roll
+lhip_l_pitch_position:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
-  joint: hip_l_pitch_joint
-thigh_l_front_active_joint_position:
+  joint: hip_l_pitch
+thigh_l_front_active_position:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
-  joint: thigh_l_front_active_joint
-shin_l_active_joint_position:
+  joint: thigh_l_front_active
+shin_l_active_position:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
-  joint: shin_l_active_joint
-ankle_l_roll_joint_position:
+  joint: shin_l_active
+ankle_l_roll_position:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
-  joint: ankle_l_roll_joint
-ankle_l_yaw_joint_position:
+  joint: ankle_l_roll
+ankle_l_yaw_position:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
-  joint: ankle_l_yaw_joint
+  joint: ankle_l_yaw

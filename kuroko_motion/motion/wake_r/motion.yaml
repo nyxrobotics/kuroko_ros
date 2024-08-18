@@ -1,24 +1,24 @@
 joint_names:
   - shoulder_l_roll
   - shoulder_r_roll
-  - hip_l_roll_joint
-  - hip_r_roll_joint
+  - hip_l_roll
+  - hip_r_roll
   - elbow_l_front
   - elbow_l_rear
   - elbow_r_front
   - elbow_r_rear
   - shoulder_l_pitch
   - shoulder_r_pitch
-  - hip_l_pitch_joint
-  - thigh_l_front_active_joint
-  - shin_l_active_joint
-  - hip_r_pitch_joint
-  - thigh_r_front_active_joint
-  - shin_r_active_joint
-  - ankle_l_roll_joint
-  - ankle_l_yaw_joint
-  - ankle_r_roll_joint
-  - ankle_r_yaw_joint
+  - hip_l_pitch
+  - thigh_l_front_active
+  - shin_l_active
+  - hip_r_pitch
+  - thigh_r_front_active
+  - shin_r_active
+  - ankle_l_roll
+  - ankle_l_yaw
+  - ankle_r_roll
+  - ankle_r_yaw
   - waist
 points:
   - positions:

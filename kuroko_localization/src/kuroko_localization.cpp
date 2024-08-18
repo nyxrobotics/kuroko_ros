@@ -2,9 +2,10 @@
 
 namespace kuroko_localization
 {
-KurokoLocalization::KurokoLocalization() : ros_node_(), err_tol_(0.2), is_moving_walking_(false)
+KurokoLocalization::KurokoLocalization(ros::NodeHandle& nh) : ros_node_(nh), err_tol_(0.2), is_moving_walking_(false)
 {
   initialize();
+  ros_node_.param("initial_body_height", initial_body_height_, 0.3);
 
   pelvis_pose_base_walking_.pose.position.x = 0.0;
   pelvis_pose_base_walking_.pose.position.y = 0.0;
@@ -16,7 +17,7 @@ KurokoLocalization::KurokoLocalization() : ros_node_(), err_tol_(0.2), is_moving
 
   pelvis_pose_offset_.pose.position.x = 0.0;
   pelvis_pose_offset_.pose.position.y = 0.0;
-  pelvis_pose_offset_.pose.position.z = 0.2495256;  // 0.3402256 - 0.0907;
+  pelvis_pose_offset_.pose.position.z = initial_body_height_;
   pelvis_pose_offset_.pose.orientation.x = 0.0;
   pelvis_pose_offset_.pose.orientation.y = 0.0;
   pelvis_pose_offset_.pose.orientation.z = 0.0;

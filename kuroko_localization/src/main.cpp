@@ -3,7 +3,8 @@
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "kuroko_localization");
-  kuroko_localization::KurokoLocalization kuroko_localization;
+  ros::NodeHandle nh("~");
+  kuroko_localization::KurokoLocalization kuroko_localization(nh);
   ros::Rate loop_rate(10);
   while (ros::ok())
   {

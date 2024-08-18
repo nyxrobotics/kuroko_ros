@@ -22,7 +22,6 @@ private:
 
   // subscriber
   ros::Subscriber pelvis_pose_msg_sub_;
-  //    ros::Subscriber pelvis_base_walking_msg_sub_;
   ros::Subscriber pelvis_reset_msg_sub_;
 
   tf::TransformBroadcaster broadcaster_;
@@ -37,23 +36,19 @@ private:
   geometry_msgs::PoseStamped pelvis_pose_offset_new_;
 
   double err_tol_;
-
+  double initial_body_height_;
   bool is_moving_walking_;
-
   boost::mutex mutex_;
 
 public:
+  KurokoLocalization(ros::NodeHandle& nh);
+  ~KurokoLocalization();
+
   void initialize();
   void pelvisPoseCallback(const geometry_msgs::PoseStamped::ConstPtr& msg);
-  //    void pelvisPoseBaseWalkingCallback(const geometry_msgs::PoseStamped::ConstPtr& msg);
   void pelvisPoseResetCallback(const std_msgs::String::ConstPtr& msg);
   Eigen::MatrixXd calcVWerr(Eigen::MatrixXd tar_position, Eigen::MatrixXd curr_position,
                             Eigen::MatrixXd tar_orientation, Eigen::MatrixXd curr_orientation);
-
-  // constructor
-  KurokoLocalization();
-  // destructor
-  ~KurokoLocalization();
 
   void update();
   void process();

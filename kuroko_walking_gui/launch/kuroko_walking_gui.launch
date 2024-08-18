@@ -9,7 +9,9 @@
   </node>
 
   <!-- kuroko Localization -->
-  <node pkg="kuroko_localization" type="kuroko_localization" name="kuroko_localization" output="screen"/>
+  <node pkg="kuroko_localization" type="kuroko_localization" name="kuroko_localization" output="screen">
+    <param name="initial_body_height" value="0.33"/>
+  </node>
 
   <!-- kuroko Footstep Planner -->
   <include file="$(find op3_navigation)/launch/op3_footstep_planner.launch"/>

@@ -13,464 +13,464 @@ KurokoKinematics::~KurokoKinematics()
 KurokoKinematics::KurokoKinematics(TreeSelect tree)
 {
   for (int id = 0; id <= ALL_JOINT_ID; id++)
-    kuroko_link_data_[id] = new LinkData();
+    joint_link_pairs_[id] = new LinkData();
 
   if (tree == WHOLE_BODY)
   {
-    kuroko_link_data_[0]->name_ = "base";
-    kuroko_link_data_[0]->parent_ = -1;
-    kuroko_link_data_[0]->sibling_ = -1;
-    kuroko_link_data_[0]->child_ = 23;
-    kuroko_link_data_[0]->link_mass_ = 0.0;
-    kuroko_link_data_[0]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    kuroko_link_data_[0]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    kuroko_link_data_[0]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    kuroko_link_data_[0]->joint_limit_upper_ = 100.0;
-    kuroko_link_data_[0]->joint_limit_lower_ = -100.0;
-    kuroko_link_data_[0]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    joint_link_pairs_[0]->name_ = "base";
+    joint_link_pairs_[0]->parent_ = -1;
+    joint_link_pairs_[0]->sibling_ = -1;
+    joint_link_pairs_[0]->child_ = 23;
+    joint_link_pairs_[0]->link_mass_ = 0.0;
+    joint_link_pairs_[0]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
+    joint_link_pairs_[0]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
+    joint_link_pairs_[0]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
+    joint_link_pairs_[0]->joint_limit_upper_ = 100.0;
+    joint_link_pairs_[0]->joint_limit_lower_ = -100.0;
+    joint_link_pairs_[0]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
     /* ----- passive joint -----*/
 
-    kuroko_link_data_[23]->name_ = "passive_x";
-    kuroko_link_data_[23]->parent_ = 0;
-    kuroko_link_data_[23]->sibling_ = -1;
-    kuroko_link_data_[23]->child_ = 24;
-    kuroko_link_data_[23]->link_mass_ = 0.0;
-    kuroko_link_data_[23]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    kuroko_link_data_[23]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    kuroko_link_data_[23]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    kuroko_link_data_[23]->joint_limit_upper_ = 100.0;
-    kuroko_link_data_[23]->joint_limit_lower_ = -100.0;
-    kuroko_link_data_[23]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    joint_link_pairs_[23]->name_ = "passive_x";
+    joint_link_pairs_[23]->parent_ = 0;
+    joint_link_pairs_[23]->sibling_ = -1;
+    joint_link_pairs_[23]->child_ = 24;
+    joint_link_pairs_[23]->link_mass_ = 0.0;
+    joint_link_pairs_[23]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
+    joint_link_pairs_[23]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
+    joint_link_pairs_[23]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
+    joint_link_pairs_[23]->joint_limit_upper_ = 100.0;
+    joint_link_pairs_[23]->joint_limit_lower_ = -100.0;
+    joint_link_pairs_[23]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
-    kuroko_link_data_[24]->name_ = "passive_y";
-    kuroko_link_data_[24]->parent_ = 23;
-    kuroko_link_data_[24]->sibling_ = -1;
-    kuroko_link_data_[24]->child_ = 25;
-    kuroko_link_data_[24]->link_mass_ = 0.0;
-    kuroko_link_data_[24]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    kuroko_link_data_[24]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    kuroko_link_data_[24]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    kuroko_link_data_[24]->joint_limit_upper_ = 100.0;
-    kuroko_link_data_[24]->joint_limit_lower_ = -100.0;
-    kuroko_link_data_[24]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    joint_link_pairs_[24]->name_ = "passive_y";
+    joint_link_pairs_[24]->parent_ = 23;
+    joint_link_pairs_[24]->sibling_ = -1;
+    joint_link_pairs_[24]->child_ = 25;
+    joint_link_pairs_[24]->link_mass_ = 0.0;
+    joint_link_pairs_[24]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
+    joint_link_pairs_[24]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
+    joint_link_pairs_[24]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
+    joint_link_pairs_[24]->joint_limit_upper_ = 100.0;
+    joint_link_pairs_[24]->joint_limit_lower_ = -100.0;
+    joint_link_pairs_[24]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
-    kuroko_link_data_[25]->name_ = "passive_z";
-    kuroko_link_data_[25]->parent_ = 24;
-    kuroko_link_data_[25]->sibling_ = -1;
-    kuroko_link_data_[25]->child_ = 26;
-    kuroko_link_data_[25]->link_mass_ = 0.0;
-    kuroko_link_data_[25]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.385);
-    kuroko_link_data_[25]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    kuroko_link_data_[25]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    kuroko_link_data_[25]->joint_limit_upper_ = 100.0;
-    kuroko_link_data_[25]->joint_limit_lower_ = -100.0;
-    kuroko_link_data_[25]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    joint_link_pairs_[25]->name_ = "passive_z";
+    joint_link_pairs_[25]->parent_ = 24;
+    joint_link_pairs_[25]->sibling_ = -1;
+    joint_link_pairs_[25]->child_ = 26;
+    joint_link_pairs_[25]->link_mass_ = 0.0;
+    joint_link_pairs_[25]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.385);
+    joint_link_pairs_[25]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
+    joint_link_pairs_[25]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
+    joint_link_pairs_[25]->joint_limit_upper_ = 100.0;
+    joint_link_pairs_[25]->joint_limit_lower_ = -100.0;
+    joint_link_pairs_[25]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
-    kuroko_link_data_[26]->name_ = "passive_roll";
-    kuroko_link_data_[26]->parent_ = 25;
-    kuroko_link_data_[26]->sibling_ = -1;
-    kuroko_link_data_[26]->child_ = 27;
-    kuroko_link_data_[26]->link_mass_ = 0.0;
-    kuroko_link_data_[26]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    kuroko_link_data_[26]->joint_axis_ = robotis_framework::getTransitionXYZ(1.0, 0.0, 0.0);
-    kuroko_link_data_[26]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    kuroko_link_data_[26]->joint_limit_upper_ = 100.0;
-    kuroko_link_data_[26]->joint_limit_lower_ = -100.0;
-    kuroko_link_data_[26]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    joint_link_pairs_[26]->name_ = "passive_roll";
+    joint_link_pairs_[26]->parent_ = 25;
+    joint_link_pairs_[26]->sibling_ = -1;
+    joint_link_pairs_[26]->child_ = 27;
+    joint_link_pairs_[26]->link_mass_ = 0.0;
+    joint_link_pairs_[26]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
+    joint_link_pairs_[26]->joint_axis_ = robotis_framework::getTransitionXYZ(1.0, 0.0, 0.0);
+    joint_link_pairs_[26]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
+    joint_link_pairs_[26]->joint_limit_upper_ = 100.0;
+    joint_link_pairs_[26]->joint_limit_lower_ = -100.0;
+    joint_link_pairs_[26]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
-    kuroko_link_data_[27]->name_ = "passive_pitch";
-    kuroko_link_data_[27]->parent_ = 26;
-    kuroko_link_data_[27]->sibling_ = -1;
-    kuroko_link_data_[27]->child_ = 28;
-    kuroko_link_data_[27]->link_mass_ = 0.0;
-    kuroko_link_data_[27]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    kuroko_link_data_[27]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 1.0, 0.0);
-    kuroko_link_data_[27]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    kuroko_link_data_[27]->joint_limit_upper_ = 100.0;
-    kuroko_link_data_[27]->joint_limit_lower_ = -100.0;
-    kuroko_link_data_[27]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    joint_link_pairs_[27]->name_ = "passive_pitch";
+    joint_link_pairs_[27]->parent_ = 26;
+    joint_link_pairs_[27]->sibling_ = -1;
+    joint_link_pairs_[27]->child_ = 28;
+    joint_link_pairs_[27]->link_mass_ = 0.0;
+    joint_link_pairs_[27]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
+    joint_link_pairs_[27]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 1.0, 0.0);
+    joint_link_pairs_[27]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
+    joint_link_pairs_[27]->joint_limit_upper_ = 100.0;
+    joint_link_pairs_[27]->joint_limit_lower_ = -100.0;
+    joint_link_pairs_[27]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
-    kuroko_link_data_[28]->name_ = "passive_yaw";
-    kuroko_link_data_[28]->parent_ = 27;
-    kuroko_link_data_[28]->sibling_ = -1;
-    kuroko_link_data_[28]->child_ = 29;
-    kuroko_link_data_[28]->link_mass_ = 0.0;
-    kuroko_link_data_[28]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    kuroko_link_data_[28]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 1.0);
-    kuroko_link_data_[28]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    kuroko_link_data_[28]->joint_limit_upper_ = 100.0;
-    kuroko_link_data_[28]->joint_limit_lower_ = -100.0;
-    kuroko_link_data_[28]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    joint_link_pairs_[28]->name_ = "passive_yaw";
+    joint_link_pairs_[28]->parent_ = 27;
+    joint_link_pairs_[28]->sibling_ = -1;
+    joint_link_pairs_[28]->child_ = 29;
+    joint_link_pairs_[28]->link_mass_ = 0.0;
+    joint_link_pairs_[28]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
+    joint_link_pairs_[28]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 1.0);
+    joint_link_pairs_[28]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
+    joint_link_pairs_[28]->joint_limit_upper_ = 100.0;
+    joint_link_pairs_[28]->joint_limit_lower_ = -100.0;
+    joint_link_pairs_[28]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
     /* ----- body -----*/
 
     // pelvis_link
-    kuroko_link_data_[29]->name_ = "pelvis";
-    kuroko_link_data_[29]->parent_ = 28;
-    kuroko_link_data_[29]->sibling_ = -1;
-    kuroko_link_data_[29]->child_ = 19;
-    kuroko_link_data_[29]->link_mass_ = 6.869;
-    kuroko_link_data_[29]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    kuroko_link_data_[29]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    kuroko_link_data_[29]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.011, 0.000, 0.058);
-    kuroko_link_data_[29]->joint_limit_upper_ = 100.0;
-    kuroko_link_data_[29]->joint_limit_lower_ = -100.0;
-    kuroko_link_data_[29]->link_inertia_ =
+    joint_link_pairs_[29]->name_ = "pelvis";
+    joint_link_pairs_[29]->parent_ = 28;
+    joint_link_pairs_[29]->sibling_ = -1;
+    joint_link_pairs_[29]->child_ = 19;
+    joint_link_pairs_[29]->link_mass_ = 6.869;
+    joint_link_pairs_[29]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
+    joint_link_pairs_[29]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
+    joint_link_pairs_[29]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.011, 0.000, 0.058);
+    joint_link_pairs_[29]->joint_limit_upper_ = 100.0;
+    joint_link_pairs_[29]->joint_limit_lower_ = -100.0;
+    joint_link_pairs_[29]->link_inertia_ =
         robotis_framework::getInertiaXYZ(0.03603, 0.00000, 0.00016, 0.02210, 0.00000, 0.03830);
 
     /* ----- head -----*/
 
     // head_pan
-    kuroko_link_data_[19]->name_ = "head_pan";
-    kuroko_link_data_[19]->parent_ = 29;
-    kuroko_link_data_[19]->sibling_ = 1;
-    kuroko_link_data_[19]->child_ = 20;
-    kuroko_link_data_[19]->link_mass_ = 0.087;
-    kuroko_link_data_[19]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0205);
-    kuroko_link_data_[19]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 1.0);
-    kuroko_link_data_[19]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.000, -0.002, 0.010);
-    kuroko_link_data_[19]->joint_limit_upper_ = 0.5 * M_PI;
-    kuroko_link_data_[19]->joint_limit_lower_ = -0.5 * M_PI;
-    kuroko_link_data_[19]->link_inertia_ =
+    joint_link_pairs_[19]->name_ = "head_pan";
+    joint_link_pairs_[19]->parent_ = 29;
+    joint_link_pairs_[19]->sibling_ = 1;
+    joint_link_pairs_[19]->child_ = 20;
+    joint_link_pairs_[19]->link_mass_ = 0.087;
+    joint_link_pairs_[19]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0205);
+    joint_link_pairs_[19]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 1.0);
+    joint_link_pairs_[19]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.000, -0.002, 0.010);
+    joint_link_pairs_[19]->joint_limit_upper_ = 0.5 * M_PI;
+    joint_link_pairs_[19]->joint_limit_lower_ = -0.5 * M_PI;
+    joint_link_pairs_[19]->link_inertia_ =
         robotis_framework::getInertiaXYZ(0.00011, 0.00000, 0.00000, 0.00003, 0.00000, 0.00012);
 
     // head_tilt
-    kuroko_link_data_[20]->name_ = "head_tilt";
-    kuroko_link_data_[20]->parent_ = 19;
-    kuroko_link_data_[20]->sibling_ = -1;
-    kuroko_link_data_[20]->child_ = -1;
-    kuroko_link_data_[20]->link_mass_ = 0.724;
-    kuroko_link_data_[20]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.03);
-    kuroko_link_data_[20]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, -1.0, 0.0);
-    kuroko_link_data_[20]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.009, 0.046, 0.022);
-    kuroko_link_data_[20]->joint_limit_upper_ = 0.5 * M_PI;
-    kuroko_link_data_[20]->joint_limit_lower_ = -0.5 * M_PI;
-    kuroko_link_data_[20]->link_inertia_ =
+    joint_link_pairs_[20]->name_ = "head_tilt";
+    joint_link_pairs_[20]->parent_ = 19;
+    joint_link_pairs_[20]->sibling_ = -1;
+    joint_link_pairs_[20]->child_ = -1;
+    joint_link_pairs_[20]->link_mass_ = 0.724;
+    joint_link_pairs_[20]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.03);
+    joint_link_pairs_[20]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, -1.0, 0.0);
+    joint_link_pairs_[20]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.009, 0.046, 0.022);
+    joint_link_pairs_[20]->joint_limit_upper_ = 0.5 * M_PI;
+    joint_link_pairs_[20]->joint_limit_lower_ = -0.5 * M_PI;
+    joint_link_pairs_[20]->link_inertia_ =
         robotis_framework::getInertiaXYZ(0.00113, 0.00001, -0.00005, 0.00114, 0.00002, 0.00084);
 
     /*----- right arm -----*/
 
     // right arm shoulder pitch
-    kuroko_link_data_[1]->name_ = "shoulder_r_pitch";
-    kuroko_link_data_[1]->parent_ = 29;
-    kuroko_link_data_[1]->sibling_ = 2;
-    kuroko_link_data_[1]->child_ = 3;
-    kuroko_link_data_[1]->link_mass_ = 0.194;
-    kuroko_link_data_[1]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, -0.0575, 0.0);
-    kuroko_link_data_[1]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, -1.0, 0.0);
-    kuroko_link_data_[1]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.003, -0.020, -0.005);
-    kuroko_link_data_[1]->joint_limit_upper_ = 0.5 * M_PI;
-    kuroko_link_data_[1]->joint_limit_lower_ = -0.5 * M_PI;
-    kuroko_link_data_[1]->link_inertia_ =
+    joint_link_pairs_[1]->name_ = "shoulder_r_pitch";
+    joint_link_pairs_[1]->parent_ = 29;
+    joint_link_pairs_[1]->sibling_ = 2;
+    joint_link_pairs_[1]->child_ = 3;
+    joint_link_pairs_[1]->link_mass_ = 0.194;
+    joint_link_pairs_[1]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, -0.0575, 0.0);
+    joint_link_pairs_[1]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, -1.0, 0.0);
+    joint_link_pairs_[1]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.003, -0.020, -0.005);
+    joint_link_pairs_[1]->joint_limit_upper_ = 0.5 * M_PI;
+    joint_link_pairs_[1]->joint_limit_lower_ = -0.5 * M_PI;
+    joint_link_pairs_[1]->link_inertia_ =
         robotis_framework::getInertiaXYZ(0.00018, 0.0, 0.0, 0.00058, -0.00004, 0.00057);
 
     // right arm shoulder roll
-    kuroko_link_data_[3]->name_ = "shoulder_r_roll";
-    kuroko_link_data_[3]->parent_ = 1;
-    kuroko_link_data_[3]->sibling_ = -1;
-    kuroko_link_data_[3]->child_ = 5;
-    kuroko_link_data_[3]->link_mass_ = 0.875;
-    kuroko_link_data_[3]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, -0.0245, -0.016);
-    kuroko_link_data_[3]->joint_axis_ = robotis_framework::getTransitionXYZ(-1.0, 0.0, 0.0);
-    kuroko_link_data_[3]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.060, -0.002, 0.000);
-    kuroko_link_data_[3]->joint_limit_upper_ = 0.3 * M_PI;
-    kuroko_link_data_[3]->joint_limit_lower_ = -0.5 * M_PI;
-    kuroko_link_data_[3]->link_inertia_ =
+    joint_link_pairs_[3]->name_ = "shoulder_r_roll";
+    joint_link_pairs_[3]->parent_ = 1;
+    joint_link_pairs_[3]->sibling_ = -1;
+    joint_link_pairs_[3]->child_ = 5;
+    joint_link_pairs_[3]->link_mass_ = 0.875;
+    joint_link_pairs_[3]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, -0.0245, -0.016);
+    joint_link_pairs_[3]->joint_axis_ = robotis_framework::getTransitionXYZ(-1.0, 0.0, 0.0);
+    joint_link_pairs_[3]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.060, -0.002, 0.000);
+    joint_link_pairs_[3]->joint_limit_upper_ = 0.3 * M_PI;
+    joint_link_pairs_[3]->joint_limit_lower_ = -0.5 * M_PI;
+    joint_link_pairs_[3]->link_inertia_ =
         robotis_framework::getInertiaXYZ(0.00043, 0.00000, 0.00000, 0.00112, 0.00000, 0.00113);
 
     // right arm elbow
-    kuroko_link_data_[5]->name_ = "elbow_r_front";
-    kuroko_link_data_[5]->parent_ = 3;
-    kuroko_link_data_[5]->sibling_ = -1;
-    kuroko_link_data_[5]->child_ = 21;
-    kuroko_link_data_[5]->link_mass_ = 1.122;
-    kuroko_link_data_[5]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, -0.09, 0.0);
-    kuroko_link_data_[5]->joint_axis_ = robotis_framework::getTransitionXYZ(1.0, 0.0, 0.0);
-    kuroko_link_data_[5]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.000, -0.073, 0.000);
-    kuroko_link_data_[5]->joint_limit_upper_ = 0.5 * M_PI;
-    kuroko_link_data_[5]->joint_limit_lower_ = -0.5 * M_PI;
-    kuroko_link_data_[5]->link_inertia_ =
+    joint_link_pairs_[5]->name_ = "elbow_r_front";
+    joint_link_pairs_[5]->parent_ = 3;
+    joint_link_pairs_[5]->sibling_ = -1;
+    joint_link_pairs_[5]->child_ = 21;
+    joint_link_pairs_[5]->link_mass_ = 1.122;
+    joint_link_pairs_[5]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, -0.09, 0.0);
+    joint_link_pairs_[5]->joint_axis_ = robotis_framework::getTransitionXYZ(1.0, 0.0, 0.0);
+    joint_link_pairs_[5]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.000, -0.073, 0.000);
+    joint_link_pairs_[5]->joint_limit_upper_ = 0.5 * M_PI;
+    joint_link_pairs_[5]->joint_limit_lower_ = -0.5 * M_PI;
+    joint_link_pairs_[5]->link_inertia_ =
         robotis_framework::getInertiaXYZ(0.00277, 0.00002, -0.00001, 0.00090, 0.00004, 0.00255);
 
     // right arm end effector
-    kuroko_link_data_[21]->name_ = "elbow_r_rear";
-    kuroko_link_data_[21]->parent_ = 5;
-    kuroko_link_data_[21]->sibling_ = -1;
-    kuroko_link_data_[21]->child_ = -1;
-    kuroko_link_data_[21]->link_mass_ = 0.0;
-    kuroko_link_data_[21]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, -0.15, 0.0);
-    kuroko_link_data_[21]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    kuroko_link_data_[21]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    kuroko_link_data_[21]->joint_limit_upper_ = 100.0;
-    kuroko_link_data_[21]->joint_limit_lower_ = -100.0;
-    kuroko_link_data_[21]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    joint_link_pairs_[21]->name_ = "elbow_r_rear";
+    joint_link_pairs_[21]->parent_ = 5;
+    joint_link_pairs_[21]->sibling_ = -1;
+    joint_link_pairs_[21]->child_ = -1;
+    joint_link_pairs_[21]->link_mass_ = 0.0;
+    joint_link_pairs_[21]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, -0.15, 0.0);
+    joint_link_pairs_[21]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
+    joint_link_pairs_[21]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
+    joint_link_pairs_[21]->joint_limit_upper_ = 100.0;
+    joint_link_pairs_[21]->joint_limit_lower_ = -100.0;
+    joint_link_pairs_[21]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
     /*----- left arm -----*/
 
     // left arm shoulder pitch
-    kuroko_link_data_[2]->name_ = "shoulder_l_pitch";
-    kuroko_link_data_[2]->parent_ = 29;
-    kuroko_link_data_[2]->sibling_ = -1;
-    kuroko_link_data_[2]->child_ = 4;
-    kuroko_link_data_[2]->link_mass_ = 0.194;
-    kuroko_link_data_[2]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0575, 0.0);
-    kuroko_link_data_[2]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 1.0, 0.0);
-    kuroko_link_data_[2]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.003, 0.020, -0.005);
-    kuroko_link_data_[2]->joint_limit_upper_ = 0.5 * M_PI;
-    kuroko_link_data_[2]->joint_limit_lower_ = -0.5 * M_PI;
-    kuroko_link_data_[2]->link_inertia_ =
+    joint_link_pairs_[2]->name_ = "shoulder_l_pitch";
+    joint_link_pairs_[2]->parent_ = 29;
+    joint_link_pairs_[2]->sibling_ = -1;
+    joint_link_pairs_[2]->child_ = 4;
+    joint_link_pairs_[2]->link_mass_ = 0.194;
+    joint_link_pairs_[2]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0575, 0.0);
+    joint_link_pairs_[2]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 1.0, 0.0);
+    joint_link_pairs_[2]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.003, 0.020, -0.005);
+    joint_link_pairs_[2]->joint_limit_upper_ = 0.5 * M_PI;
+    joint_link_pairs_[2]->joint_limit_lower_ = -0.5 * M_PI;
+    joint_link_pairs_[2]->link_inertia_ =
         robotis_framework::getInertiaXYZ(0.00018, 0.00000, 0.00000, 0.00058, 0.00004, 0.00057);
 
     // left arm shoulder roll
-    kuroko_link_data_[4]->name_ = "shoulder_l_roll";
-    kuroko_link_data_[4]->parent_ = 2;
-    kuroko_link_data_[4]->sibling_ = -1;
-    kuroko_link_data_[4]->child_ = 6;
-    kuroko_link_data_[4]->link_mass_ = 0.875;
-    kuroko_link_data_[4]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0245, -0.016);
-    kuroko_link_data_[4]->joint_axis_ = robotis_framework::getTransitionXYZ(-1.0, 0.0, 0.0);
-    kuroko_link_data_[4]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.060, 0.002, 0.000);
-    kuroko_link_data_[4]->joint_limit_upper_ = 0.5 * M_PI;
-    kuroko_link_data_[4]->joint_limit_lower_ = -0.3 * M_PI;
-    kuroko_link_data_[4]->link_inertia_ =
+    joint_link_pairs_[4]->name_ = "shoulder_l_roll";
+    joint_link_pairs_[4]->parent_ = 2;
+    joint_link_pairs_[4]->sibling_ = -1;
+    joint_link_pairs_[4]->child_ = 6;
+    joint_link_pairs_[4]->link_mass_ = 0.875;
+    joint_link_pairs_[4]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0245, -0.016);
+    joint_link_pairs_[4]->joint_axis_ = robotis_framework::getTransitionXYZ(-1.0, 0.0, 0.0);
+    joint_link_pairs_[4]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.060, 0.002, 0.000);
+    joint_link_pairs_[4]->joint_limit_upper_ = 0.5 * M_PI;
+    joint_link_pairs_[4]->joint_limit_lower_ = -0.3 * M_PI;
+    joint_link_pairs_[4]->link_inertia_ =
         robotis_framework::getInertiaXYZ(0.00043, 0.00000, 0.00000, 0.00112, 0.00000, 0.00113);
 
     // left arm elbow
-    kuroko_link_data_[6]->name_ = "elbow_l_front";
-    kuroko_link_data_[6]->parent_ = 4;
-    kuroko_link_data_[6]->sibling_ = -1;
-    kuroko_link_data_[6]->child_ = 22;
-    kuroko_link_data_[6]->link_mass_ = 1.122;
-    kuroko_link_data_[6]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.09, 0.0);
-    kuroko_link_data_[6]->joint_axis_ = robotis_framework::getTransitionXYZ(1.0, 0.0, 0.0);
-    kuroko_link_data_[6]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.000, 0.073, 0.000);
-    kuroko_link_data_[6]->joint_limit_upper_ = 0.5 * M_PI;
-    kuroko_link_data_[6]->joint_limit_lower_ = -0.5 * M_PI;
-    kuroko_link_data_[6]->link_inertia_ =
+    joint_link_pairs_[6]->name_ = "elbow_l_front";
+    joint_link_pairs_[6]->parent_ = 4;
+    joint_link_pairs_[6]->sibling_ = -1;
+    joint_link_pairs_[6]->child_ = 22;
+    joint_link_pairs_[6]->link_mass_ = 1.122;
+    joint_link_pairs_[6]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.09, 0.0);
+    joint_link_pairs_[6]->joint_axis_ = robotis_framework::getTransitionXYZ(1.0, 0.0, 0.0);
+    joint_link_pairs_[6]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.000, 0.073, 0.000);
+    joint_link_pairs_[6]->joint_limit_upper_ = 0.5 * M_PI;
+    joint_link_pairs_[6]->joint_limit_lower_ = -0.5 * M_PI;
+    joint_link_pairs_[6]->link_inertia_ =
         robotis_framework::getInertiaXYZ(0.00277, -0.00002, -0.00001, 0.00090, -0.00004, 0.00255);
 
     // left arm end effector
-    kuroko_link_data_[22]->name_ = "elbow_l_rear";
-    kuroko_link_data_[22]->parent_ = 6;
-    kuroko_link_data_[22]->sibling_ = -1;
-    kuroko_link_data_[22]->child_ = -1;
-    kuroko_link_data_[22]->link_mass_ = 0.0;
-    kuroko_link_data_[22]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.15, 0.0);
-    kuroko_link_data_[22]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    kuroko_link_data_[22]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    kuroko_link_data_[22]->joint_limit_upper_ = 100.0;
-    kuroko_link_data_[22]->joint_limit_lower_ = -100.0;
-    kuroko_link_data_[22]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    joint_link_pairs_[22]->name_ = "elbow_l_rear";
+    joint_link_pairs_[22]->parent_ = 6;
+    joint_link_pairs_[22]->sibling_ = -1;
+    joint_link_pairs_[22]->child_ = -1;
+    joint_link_pairs_[22]->link_mass_ = 0.0;
+    joint_link_pairs_[22]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.15, 0.0);
+    joint_link_pairs_[22]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
+    joint_link_pairs_[22]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
+    joint_link_pairs_[22]->joint_limit_upper_ = 100.0;
+    joint_link_pairs_[22]->joint_limit_lower_ = -100.0;
+    joint_link_pairs_[22]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
     /* ----- right leg -----*/
 
     // right leg hip yaw
-    kuroko_link_data_[7]->name_ = "ankle_r_yaw";
-    kuroko_link_data_[7]->parent_ = 29;
-    kuroko_link_data_[7]->sibling_ = 8;
-    kuroko_link_data_[7]->child_ = 9;
-    kuroko_link_data_[7]->link_mass_ = 0.243;
-    kuroko_link_data_[7]->joint_position_ = robotis_framework::getTransitionXYZ(-0.005, -0.035, -0.0907);
-    kuroko_link_data_[7]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -1.0);
-    kuroko_link_data_[7]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.012, 0.000, -0.025);
-    kuroko_link_data_[7]->joint_limit_upper_ = 0.45 * M_PI;
-    kuroko_link_data_[7]->joint_limit_lower_ = -0.45 * M_PI;
-    kuroko_link_data_[7]->link_inertia_ =
+    joint_link_pairs_[7]->name_ = "ankle_r_yaw";
+    joint_link_pairs_[7]->parent_ = 29;
+    joint_link_pairs_[7]->sibling_ = 8;
+    joint_link_pairs_[7]->child_ = 9;
+    joint_link_pairs_[7]->link_mass_ = 0.243;
+    joint_link_pairs_[7]->joint_position_ = robotis_framework::getTransitionXYZ(-0.005, -0.035, -0.0907);
+    joint_link_pairs_[7]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -1.0);
+    joint_link_pairs_[7]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.012, 0.000, -0.025);
+    joint_link_pairs_[7]->joint_limit_upper_ = 0.45 * M_PI;
+    joint_link_pairs_[7]->joint_limit_lower_ = -0.45 * M_PI;
+    joint_link_pairs_[7]->link_inertia_ =
         robotis_framework::getInertiaXYZ(0.00024, 0.00000, 0.00000, 0.00101, 0.00000, 0.00092);
 
     // right leg hip roll
-    kuroko_link_data_[9]->name_ = "hip_r_roll";
-    kuroko_link_data_[9]->parent_ = 7;
-    kuroko_link_data_[9]->sibling_ = -1;
-    kuroko_link_data_[9]->child_ = 11;
-    kuroko_link_data_[9]->link_mass_ = 1.045;
-    kuroko_link_data_[9]->joint_position_ = robotis_framework::getTransitionXYZ(0.000, 0.000, -0.0285);
-    kuroko_link_data_[9]->joint_axis_ = robotis_framework::getTransitionXYZ(-1.0, 0.0, 0.0);
-    kuroko_link_data_[9]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.068, 0.000, 0.000);
-    kuroko_link_data_[9]->joint_limit_upper_ = 0.3 * M_PI;
-    kuroko_link_data_[9]->joint_limit_lower_ = -0.3 * M_PI;
-    kuroko_link_data_[9]->link_inertia_ =
+    joint_link_pairs_[9]->name_ = "hip_r_roll";
+    joint_link_pairs_[9]->parent_ = 7;
+    joint_link_pairs_[9]->sibling_ = -1;
+    joint_link_pairs_[9]->child_ = 11;
+    joint_link_pairs_[9]->link_mass_ = 1.045;
+    joint_link_pairs_[9]->joint_position_ = robotis_framework::getTransitionXYZ(0.000, 0.000, -0.0285);
+    joint_link_pairs_[9]->joint_axis_ = robotis_framework::getTransitionXYZ(-1.0, 0.0, 0.0);
+    joint_link_pairs_[9]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.068, 0.000, 0.000);
+    joint_link_pairs_[9]->joint_limit_upper_ = 0.3 * M_PI;
+    joint_link_pairs_[9]->joint_limit_lower_ = -0.3 * M_PI;
+    joint_link_pairs_[9]->link_inertia_ =
         robotis_framework::getInertiaXYZ(0.00056, 0.00000, 0.00000, 0.00168, 0.00000, 0.00171);
 
     // right leg hip pitch
-    kuroko_link_data_[11]->name_ = "hip_r_pitch";
-    kuroko_link_data_[11]->parent_ = 9;
-    kuroko_link_data_[11]->sibling_ = -1;
-    kuroko_link_data_[11]->child_ = 13;
-    kuroko_link_data_[11]->link_mass_ = 3.095;
-    kuroko_link_data_[11]->joint_position_ = robotis_framework::getTransitionXYZ(0.000, 0.000, 0.000);
-    kuroko_link_data_[11]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, -1.0, 0.0);
-    kuroko_link_data_[11]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.022, 0.007, -0.168);
-    kuroko_link_data_[11]->joint_limit_upper_ = 0.4 * M_PI;
-    kuroko_link_data_[11]->joint_limit_lower_ = -0.4 * M_PI;
-    kuroko_link_data_[11]->link_inertia_ =
+    joint_link_pairs_[11]->name_ = "hip_r_pitch";
+    joint_link_pairs_[11]->parent_ = 9;
+    joint_link_pairs_[11]->sibling_ = -1;
+    joint_link_pairs_[11]->child_ = 13;
+    joint_link_pairs_[11]->link_mass_ = 3.095;
+    joint_link_pairs_[11]->joint_position_ = robotis_framework::getTransitionXYZ(0.000, 0.000, 0.000);
+    joint_link_pairs_[11]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, -1.0, 0.0);
+    joint_link_pairs_[11]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.022, 0.007, -0.168);
+    joint_link_pairs_[11]->joint_limit_upper_ = 0.4 * M_PI;
+    joint_link_pairs_[11]->joint_limit_lower_ = -0.4 * M_PI;
+    joint_link_pairs_[11]->link_inertia_ =
         robotis_framework::getInertiaXYZ(0.04329, -0.00027, 0.00286, 0.04042, 0.00203, 0.00560);
 
     // right leg knee
-    kuroko_link_data_[13]->name_ = "thigh_r_front_active";
-    kuroko_link_data_[13]->parent_ = 11;
-    kuroko_link_data_[13]->sibling_ = -1;
-    kuroko_link_data_[13]->child_ = 15;
-    kuroko_link_data_[13]->link_mass_ = 2.401;
-    kuroko_link_data_[13]->joint_position_ = robotis_framework::getTransitionXYZ(0.000, 0.000, -0.110);
-    kuroko_link_data_[13]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, -1.0, 0.0);
-    kuroko_link_data_[13]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.002, 0.066, -0.183);
-    kuroko_link_data_[13]->joint_limit_upper_ = 0.1 * M_PI;
-    kuroko_link_data_[13]->joint_limit_lower_ = -0.7 * M_PI;
-    kuroko_link_data_[13]->link_inertia_ =
+    joint_link_pairs_[13]->name_ = "thigh_r_front_active";
+    joint_link_pairs_[13]->parent_ = 11;
+    joint_link_pairs_[13]->sibling_ = -1;
+    joint_link_pairs_[13]->child_ = 15;
+    joint_link_pairs_[13]->link_mass_ = 2.401;
+    joint_link_pairs_[13]->joint_position_ = robotis_framework::getTransitionXYZ(0.000, 0.000, -0.110);
+    joint_link_pairs_[13]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, -1.0, 0.0);
+    joint_link_pairs_[13]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.002, 0.066, -0.183);
+    joint_link_pairs_[13]->joint_limit_upper_ = 0.1 * M_PI;
+    joint_link_pairs_[13]->joint_limit_lower_ = -0.7 * M_PI;
+    joint_link_pairs_[13]->link_inertia_ =
         robotis_framework::getInertiaXYZ(0.01971, -0.00031, -0.00294, 0.01687, -0.00140, 0.00574);
 
     // right leg ankle pitch
-    kuroko_link_data_[15]->name_ = "shin_r_active";
-    kuroko_link_data_[15]->parent_ = 13;
-    kuroko_link_data_[15]->sibling_ = -1;
-    kuroko_link_data_[15]->child_ = 17;
-    kuroko_link_data_[15]->link_mass_ = 1.045;
-    kuroko_link_data_[15]->joint_position_ = robotis_framework::getTransitionXYZ(0.000, 0.000, -0.110);
-    kuroko_link_data_[15]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 1.0, 0.0);
-    kuroko_link_data_[15]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.011, 0.033, 0.000);
-    kuroko_link_data_[15]->joint_limit_upper_ = 0.45 * M_PI;
-    kuroko_link_data_[15]->joint_limit_lower_ = -0.45 * M_PI;
-    kuroko_link_data_[15]->link_inertia_ =
+    joint_link_pairs_[15]->name_ = "shin_r_active";
+    joint_link_pairs_[15]->parent_ = 13;
+    joint_link_pairs_[15]->sibling_ = -1;
+    joint_link_pairs_[15]->child_ = 17;
+    joint_link_pairs_[15]->link_mass_ = 1.045;
+    joint_link_pairs_[15]->joint_position_ = robotis_framework::getTransitionXYZ(0.000, 0.000, -0.110);
+    joint_link_pairs_[15]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 1.0, 0.0);
+    joint_link_pairs_[15]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.011, 0.033, 0.000);
+    joint_link_pairs_[15]->joint_limit_upper_ = 0.45 * M_PI;
+    joint_link_pairs_[15]->joint_limit_lower_ = -0.45 * M_PI;
+    joint_link_pairs_[15]->link_inertia_ =
         robotis_framework::getInertiaXYZ(0.00056, 0.00000, 0.00000, 0.00168, 0.00000, 0.00171);
 
     // right leg ankle roll
-    kuroko_link_data_[17]->name_ = "ankle_r_roll";
-    kuroko_link_data_[17]->parent_ = 15;
-    kuroko_link_data_[17]->sibling_ = -1;
-    kuroko_link_data_[17]->child_ = 31;
-    kuroko_link_data_[17]->link_mass_ = 0.223;
-    kuroko_link_data_[17]->joint_position_ = robotis_framework::getTransitionXYZ(0.000, 0.000, 0.000);
-    kuroko_link_data_[17]->joint_axis_ = robotis_framework::getTransitionXYZ(1.0, 0.0, 0.0);
-    kuroko_link_data_[17]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.070, 0.000, -0.048);
-    kuroko_link_data_[17]->joint_limit_upper_ = 0.45 * M_PI;
-    kuroko_link_data_[17]->joint_limit_lower_ = -0.45 * M_PI;
-    kuroko_link_data_[17]->link_inertia_ =
+    joint_link_pairs_[17]->name_ = "ankle_r_roll";
+    joint_link_pairs_[17]->parent_ = 15;
+    joint_link_pairs_[17]->sibling_ = -1;
+    joint_link_pairs_[17]->child_ = 31;
+    joint_link_pairs_[17]->link_mass_ = 0.223;
+    joint_link_pairs_[17]->joint_position_ = robotis_framework::getTransitionXYZ(0.000, 0.000, 0.000);
+    joint_link_pairs_[17]->joint_axis_ = robotis_framework::getTransitionXYZ(1.0, 0.0, 0.0);
+    joint_link_pairs_[17]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.070, 0.000, -0.048);
+    joint_link_pairs_[17]->joint_limit_upper_ = 0.45 * M_PI;
+    joint_link_pairs_[17]->joint_limit_lower_ = -0.45 * M_PI;
+    joint_link_pairs_[17]->link_inertia_ =
         robotis_framework::getInertiaXYZ(0.00022, 0.00000, -0.00001, 0.00099, 0.00000, 0.00091);
 
     // right leg end
-    kuroko_link_data_[31]->name_ = "r_leg_end";
-    kuroko_link_data_[31]->parent_ = 17;
-    kuroko_link_data_[31]->sibling_ = -1;
-    kuroko_link_data_[31]->child_ = -1;
-    kuroko_link_data_[31]->link_mass_ = 0.0;
-    kuroko_link_data_[31]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -0.0305);
-    kuroko_link_data_[31]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    kuroko_link_data_[31]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    kuroko_link_data_[31]->joint_limit_upper_ = 100.0;
-    kuroko_link_data_[31]->joint_limit_lower_ = -100.0;
-    kuroko_link_data_[31]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    joint_link_pairs_[31]->name_ = "r_leg_end";
+    joint_link_pairs_[31]->parent_ = 17;
+    joint_link_pairs_[31]->sibling_ = -1;
+    joint_link_pairs_[31]->child_ = -1;
+    joint_link_pairs_[31]->link_mass_ = 0.0;
+    joint_link_pairs_[31]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -0.0305);
+    joint_link_pairs_[31]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
+    joint_link_pairs_[31]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
+    joint_link_pairs_[31]->joint_limit_upper_ = 100.0;
+    joint_link_pairs_[31]->joint_limit_lower_ = -100.0;
+    joint_link_pairs_[31]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
     /* ----- left leg -----*/
 
     // left leg hip yaw
-    kuroko_link_data_[8]->name_ = "ankle_l_yaw";
-    kuroko_link_data_[8]->parent_ = 29;
-    kuroko_link_data_[8]->sibling_ = -1;
-    kuroko_link_data_[8]->child_ = 10;
-    kuroko_link_data_[8]->link_mass_ = 0.243;
-    kuroko_link_data_[8]->joint_position_ = robotis_framework::getTransitionXYZ(-0.005, 0.035, -0.0907);
-    kuroko_link_data_[8]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -1.0);
-    kuroko_link_data_[8]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.012, 0.000, -0.025);
-    kuroko_link_data_[8]->joint_limit_upper_ = 0.45 * M_PI;
-    kuroko_link_data_[8]->joint_limit_lower_ = -0.45 * M_PI;
-    kuroko_link_data_[8]->link_inertia_ =
+    joint_link_pairs_[8]->name_ = "ankle_l_yaw";
+    joint_link_pairs_[8]->parent_ = 29;
+    joint_link_pairs_[8]->sibling_ = -1;
+    joint_link_pairs_[8]->child_ = 10;
+    joint_link_pairs_[8]->link_mass_ = 0.243;
+    joint_link_pairs_[8]->joint_position_ = robotis_framework::getTransitionXYZ(-0.005, 0.035, -0.0907);
+    joint_link_pairs_[8]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -1.0);
+    joint_link_pairs_[8]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.012, 0.000, -0.025);
+    joint_link_pairs_[8]->joint_limit_upper_ = 0.45 * M_PI;
+    joint_link_pairs_[8]->joint_limit_lower_ = -0.45 * M_PI;
+    joint_link_pairs_[8]->link_inertia_ =
         robotis_framework::getInertiaXYZ(0.00024, 0.00000, 0.00000, 0.00101, 0.00000, 0.00092);
 
     // left leg hip roll
-    kuroko_link_data_[10]->name_ = "hip_l_roll";
-    kuroko_link_data_[10]->parent_ = 8;
-    kuroko_link_data_[10]->sibling_ = -1;
-    kuroko_link_data_[10]->child_ = 12;
-    kuroko_link_data_[10]->link_mass_ = 1.045;
-    kuroko_link_data_[10]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -0.0285);
-    kuroko_link_data_[10]->joint_axis_ = robotis_framework::getTransitionXYZ(-1.0, 0.0, 0.0);
-    kuroko_link_data_[10]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.068, 0.000, 0.000);
-    kuroko_link_data_[10]->joint_limit_upper_ = 0.3 * M_PI;
-    kuroko_link_data_[10]->joint_limit_lower_ = -0.3 * M_PI;
-    kuroko_link_data_[10]->link_inertia_ =
+    joint_link_pairs_[10]->name_ = "hip_l_roll";
+    joint_link_pairs_[10]->parent_ = 8;
+    joint_link_pairs_[10]->sibling_ = -1;
+    joint_link_pairs_[10]->child_ = 12;
+    joint_link_pairs_[10]->link_mass_ = 1.045;
+    joint_link_pairs_[10]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -0.0285);
+    joint_link_pairs_[10]->joint_axis_ = robotis_framework::getTransitionXYZ(-1.0, 0.0, 0.0);
+    joint_link_pairs_[10]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.068, 0.000, 0.000);
+    joint_link_pairs_[10]->joint_limit_upper_ = 0.3 * M_PI;
+    joint_link_pairs_[10]->joint_limit_lower_ = -0.3 * M_PI;
+    joint_link_pairs_[10]->link_inertia_ =
         robotis_framework::getInertiaXYZ(0.00056, 0.00000, 0.00000, 0.00168, 0.00000, 0.00171);
 
     // left leg hip pitch
-    kuroko_link_data_[12]->name_ = "hip_l_pitch";
-    kuroko_link_data_[12]->parent_ = 10;
-    kuroko_link_data_[12]->sibling_ = -1;
-    kuroko_link_data_[12]->child_ = 14;
-    kuroko_link_data_[12]->link_mass_ = 3.095;
-    kuroko_link_data_[12]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    kuroko_link_data_[12]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 1.0, 0.0);
-    kuroko_link_data_[12]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.022, -0.007, -0.168);
-    kuroko_link_data_[12]->joint_limit_upper_ = 0.4 * M_PI;
-    kuroko_link_data_[12]->joint_limit_lower_ = -0.4 * M_PI;
-    kuroko_link_data_[12]->link_inertia_ =
+    joint_link_pairs_[12]->name_ = "hip_l_pitch";
+    joint_link_pairs_[12]->parent_ = 10;
+    joint_link_pairs_[12]->sibling_ = -1;
+    joint_link_pairs_[12]->child_ = 14;
+    joint_link_pairs_[12]->link_mass_ = 3.095;
+    joint_link_pairs_[12]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
+    joint_link_pairs_[12]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 1.0, 0.0);
+    joint_link_pairs_[12]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.022, -0.007, -0.168);
+    joint_link_pairs_[12]->joint_limit_upper_ = 0.4 * M_PI;
+    joint_link_pairs_[12]->joint_limit_lower_ = -0.4 * M_PI;
+    joint_link_pairs_[12]->link_inertia_ =
         robotis_framework::getInertiaXYZ(0.04328, 0.00028, 0.00288, 0.04042, -0.00202, 0.00560);
 
     // left leg knee pitch
-    kuroko_link_data_[14]->name_ = "thigh_l_front_active";
-    kuroko_link_data_[14]->parent_ = 12;
-    kuroko_link_data_[14]->sibling_ = -1;
-    kuroko_link_data_[14]->child_ = 16;
-    kuroko_link_data_[14]->link_mass_ = 2.401;
-    kuroko_link_data_[14]->joint_position_ = robotis_framework::getTransitionXYZ(0.000, 0.000, -0.110);
-    kuroko_link_data_[14]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 1.0, 0.0);
-    kuroko_link_data_[14]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.002, -0.066, -0.183);
-    kuroko_link_data_[14]->joint_limit_upper_ = 0.7 * M_PI;
-    kuroko_link_data_[14]->joint_limit_lower_ = -0.1 * M_PI;
-    kuroko_link_data_[14]->link_inertia_ =
+    joint_link_pairs_[14]->name_ = "thigh_l_front_active";
+    joint_link_pairs_[14]->parent_ = 12;
+    joint_link_pairs_[14]->sibling_ = -1;
+    joint_link_pairs_[14]->child_ = 16;
+    joint_link_pairs_[14]->link_mass_ = 2.401;
+    joint_link_pairs_[14]->joint_position_ = robotis_framework::getTransitionXYZ(0.000, 0.000, -0.110);
+    joint_link_pairs_[14]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 1.0, 0.0);
+    joint_link_pairs_[14]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.002, -0.066, -0.183);
+    joint_link_pairs_[14]->joint_limit_upper_ = 0.7 * M_PI;
+    joint_link_pairs_[14]->joint_limit_lower_ = -0.1 * M_PI;
+    joint_link_pairs_[14]->link_inertia_ =
         robotis_framework::getInertiaXYZ(0.01971, 0.00031, -0.00294, 0.01687, 0.00140, 0.00574);
 
     // left leg ankle pitch
-    kuroko_link_data_[16]->name_ = "shin_l_active";
-    kuroko_link_data_[16]->parent_ = 14;
-    kuroko_link_data_[16]->sibling_ = -1;
-    kuroko_link_data_[16]->child_ = 18;
-    kuroko_link_data_[16]->link_mass_ = 1.045;
-    kuroko_link_data_[16]->joint_position_ = robotis_framework::getTransitionXYZ(0.000, 0.000, -0.110);
-    kuroko_link_data_[16]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, -1.0, 0.0);
-    kuroko_link_data_[16]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.011, -0.033, 0.000);
-    kuroko_link_data_[16]->joint_limit_upper_ = 0.45 * M_PI;
-    kuroko_link_data_[16]->joint_limit_lower_ = -0.45 * M_PI;
-    kuroko_link_data_[16]->link_inertia_ =
+    joint_link_pairs_[16]->name_ = "shin_l_active";
+    joint_link_pairs_[16]->parent_ = 14;
+    joint_link_pairs_[16]->sibling_ = -1;
+    joint_link_pairs_[16]->child_ = 18;
+    joint_link_pairs_[16]->link_mass_ = 1.045;
+    joint_link_pairs_[16]->joint_position_ = robotis_framework::getTransitionXYZ(0.000, 0.000, -0.110);
+    joint_link_pairs_[16]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, -1.0, 0.0);
+    joint_link_pairs_[16]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.011, -0.033, 0.000);
+    joint_link_pairs_[16]->joint_limit_upper_ = 0.45 * M_PI;
+    joint_link_pairs_[16]->joint_limit_lower_ = -0.45 * M_PI;
+    joint_link_pairs_[16]->link_inertia_ =
         robotis_framework::getInertiaXYZ(0.00056, 0.00000, 0.00000, 0.00168, 0.00000, 0.00171);
 
     // left leg ankle roll
-    kuroko_link_data_[18]->name_ = "ankle_l_roll";
-    kuroko_link_data_[18]->parent_ = 16;
-    kuroko_link_data_[18]->sibling_ = -1;
-    kuroko_link_data_[18]->child_ = 30;
-    kuroko_link_data_[18]->link_mass_ = 0.223;
-    kuroko_link_data_[18]->joint_position_ = robotis_framework::getTransitionXYZ(0.000, 0.000, 0.000);
-    kuroko_link_data_[18]->joint_axis_ = robotis_framework::getTransitionXYZ(1.0, 0.0, 0.0);
-    kuroko_link_data_[18]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.070, 0.000, -0.048);
-    kuroko_link_data_[18]->joint_limit_upper_ = 0.45 * M_PI;
-    kuroko_link_data_[18]->joint_limit_lower_ = -0.45 * M_PI;
-    kuroko_link_data_[18]->link_inertia_ =
+    joint_link_pairs_[18]->name_ = "ankle_l_roll";
+    joint_link_pairs_[18]->parent_ = 16;
+    joint_link_pairs_[18]->sibling_ = -1;
+    joint_link_pairs_[18]->child_ = 30;
+    joint_link_pairs_[18]->link_mass_ = 0.223;
+    joint_link_pairs_[18]->joint_position_ = robotis_framework::getTransitionXYZ(0.000, 0.000, 0.000);
+    joint_link_pairs_[18]->joint_axis_ = robotis_framework::getTransitionXYZ(1.0, 0.0, 0.0);
+    joint_link_pairs_[18]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.070, 0.000, -0.048);
+    joint_link_pairs_[18]->joint_limit_upper_ = 0.45 * M_PI;
+    joint_link_pairs_[18]->joint_limit_lower_ = -0.45 * M_PI;
+    joint_link_pairs_[18]->link_inertia_ =
         robotis_framework::getInertiaXYZ(0.00022, 0.00000, -0.00001, 0.00099, 0.00000, 0.00091);
 
     // left leg end
-    kuroko_link_data_[30]->name_ = "l_leg_end";
-    kuroko_link_data_[30]->parent_ = 18;
-    kuroko_link_data_[30]->sibling_ = -1;
-    kuroko_link_data_[30]->child_ = -1;
-    kuroko_link_data_[30]->link_mass_ = 0.0;
-    kuroko_link_data_[30]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -0.0305);
-    kuroko_link_data_[30]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    kuroko_link_data_[30]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    kuroko_link_data_[30]->joint_limit_upper_ = 100.0;
-    kuroko_link_data_[30]->joint_limit_lower_ = -100.0;
-    kuroko_link_data_[30]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    joint_link_pairs_[30]->name_ = "l_leg_end";
+    joint_link_pairs_[30]->parent_ = 18;
+    joint_link_pairs_[30]->sibling_ = -1;
+    joint_link_pairs_[30]->child_ = -1;
+    joint_link_pairs_[30]->link_mass_ = 0.0;
+    joint_link_pairs_[30]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -0.0305);
+    joint_link_pairs_[30]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
+    joint_link_pairs_[30]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
+    joint_link_pairs_[30]->joint_limit_upper_ = 100.0;
+    joint_link_pairs_[30]->joint_limit_lower_ = -100.0;
+    joint_link_pairs_[30]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
   }
 
-  thigh_length_m_ = std::fabs(kuroko_link_data_[ID_R_LEG_START + 2 * 3]->joint_position_.coeff(2, 0));
-  calf_length_m_ = std::fabs(kuroko_link_data_[ID_R_LEG_START + 2 * 4]->joint_position_.coeff(2, 0));
-  ankle_length_m_ = std::fabs(kuroko_link_data_[ID_R_LEG_END]->joint_position_.coeff(2, 0));
-  leg_side_offset_m_ = 2.0 * (std::fabs(kuroko_link_data_[ID_R_LEG_START]->joint_position_.coeff(1, 0)));
+  thigh_length_m_ = std::fabs(joint_link_pairs_[ID_R_LEG_START + 2 * 3]->joint_position_.coeff(2, 0));
+  calf_length_m_ = std::fabs(joint_link_pairs_[ID_R_LEG_START + 2 * 4]->joint_position_.coeff(2, 0));
+  ankle_length_m_ = std::fabs(joint_link_pairs_[ID_R_LEG_END]->joint_position_.coeff(2, 0));
+  leg_side_offset_m_ = 2.0 * (std::fabs(joint_link_pairs_[ID_R_LEG_START]->joint_position_.coeff(1, 0)));
 }
 
 std::vector<int> KurokoKinematics::findRoute(int to)
 {
-  int id = kuroko_link_data_[to]->parent_;
+  int id = joint_link_pairs_[to]->parent_;
 
   std::vector<int> idx;
 
@@ -490,7 +490,7 @@ std::vector<int> KurokoKinematics::findRoute(int to)
 
 std::vector<int> KurokoKinematics::findRoute(int from, int to)
 {
-  int id = kuroko_link_data_[to]->parent_;
+  int id = joint_link_pairs_[to]->parent_;
 
   std::vector<int> idx;
 
@@ -515,8 +515,8 @@ double KurokoKinematics::calcTotalMass(int joint_id)
   if (joint_id == -1)
     mass = 0.0;
   else
-    mass = kuroko_link_data_[joint_id]->link_mass_ + calcTotalMass(kuroko_link_data_[joint_id]->sibling_) +
-           calcTotalMass(kuroko_link_data_[joint_id]->child_);
+    mass = joint_link_pairs_[joint_id]->link_mass_ + calcTotalMass(joint_link_pairs_[joint_id]->sibling_) +
+           calcTotalMass(joint_link_pairs_[joint_id]->child_);
 
   return mass;
 }
@@ -529,10 +529,10 @@ Eigen::MatrixXd KurokoKinematics::calcMC(int joint_id)
     mc = Eigen::MatrixXd::Zero(3, 1);
   else
   {
-    mc = kuroko_link_data_[joint_id]->link_mass_ *
-         (kuroko_link_data_[joint_id]->internal_orientation_ * kuroko_link_data_[joint_id]->link_center_of_mass_ +
-          kuroko_link_data_[joint_id]->internal_position_);
-    mc = mc + calcMC(kuroko_link_data_[joint_id]->sibling_) + calcMC(kuroko_link_data_[joint_id]->child_);
+    mc = joint_link_pairs_[joint_id]->link_mass_ *
+         (joint_link_pairs_[joint_id]->internal_orientation_ * joint_link_pairs_[joint_id]->link_center_of_mass_ +
+          joint_link_pairs_[joint_id]->internal_position_);
+    mc = mc + calcMC(joint_link_pairs_[joint_id]->sibling_) + calcMC(joint_link_pairs_[joint_id]->child_);
   }
 
   return mc;
@@ -556,31 +556,31 @@ void KurokoKinematics::calcForwardKinematics(int joint_id)
 
   if (joint_id == 0)
   {
-    kuroko_link_data_[0]->internal_position_ = Eigen::MatrixXd::Zero(3, 1);
-    kuroko_link_data_[0]->internal_orientation_ = robotis_framework::calcRodrigues(
-        robotis_framework::calcHatto(kuroko_link_data_[0]->joint_axis_), kuroko_link_data_[0]->internal_joint_angle_);
+    joint_link_pairs_[0]->internal_position_ = Eigen::MatrixXd::Zero(3, 1);
+    joint_link_pairs_[0]->internal_orientation_ = robotis_framework::calcRodrigues(
+        robotis_framework::calcHatto(joint_link_pairs_[0]->joint_axis_), joint_link_pairs_[0]->internal_joint_angle_);
   }
 
   if (joint_id != 0)
   {
-    int parent = kuroko_link_data_[joint_id]->parent_;
+    int parent = joint_link_pairs_[joint_id]->parent_;
 
-    kuroko_link_data_[joint_id]->internal_position_ =
-        kuroko_link_data_[parent]->internal_orientation_ * kuroko_link_data_[joint_id]->joint_position_ +
-        kuroko_link_data_[parent]->internal_position_;
-    kuroko_link_data_[joint_id]->internal_orientation_ =
-        kuroko_link_data_[parent]->internal_orientation_ *
-        robotis_framework::calcRodrigues(robotis_framework::calcHatto(kuroko_link_data_[joint_id]->joint_axis_),
-                                         kuroko_link_data_[joint_id]->internal_joint_angle_);
+    joint_link_pairs_[joint_id]->internal_position_ =
+        joint_link_pairs_[parent]->internal_orientation_ * joint_link_pairs_[joint_id]->joint_position_ +
+        joint_link_pairs_[parent]->internal_position_;
+    joint_link_pairs_[joint_id]->internal_orientation_ =
+        joint_link_pairs_[parent]->internal_orientation_ *
+        robotis_framework::calcRodrigues(robotis_framework::calcHatto(joint_link_pairs_[joint_id]->joint_axis_),
+                                         joint_link_pairs_[joint_id]->internal_joint_angle_);
 
-    kuroko_link_data_[joint_id]->internal_transformation_.block<3, 1>(0, 3) =
-        kuroko_link_data_[joint_id]->internal_position_;
-    kuroko_link_data_[joint_id]->internal_transformation_.block<3, 3>(0, 0) =
-        kuroko_link_data_[joint_id]->internal_orientation_;
+    joint_link_pairs_[joint_id]->internal_transformation_.block<3, 1>(0, 3) =
+        joint_link_pairs_[joint_id]->internal_position_;
+    joint_link_pairs_[joint_id]->internal_transformation_.block<3, 3>(0, 0) =
+        joint_link_pairs_[joint_id]->internal_orientation_;
   }
 
-  calcForwardKinematics(kuroko_link_data_[joint_id]->sibling_);
-  calcForwardKinematics(kuroko_link_data_[joint_id]->child_);
+  calcForwardKinematics(joint_link_pairs_[joint_id]->sibling_);
+  calcForwardKinematics(joint_link_pairs_[joint_id]->child_);
 }
 
 Eigen::MatrixXd KurokoKinematics::calcJacobian(std::vector<int> idx)
@@ -588,7 +588,7 @@ Eigen::MatrixXd KurokoKinematics::calcJacobian(std::vector<int> idx)
   int idx_size = idx.size();
   int end = idx_size - 1;
 
-  Eigen::MatrixXd tar_position = kuroko_link_data_[idx[end]]->internal_position_;
+  Eigen::MatrixXd tar_position = joint_link_pairs_[idx[end]]->internal_position_;
   Eigen::MatrixXd jacobian = Eigen::MatrixXd::Zero(6, idx_size);
 
   for (int id = 0; id < idx_size; id++)
@@ -596,10 +596,10 @@ Eigen::MatrixXd KurokoKinematics::calcJacobian(std::vector<int> idx)
     int curr_id = idx[id];
 
     Eigen::MatrixXd tar_orientation =
-        kuroko_link_data_[curr_id]->internal_orientation_ * kuroko_link_data_[curr_id]->joint_axis_;
+        joint_link_pairs_[curr_id]->internal_orientation_ * joint_link_pairs_[curr_id]->joint_axis_;
 
     jacobian.block(0, id, 3, 1) =
-        robotis_framework::calcCross(tar_orientation, tar_position - kuroko_link_data_[curr_id]->internal_position_);
+        robotis_framework::calcCross(tar_orientation, tar_position - joint_link_pairs_[curr_id]->internal_position_);
     jacobian.block(3, id, 3, 1) = tar_orientation;
   }
 
@@ -611,7 +611,7 @@ Eigen::MatrixXd KurokoKinematics::calcJacobianCOM(std::vector<int> idx)
   int idx_size = idx.size();
   int end = idx_size - 1;
 
-  Eigen::MatrixXd tar_position = kuroko_link_data_[idx[end]]->internal_position_;
+  Eigen::MatrixXd tar_position = joint_link_pairs_[idx[end]]->internal_position_;
   Eigen::MatrixXd jacobian_com = Eigen::MatrixXd::Zero(6, idx_size);
 
   for (int id = 0; id < idx_size; id++)
@@ -619,9 +619,9 @@ Eigen::MatrixXd KurokoKinematics::calcJacobianCOM(std::vector<int> idx)
     int curr_id = idx[id];
     double mass = calcTotalMass(curr_id);
 
-    Eigen::MatrixXd og = calcMC(curr_id) / mass - kuroko_link_data_[curr_id]->internal_position_;
+    Eigen::MatrixXd og = calcMC(curr_id) / mass - joint_link_pairs_[curr_id]->internal_position_;
     Eigen::MatrixXd tar_orientation =
-        kuroko_link_data_[curr_id]->internal_orientation_ * kuroko_link_data_[curr_id]->joint_axis_;
+        joint_link_pairs_[curr_id]->internal_orientation_ * joint_link_pairs_[curr_id]->joint_axis_;
 
     jacobian_com.block(0, id, 3, 1) = robotis_framework::calcCross(tar_orientation, og);
     jacobian_com.block(3, id, 3, 1) = tar_orientation;
@@ -658,8 +658,8 @@ bool KurokoKinematics::calcInverseKinematics(int to, const Eigen::MatrixXd& tar_
   {
     Eigen::MatrixXd jacobian = calcJacobian(idx);
 
-    Eigen::MatrixXd curr_position = kuroko_link_data_[to]->internal_position_;
-    Eigen::MatrixXd curr_orientation = kuroko_link_data_[to]->internal_orientation_;
+    Eigen::MatrixXd curr_position = joint_link_pairs_[to]->internal_position_;
+    Eigen::MatrixXd curr_orientation = joint_link_pairs_[to]->internal_orientation_;
 
     Eigen::MatrixXd err = calcVWerr(tar_position, curr_position, tar_orientation, curr_orientation);
 
@@ -679,7 +679,7 @@ bool KurokoKinematics::calcInverseKinematics(int to, const Eigen::MatrixXd& tar_
     for (int id = 0; id < idx.size(); id++)
     {
       int joint_num = idx[id];
-      kuroko_link_data_[joint_num]->internal_joint_angle_ += delta_angle.coeff(id);
+      joint_link_pairs_[joint_num]->internal_joint_angle_ += delta_angle.coeff(id);
     }
 
     calcForwardKinematics(0);
@@ -687,12 +687,12 @@ bool KurokoKinematics::calcInverseKinematics(int to, const Eigen::MatrixXd& tar_
 
   for (int joint_num : idx)
   {
-    if (kuroko_link_data_[joint_num]->internal_joint_angle_ >= kuroko_link_data_[joint_num]->joint_limit_upper_)
+    if (joint_link_pairs_[joint_num]->internal_joint_angle_ >= joint_link_pairs_[joint_num]->joint_limit_upper_)
     {
       limit_success = false;
       break;
     }
-    else if (kuroko_link_data_[joint_num]->internal_joint_angle_ <= kuroko_link_data_[joint_num]->joint_limit_lower_)
+    else if (joint_link_pairs_[joint_num]->internal_joint_angle_ <= joint_link_pairs_[joint_num]->joint_limit_lower_)
     {
       limit_success = false;
       break;
@@ -718,8 +718,8 @@ bool KurokoKinematics::calcInverseKinematics(int from, int to, const Eigen::Matr
   {
     Eigen::MatrixXd jacobian = calcJacobian(idx);
 
-    Eigen::MatrixXd curr_position = kuroko_link_data_[to]->internal_position_;
-    Eigen::MatrixXd curr_orientation = kuroko_link_data_[to]->internal_orientation_;
+    Eigen::MatrixXd curr_position = joint_link_pairs_[to]->internal_position_;
+    Eigen::MatrixXd curr_orientation = joint_link_pairs_[to]->internal_orientation_;
 
     Eigen::MatrixXd err = calcVWerr(tar_position, curr_position, tar_orientation, curr_orientation);
 
@@ -739,7 +739,7 @@ bool KurokoKinematics::calcInverseKinematics(int from, int to, const Eigen::Matr
     for (int id = 0; id < idx.size(); id++)
     {
       int joint_num = idx[id];
-      kuroko_link_data_[joint_num]->internal_joint_angle_ += delta_angle.coeff(id);
+      joint_link_pairs_[joint_num]->internal_joint_angle_ += delta_angle.coeff(id);
     }
 
     calcForwardKinematics(0);
@@ -747,12 +747,12 @@ bool KurokoKinematics::calcInverseKinematics(int from, int to, const Eigen::Matr
 
   for (int joint_num : idx)
   {
-    if (kuroko_link_data_[joint_num]->internal_joint_angle_ >= kuroko_link_data_[joint_num]->joint_limit_upper_)
+    if (joint_link_pairs_[joint_num]->internal_joint_angle_ >= joint_link_pairs_[joint_num]->joint_limit_upper_)
     {
       limit_success = false;
       break;
     }
-    else if (kuroko_link_data_[joint_num]->internal_joint_angle_ <= kuroko_link_data_[joint_num]->joint_limit_lower_)
+    else if (joint_link_pairs_[joint_num]->internal_joint_angle_ <= joint_link_pairs_[joint_num]->joint_limit_lower_)
     {
       limit_success = false;
       break;
@@ -798,8 +798,8 @@ bool KurokoKinematics::calcInverseKinematics(int to, const Eigen::MatrixXd& tar_
   {
     Eigen::MatrixXd jacobian = calcJacobian(idx);
 
-    Eigen::MatrixXd curr_position = kuroko_link_data_[to]->internal_position_;
-    Eigen::MatrixXd curr_orientation = kuroko_link_data_[to]->internal_orientation_;
+    Eigen::MatrixXd curr_position = joint_link_pairs_[to]->internal_position_;
+    Eigen::MatrixXd curr_orientation = joint_link_pairs_[to]->internal_orientation_;
 
     Eigen::MatrixXd err = calcVWerr(tar_position, curr_position, tar_orientation, curr_orientation);
 
@@ -819,7 +819,7 @@ bool KurokoKinematics::calcInverseKinematics(int to, const Eigen::MatrixXd& tar_
     for (int id = 0; id < idx.size(); id++)
     {
       int joint_id = idx[id];
-      kuroko_link_data_[joint_id]->internal_joint_angle_ += delta_angle.coeff(id);
+      joint_link_pairs_[joint_id]->internal_joint_angle_ += delta_angle.coeff(id);
     }
 
     calcForwardKinematics(0);
@@ -828,12 +828,12 @@ bool KurokoKinematics::calcInverseKinematics(int to, const Eigen::MatrixXd& tar_
   /* check joint limit */
   for (int joint_num : idx)
   {
-    if (kuroko_link_data_[joint_num]->internal_joint_angle_ >= kuroko_link_data_[joint_num]->joint_limit_upper_)
+    if (joint_link_pairs_[joint_num]->internal_joint_angle_ >= joint_link_pairs_[joint_num]->joint_limit_upper_)
     {
       limit_success = false;
       break;
     }
-    else if (kuroko_link_data_[joint_num]->internal_joint_angle_ <= kuroko_link_data_[joint_num]->joint_limit_lower_)
+    else if (joint_link_pairs_[joint_num]->internal_joint_angle_ <= joint_link_pairs_[joint_num]->joint_limit_lower_)
     {
       limit_success = false;
       break;
@@ -878,8 +878,8 @@ bool KurokoKinematics::calcInverseKinematics(int from, int to, const Eigen::Matr
   for (int iter = 0; iter < max_iter; iter++)
   {
     Eigen::MatrixXd jacobian = calcJacobian(idx);
-    Eigen::MatrixXd curr_position = kuroko_link_data_[to]->internal_position_;
-    Eigen::MatrixXd curr_orientation = kuroko_link_data_[to]->internal_orientation_;
+    Eigen::MatrixXd curr_position = joint_link_pairs_[to]->internal_position_;
+    Eigen::MatrixXd curr_orientation = joint_link_pairs_[to]->internal_orientation_;
     Eigen::MatrixXd err = calcVWerr(tar_position, curr_position, tar_orientation, curr_orientation);
 
     if (err.norm() < ik_err)
@@ -897,7 +897,7 @@ bool KurokoKinematics::calcInverseKinematics(int from, int to, const Eigen::Matr
     for (int id = 0; id < idx.size(); id++)
     {
       int joint_id = idx[id];
-      kuroko_link_data_[joint_id]->internal_joint_angle_ += delta_angle.coeff(id);
+      joint_link_pairs_[joint_id]->internal_joint_angle_ += delta_angle.coeff(id);
     }
     calcForwardKinematics(0);
   }
@@ -905,12 +905,12 @@ bool KurokoKinematics::calcInverseKinematics(int from, int to, const Eigen::Matr
   /* check joint limit */
   for (int joint_num : idx)
   {
-    if (kuroko_link_data_[joint_num]->internal_joint_angle_ >= kuroko_link_data_[joint_num]->joint_limit_upper_)
+    if (joint_link_pairs_[joint_num]->internal_joint_angle_ >= joint_link_pairs_[joint_num]->joint_limit_upper_)
     {
       limit_success = false;
       break;
     }
-    else if (kuroko_link_data_[joint_num]->internal_joint_angle_ <= kuroko_link_data_[joint_num]->joint_limit_lower_)
+    else if (joint_link_pairs_[joint_num]->internal_joint_angle_ <= joint_link_pairs_[joint_num]->joint_limit_lower_)
     {
       limit_success = false;
       break;
@@ -1044,9 +1044,9 @@ LinkData* KurokoKinematics::getLinkData(const std::string& link_name)
 {
   for (int ix = 0; ix <= ALL_JOINT_ID; ix++)
   {
-    if (kuroko_link_data_[ix]->name_ == link_name)
+    if (joint_link_pairs_[ix]->name_ == link_name)
     {
-      return kuroko_link_data_[ix];
+      return joint_link_pairs_[ix];
     }
   }
 
@@ -1055,9 +1055,9 @@ LinkData* KurokoKinematics::getLinkData(const std::string& link_name)
 
 LinkData* KurokoKinematics::getLinkData(const int link_id)
 {
-  if (kuroko_link_data_[link_id] != nullptr)
+  if (joint_link_pairs_[link_id] != nullptr)
   {
-    return kuroko_link_data_[link_id];
+    return joint_link_pairs_[link_id];
   }
 
   return nullptr;

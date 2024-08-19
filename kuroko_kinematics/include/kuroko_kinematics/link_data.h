@@ -19,23 +19,25 @@ public:
   int sibling_;
   int child_;
 
-  double mass_;
+  double link_mass_;
 
-  Eigen::MatrixXd relative_position_;
+  Eigen::MatrixXd joint_position_;
   Eigen::MatrixXd joint_axis_;
-  Eigen::MatrixXd center_of_mass_;
-  Eigen::MatrixXd inertia_;
+  Eigen::MatrixXd link_center_of_mass_;
+  Eigen::MatrixXd link_inertia_;
 
-  double joint_limit_max_;
-  double joint_limit_min_;
+  double joint_limit_upper_;
+  double joint_limit_lower_;
 
-  double joint_angle_;
-  double joint_velocity_;
-  double joint_acceleration_;
+  // Internal ca
 
-  Eigen::MatrixXd position_;
-  Eigen::MatrixXd orientation_;
-  Eigen::MatrixXd transformation_;
+  double internal_joint_angle_;
+  double internal_joint_velocity_;
+  double internal_joint_acceleration_;
+
+  Eigen::MatrixXd internal_position_;
+  Eigen::MatrixXd internal_orientation_;
+  Eigen::MatrixXd internal_transformation_;
 };
 
 }  // namespace motion_control

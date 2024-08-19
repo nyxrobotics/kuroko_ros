@@ -17,19 +17,19 @@ WalkingModule::WalkingModule() : control_cycle_msec_(8), debug_(false)
   kuroko_kd_ = new KurokoKinematics(WHOLE_BODY);
 
   // result
-  result_["ankle_r_yaw"] = new robotis_framework::DynamixelState();
   result_["hip_r_roll"] = new robotis_framework::DynamixelState();
   result_["hip_r_pitch"] = new robotis_framework::DynamixelState();
   result_["thigh_r_front_active"] = new robotis_framework::DynamixelState();
   result_["shin_r_active"] = new robotis_framework::DynamixelState();
   result_["ankle_r_roll"] = new robotis_framework::DynamixelState();
+  result_["ankle_r_yaw"] = new robotis_framework::DynamixelState();
 
-  result_["ankle_l_yaw"] = new robotis_framework::DynamixelState();
   result_["hip_l_roll"] = new robotis_framework::DynamixelState();
   result_["hip_l_pitch"] = new robotis_framework::DynamixelState();
   result_["thigh_l_front_active"] = new robotis_framework::DynamixelState();
   result_["shin_l_active"] = new robotis_framework::DynamixelState();
   result_["ankle_l_roll"] = new robotis_framework::DynamixelState();
+  result_["ankle_l_yaw"] = new robotis_framework::DynamixelState();
 
   result_["shoulder_r_pitch"] = new robotis_framework::DynamixelState();
   result_["shoulder_l_pitch"] = new robotis_framework::DynamixelState();

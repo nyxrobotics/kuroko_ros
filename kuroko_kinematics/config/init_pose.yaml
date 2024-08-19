@@ -1,23 +1,22 @@
 init_pose:
-  shin_l_active: 0.625
-  ankle_l_roll: 0.00
-  hip_l_pitch: -0.916
-  hip_l_roll: 0.00
-  ankle_l_yaw: 0.00
-  thigh_l_front_active: 1.192
-  shoulder_l_pitch: 0.00
-  shoulder_l_roll: 1.293
-  elbow_l_front: -0.10
-  l_el_yaw: -1.926
-  l_gripper: 0.00
-  shin_r_active: -0.625
-  ankle_r_roll: 0.00
-  hip_r_pitch: 0.916
+  waist: 0.00
+  shoulder_r_pitch: 0.855
+  shoulder_r_roll: 0.00
+  elbow_r_front: -2.268
+  elbow_r_rear: 2.268
+  shoulder_l_pitch: -0.855
+  shoulder_l_roll: 0.00
+  elbow_l_front: 2.268
+  elbow_l_rear: -2.268
   hip_r_roll: 0.00
+  hip_r_pitch: 0.00
+  thigh_r_front_active: -0.087
+  shin_r_active: -0.175
+  ankle_r_roll: 0.00
   ankle_r_yaw: 0.00
-  thigh_r_front_active: -1.192
-  shoulder_r_pitch: 0.00
-  shoulder_r_roll: -1.293
-  elbow_r_front: 0.10
-  r_el_yaw: 1.926
-  r_gripper: 0.00
+  hip_l_roll: 0.00
+  hip_l_pitch: 0.00
+  thigh_l_front_active: 0.087
+  shin_l_active: 0.175
+  ankle_l_roll: 0.00
+  ankle_l_yaw: 0.00

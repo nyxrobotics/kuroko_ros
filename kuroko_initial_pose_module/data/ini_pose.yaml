@@ -1,56 +1,50 @@
-# time parameter
-
-mov_time: 2.0 # movement time
-
-via_num: 0 # via-point number
-via_time: [4.0] # via-point time
-
-# via-point pose [deg]
-
-via_pose:
-  1: [0.0] # waist
-  2: [0.0] # hip_r_roll
-  3: [0.0] # hip_l_roll
-  4: [0.0] # shoulder_r_pitch
-  5: [0.0] # shoulder_l_pitch
-  6: [0.0] # hip_r_pitch
-  7: [0.0] # thigh_r_front_active
-  8: [0.0] # shin_r_active
-  9: [0.0] # ankle_r_roll
-  10: [0.0] # ankle_r_yaw
-  11: [0.0] # hip_l_pitch
-  12: [0.0] # thigh_l_front_active
-  13: [0.0] # shin_l_active
-  14: [0.0] # ankle_l_roll
-  15: [0.0] # ankle_l_yaw
-  16: [0.0] # shoulder_r_roll
-  17: [0.0] # elbow_r_rear
-  18: [0.0] # elbow_r_front
-  19: [0.0] # shoulder_l_roll
-  20: [0.0] # elbow_l_rear
-  21: [0.0] # elbow_l_front
-
 # target pose [deg]
-
+mov_time: 2.0 # movement time
 tar_pose:
   1: 0.0 # waist
-  2: 0.0 # hip_r_roll
-  3: 0.0 # hip_l_roll
-  4: 49.0 # shoulder_r_pitch
-  5: -49.0 # shoulder_l_pitch
-  6: 0.0 # hip_r_pitch
-  7: -5.0 # thigh_r_front_active
-  8: -10.0 # shin_r_active
-  9: 0.0 # ankle_r_roll
-  10: 0.0 # ankle_r_yaw
-  11: 0.0 # hip_l_pitch
-  12: 5.0 # thigh_l_front_active
-  13: 10.0 # shin_l_active
-  14: 0.0 # ankle_l_roll
-  15: 0.0 # ankle_l_yaw
-  16: 0.0 # shoulder_r_roll
-  17: 130.0 # elbow_r_rear
-  18: -130.0 # elbow_r_front
-  19: 0.0 # shoulder_l_roll
-  20: -130.0 # elbow_l_rear
-  21: 130.0 # elbow_l_front
+  2: 49.0 # shoulder_r_pitch
+  3: 0.0 # shoulder_r_roll
+  4: -130.0 # elbow_r_front
+  5: 130.0 # elbow_r_rear
+  6: -49.0 # shoulder_l_pitch
+  7: 0.0 # shoulder_l_roll
+  8: 130.0 # elbow_l_front
+  9: -130.0 # elbow_l_rear
+  10: 0.0 # hip_r_roll
+  11: 0.0 # hip_r_pitch
+  12: -5.0 # thigh_r_front_active
+  13: -10.0 # shin_r_active
+  14: 0.0 # ankle_r_roll
+  15: 0.0 # ankle_r_yaw
+  16: 0.0 # hip_l_roll
+  17: 0.0 # hip_l_pitch
+  18: 5.0 # thigh_l_front_active
+  19: 10.0 # shin_l_active
+  20: 0.0 # ankle_l_roll
+  21: 0.0 # ankle_l_yaw
+
+# via-point pose [deg] (Optional)
+via_num: 0 # via-point number
+via_time: [4.0] # via-point time
+via_pose:
+  1: [0.0] # waist
+  2: [49.0] # shoulder_r_pitch
+  3: [0.0] # shoulder_r_roll
+  4: [-130.0] # elbow_r_front
+  5: [130.0] # elbow_r_rear
+  6: [-49.0] # shoulder_l_pitch
+  7: [0.0] # shoulder_l_roll
+  8: [130.0] # elbow_l_front
+  9: [-130.0] # elbow_l_rear
+  10: [0.0] # hip_r_roll
+  11: [0.0] # hip_r_pitch
+  12: [-5.0] # thigh_r_front_active
+  13: [-10.0] # shin_r_active
+  14: [0.0] # ankle_r_roll
+  15: [0.0] # ankle_r_yaw
+  16: [0.0] # hip_l_roll
+  17: [0.0] # hip_l_pitch
+  18: [5.0] # thigh_l_front_active
+  19: [10.0] # shin_l_active
+  20: [0.0] # ankle_l_roll
+  21: [0.0] # ankle_l_yaw

@@ -46,26 +46,26 @@
     <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" ns="$(arg robot_name)" args="
       joint_state_controller
       chest_position
-      hip_r_roll_position
-      hip_l_roll_position
       shoulder_r_pitch_position
+      shoulder_r_roll_position
+      elbow_r_front_position
+      elbow_r_rear_position
       shoulder_l_pitch_position
+      shoulder_l_roll_position
+      elbow_l_front_position
+      elbow_l_rear_position
+      hip_r_roll_position
       hip_r_pitch_position
       thigh_r_front_active_position
       shin_r_active_position
       ankle_r_roll_position
       ankle_r_yaw_position
+      hip_l_roll_position
       hip_l_pitch_position
       thigh_l_front_active_position
       shin_l_active_position
       ankle_l_roll_position
       ankle_l_yaw_position
-      shoulder_r_roll_position
-      elbow_r_rear_position
-      elbow_r_front_position
-      shoulder_l_roll_position
-      elbow_l_rear_position
-      elbow_l_front_position
       "/>
   </group>
   <group if="$(arg use_trajectory_control)">

@@ -1,22 +1,25 @@
 id_joint:
-  1: shoulder_r_pitch
-  2: shoulder_l_pitch
+  1: waist
+  2: shoulder_r_pitch
   3: shoulder_r_roll
-  4: shoulder_l_roll
-  5: elbow_r_front
-  6: elbow_l_front
-  7: ankle_r_yaw
-  8: ankle_l_yaw
-  9: hip_r_roll
-  10: hip_l_roll
+  4: elbow_r_front
+  5: elbow_r_rear
+  6: shoulder_l_pitch
+  7: shoulder_l_roll
+  8: elbow_l_front
+  9: elbow_l_rear
+  10: hip_r_roll
   11: hip_r_pitch
-  12: hip_l_pitch
-  13: thigh_r_front_active
-  14: thigh_l_front_active
-  15: shin_r_active
-  16: shin_l_active
-  17: ankle_r_roll
-  18: ankle_l_roll
+  12: thigh_r_front_active
+  13: shin_r_active
+  14: ankle_r_roll
+  15: ankle_r_yaw
+  16: hip_l_roll
+  17: hip_l_pitch
+  18: thigh_l_front_active
+  19: shin_l_active
+  20: ankle_l_roll
+  21: ankle_l_yaw
 module_list:
   [
     none,

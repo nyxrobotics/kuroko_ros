@@ -19,7 +19,7 @@ joint_names:
   - ankle_l_yaw
   - ankle_r_roll
   - ankle_r_yaw
-  - waist
+  - chest
 points:
   - positions:
       [

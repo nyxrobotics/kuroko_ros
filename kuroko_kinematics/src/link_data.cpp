@@ -12,9 +12,12 @@ LinkData::LinkData()
 
   // Joint params
   joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
+  joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, 0.0, 0.0);
   joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
   joint_limit_lower_ = -100.0;
   joint_limit_upper_ = 100.0;
+  joint_mimic_ = "";
+  joint_mimic_multiplier_ = 1.0;
 
   // Link params
   link_mass_ = 0.0;

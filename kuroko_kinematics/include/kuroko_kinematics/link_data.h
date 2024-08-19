@@ -21,9 +21,12 @@ public:
 
   // Joint params
   Eigen::MatrixXd joint_position_;
+  Eigen::MatrixXd joint_orientation_;
   Eigen::MatrixXd joint_axis_;
   double joint_limit_upper_;
   double joint_limit_lower_;
+  std::string joint_mimic_;
+  double joint_mimic_multiplier_;
 
   // Link params
   double link_mass_;

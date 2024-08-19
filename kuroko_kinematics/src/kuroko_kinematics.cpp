@@ -20,446 +20,542 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_pairs_[0]->name_ = "base";
     joint_link_pairs_[0]->parent_ = -1;
     joint_link_pairs_[0]->sibling_ = -1;
-    joint_link_pairs_[0]->child_ = 23;
-    joint_link_pairs_[0]->link_mass_ = 0.0;
+    joint_link_pairs_[0]->child_ = 1;
     joint_link_pairs_[0]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
+    joint_link_pairs_[0]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, 0.0, 0.0);
     joint_link_pairs_[0]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    joint_link_pairs_[0]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    joint_link_pairs_[0]->joint_limit_upper_ = 100.0;
     joint_link_pairs_[0]->joint_limit_lower_ = -100.0;
+    joint_link_pairs_[0]->joint_limit_upper_ = 100.0;
+    joint_link_pairs_[0]->link_mass_ = 0.0;
+    joint_link_pairs_[0]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
     joint_link_pairs_[0]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
-    /* ----- passive joint -----*/
+    // Body
+    joint_link_pairs_[1]->name_ = "waist";
+    joint_link_pairs_[1]->parent_ = 0;
+    joint_link_pairs_[1]->sibling_ = -1;
+    joint_link_pairs_[1]->child_ = 2;
+    joint_link_pairs_[1]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
+    joint_link_pairs_[1]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, 0.0, 0.0);
+    joint_link_pairs_[1]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
+    joint_link_pairs_[1]->joint_limit_lower_ = -100.0;
+    joint_link_pairs_[1]->joint_limit_upper_ = 100.0;
+    joint_link_pairs_[1]->link_mass_ = 0.337;
+    joint_link_pairs_[1]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.00125, 0.0, -0.04875);
+    joint_link_pairs_[1]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
 
-    joint_link_pairs_[23]->name_ = "passive_x";
-    joint_link_pairs_[23]->parent_ = 0;
+    joint_link_pairs_[2]->name_ = "chest";
+    joint_link_pairs_[2]->parent_ = 1;
+    joint_link_pairs_[2]->sibling_ = 11;  // TODO (hip_r_roll)
+    joint_link_pairs_[2]->child_ = 3;
+    joint_link_pairs_[2]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
+    joint_link_pairs_[2]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, 0.0, 0.0);
+    joint_link_pairs_[2]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 1.0);
+    joint_link_pairs_[2]->joint_limit_lower_ = -3.1;
+    joint_link_pairs_[2]->joint_limit_upper_ = 3.1;
+    joint_link_pairs_[2]->link_mass_ = 0.337;
+    joint_link_pairs_[2]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.057);
+    joint_link_pairs_[2]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+
+    // Right Arm
+    joint_link_pairs_[3]->name_ = "shoulder_r_pitch";
+    joint_link_pairs_[3]->parent_ = 2;
+    joint_link_pairs_[3]->sibling_ = 7;  // (shoulder_l_pitch)
+    joint_link_pairs_[3]->child_ = 4;
+    joint_link_pairs_[3]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, -0.1275, 0.01275);
+    joint_link_pairs_[3]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, 0.0, 0.0);
+    joint_link_pairs_[3]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, -1.0, 0.0);
+    joint_link_pairs_[3]->joint_limit_lower_ = -3.1;
+    joint_link_pairs_[3]->joint_limit_upper_ = 3.1;
+    joint_link_pairs_[3]->link_mass_ = 0.022;
+    joint_link_pairs_[3]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, -0.024, 0.0);
+    joint_link_pairs_[3]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+
+    joint_link_pairs_[4]->name_ = "shoulder_r_roll";
+    joint_link_pairs_[4]->parent_ = 3;
+    joint_link_pairs_[4]->sibling_ = -1;
+    joint_link_pairs_[4]->child_ = 5;
+    joint_link_pairs_[4]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, -0.1275, 0.01275);
+    joint_link_pairs_[4]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, 0.0, 0.0);
+    joint_link_pairs_[4]->joint_axis_ = robotis_framework::getTransitionXYZ(-1.0, 0.0, 0.0);
+    joint_link_pairs_[4]->joint_limit_lower_ = -1.0472;
+    joint_link_pairs_[4]->joint_limit_upper_ = 2.0071;
+    joint_link_pairs_[4]->link_mass_ = 0.342;
+    joint_link_pairs_[4]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, -0.016, -0.02575);
+    joint_link_pairs_[4]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+
+    joint_link_pairs_[5]->name_ = "elbow_r_front_and_rear";
+    joint_link_pairs_[5]->parent_ = 4;
+    joint_link_pairs_[5]->sibling_ = -1;
+    joint_link_pairs_[5]->child_ = 6;
+    joint_link_pairs_[5]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.008, -0.052);
+    joint_link_pairs_[5]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, 0.0, 0.0);
+    joint_link_pairs_[5]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 1.0, 0.0);
+    joint_link_pairs_[5]->joint_limit_lower_ = -2.6180;
+    joint_link_pairs_[5]->joint_limit_upper_ = 2.6180;
+    joint_link_pairs_[5]->link_mass_ = 0.063;
+    joint_link_pairs_[5]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0043, 0.0, -0.1);
+    joint_link_pairs_[5]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+
+    joint_link_pairs_[6]->name_ = "arm_r_end";
+    joint_link_pairs_[6]->parent_ = 5;
+    joint_link_pairs_[6]->sibling_ = -1;
+    joint_link_pairs_[6]->child_ = -1;
+    joint_link_pairs_[6]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -0.208);
+    joint_link_pairs_[6]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, 0.0, 0.0);
+    joint_link_pairs_[6]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
+    joint_link_pairs_[6]->joint_limit_lower_ = -100;
+    joint_link_pairs_[6]->joint_limit_upper_ = 100;
+    joint_link_pairs_[6]->link_mass_ = 0;
+    joint_link_pairs_[6]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0, 0, 0);
+    joint_link_pairs_[6]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+
+    // Left Arm
+    joint_link_pairs_[7]->name_ = "shoulder_l_pitch";
+    joint_link_pairs_[7]->parent_ = 2;
+    joint_link_pairs_[7]->sibling_ = -1;
+    joint_link_pairs_[7]->child_ = 8;
+    joint_link_pairs_[7]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.1275, 0.01275);
+    joint_link_pairs_[7]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, 0.0, 0.0);
+    joint_link_pairs_[7]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 1.0, 0.0);
+    joint_link_pairs_[7]->joint_limit_lower_ = -3.1;
+    joint_link_pairs_[7]->joint_limit_upper_ = 3.1;
+    joint_link_pairs_[7]->link_mass_ = 0.022;
+    joint_link_pairs_[7]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.024, 0.0);
+    joint_link_pairs_[7]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+
+    joint_link_pairs_[8]->name_ = "shoulder_l_roll";
+    joint_link_pairs_[8]->parent_ = 7;
+    joint_link_pairs_[8]->sibling_ = -1;
+    joint_link_pairs_[8]->child_ = 9;
+    joint_link_pairs_[8]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.038, 0.0);
+    joint_link_pairs_[8]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, 0.0, 0.0);
+    joint_link_pairs_[8]->joint_axis_ = robotis_framework::getTransitionXYZ(-1.0, 0.0, 0.0);
+    joint_link_pairs_[8]->joint_limit_lower_ = -2.0071;
+    joint_link_pairs_[8]->joint_limit_upper_ = 1.0472;
+    joint_link_pairs_[8]->link_mass_ = 0.342;
+    joint_link_pairs_[8]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.016, -0.02575);
+    joint_link_pairs_[8]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+
+    joint_link_pairs_[9]->name_ = "elbow_l_front_and_rear";
+    joint_link_pairs_[9]->parent_ = 8;
+    joint_link_pairs_[9]->sibling_ = -1;
+    joint_link_pairs_[9]->child_ = 10;
+    joint_link_pairs_[9]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, -0.008, -0.052);
+    joint_link_pairs_[9]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, 0.0, 0.0);
+    joint_link_pairs_[9]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, -1.0, 0.0);
+    joint_link_pairs_[9]->joint_limit_lower_ = -2.6180;
+    joint_link_pairs_[9]->joint_limit_upper_ = 2.6180;
+    joint_link_pairs_[9]->link_mass_ = 0.063;
+    joint_link_pairs_[9]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0043, 0.0, -0.104);
+    joint_link_pairs_[9]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+
+    joint_link_pairs_[10]->name_ = "arm_l_end";
+    joint_link_pairs_[10]->parent_ = 9;
+    joint_link_pairs_[10]->sibling_ = -1;
+    joint_link_pairs_[10]->child_ = -1;
+    joint_link_pairs_[10]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -0.208);
+    joint_link_pairs_[10]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, 0.0, 0.0);
+    joint_link_pairs_[10]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
+    joint_link_pairs_[10]->joint_limit_lower_ = -100;
+    joint_link_pairs_[10]->joint_limit_upper_ = 100;
+    joint_link_pairs_[10]->link_mass_ = 0;
+    joint_link_pairs_[10]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0, 0, 0);
+    joint_link_pairs_[10]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+
+    // Right Leg
+    joint_link_pairs_[11]->name_ = "hip_r_roll";
+    joint_link_pairs_[11]->parent_ = 1;    // waist
+    joint_link_pairs_[11]->sibling_ = 25;  // hip_l_roll
+    joint_link_pairs_[11]->child_ = 12;
+    joint_link_pairs_[11]->joint_position_ = robotis_framework::getTransitionXYZ(0, 0, -0.08425);
+    joint_link_pairs_[11]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, 0.0, 0.0);
+    joint_link_pairs_[11]->joint_axis_ = robotis_framework::getTransitionXYZ(1.0, 0.0, 0.0);
+    joint_link_pairs_[11]->joint_limit_lower_ = -0.5550;
+    joint_link_pairs_[11]->joint_limit_upper_ = 1.8640;
+    joint_link_pairs_[11]->link_mass_ = 0.026;
+    joint_link_pairs_[11]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.00125, -0.0065, -0.004125);
+    joint_link_pairs_[11]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+
+    joint_link_pairs_[12]->name_ = "hip_r_pitch";
+    joint_link_pairs_[12]->parent_ = 11;
+    joint_link_pairs_[12]->sibling_ = -1;
+    joint_link_pairs_[12]->child_ = 13;
+    joint_link_pairs_[12]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, -0.027, 0.0);
+    joint_link_pairs_[12]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, 0.0, 0.0);
+    joint_link_pairs_[12]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, -1.0, 0.0);
+    joint_link_pairs_[12]->joint_limit_lower_ = -3.1;
+    joint_link_pairs_[12]->joint_limit_upper_ = 3.1;
+    joint_link_pairs_[12]->link_mass_ = 0.478;
+    joint_link_pairs_[12]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.00175, -0.049, -0.015);
+    joint_link_pairs_[12]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+
+    joint_link_pairs_[13]->name_ = "thigh_r_front_active";
+    joint_link_pairs_[13]->parent_ = 12;
+    joint_link_pairs_[13]->sibling_ = 20;  // shin_r_active
+    joint_link_pairs_[13]->child_ = 14;
+    joint_link_pairs_[13]->joint_position_ = robotis_framework::getTransitionXYZ(0.015, -0.02925, -0.0305);
+    joint_link_pairs_[13]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, -0.785398163, 0.0);
+    joint_link_pairs_[13]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 1.0, 0.0);
+    joint_link_pairs_[13]->joint_limit_lower_ = -0.4974;
+    joint_link_pairs_[13]->joint_limit_upper_ = 1.8588;
+    joint_link_pairs_[13]->link_mass_ = 0.012;
+    joint_link_pairs_[13]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -0.05);
+    joint_link_pairs_[13]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+
+    joint_link_pairs_[14]->name_ = "knee_r_passive";
+    joint_link_pairs_[14]->parent_ = 13;
+    joint_link_pairs_[14]->sibling_ = -1;
+    joint_link_pairs_[14]->child_ = 15;
+    joint_link_pairs_[14]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -0.1);
+    joint_link_pairs_[14]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, 0.785398163, 0.0);
+    joint_link_pairs_[14]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 1.0, 0.0);
+    joint_link_pairs_[14]->joint_limit_lower_ = -1.8588;
+    joint_link_pairs_[14]->joint_limit_upper_ = 0.4974;
+    joint_link_pairs_[14]->joint_mimic_ = "thigh_r_front_active";
+    joint_link_pairs_[14]->joint_mimic_multiplier_ = -1.0;
+    joint_link_pairs_[14]->link_mass_ = 0.007;
+    joint_link_pairs_[14]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.01675, 0.0, 0.0);
+    joint_link_pairs_[14]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+
+    joint_link_pairs_[15]->name_ = "shin_r_front_passive";
+    joint_link_pairs_[15]->parent_ = 14;
+    joint_link_pairs_[15]->sibling_ = 24;
+    joint_link_pairs_[15]->child_ = 16;
+    joint_link_pairs_[15]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
+    joint_link_pairs_[15]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, 0.785398163, 0.0);
+    joint_link_pairs_[15]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 1.0, 0.0);
+    joint_link_pairs_[15]->joint_limit_lower_ = -1.8588;
+    joint_link_pairs_[15]->joint_limit_upper_ = 0.4974;
+    joint_link_pairs_[15]->joint_mimic_ = "shin_r_active";
+    joint_link_pairs_[15]->joint_mimic_multiplier_ = 1.0;
+    joint_link_pairs_[15]->link_mass_ = 0.013;
+    joint_link_pairs_[15]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -0.05);
+    joint_link_pairs_[15]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+
+    joint_link_pairs_[16]->name_ = "ankle_r_pitch_passive";
+    joint_link_pairs_[16]->parent_ = 15;
+    joint_link_pairs_[16]->sibling_ = -1;
+    joint_link_pairs_[16]->child_ = 17;
+    joint_link_pairs_[16]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -0.1);
+    joint_link_pairs_[16]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, -0.785398163, 0.0);
+    joint_link_pairs_[16]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 1.0, 0.0);
+    joint_link_pairs_[16]->joint_limit_lower_ = -0.4974;
+    joint_link_pairs_[16]->joint_limit_upper_ = 1.8588;
+    joint_link_pairs_[16]->joint_mimic_ = "shin_r_active";
+    joint_link_pairs_[16]->joint_mimic_multiplier_ = -1.0;
+    joint_link_pairs_[16]->link_mass_ = 0.104;
+    joint_link_pairs_[16]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.0285, 0, -0.013);
+    joint_link_pairs_[16]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+
+    joint_link_pairs_[17]->name_ = "ankle_r_roll";
+    joint_link_pairs_[17]->parent_ = 16;
+    joint_link_pairs_[17]->sibling_ = -1;
+    joint_link_pairs_[17]->child_ = 18;
+    joint_link_pairs_[17]->joint_position_ = robotis_framework::getTransitionXYZ(-0.015, 0, -0.027);
+    joint_link_pairs_[17]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, 0.0, 0.0);
+    joint_link_pairs_[17]->joint_axis_ = robotis_framework::getTransitionXYZ(1.0, 0.0, 0.0);
+    joint_link_pairs_[17]->joint_limit_lower_ = -0.3704;
+    joint_link_pairs_[17]->joint_limit_upper_ = 1.5708;
+    joint_link_pairs_[17]->link_mass_ = 0.0136;
+    joint_link_pairs_[17]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0, -0.009375, -0.01175);
+    joint_link_pairs_[17]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+
+    joint_link_pairs_[18]->name_ = "ankle_r_yaw";
+    joint_link_pairs_[18]->parent_ = 17;
+    joint_link_pairs_[18]->sibling_ = -1;
+    joint_link_pairs_[18]->child_ = 19;
+    joint_link_pairs_[18]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -0.03825);
+    joint_link_pairs_[18]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, 0.0, 0.0);
+    joint_link_pairs_[18]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -1.0);
+    joint_link_pairs_[18]->joint_limit_lower_ = -3.1;
+    joint_link_pairs_[18]->joint_limit_upper_ = 3.1;
+    joint_link_pairs_[18]->link_mass_ = 0.043;
+    joint_link_pairs_[18]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -0.004);
+    joint_link_pairs_[18]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+
+    joint_link_pairs_[19]->name_ = "leg_r_end";
+    joint_link_pairs_[19]->parent_ = 18;
+    joint_link_pairs_[19]->sibling_ = -1;
+    joint_link_pairs_[19]->child_ = -1;
+    joint_link_pairs_[19]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -0.004);
+    joint_link_pairs_[19]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, 0.0, 0.0);
+    joint_link_pairs_[19]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
+    joint_link_pairs_[19]->joint_limit_lower_ = -100;
+    joint_link_pairs_[19]->joint_limit_upper_ = 100;
+    joint_link_pairs_[19]->link_mass_ = 0;
+    joint_link_pairs_[19]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0, 0, 0);
+    joint_link_pairs_[19]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+
+    joint_link_pairs_[20]->name_ = "shin_r_active";
+    joint_link_pairs_[20]->parent_ = 12;   // hip_r_pitch
+    joint_link_pairs_[20]->sibling_ = 23;  // thigh_r_middle_passive_link
+    joint_link_pairs_[20]->child_ = 21;
+    joint_link_pairs_[20]->joint_position_ = robotis_framework::getTransitionXYZ(-0.0185, -0.02925, -0.0305);
+    joint_link_pairs_[20]->joint_orientation_ = robotis_framework::convertRPYToRotation(0, 1.047197551, 0);
+    joint_link_pairs_[20]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 1.0, 0.0);
+    joint_link_pairs_[20]->joint_limit_lower_ = -1.8588;
+    joint_link_pairs_[20]->joint_limit_upper_ = 0.4974;
+    joint_link_pairs_[20]->link_mass_ = 0.008;
+    joint_link_pairs_[20]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.004745, 0, -0.015);
+    joint_link_pairs_[20]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+
+    joint_link_pairs_[21]->name_ = "thigh_r_rear_passive_mimic";
+    joint_link_pairs_[21]->parent_ = 20;
+    joint_link_pairs_[21]->sibling_ = -1;
+    joint_link_pairs_[21]->child_ = 22;
+    joint_link_pairs_[21]->joint_position_ = robotis_framework::getTransitionXYZ(0, 0, -0.03);
+    joint_link_pairs_[21]->joint_orientation_ = robotis_framework::convertRPYToRotation(0, -1.832597551, 0);
+    joint_link_pairs_[21]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 1.0, 0.0);
+    joint_link_pairs_[21]->joint_limit_lower_ = -3.1;
+    joint_link_pairs_[21]->joint_limit_upper_ = 3.1;
+    joint_link_pairs_[21]->joint_mimic_ = "shin_r_active";
+    joint_link_pairs_[21]->joint_mimic_multiplier_ = -1.0;
+    joint_link_pairs_[21]->link_mass_ = 0.0;
+    joint_link_pairs_[21]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0, 0, 0);
+    joint_link_pairs_[21]->link_inertia_ = robotis_framework::getInertiaXYZ(0, 0, 0, 0, 0, 0);
+
+    joint_link_pairs_[22]->name_ = "thigh_r_rear_passive";
+    joint_link_pairs_[22]->parent_ = 21;
+    joint_link_pairs_[22]->sibling_ = -1;
+    joint_link_pairs_[22]->child_ = 23;
+    joint_link_pairs_[22]->joint_position_ = robotis_framework::getTransitionXYZ(0, 0, 0);
+    joint_link_pairs_[22]->joint_orientation_ = robotis_framework::convertRPYToRotation(0, 0, 0);
+    joint_link_pairs_[22]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 1.0, 0.0);
+    joint_link_pairs_[22]->joint_limit_lower_ = -3.1;
+    joint_link_pairs_[22]->joint_limit_upper_ = 3.1;
+    joint_link_pairs_[21]->joint_mimic_ = "thigh_r_front_active";
+    joint_link_pairs_[21]->joint_mimic_multiplier_ = 1.0;
+    joint_link_pairs_[22]->link_mass_ = 0.011;
+    joint_link_pairs_[22]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0, 0, -0.05);
+    joint_link_pairs_[22]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+
+    joint_link_pairs_[23]->name_ = "thigh_r_middle_passive";
+    joint_link_pairs_[23]->parent_ = 12;  // hip_r_pitch
     joint_link_pairs_[23]->sibling_ = -1;
     joint_link_pairs_[23]->child_ = 24;
-    joint_link_pairs_[23]->link_mass_ = 0.0;
-    joint_link_pairs_[23]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    joint_link_pairs_[23]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    joint_link_pairs_[23]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    joint_link_pairs_[23]->joint_limit_upper_ = 100.0;
-    joint_link_pairs_[23]->joint_limit_lower_ = -100.0;
-    joint_link_pairs_[23]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    joint_link_pairs_[23]->joint_position_ = robotis_framework::getTransitionXYZ(-0.0185, -0.02925, -0.0305);
+    joint_link_pairs_[23]->joint_orientation_ = robotis_framework::convertRPYToRotation(0, -0.785398163, 0);
+    joint_link_pairs_[23]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 1.0, 0.0);
+    joint_link_pairs_[23]->joint_limit_lower_ = -3.1;
+    joint_link_pairs_[23]->joint_limit_upper_ = 3.1;
+    joint_link_pairs_[21]->joint_mimic_ = "thigh_r_front_active";
+    joint_link_pairs_[21]->joint_mimic_multiplier_ = 1.0;
+    joint_link_pairs_[23]->link_mass_ = 0.012;
+    joint_link_pairs_[23]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0, 0, -0.05);
+    joint_link_pairs_[23]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
 
-    joint_link_pairs_[24]->name_ = "passive_y";
-    joint_link_pairs_[24]->parent_ = 23;
+    joint_link_pairs_[24]->name_ = "shin_r_rear_passive";
+    joint_link_pairs_[24]->parent_ = 14;  // knee_r_passive
     joint_link_pairs_[24]->sibling_ = -1;
     joint_link_pairs_[24]->child_ = 25;
-    joint_link_pairs_[24]->link_mass_ = 0.0;
-    joint_link_pairs_[24]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    joint_link_pairs_[24]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    joint_link_pairs_[24]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    joint_link_pairs_[24]->joint_limit_upper_ = 100.0;
-    joint_link_pairs_[24]->joint_limit_lower_ = -100.0;
-    joint_link_pairs_[24]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    joint_link_pairs_[24]->joint_position_ = robotis_framework::getTransitionXYZ(-0.0335, 0, 0);
+    joint_link_pairs_[24]->joint_orientation_ = robotis_framework::convertRPYToRotation(0, 0.785398163, 0);
+    joint_link_pairs_[24]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 1.0, 0.0);
+    joint_link_pairs_[24]->joint_limit_lower_ = -1.8588;
+    joint_link_pairs_[24]->joint_limit_upper_ = 0.4974;
+    joint_link_pairs_[24]->joint_mimic_ = "shin_r_active";
+    joint_link_pairs_[24]->joint_mimic_multiplier_ = 1.0;
+    joint_link_pairs_[24]->link_mass_ = 0.016;
+    joint_link_pairs_[24]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0, 0, -0.05);
+    joint_link_pairs_[24]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
 
-    joint_link_pairs_[25]->name_ = "passive_z";
-    joint_link_pairs_[25]->parent_ = 24;
+    // Left Leg
+    joint_link_pairs_[25]->name_ = "hip_l_roll";
+    joint_link_pairs_[25]->parent_ = 1;  // waist
     joint_link_pairs_[25]->sibling_ = -1;
     joint_link_pairs_[25]->child_ = 26;
-    joint_link_pairs_[25]->link_mass_ = 0.0;
-    joint_link_pairs_[25]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.385);
-    joint_link_pairs_[25]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    joint_link_pairs_[25]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    joint_link_pairs_[25]->joint_limit_upper_ = 100.0;
-    joint_link_pairs_[25]->joint_limit_lower_ = -100.0;
-    joint_link_pairs_[25]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    joint_link_pairs_[25]->joint_position_ = robotis_framework::getTransitionXYZ(0, 0, -0.08425);
+    joint_link_pairs_[25]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, 0.0, 0.0);
+    joint_link_pairs_[25]->joint_axis_ = robotis_framework::getTransitionXYZ(-1.0, 0.0, 0.0);
+    joint_link_pairs_[25]->joint_limit_lower_ = -0.5550;
+    joint_link_pairs_[25]->joint_limit_upper_ = 1.8640;
+    joint_link_pairs_[25]->link_mass_ = 0.026;
+    joint_link_pairs_[25]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.00125, 0.0065, -0.004125);
+    joint_link_pairs_[25]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
 
-    joint_link_pairs_[26]->name_ = "passive_roll";
+    joint_link_pairs_[26]->name_ = "hip_l_pitch";
     joint_link_pairs_[26]->parent_ = 25;
     joint_link_pairs_[26]->sibling_ = -1;
     joint_link_pairs_[26]->child_ = 27;
-    joint_link_pairs_[26]->link_mass_ = 0.0;
-    joint_link_pairs_[26]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    joint_link_pairs_[26]->joint_axis_ = robotis_framework::getTransitionXYZ(1.0, 0.0, 0.0);
-    joint_link_pairs_[26]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    joint_link_pairs_[26]->joint_limit_upper_ = 100.0;
-    joint_link_pairs_[26]->joint_limit_lower_ = -100.0;
-    joint_link_pairs_[26]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    joint_link_pairs_[26]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.027, 0.0);
+    joint_link_pairs_[26]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, 0.0, 0.0);
+    joint_link_pairs_[26]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 1.0, 0.0);
+    joint_link_pairs_[26]->joint_limit_lower_ = -3.1;
+    joint_link_pairs_[26]->joint_limit_upper_ = 3.1;
+    joint_link_pairs_[26]->link_mass_ = 0.478;
+    joint_link_pairs_[26]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.00175, 0.049, -0.015);
+    joint_link_pairs_[26]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
 
-    joint_link_pairs_[27]->name_ = "passive_pitch";
+    joint_link_pairs_[27]->name_ = "thigh_l_front_active";
     joint_link_pairs_[27]->parent_ = 26;
-    joint_link_pairs_[27]->sibling_ = -1;
+    joint_link_pairs_[27]->sibling_ = 34;  // shin_l_active
     joint_link_pairs_[27]->child_ = 28;
-    joint_link_pairs_[27]->link_mass_ = 0.0;
-    joint_link_pairs_[27]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    joint_link_pairs_[27]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 1.0, 0.0);
-    joint_link_pairs_[27]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    joint_link_pairs_[27]->joint_limit_upper_ = 100.0;
-    joint_link_pairs_[27]->joint_limit_lower_ = -100.0;
-    joint_link_pairs_[27]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    joint_link_pairs_[27]->joint_position_ = robotis_framework::getTransitionXYZ(0.015, 0.02925, -0.0305);
+    joint_link_pairs_[27]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, -0.785398163, 0.0);
+    joint_link_pairs_[27]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, -1.0, 0.0);
+    joint_link_pairs_[27]->joint_limit_lower_ = -1.8588;
+    joint_link_pairs_[27]->joint_limit_upper_ = 0.4974;
+    joint_link_pairs_[27]->link_mass_ = 0.012;
+    joint_link_pairs_[27]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -0.05);
+    joint_link_pairs_[27]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
 
-    joint_link_pairs_[28]->name_ = "passive_yaw";
+    joint_link_pairs_[28]->name_ = "knee_l_passive";
     joint_link_pairs_[28]->parent_ = 27;
     joint_link_pairs_[28]->sibling_ = -1;
     joint_link_pairs_[28]->child_ = 29;
-    joint_link_pairs_[28]->link_mass_ = 0.0;
-    joint_link_pairs_[28]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    joint_link_pairs_[28]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 1.0);
-    joint_link_pairs_[28]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    joint_link_pairs_[28]->joint_limit_upper_ = 100.0;
-    joint_link_pairs_[28]->joint_limit_lower_ = -100.0;
-    joint_link_pairs_[28]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    joint_link_pairs_[28]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -0.1);
+    joint_link_pairs_[28]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, 0.785398163, 0.0);
+    joint_link_pairs_[28]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, -1.0, 0.0);
+    joint_link_pairs_[28]->joint_limit_lower_ = -0.4974;
+    joint_link_pairs_[28]->joint_limit_upper_ = 1.8588;
+    joint_link_pairs_[28]->joint_mimic_ = "thigh_l_front_active";
+    joint_link_pairs_[28]->joint_mimic_multiplier_ = -1.0;
+    joint_link_pairs_[28]->link_mass_ = 0.007;
+    joint_link_pairs_[28]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.01675, 0.0, 0.0);
+    joint_link_pairs_[28]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
 
-    /* ----- body -----*/
-
-    // pelvis_link
-    joint_link_pairs_[29]->name_ = "pelvis";
+    joint_link_pairs_[29]->name_ = "shin_l_front_passive";
     joint_link_pairs_[29]->parent_ = 28;
-    joint_link_pairs_[29]->sibling_ = -1;
-    joint_link_pairs_[29]->child_ = 19;
-    joint_link_pairs_[29]->link_mass_ = 6.869;
+    joint_link_pairs_[29]->sibling_ = 33;
+    joint_link_pairs_[29]->child_ = 30;
     joint_link_pairs_[29]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    joint_link_pairs_[29]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    joint_link_pairs_[29]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.011, 0.000, 0.058);
-    joint_link_pairs_[29]->joint_limit_upper_ = 100.0;
-    joint_link_pairs_[29]->joint_limit_lower_ = -100.0;
-    joint_link_pairs_[29]->link_inertia_ =
-        robotis_framework::getInertiaXYZ(0.03603, 0.00000, 0.00016, 0.02210, 0.00000, 0.03830);
+    joint_link_pairs_[29]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, 0.785398163, 0.0);
+    joint_link_pairs_[29]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, -1.0, 0.0);
+    joint_link_pairs_[29]->joint_limit_lower_ = -0.4974;
+    joint_link_pairs_[29]->joint_limit_upper_ = 1.8588;
+    joint_link_pairs_[29]->joint_mimic_ = "shin_l_active";
+    joint_link_pairs_[29]->joint_mimic_multiplier_ = 1.0;
+    joint_link_pairs_[29]->link_mass_ = 0.013;
+    joint_link_pairs_[29]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -0.05);
+    joint_link_pairs_[29]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
 
-    /* ----- head -----*/
-
-    // head_pan
-    joint_link_pairs_[19]->name_ = "head_pan";
-    joint_link_pairs_[19]->parent_ = 29;
-    joint_link_pairs_[19]->sibling_ = 1;
-    joint_link_pairs_[19]->child_ = 20;
-    joint_link_pairs_[19]->link_mass_ = 0.087;
-    joint_link_pairs_[19]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0205);
-    joint_link_pairs_[19]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 1.0);
-    joint_link_pairs_[19]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.000, -0.002, 0.010);
-    joint_link_pairs_[19]->joint_limit_upper_ = 0.5 * M_PI;
-    joint_link_pairs_[19]->joint_limit_lower_ = -0.5 * M_PI;
-    joint_link_pairs_[19]->link_inertia_ =
-        robotis_framework::getInertiaXYZ(0.00011, 0.00000, 0.00000, 0.00003, 0.00000, 0.00012);
-
-    // head_tilt
-    joint_link_pairs_[20]->name_ = "head_tilt";
-    joint_link_pairs_[20]->parent_ = 19;
-    joint_link_pairs_[20]->sibling_ = -1;
-    joint_link_pairs_[20]->child_ = -1;
-    joint_link_pairs_[20]->link_mass_ = 0.724;
-    joint_link_pairs_[20]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.03);
-    joint_link_pairs_[20]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, -1.0, 0.0);
-    joint_link_pairs_[20]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.009, 0.046, 0.022);
-    joint_link_pairs_[20]->joint_limit_upper_ = 0.5 * M_PI;
-    joint_link_pairs_[20]->joint_limit_lower_ = -0.5 * M_PI;
-    joint_link_pairs_[20]->link_inertia_ =
-        robotis_framework::getInertiaXYZ(0.00113, 0.00001, -0.00005, 0.00114, 0.00002, 0.00084);
-
-    /*----- right arm -----*/
-
-    // right arm shoulder pitch
-    joint_link_pairs_[1]->name_ = "shoulder_r_pitch";
-    joint_link_pairs_[1]->parent_ = 29;
-    joint_link_pairs_[1]->sibling_ = 2;
-    joint_link_pairs_[1]->child_ = 3;
-    joint_link_pairs_[1]->link_mass_ = 0.194;
-    joint_link_pairs_[1]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, -0.0575, 0.0);
-    joint_link_pairs_[1]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, -1.0, 0.0);
-    joint_link_pairs_[1]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.003, -0.020, -0.005);
-    joint_link_pairs_[1]->joint_limit_upper_ = 0.5 * M_PI;
-    joint_link_pairs_[1]->joint_limit_lower_ = -0.5 * M_PI;
-    joint_link_pairs_[1]->link_inertia_ =
-        robotis_framework::getInertiaXYZ(0.00018, 0.0, 0.0, 0.00058, -0.00004, 0.00057);
-
-    // right arm shoulder roll
-    joint_link_pairs_[3]->name_ = "shoulder_r_roll";
-    joint_link_pairs_[3]->parent_ = 1;
-    joint_link_pairs_[3]->sibling_ = -1;
-    joint_link_pairs_[3]->child_ = 5;
-    joint_link_pairs_[3]->link_mass_ = 0.875;
-    joint_link_pairs_[3]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, -0.0245, -0.016);
-    joint_link_pairs_[3]->joint_axis_ = robotis_framework::getTransitionXYZ(-1.0, 0.0, 0.0);
-    joint_link_pairs_[3]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.060, -0.002, 0.000);
-    joint_link_pairs_[3]->joint_limit_upper_ = 0.3 * M_PI;
-    joint_link_pairs_[3]->joint_limit_lower_ = -0.5 * M_PI;
-    joint_link_pairs_[3]->link_inertia_ =
-        robotis_framework::getInertiaXYZ(0.00043, 0.00000, 0.00000, 0.00112, 0.00000, 0.00113);
-
-    // right arm elbow
-    joint_link_pairs_[5]->name_ = "elbow_r_front";
-    joint_link_pairs_[5]->parent_ = 3;
-    joint_link_pairs_[5]->sibling_ = -1;
-    joint_link_pairs_[5]->child_ = 21;
-    joint_link_pairs_[5]->link_mass_ = 1.122;
-    joint_link_pairs_[5]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, -0.09, 0.0);
-    joint_link_pairs_[5]->joint_axis_ = robotis_framework::getTransitionXYZ(1.0, 0.0, 0.0);
-    joint_link_pairs_[5]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.000, -0.073, 0.000);
-    joint_link_pairs_[5]->joint_limit_upper_ = 0.5 * M_PI;
-    joint_link_pairs_[5]->joint_limit_lower_ = -0.5 * M_PI;
-    joint_link_pairs_[5]->link_inertia_ =
-        robotis_framework::getInertiaXYZ(0.00277, 0.00002, -0.00001, 0.00090, 0.00004, 0.00255);
-
-    // right arm end effector
-    joint_link_pairs_[21]->name_ = "elbow_r_rear";
-    joint_link_pairs_[21]->parent_ = 5;
-    joint_link_pairs_[21]->sibling_ = -1;
-    joint_link_pairs_[21]->child_ = -1;
-    joint_link_pairs_[21]->link_mass_ = 0.0;
-    joint_link_pairs_[21]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, -0.15, 0.0);
-    joint_link_pairs_[21]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    joint_link_pairs_[21]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    joint_link_pairs_[21]->joint_limit_upper_ = 100.0;
-    joint_link_pairs_[21]->joint_limit_lower_ = -100.0;
-    joint_link_pairs_[21]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-
-    /*----- left arm -----*/
-
-    // left arm shoulder pitch
-    joint_link_pairs_[2]->name_ = "shoulder_l_pitch";
-    joint_link_pairs_[2]->parent_ = 29;
-    joint_link_pairs_[2]->sibling_ = -1;
-    joint_link_pairs_[2]->child_ = 4;
-    joint_link_pairs_[2]->link_mass_ = 0.194;
-    joint_link_pairs_[2]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0575, 0.0);
-    joint_link_pairs_[2]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 1.0, 0.0);
-    joint_link_pairs_[2]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.003, 0.020, -0.005);
-    joint_link_pairs_[2]->joint_limit_upper_ = 0.5 * M_PI;
-    joint_link_pairs_[2]->joint_limit_lower_ = -0.5 * M_PI;
-    joint_link_pairs_[2]->link_inertia_ =
-        robotis_framework::getInertiaXYZ(0.00018, 0.00000, 0.00000, 0.00058, 0.00004, 0.00057);
-
-    // left arm shoulder roll
-    joint_link_pairs_[4]->name_ = "shoulder_l_roll";
-    joint_link_pairs_[4]->parent_ = 2;
-    joint_link_pairs_[4]->sibling_ = -1;
-    joint_link_pairs_[4]->child_ = 6;
-    joint_link_pairs_[4]->link_mass_ = 0.875;
-    joint_link_pairs_[4]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0245, -0.016);
-    joint_link_pairs_[4]->joint_axis_ = robotis_framework::getTransitionXYZ(-1.0, 0.0, 0.0);
-    joint_link_pairs_[4]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.060, 0.002, 0.000);
-    joint_link_pairs_[4]->joint_limit_upper_ = 0.5 * M_PI;
-    joint_link_pairs_[4]->joint_limit_lower_ = -0.3 * M_PI;
-    joint_link_pairs_[4]->link_inertia_ =
-        robotis_framework::getInertiaXYZ(0.00043, 0.00000, 0.00000, 0.00112, 0.00000, 0.00113);
-
-    // left arm elbow
-    joint_link_pairs_[6]->name_ = "elbow_l_front";
-    joint_link_pairs_[6]->parent_ = 4;
-    joint_link_pairs_[6]->sibling_ = -1;
-    joint_link_pairs_[6]->child_ = 22;
-    joint_link_pairs_[6]->link_mass_ = 1.122;
-    joint_link_pairs_[6]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.09, 0.0);
-    joint_link_pairs_[6]->joint_axis_ = robotis_framework::getTransitionXYZ(1.0, 0.0, 0.0);
-    joint_link_pairs_[6]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.000, 0.073, 0.000);
-    joint_link_pairs_[6]->joint_limit_upper_ = 0.5 * M_PI;
-    joint_link_pairs_[6]->joint_limit_lower_ = -0.5 * M_PI;
-    joint_link_pairs_[6]->link_inertia_ =
-        robotis_framework::getInertiaXYZ(0.00277, -0.00002, -0.00001, 0.00090, -0.00004, 0.00255);
-
-    // left arm end effector
-    joint_link_pairs_[22]->name_ = "elbow_l_rear";
-    joint_link_pairs_[22]->parent_ = 6;
-    joint_link_pairs_[22]->sibling_ = -1;
-    joint_link_pairs_[22]->child_ = -1;
-    joint_link_pairs_[22]->link_mass_ = 0.0;
-    joint_link_pairs_[22]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.15, 0.0);
-    joint_link_pairs_[22]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    joint_link_pairs_[22]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    joint_link_pairs_[22]->joint_limit_upper_ = 100.0;
-    joint_link_pairs_[22]->joint_limit_lower_ = -100.0;
-    joint_link_pairs_[22]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-
-    /* ----- right leg -----*/
-
-    // right leg hip yaw
-    joint_link_pairs_[7]->name_ = "ankle_r_yaw";
-    joint_link_pairs_[7]->parent_ = 29;
-    joint_link_pairs_[7]->sibling_ = 8;
-    joint_link_pairs_[7]->child_ = 9;
-    joint_link_pairs_[7]->link_mass_ = 0.243;
-    joint_link_pairs_[7]->joint_position_ = robotis_framework::getTransitionXYZ(-0.005, -0.035, -0.0907);
-    joint_link_pairs_[7]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -1.0);
-    joint_link_pairs_[7]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.012, 0.000, -0.025);
-    joint_link_pairs_[7]->joint_limit_upper_ = 0.45 * M_PI;
-    joint_link_pairs_[7]->joint_limit_lower_ = -0.45 * M_PI;
-    joint_link_pairs_[7]->link_inertia_ =
-        robotis_framework::getInertiaXYZ(0.00024, 0.00000, 0.00000, 0.00101, 0.00000, 0.00092);
-
-    // right leg hip roll
-    joint_link_pairs_[9]->name_ = "hip_r_roll";
-    joint_link_pairs_[9]->parent_ = 7;
-    joint_link_pairs_[9]->sibling_ = -1;
-    joint_link_pairs_[9]->child_ = 11;
-    joint_link_pairs_[9]->link_mass_ = 1.045;
-    joint_link_pairs_[9]->joint_position_ = robotis_framework::getTransitionXYZ(0.000, 0.000, -0.0285);
-    joint_link_pairs_[9]->joint_axis_ = robotis_framework::getTransitionXYZ(-1.0, 0.0, 0.0);
-    joint_link_pairs_[9]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.068, 0.000, 0.000);
-    joint_link_pairs_[9]->joint_limit_upper_ = 0.3 * M_PI;
-    joint_link_pairs_[9]->joint_limit_lower_ = -0.3 * M_PI;
-    joint_link_pairs_[9]->link_inertia_ =
-        robotis_framework::getInertiaXYZ(0.00056, 0.00000, 0.00000, 0.00168, 0.00000, 0.00171);
-
-    // right leg hip pitch
-    joint_link_pairs_[11]->name_ = "hip_r_pitch";
-    joint_link_pairs_[11]->parent_ = 9;
-    joint_link_pairs_[11]->sibling_ = -1;
-    joint_link_pairs_[11]->child_ = 13;
-    joint_link_pairs_[11]->link_mass_ = 3.095;
-    joint_link_pairs_[11]->joint_position_ = robotis_framework::getTransitionXYZ(0.000, 0.000, 0.000);
-    joint_link_pairs_[11]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, -1.0, 0.0);
-    joint_link_pairs_[11]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.022, 0.007, -0.168);
-    joint_link_pairs_[11]->joint_limit_upper_ = 0.4 * M_PI;
-    joint_link_pairs_[11]->joint_limit_lower_ = -0.4 * M_PI;
-    joint_link_pairs_[11]->link_inertia_ =
-        robotis_framework::getInertiaXYZ(0.04329, -0.00027, 0.00286, 0.04042, 0.00203, 0.00560);
-
-    // right leg knee
-    joint_link_pairs_[13]->name_ = "thigh_r_front_active";
-    joint_link_pairs_[13]->parent_ = 11;
-    joint_link_pairs_[13]->sibling_ = -1;
-    joint_link_pairs_[13]->child_ = 15;
-    joint_link_pairs_[13]->link_mass_ = 2.401;
-    joint_link_pairs_[13]->joint_position_ = robotis_framework::getTransitionXYZ(0.000, 0.000, -0.110);
-    joint_link_pairs_[13]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, -1.0, 0.0);
-    joint_link_pairs_[13]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.002, 0.066, -0.183);
-    joint_link_pairs_[13]->joint_limit_upper_ = 0.1 * M_PI;
-    joint_link_pairs_[13]->joint_limit_lower_ = -0.7 * M_PI;
-    joint_link_pairs_[13]->link_inertia_ =
-        robotis_framework::getInertiaXYZ(0.01971, -0.00031, -0.00294, 0.01687, -0.00140, 0.00574);
-
-    // right leg ankle pitch
-    joint_link_pairs_[15]->name_ = "shin_r_active";
-    joint_link_pairs_[15]->parent_ = 13;
-    joint_link_pairs_[15]->sibling_ = -1;
-    joint_link_pairs_[15]->child_ = 17;
-    joint_link_pairs_[15]->link_mass_ = 1.045;
-    joint_link_pairs_[15]->joint_position_ = robotis_framework::getTransitionXYZ(0.000, 0.000, -0.110);
-    joint_link_pairs_[15]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 1.0, 0.0);
-    joint_link_pairs_[15]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.011, 0.033, 0.000);
-    joint_link_pairs_[15]->joint_limit_upper_ = 0.45 * M_PI;
-    joint_link_pairs_[15]->joint_limit_lower_ = -0.45 * M_PI;
-    joint_link_pairs_[15]->link_inertia_ =
-        robotis_framework::getInertiaXYZ(0.00056, 0.00000, 0.00000, 0.00168, 0.00000, 0.00171);
-
-    // right leg ankle roll
-    joint_link_pairs_[17]->name_ = "ankle_r_roll";
-    joint_link_pairs_[17]->parent_ = 15;
-    joint_link_pairs_[17]->sibling_ = -1;
-    joint_link_pairs_[17]->child_ = 31;
-    joint_link_pairs_[17]->link_mass_ = 0.223;
-    joint_link_pairs_[17]->joint_position_ = robotis_framework::getTransitionXYZ(0.000, 0.000, 0.000);
-    joint_link_pairs_[17]->joint_axis_ = robotis_framework::getTransitionXYZ(1.0, 0.0, 0.0);
-    joint_link_pairs_[17]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.070, 0.000, -0.048);
-    joint_link_pairs_[17]->joint_limit_upper_ = 0.45 * M_PI;
-    joint_link_pairs_[17]->joint_limit_lower_ = -0.45 * M_PI;
-    joint_link_pairs_[17]->link_inertia_ =
-        robotis_framework::getInertiaXYZ(0.00022, 0.00000, -0.00001, 0.00099, 0.00000, 0.00091);
-
-    // right leg end
-    joint_link_pairs_[31]->name_ = "r_leg_end";
-    joint_link_pairs_[31]->parent_ = 17;
-    joint_link_pairs_[31]->sibling_ = -1;
-    joint_link_pairs_[31]->child_ = -1;
-    joint_link_pairs_[31]->link_mass_ = 0.0;
-    joint_link_pairs_[31]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -0.0305);
-    joint_link_pairs_[31]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    joint_link_pairs_[31]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    joint_link_pairs_[31]->joint_limit_upper_ = 100.0;
-    joint_link_pairs_[31]->joint_limit_lower_ = -100.0;
-    joint_link_pairs_[31]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-
-    /* ----- left leg -----*/
-
-    // left leg hip yaw
-    joint_link_pairs_[8]->name_ = "ankle_l_yaw";
-    joint_link_pairs_[8]->parent_ = 29;
-    joint_link_pairs_[8]->sibling_ = -1;
-    joint_link_pairs_[8]->child_ = 10;
-    joint_link_pairs_[8]->link_mass_ = 0.243;
-    joint_link_pairs_[8]->joint_position_ = robotis_framework::getTransitionXYZ(-0.005, 0.035, -0.0907);
-    joint_link_pairs_[8]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -1.0);
-    joint_link_pairs_[8]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.012, 0.000, -0.025);
-    joint_link_pairs_[8]->joint_limit_upper_ = 0.45 * M_PI;
-    joint_link_pairs_[8]->joint_limit_lower_ = -0.45 * M_PI;
-    joint_link_pairs_[8]->link_inertia_ =
-        robotis_framework::getInertiaXYZ(0.00024, 0.00000, 0.00000, 0.00101, 0.00000, 0.00092);
-
-    // left leg hip roll
-    joint_link_pairs_[10]->name_ = "hip_l_roll";
-    joint_link_pairs_[10]->parent_ = 8;
-    joint_link_pairs_[10]->sibling_ = -1;
-    joint_link_pairs_[10]->child_ = 12;
-    joint_link_pairs_[10]->link_mass_ = 1.045;
-    joint_link_pairs_[10]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -0.0285);
-    joint_link_pairs_[10]->joint_axis_ = robotis_framework::getTransitionXYZ(-1.0, 0.0, 0.0);
-    joint_link_pairs_[10]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.068, 0.000, 0.000);
-    joint_link_pairs_[10]->joint_limit_upper_ = 0.3 * M_PI;
-    joint_link_pairs_[10]->joint_limit_lower_ = -0.3 * M_PI;
-    joint_link_pairs_[10]->link_inertia_ =
-        robotis_framework::getInertiaXYZ(0.00056, 0.00000, 0.00000, 0.00168, 0.00000, 0.00171);
-
-    // left leg hip pitch
-    joint_link_pairs_[12]->name_ = "hip_l_pitch";
-    joint_link_pairs_[12]->parent_ = 10;
-    joint_link_pairs_[12]->sibling_ = -1;
-    joint_link_pairs_[12]->child_ = 14;
-    joint_link_pairs_[12]->link_mass_ = 3.095;
-    joint_link_pairs_[12]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    joint_link_pairs_[12]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 1.0, 0.0);
-    joint_link_pairs_[12]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.022, -0.007, -0.168);
-    joint_link_pairs_[12]->joint_limit_upper_ = 0.4 * M_PI;
-    joint_link_pairs_[12]->joint_limit_lower_ = -0.4 * M_PI;
-    joint_link_pairs_[12]->link_inertia_ =
-        robotis_framework::getInertiaXYZ(0.04328, 0.00028, 0.00288, 0.04042, -0.00202, 0.00560);
-
-    // left leg knee pitch
-    joint_link_pairs_[14]->name_ = "thigh_l_front_active";
-    joint_link_pairs_[14]->parent_ = 12;
-    joint_link_pairs_[14]->sibling_ = -1;
-    joint_link_pairs_[14]->child_ = 16;
-    joint_link_pairs_[14]->link_mass_ = 2.401;
-    joint_link_pairs_[14]->joint_position_ = robotis_framework::getTransitionXYZ(0.000, 0.000, -0.110);
-    joint_link_pairs_[14]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 1.0, 0.0);
-    joint_link_pairs_[14]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.002, -0.066, -0.183);
-    joint_link_pairs_[14]->joint_limit_upper_ = 0.7 * M_PI;
-    joint_link_pairs_[14]->joint_limit_lower_ = -0.1 * M_PI;
-    joint_link_pairs_[14]->link_inertia_ =
-        robotis_framework::getInertiaXYZ(0.01971, 0.00031, -0.00294, 0.01687, 0.00140, 0.00574);
-
-    // left leg ankle pitch
-    joint_link_pairs_[16]->name_ = "shin_l_active";
-    joint_link_pairs_[16]->parent_ = 14;
-    joint_link_pairs_[16]->sibling_ = -1;
-    joint_link_pairs_[16]->child_ = 18;
-    joint_link_pairs_[16]->link_mass_ = 1.045;
-    joint_link_pairs_[16]->joint_position_ = robotis_framework::getTransitionXYZ(0.000, 0.000, -0.110);
-    joint_link_pairs_[16]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, -1.0, 0.0);
-    joint_link_pairs_[16]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.011, -0.033, 0.000);
-    joint_link_pairs_[16]->joint_limit_upper_ = 0.45 * M_PI;
-    joint_link_pairs_[16]->joint_limit_lower_ = -0.45 * M_PI;
-    joint_link_pairs_[16]->link_inertia_ =
-        robotis_framework::getInertiaXYZ(0.00056, 0.00000, 0.00000, 0.00168, 0.00000, 0.00171);
-
-    // left leg ankle roll
-    joint_link_pairs_[18]->name_ = "ankle_l_roll";
-    joint_link_pairs_[18]->parent_ = 16;
-    joint_link_pairs_[18]->sibling_ = -1;
-    joint_link_pairs_[18]->child_ = 30;
-    joint_link_pairs_[18]->link_mass_ = 0.223;
-    joint_link_pairs_[18]->joint_position_ = robotis_framework::getTransitionXYZ(0.000, 0.000, 0.000);
-    joint_link_pairs_[18]->joint_axis_ = robotis_framework::getTransitionXYZ(1.0, 0.0, 0.0);
-    joint_link_pairs_[18]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.070, 0.000, -0.048);
-    joint_link_pairs_[18]->joint_limit_upper_ = 0.45 * M_PI;
-    joint_link_pairs_[18]->joint_limit_lower_ = -0.45 * M_PI;
-    joint_link_pairs_[18]->link_inertia_ =
-        robotis_framework::getInertiaXYZ(0.00022, 0.00000, -0.00001, 0.00099, 0.00000, 0.00091);
-
-    // left leg end
-    joint_link_pairs_[30]->name_ = "l_leg_end";
-    joint_link_pairs_[30]->parent_ = 18;
+    joint_link_pairs_[30]->name_ = "ankle_l_pitch_passive";
+    joint_link_pairs_[30]->parent_ = 29;
     joint_link_pairs_[30]->sibling_ = -1;
-    joint_link_pairs_[30]->child_ = -1;
-    joint_link_pairs_[30]->link_mass_ = 0.0;
-    joint_link_pairs_[30]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -0.0305);
-    joint_link_pairs_[30]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    joint_link_pairs_[30]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    joint_link_pairs_[30]->joint_limit_upper_ = 100.0;
-    joint_link_pairs_[30]->joint_limit_lower_ = -100.0;
-    joint_link_pairs_[30]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    joint_link_pairs_[30]->child_ = 31;
+    joint_link_pairs_[30]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -0.1);
+    joint_link_pairs_[30]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, -0.785398163, 0.0);
+    joint_link_pairs_[30]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, -1.0, 0.0);
+    joint_link_pairs_[30]->joint_limit_lower_ = -1.8588;
+    joint_link_pairs_[30]->joint_limit_upper_ = 0.4974;
+    joint_link_pairs_[30]->joint_mimic_ = "shin_l_active";
+    joint_link_pairs_[30]->joint_mimic_multiplier_ = -1.0;
+    joint_link_pairs_[30]->link_mass_ = 0.104;
+    joint_link_pairs_[30]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.0285, 0, -0.013);
+    joint_link_pairs_[30]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+
+    joint_link_pairs_[31]->name_ = "ankle_l_roll";
+    joint_link_pairs_[31]->parent_ = 30;
+    joint_link_pairs_[31]->sibling_ = -1;
+    joint_link_pairs_[31]->child_ = 32;
+    joint_link_pairs_[31]->joint_position_ = robotis_framework::getTransitionXYZ(-0.015, 0, -0.027);
+    joint_link_pairs_[31]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, 0.0, 0.0);
+    joint_link_pairs_[31]->joint_axis_ = robotis_framework::getTransitionXYZ(1.0, 0.0, 0.0);
+    joint_link_pairs_[31]->joint_limit_lower_ = -1.5708;
+    joint_link_pairs_[31]->joint_limit_upper_ = 0.3704;
+    joint_link_pairs_[31]->link_mass_ = 0.0136;
+    joint_link_pairs_[31]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0, 0.009375, -0.01175);
+    joint_link_pairs_[31]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+
+    joint_link_pairs_[32]->name_ = "ankle_l_yaw";
+    joint_link_pairs_[32]->parent_ = 31;
+    joint_link_pairs_[32]->sibling_ = -1;
+    joint_link_pairs_[32]->child_ = 33;
+    joint_link_pairs_[32]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -0.03825);
+    joint_link_pairs_[32]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, 0.0, 0.0);
+    joint_link_pairs_[32]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -1.0);
+    joint_link_pairs_[32]->joint_limit_lower_ = -3.1;
+    joint_link_pairs_[32]->joint_limit_upper_ = 3.1;
+    joint_link_pairs_[32]->link_mass_ = 0.043;
+    joint_link_pairs_[32]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -0.004);
+    joint_link_pairs_[32]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+
+    joint_link_pairs_[33]->name_ = "leg_l_end";
+    joint_link_pairs_[33]->parent_ = 32;
+    joint_link_pairs_[33]->sibling_ = -1;
+    joint_link_pairs_[33]->child_ = -1;
+    joint_link_pairs_[33]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -0.004);
+    joint_link_pairs_[33]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, 0.0, 0.0);
+    joint_link_pairs_[33]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
+    joint_link_pairs_[33]->joint_limit_lower_ = -100;
+    joint_link_pairs_[33]->joint_limit_upper_ = 100;
+    joint_link_pairs_[33]->link_mass_ = 0;
+    joint_link_pairs_[33]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0, 0, 0);
+    joint_link_pairs_[33]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+
+    joint_link_pairs_[34]->name_ = "shin_l_active";
+    joint_link_pairs_[34]->parent_ = 27;  // thigh_l_front_active
+    joint_link_pairs_[34]->sibling_ = -1;
+    joint_link_pairs_[34]->child_ = 35;
+    joint_link_pairs_[34]->joint_position_ = robotis_framework::getTransitionXYZ(-0.0185, 0.02925, -0.0305);
+    joint_link_pairs_[34]->joint_orientation_ = robotis_framework::convertRPYToRotation(0, 1.047197551, 0);
+    joint_link_pairs_[34]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, -1.0, 0.0);
+    joint_link_pairs_[34]->joint_limit_lower_ = -0.4974;
+    joint_link_pairs_[34]->joint_limit_upper_ = 1.8588;
+    joint_link_pairs_[34]->link_mass_ = 0.008;
+    joint_link_pairs_[34]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.004745, 0, -0.015);
+    joint_link_pairs_[34]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+
+    joint_link_pairs_[35]->name_ = "thigh_l_rear_passive_mimic";
+    joint_link_pairs_[35]->parent_ = 34;
+    joint_link_pairs_[35]->sibling_ = -1;
+    joint_link_pairs_[35]->child_ = 36;
+    joint_link_pairs_[35]->joint_position_ = robotis_framework::getTransitionXYZ(0, 0, -0.03);
+    joint_link_pairs_[35]->joint_orientation_ = robotis_framework::convertRPYToRotation(0, -1.832597551, 0);
+    joint_link_pairs_[35]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, -1.0, 0.0);
+    joint_link_pairs_[35]->joint_limit_lower_ = -3.1;
+    joint_link_pairs_[35]->joint_limit_upper_ = 3.1;
+    joint_link_pairs_[35]->joint_mimic_ = "shin_l_active";
+    joint_link_pairs_[35]->joint_mimic_multiplier_ = -1.0;
+    joint_link_pairs_[35]->link_mass_ = 0.0;
+    joint_link_pairs_[35]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0, 0, 0);
+    joint_link_pairs_[35]->link_inertia_ = robotis_framework::getInertiaXYZ(0, 0, 0, 0, 0, 0);
+
+    joint_link_pairs_[36]->name_ = "thigh_l_rear_passive";
+    joint_link_pairs_[36]->parent_ = 35;
+    joint_link_pairs_[36]->sibling_ = -1;
+    joint_link_pairs_[36]->child_ = 37;
+    joint_link_pairs_[36]->joint_position_ = robotis_framework::getTransitionXYZ(0, 0, 0);
+    joint_link_pairs_[36]->joint_orientation_ = robotis_framework::convertRPYToRotation(0, 0, 0);
+    joint_link_pairs_[36]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, -1.0, 0.0);
+    joint_link_pairs_[36]->joint_limit_lower_ = -3.1;
+    joint_link_pairs_[36]->joint_limit_upper_ = 3.1;
+    joint_link_pairs_[36]->joint_mimic_ = "thigh_l_front_active";
+    joint_link_pairs_[36]->joint_mimic_multiplier_ = 1.0;
+    joint_link_pairs_[36]->link_mass_ = 0.011;
+    joint_link_pairs_[36]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0, 0, -0.05);
+    joint_link_pairs_[36]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+
+    joint_link_pairs_[37]->name_ = "thigh_l_middle_passive";
+    joint_link_pairs_[37]->parent_ = 27;  // thigh_l_front_active
+    joint_link_pairs_[37]->sibling_ = -1;
+    joint_link_pairs_[37]->child_ = 38;
+    joint_link_pairs_[37]->joint_position_ = robotis_framework::getTransitionXYZ(-0.0185, 0.02925, -0.0305);
+    joint_link_pairs_[37]->joint_orientation_ = robotis_framework::convertRPYToRotation(0, -0.785398163, 0);
+    joint_link_pairs_[37]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, -1.0, 0.0);
+    joint_link_pairs_[37]->joint_limit_lower_ = -3.1;
+    joint_link_pairs_[37]->joint_limit_upper_ = 3.1;
+    joint_link_pairs_[37]->joint_mimic_ = "thigh_l_front_active";
+    joint_link_pairs_[37]->joint_mimic_multiplier_ = 1.0;
+    joint_link_pairs_[37]->link_mass_ = 0.012;
+    joint_link_pairs_[37]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0, 0, -0.05);
+    joint_link_pairs_[37]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+
+    joint_link_pairs_[38]->name_ = "shin_l_rear_passive";
+    joint_link_pairs_[38]->parent_ = 29;  // knee_l_passive
+    joint_link_pairs_[38]->sibling_ = -1;
+    joint_link_pairs_[38]->child_ = 39;
+    joint_link_pairs_[38]->joint_position_ = robotis_framework::getTransitionXYZ(-0.0335, 0, 0);
+    joint_link_pairs_[38]->joint_orientation_ = robotis_framework::convertRPYToRotation(0, 0.785398163, 0);
+    joint_link_pairs_[38]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, -1.0, 0.0);
+    joint_link_pairs_[38]->joint_limit_lower_ = -0.4974;
+    joint_link_pairs_[38]->joint_limit_upper_ = 1.8588;
+    joint_link_pairs_[38]->joint_mimic_ = "shin_l_active";
+    joint_link_pairs_[38]->joint_mimic_multiplier_ = 1.0;
+    joint_link_pairs_[38]->link_mass_ = 0.016;
+    joint_link_pairs_[38]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0, 0, -0.05);
+    joint_link_pairs_[38]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
   }
 
   thigh_length_m_ = std::fabs(joint_link_pairs_[ID_R_LEG_START + 2 * 3]->joint_position_.coeff(2, 0));

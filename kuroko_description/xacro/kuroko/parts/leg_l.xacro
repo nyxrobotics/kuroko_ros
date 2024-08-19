@@ -103,7 +103,7 @@
     </link>
 
     <xacro:unless value="$(arg gazebo)">
-      <joint name="thigh_l_rear_passive_mimic1" type="revolute">
+      <joint name="thigh_l_rear_passive_mimic" type="revolute">
         <parent link="shin_l_active_link"/>
         <child link="thigh_l_rear_passive_mimic_link"/>
         <origin xyz="0 0 -0.03" rpy="0 -1.832597551 0"/>
@@ -113,7 +113,7 @@
         <mimic joint="shin_l_active" multiplier="-1" offset="0"/>
       </joint>
       <link name="thigh_l_rear_passive_mimic_link"/>
-      <joint name="thigh_l_rear_passive_mimic2" type="revolute">
+      <joint name="thigh_l_rear_passive" type="revolute">
         <parent link="thigh_l_rear_passive_mimic_link"/>
         <child link="thigh_l_rear_passive_link"/>
         <origin xyz="0 0 0" rpy="0 0 0"/>

@@ -74,7 +74,7 @@ void KurokoKinematics::initialize(const Eigen::MatrixXd& pelvis_position, const 
   rleg_chain_.addSegment(KDL::Segment(
       "r_leg_an_r", KDL::Joint(KDL::Joint::RotX), KDL::Frame(KDL::Vector(0.0, 0.0, -0.0305)),
       KDL::RigidBodyInertia(0.06934, KDL::Vector(0.0, 0.0, 0.0), KDL::RotationalInertia(0.0, 0.0, 0.0, 0.0, 0.0, 0.0))));
-  rleg_chain_.addSegment(KDL::Segment("r_leg_end", KDL::Joint(KDL::Joint::None), KDL::Frame(KDL::Vector(0.0, 0.0, 0.0)),
+  rleg_chain_.addSegment(KDL::Segment("leg_r_end", KDL::Joint(KDL::Joint::None), KDL::Frame(KDL::Vector(0.0, 0.0, 0.0)),
                                       KDL::RigidBodyInertia(0.0, KDL::Vector(0.0, 0.0, 0.0),
                                                             KDL::RotationalInertia(0.0, 0.0, 0.0, 0.0, 0.0, 0.0))));
 
@@ -111,7 +111,7 @@ void KurokoKinematics::initialize(const Eigen::MatrixXd& pelvis_position, const 
   lleg_chain_.addSegment(KDL::Segment(
       "l_leg_an_r", KDL::Joint(KDL::Joint::RotX), KDL::Frame(KDL::Vector(0.0, 0.0, -0.0305)),
       KDL::RigidBodyInertia(0.06934, KDL::Vector(0.0, 0.0, 0.0), KDL::RotationalInertia(0.0, 0.0, 0.0, 0.0, 0.0, 0.0))));
-  lleg_chain_.addSegment(KDL::Segment("l_leg_end", KDL::Joint(KDL::Joint::None), KDL::Frame(KDL::Vector(0.0, 0.0, 0.0)),
+  lleg_chain_.addSegment(KDL::Segment("leg_l_end", KDL::Joint(KDL::Joint::None), KDL::Frame(KDL::Vector(0.0, 0.0, 0.0)),
                                       KDL::RigidBodyInertia(0.0, KDL::Vector(0.0, 0.0, 0.0),
                                                             KDL::RotationalInertia(0.0, 0.0, 0.0, 0.0, 0.0, 0.0))));
 

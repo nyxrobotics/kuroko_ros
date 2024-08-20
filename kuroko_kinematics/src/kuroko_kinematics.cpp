@@ -666,7 +666,6 @@ void KurokoKinematics::calcForwardKinematics(int joint_id)
     int parent = joint_link_pairs_[joint_id]->parent_;
     double joint_angle = joint_link_pairs_[joint_id]->internal_joint_angle_;
 
-    // Apply mimic joint angle calculation if this joint mimics another joint
     if (!joint_link_pairs_[joint_id]->joint_mimic_.empty())
     {
       int mimic_id = getLinkIndex(joint_link_pairs_[joint_id]->joint_mimic_);
@@ -677,14 +676,12 @@ void KurokoKinematics::calcForwardKinematics(int joint_id)
       }
     }
 
-    // Calculate the current joint's position and orientation based on its parent
     joint_link_pairs_[joint_id]->internal_position_ =
         joint_link_pairs_[parent]->internal_orientation_ * joint_link_pairs_[joint_id]->joint_position_ +
         joint_link_pairs_[parent]->internal_position_;
 
     joint_link_pairs_[joint_id]->internal_orientation_ =
-        joint_link_pairs_[parent]->internal_orientation_ *
-        joint_link_pairs_[joint_id]->joint_orientation_ *  // Apply joint_orientation_ directly
+        joint_link_pairs_[parent]->internal_orientation_ * joint_link_pairs_[joint_id]->joint_orientation_ *
         robotis_framework::calcRodrigues(robotis_framework::calcHatto(joint_link_pairs_[joint_id]->joint_axis_),
                                          joint_angle);
 
@@ -694,7 +691,6 @@ void KurokoKinematics::calcForwardKinematics(int joint_id)
         joint_link_pairs_[joint_id]->internal_orientation_;
   }
 
-  // Recursively process sibling and child joints
   calcForwardKinematics(joint_link_pairs_[joint_id]->sibling_);
   calcForwardKinematics(joint_link_pairs_[joint_id]->child_);
 }
@@ -1134,12 +1130,15 @@ bool KurokoKinematics::calcInverseKinematicsForRightLeg(double* out, double x, d
   if (calcInverseKinematicsForLeg(out, x, y, z, roll, pitch, yaw))
   {
     for (int ix = 0; ix < 6; ix++)
-      out[ix] *= getJointDirection(ID_R_LEG_START + 2 * ix);
-
+    {
+      out[ix] *= getJointDirection(getLinkIndex("hip_r_roll") + ix);
+    }
     return true;
   }
   else
+  {
     return false;
+  }
 }
 
 bool KurokoKinematics::calcInverseKinematicsForLeftLeg(double* out, double x, double y, double z, double roll,
@@ -1148,12 +1147,15 @@ bool KurokoKinematics::calcInverseKinematicsForLeftLeg(double* out, double x, do
   if (calcInverseKinematicsForLeg(out, x, y, z, roll, pitch, yaw))
   {
     for (int ix = 0; ix < 6; ix++)
-      out[ix] *= getJointDirection(ID_L_LEG_START + 2 * ix);
-
+    {
+      out[ix] *= getJointDirection(getLinkIndex("hip_l_roll") + ix);
+    }
     return true;
   }
   else
+  {
     return false;
+  }
 }
 
 LinkData* KurokoKinematics::getLinkData(const std::string& link_name)

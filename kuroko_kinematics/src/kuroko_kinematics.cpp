@@ -658,21 +658,35 @@ void KurokoKinematics::calcForwardKinematics(int joint_id)
   if (joint_id == 0)
   {
     joint_link_pairs_[0]->internal_position_ = Eigen::MatrixXd::Zero(3, 1);
-    joint_link_pairs_[0]->internal_orientation_ = robotis_framework::calcRodrigues(
-        robotis_framework::calcHatto(joint_link_pairs_[0]->joint_axis_), joint_link_pairs_[0]->internal_joint_angle_);
+    joint_link_pairs_[0]->internal_orientation_ = joint_link_pairs_[0]->joint_orientation_;
   }
 
   if (joint_id != 0)
   {
     int parent = joint_link_pairs_[joint_id]->parent_;
+    double joint_angle = joint_link_pairs_[joint_id]->internal_joint_angle_;
 
+    // Apply mimic joint angle calculation if this joint mimics another joint
+    if (!joint_link_pairs_[joint_id]->joint_mimic_.empty())
+    {
+      int mimic_id = getLinkIndex(joint_link_pairs_[joint_id]->joint_mimic_);
+      if (mimic_id != -1)
+      {
+        joint_angle =
+            joint_link_pairs_[mimic_id]->internal_joint_angle_ * joint_link_pairs_[joint_id]->joint_mimic_multiplier_;
+      }
+    }
+
+    // Calculate the current joint's position and orientation based on its parent
     joint_link_pairs_[joint_id]->internal_position_ =
         joint_link_pairs_[parent]->internal_orientation_ * joint_link_pairs_[joint_id]->joint_position_ +
         joint_link_pairs_[parent]->internal_position_;
+
     joint_link_pairs_[joint_id]->internal_orientation_ =
         joint_link_pairs_[parent]->internal_orientation_ *
+        joint_link_pairs_[joint_id]->joint_orientation_ *  // Apply joint_orientation_ directly
         robotis_framework::calcRodrigues(robotis_framework::calcHatto(joint_link_pairs_[joint_id]->joint_axis_),
-                                         joint_link_pairs_[joint_id]->internal_joint_angle_);
+                                         joint_angle);
 
     joint_link_pairs_[joint_id]->internal_transformation_.block<3, 1>(0, 3) =
         joint_link_pairs_[joint_id]->internal_position_;
@@ -680,6 +694,7 @@ void KurokoKinematics::calcForwardKinematics(int joint_id)
         joint_link_pairs_[joint_id]->internal_orientation_;
   }
 
+  // Recursively process sibling and child joints
   calcForwardKinematics(joint_link_pairs_[joint_id]->sibling_);
   calcForwardKinematics(joint_link_pairs_[joint_id]->child_);
 }
@@ -751,8 +766,6 @@ bool KurokoKinematics::calcInverseKinematics(int to, const Eigen::MatrixXd& tar_
   bool ik_success = false;
   bool limit_success = false;
 
-  //  calcForwardKinematics(0);
-
   std::vector<int> idx = findRoute(to);
 
   for (int iter = 0; iter < max_iter; iter++)
@@ -783,9 +796,11 @@ bool KurokoKinematics::calcInverseKinematics(int to, const Eigen::MatrixXd& tar_
       joint_link_pairs_[joint_num]->internal_joint_angle_ += delta_angle.coeff(id);
     }
 
+    // Recalculate forward kinematics with updated joint angles
     calcForwardKinematics(0);
   }
 
+  // Check joint limits to ensure calculated angles are within allowable range
   for (int joint_num : idx)
   {
     if (joint_link_pairs_[joint_num]->internal_joint_angle_ >= joint_link_pairs_[joint_num]->joint_limit_upper_)
@@ -810,8 +825,6 @@ bool KurokoKinematics::calcInverseKinematics(int from, int to, const Eigen::Matr
 {
   bool ik_success = false;
   bool limit_success = false;
-
-  //  calcForwardKinematics(0);
 
   std::vector<int> idx = findRoute(from, to);
 
@@ -1035,21 +1048,23 @@ bool KurokoKinematics::calcInverseKinematicsForLeg(double* out, double x, double
   double calf_length = calf_length_m_;
   double ankle_length = ankle_length_m_;
 
+  // Transformation from the base to the desired position
   trans_ad = robotis_framework::getTransformationXYZRPY(x, y, z, roll, pitch, yaw);
 
+  // Adjusting the target position considering the ankle length
   vec.coeffRef(0) = trans_ad.coeff(0, 3) + trans_ad.coeff(0, 2) * ankle_length;
   vec.coeffRef(1) = trans_ad.coeff(1, 3) + trans_ad.coeff(1, 2) * ankle_length;
   vec.coeffRef(2) = trans_ad.coeff(2, 3) + trans_ad.coeff(2, 2) * ankle_length;
 
-  // Get Knee
+  // Step 1: Calculate the knee pitch angle
   rac = vec.norm();
   arc_cos =
       acos((rac * rac - thigh_length * thigh_length - calf_length * calf_length) / (2.0 * thigh_length * calf_length));
-  if (std::isnan(arc_cos) == 1)
+  if (std::isnan(arc_cos))
     return false;
-  *(out + 3) = arc_cos;
+  *(out + 3) = arc_cos;  // Knee pitch angle
 
-  // Get Ankle Roll
+  // Step 2: Calculate the ankle roll angle
   trans_ad.computeInverseWithCheck(trans_da, invertible);
   if (!invertible)
     return false;
@@ -1065,15 +1080,15 @@ bool KurokoKinematics::calcInverseKinematicsForLeg(double* out, double x, double
     m = -1.0;
   arc_cos = acos(m);
 
-  if (std::isnan(arc_cos) == 1)
+  if (std::isnan(arc_cos))
     return false;
 
   if (trans_da.coeff(1, 3) < 0.0)
     *(out + 5) = -arc_cos;
   else
-    *(out + 5) = arc_cos;
+    *(out + 5) = arc_cos;  // Ankle roll angle
 
-  // Get Hip Yaw
+  // Step 3: Calculate the hip yaw angle
   trans_cd = robotis_framework::getTransformationXYZRPY(0, 0, -ankle_length, *(out + 5), 0, 0);
   trans_cd.computeInverseWithCheck(trans_dc, invertible);
   if (!invertible)
@@ -1081,20 +1096,20 @@ bool KurokoKinematics::calcInverseKinematicsForLeg(double* out, double x, double
 
   trans_ac = trans_ad * trans_dc;
   arc_tan = atan2(-trans_ac.coeff(0, 1), trans_ac.coeff(1, 1));
-  if (std::isinf(arc_tan) != 0)
+  if (std::isinf(arc_tan))
     return false;
-  *(out) = arc_tan;
+  *(out) = arc_tan;  // Hip yaw angle
 
-  // Get Hip Roll
+  // Step 4: Calculate the hip roll angle
   arc_tan = atan2(trans_ac.coeff(2, 1), -trans_ac.coeff(0, 1) * sin(*(out)) + trans_ac.coeff(1, 1) * cos(*(out)));
-  if (std::isinf(arc_tan) != 0)
+  if (std::isinf(arc_tan))
     return false;
-  *(out + 1) = arc_tan;
+  *(out + 1) = arc_tan;  // Hip roll angle
 
-  // Get Hip Pitch and Ankle Pitch
+  // Step 5: Calculate the hip pitch and ankle pitch angles
   arc_tan = atan2(trans_ac.coeff(0, 2) * cos(*(out)) + trans_ac.coeff(1, 2) * sin(*(out)),
                   trans_ac.coeff(0, 0) * cos(*(out)) + trans_ac.coeff(1, 0) * sin(*(out)));
-  if (std::isinf(arc_tan) == 1)
+  if (std::isinf(arc_tan))
     return false;
   theta = arc_tan;
   k = sin(*(out + 3)) * calf_length;
@@ -1105,10 +1120,10 @@ bool KurokoKinematics::calcInverseKinematicsForLeg(double* out, double x, double
   s = (k * n + l * m) / (k * k + l * l);
   c = (n - k * s) / l;
   arc_tan = atan2(s, c);
-  if (std::isinf(arc_tan) == 1)
+  if (std::isinf(arc_tan))
     return false;
-  *(out + 2) = arc_tan;
-  *(out + 4) = theta - *(out + 3) - *(out + 2);
+  *(out + 2) = arc_tan;                          // Hip pitch angle
+  *(out + 4) = theta - *(out + 3) - *(out + 2);  // Ankle pitch angle
 
   return true;
 }

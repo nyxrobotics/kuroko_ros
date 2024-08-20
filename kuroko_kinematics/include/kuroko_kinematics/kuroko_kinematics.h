@@ -58,6 +58,7 @@ public:
 
   LinkData* getLinkData(const std::string& link_name);
   LinkData* getLinkData(const int link_id);
+  int getLinkIndex(const std::string& link_name);
   Eigen::MatrixXd getJointAxis(const std::string& link_name);
   double getJointDirection(const std::string& link_name);
   double getJointDirection(const int link_id);

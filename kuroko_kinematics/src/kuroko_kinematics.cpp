@@ -558,10 +558,15 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_pairs_[38]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
   }
 
-  thigh_length_m_ = std::fabs(joint_link_pairs_[ID_R_LEG_START + 2 * 3]->joint_position_.coeff(2, 0));
-  calf_length_m_ = std::fabs(joint_link_pairs_[ID_R_LEG_START + 2 * 4]->joint_position_.coeff(2, 0));
-  ankle_length_m_ = std::fabs(joint_link_pairs_[ID_R_LEG_END]->joint_position_.coeff(2, 0));
-  leg_side_offset_m_ = 2.0 * (std::fabs(joint_link_pairs_[ID_R_LEG_START]->joint_position_.coeff(1, 0)));
+  leg_side_offset_m_ =
+      2.0 * (std::fabs(joint_link_pairs_[getLinkIndex("hip_r_roll")]->joint_position_.coeff(1, 0) +
+                       joint_link_pairs_[getLinkIndex("hip_r_pitch")]->joint_position_.coeff(1, 0) +
+                       joint_link_pairs_[getLinkIndex("thigh_r_front_active")]->joint_position_.coeff(1, 0)));
+  thigh_length_m_ = std::fabs(joint_link_pairs_[getLinkIndex("knee_r_passive")]->joint_position_.coeff(2, 0));
+  calf_length_m_ = std::fabs(joint_link_pairs_[getLinkIndex("ankle_r_pitch_passive")]->joint_position_.coeff(2, 0));
+  ankle_length_m_ = std::fabs(joint_link_pairs_[getLinkIndex("ankle_r_roll")]->joint_position_.coeff(2, 0) +
+                              joint_link_pairs_[getLinkIndex("ankle_r_yaw")]->joint_position_.coeff(2, 0) +
+                              joint_link_pairs_[getLinkIndex("leg_r_end")]->joint_position_.coeff(2, 0));
 }
 
 std::vector<int> KurokoKinematics::findRoute(int to)
@@ -1147,6 +1152,18 @@ LinkData* KurokoKinematics::getLinkData(const std::string& link_name)
   }
 
   return nullptr;
+}
+
+int KurokoKinematics::getLinkIndex(const std::string& link_name)
+{
+  for (int i = 0; i <= ALL_JOINT_ID; i++)
+  {
+    if (joint_link_pairs_[i]->name_ == link_name)
+    {
+      return i;
+    }
+  }
+  return -1;  // Not found
 }
 
 LinkData* KurokoKinematics::getLinkData(const int link_id)

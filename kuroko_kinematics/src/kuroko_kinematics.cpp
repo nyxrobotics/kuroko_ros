@@ -693,6 +693,22 @@ void KurokoKinematics::calcForwardKinematics(int joint_id)
 
   calcForwardKinematics(joint_link_pairs_[joint_id]->sibling_);
   calcForwardKinematics(joint_link_pairs_[joint_id]->child_);
+
+  // 従属関係のある関節の順運動学を更新
+  if (joint_id == getLinkIndex("thigh_r_front_active"))
+  {
+    calcForwardKinematics(getLinkIndex("knee_r_passive"));
+    calcForwardKinematics(getLinkIndex("thigh_r_rear_passive_mimic"));
+    calcForwardKinematics(getLinkIndex("thigh_r_rear_passive"));
+    calcForwardKinematics(getLinkIndex("thigh_r_middle_passive"));
+  }
+
+  if (joint_id == getLinkIndex("shin_r_front_passive"))
+  {
+    calcForwardKinematics(getLinkIndex("ankle_r_pitch_passive"));
+    calcForwardKinematics(getLinkIndex("shin_r_active"));
+    calcForwardKinematics(getLinkIndex("shin_r_rear_passive"));
+  }
 }
 
 Eigen::MatrixXd KurokoKinematics::calcJacobian(std::vector<int> idx)
@@ -1035,6 +1051,10 @@ bool KurokoKinematics::calcInverseKinematics(int from, int to, const Eigen::Matr
 bool KurokoKinematics::calcInverseKinematicsForLeg(double* out, double x, double y, double z, double roll, double pitch,
                                                    double yaw)
 {
+  std::cout << "calcInverseKinematicsForLeg called with parameters:" << std::endl;
+  std::cout << "x: " << x << ", y: " << y << ", z: " << z << std::endl;
+  std::cout << "roll: " << roll << ", pitch: " << pitch << ", yaw: " << yaw << std::endl;
+
   Eigen::Matrix4d trans_ad, trans_da, trans_cd, trans_dc, trans_ac;
   Eigen::Vector3d vec;
 
@@ -1059,7 +1079,10 @@ bool KurokoKinematics::calcInverseKinematicsForLeg(double* out, double x, double
   if (std::isnan(arc_cos))
     return false;
   *(out + 3) = arc_cos;  // Knee pitch angle
-
+  std::cout << "Intermediate values during Inverse Kinematics calculation:" << std::endl;
+  std::cout << "thigh_length: " << thigh_length_m_ << ", calf_length: " << calf_length_m_
+            << ", ankle_length: " << ankle_length_m_ << std::endl;
+  std::cout << "rac: " << rac << ", arc_cos (knee): " << arc_cos << std::endl;
   // Step 2: Calculate the ankle roll angle
   trans_ad.computeInverseWithCheck(trans_da, invertible);
   if (!invertible)
@@ -1120,23 +1143,52 @@ bool KurokoKinematics::calcInverseKinematicsForLeg(double* out, double x, double
     return false;
   *(out + 2) = arc_tan;                          // Hip pitch angle
   *(out + 4) = theta - *(out + 3) - *(out + 2);  // Ankle pitch angle
-
+  std::cout << "Final Joint Angles:" << std::endl;
+  for (int i = 0; i < 6; i++)
+  {
+    int joint_id = getLinkIndex("hip_r_roll") + i;
+    std::string joint_name = joint_link_pairs_[joint_id]->name_;
+    std::cout << "Joint ID: " << joint_id << " (" << joint_name << "), Angle: " << out[i] << std::endl;
+  }
   return true;
 }
 
 bool KurokoKinematics::calcInverseKinematicsForRightLeg(double* out, double x, double y, double z, double roll,
                                                         double pitch, double yaw)
 {
+  std::cout << "calcInverseKinematicsForRightLeg called with parameters:" << std::endl;
+  std::cout << "x: " << x << ", y: " << y << ", z: " << z << std::endl;
+  std::cout << "roll: " << roll << ", pitch: " << pitch << ", yaw: " << yaw << std::endl;
+
   if (calcInverseKinematicsForLeg(out, x, y, z, roll, pitch, yaw))
   {
-    for (int ix = 0; ix < 6; ix++)
-    {
-      out[ix] *= getJointDirection(getLinkIndex("hip_r_roll") + ix);
-    }
+    // Adjust joint angles according to the joint directions and dependencies
+    out[0] *= getJointDirection(getLinkIndex("hip_r_roll"));
+    out[1] *= getJointDirection(getLinkIndex("hip_r_pitch"));
+    out[2] *= getJointDirection(getLinkIndex("thigh_r_front_active"));
+
+    // Calculate dependent joints
+    out[3] = out[2] * joint_link_pairs_[14]->joint_mimic_multiplier_;  // knee_r_passive
+    out[4] = joint_link_pairs_[16]->joint_mimic_multiplier_ * out[2] /
+             joint_link_pairs_[15]->joint_mimic_multiplier_;  // ankle_r_pitch_passive
+    out[5] *= getJointDirection(getLinkIndex("ankle_r_roll"));
+    out[6] *= getJointDirection(getLinkIndex("ankle_r_yaw"));
+
+    std::cout << "Inverse Kinematics result (Right Leg):" << std::endl;
+    std::cout << "Joint ID: 11 (hip_r_roll), Angle: " << out[0] << std::endl;
+    std::cout << "Joint ID: 12 (hip_r_pitch), Angle: " << out[1] << std::endl;
+    std::cout << "Joint ID: 13 (thigh_r_front_active), Angle: " << out[2] << std::endl;
+    std::cout << "Joint ID: 14 (knee_r_passive), Angle: " << out[3] << std::endl;
+    std::cout << "Joint ID: 15 (shin_r_front_passive), Angle: " << out[4] << std::endl;
+    std::cout << "Joint ID: 16 (ankle_r_pitch_passive), Angle: " << out[4] << std::endl;
+    std::cout << "Joint ID: 17 (ankle_r_roll), Angle: " << out[5] << std::endl;
+    std::cout << "Joint ID: 18 (ankle_r_yaw), Angle: " << out[6] << std::endl;
+
     return true;
   }
   else
   {
+    std::cout << "Inverse Kinematics calculation failed for Right Leg." << std::endl;
     return false;
   }
 }
@@ -1144,16 +1196,39 @@ bool KurokoKinematics::calcInverseKinematicsForRightLeg(double* out, double x, d
 bool KurokoKinematics::calcInverseKinematicsForLeftLeg(double* out, double x, double y, double z, double roll,
                                                        double pitch, double yaw)
 {
+  std::cout << "calcInverseKinematicsForLeftLeg called with parameters:" << std::endl;
+  std::cout << "x: " << x << ", y: " << y << ", z: " << z << std::endl;
+  std::cout << "roll: " << roll << ", pitch: " << pitch << ", yaw: " << yaw << std::endl;
+
   if (calcInverseKinematicsForLeg(out, x, y, z, roll, pitch, yaw))
   {
-    for (int ix = 0; ix < 6; ix++)
-    {
-      out[ix] *= getJointDirection(getLinkIndex("hip_l_roll") + ix);
-    }
+    // Adjust joint angles according to the joint directions and dependencies
+    out[0] *= getJointDirection(getLinkIndex("hip_l_roll"));
+    out[1] *= getJointDirection(getLinkIndex("hip_l_pitch"));
+    out[2] *= getJointDirection(getLinkIndex("thigh_l_front_active"));
+
+    // Calculate dependent joints
+    out[3] = out[2] * joint_link_pairs_[28]->joint_mimic_multiplier_;  // knee_l_passive
+    out[4] = joint_link_pairs_[30]->joint_mimic_multiplier_ * out[2] /
+             joint_link_pairs_[29]->joint_mimic_multiplier_;  // ankle_l_pitch_passive
+    out[5] *= getJointDirection(getLinkIndex("ankle_l_roll"));
+    out[6] *= getJointDirection(getLinkIndex("ankle_l_yaw"));
+
+    std::cout << "Inverse Kinematics result (Left Leg):" << std::endl;
+    std::cout << "Joint ID: 25 (hip_l_roll), Angle: " << out[0] << std::endl;
+    std::cout << "Joint ID: 26 (hip_l_pitch), Angle: " << out[1] << std::endl;
+    std::cout << "Joint ID: 27 (thigh_l_front_active), Angle: " << out[2] << std::endl;
+    std::cout << "Joint ID: 28 (knee_l_passive), Angle: " << out[3] << std::endl;
+    std::cout << "Joint ID: 29 (shin_l_front_passive), Angle: " << out[4] << std::endl;
+    std::cout << "Joint ID: 30 (ankle_l_pitch_passive), Angle: " << out[4] << std::endl;
+    std::cout << "Joint ID: 31 (ankle_l_roll), Angle: " << out[5] << std::endl;
+    std::cout << "Joint ID: 32 (ankle_l_yaw), Angle: " << out[6] << std::endl;
+
     return true;
   }
   else
   {
+    std::cout << "Inverse Kinematics calculation failed for Left Leg." << std::endl;
     return false;
   }
 }

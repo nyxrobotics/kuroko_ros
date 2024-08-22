@@ -17,6 +17,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
 
   if (tree == WHOLE_BODY)
   {
+    // Base link
     joint_link_pairs_[0]->name_ = "base";
     joint_link_pairs_[0]->parent_ = -1;
     joint_link_pairs_[0]->sibling_ = -1;
@@ -30,7 +31,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_pairs_[0]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
     joint_link_pairs_[0]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
-    // Body
+    // Waist link
     joint_link_pairs_[1]->name_ = "waist";
     joint_link_pairs_[1]->parent_ = 0;
     joint_link_pairs_[1]->sibling_ = -1;
@@ -44,9 +45,10 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_pairs_[1]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.00125, 0.0, -0.04875);
     joint_link_pairs_[1]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
 
+    // Chest link
     joint_link_pairs_[2]->name_ = "chest";
     joint_link_pairs_[2]->parent_ = 1;
-    joint_link_pairs_[2]->sibling_ = 11;  // TODO (hip_r_roll)
+    joint_link_pairs_[2]->sibling_ = 11;  // hip_r_roll
     joint_link_pairs_[2]->child_ = 3;
     joint_link_pairs_[2]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
     joint_link_pairs_[2]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, 0.0, 0.0);
@@ -177,6 +179,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_pairs_[11]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.00125, -0.0065, -0.004125);
     joint_link_pairs_[11]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
 
+    // Right hip pitch
     joint_link_pairs_[12]->name_ = "hip_r_pitch";
     joint_link_pairs_[12]->parent_ = 11;  // hip_r_roll
     joint_link_pairs_[12]->sibling_ = -1;
@@ -190,6 +193,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_pairs_[12]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.00175, -0.049, -0.015);
     joint_link_pairs_[12]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
 
+    // Right thigh front active
     joint_link_pairs_[13]->name_ = "thigh_r_front_active";
     joint_link_pairs_[13]->parent_ = 12;   // hip_r_pitch
     joint_link_pairs_[13]->sibling_ = 20;  // shin_r_active
@@ -203,6 +207,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_pairs_[13]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -0.05);
     joint_link_pairs_[13]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
 
+    // Right knee passive
     joint_link_pairs_[14]->name_ = "knee_r_passive";
     joint_link_pairs_[14]->parent_ = 13;  // thigh_r_front_active
     joint_link_pairs_[14]->sibling_ = -1;
@@ -218,6 +223,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_pairs_[14]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.01675, 0.0, 0.0);
     joint_link_pairs_[14]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
 
+    // Right shin front passive
     joint_link_pairs_[15]->name_ = "shin_r_front_passive";
     joint_link_pairs_[15]->parent_ = 14;   // knee_r_passive
     joint_link_pairs_[15]->sibling_ = 24;  // shin_r_rear_passive
@@ -233,6 +239,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_pairs_[15]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -0.05);
     joint_link_pairs_[15]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
 
+    // Right ankle pitch passive
     joint_link_pairs_[16]->name_ = "ankle_r_pitch_passive";
     joint_link_pairs_[16]->parent_ = 15;  // shin_r_front_passive
     joint_link_pairs_[16]->sibling_ = -1;
@@ -248,6 +255,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_pairs_[16]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.0285, 0, -0.013);
     joint_link_pairs_[16]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
 
+    // Right ankle roll
     joint_link_pairs_[17]->name_ = "ankle_r_roll";
     joint_link_pairs_[17]->parent_ = 16;  // ankle_r_pitch_passive
     joint_link_pairs_[17]->sibling_ = -1;
@@ -261,6 +269,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_pairs_[17]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0, -0.009375, -0.01175);
     joint_link_pairs_[17]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
 
+    // Right ankle yaw
     joint_link_pairs_[18]->name_ = "ankle_r_yaw";
     joint_link_pairs_[18]->parent_ = 17;  // ankle_r_roll
     joint_link_pairs_[18]->sibling_ = -1;
@@ -274,6 +283,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_pairs_[18]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -0.004);
     joint_link_pairs_[18]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
 
+    // Right leg end
     joint_link_pairs_[19]->name_ = "leg_r_end";
     joint_link_pairs_[19]->parent_ = 18;  // ankle_r_yaw
     joint_link_pairs_[19]->sibling_ = -1;
@@ -730,23 +740,75 @@ void KurokoKinematics::calcForwardKinematics(int joint_id)
 
   if (joint_id == getLinkIndex("shin_r_front_passive"))
   {
-    // Update ankle_r_pitch_passive
-    joint_link_pairs_[getLinkIndex("ankle_r_pitch_passive")]->internal_joint_angle_ =
-        joint_link_pairs_[joint_id]->internal_joint_angle_ *
-        joint_link_pairs_[getLinkIndex("ankle_r_pitch_passive")]->joint_mimic_multiplier_;
-    calcForwardKinematics(getLinkIndex("ankle_r_pitch_passive"));
-
     // Update shin_r_active
     joint_link_pairs_[getLinkIndex("shin_r_active")]->internal_joint_angle_ =
-        joint_link_pairs_[joint_id]->internal_joint_angle_ *
-        joint_link_pairs_[getLinkIndex("shin_r_active")]->joint_mimic_multiplier_;
+        joint_link_pairs_[joint_id]->internal_joint_angle_ / joint_link_pairs_[joint_id]->joint_mimic_multiplier_;
     calcForwardKinematics(getLinkIndex("shin_r_active"));
+
+    // Update ankle_r_pitch_passive
+    joint_link_pairs_[getLinkIndex("ankle_r_pitch_passive")]->internal_joint_angle_ =
+        joint_link_pairs_[getLinkIndex("shin_r_active")]->internal_joint_angle_ *
+        joint_link_pairs_[getLinkIndex("ankle_r_pitch_passive")]->joint_mimic_multiplier_;
+    calcForwardKinematics(getLinkIndex("ankle_r_pitch_passive"));
 
     // Update shin_r_rear_passive
     joint_link_pairs_[getLinkIndex("shin_r_rear_passive")]->internal_joint_angle_ =
         joint_link_pairs_[getLinkIndex("shin_r_active")]->internal_joint_angle_ *
         joint_link_pairs_[getLinkIndex("shin_r_rear_passive")]->joint_mimic_multiplier_;
     calcForwardKinematics(getLinkIndex("shin_r_rear_passive"));
+  }
+
+  if (joint_id == getLinkIndex("thigh_l_front_active"))
+  {
+    // Update knee_r_passive
+    joint_link_pairs_[getLinkIndex("knee_l_passive")]->internal_joint_angle_ =
+        joint_link_pairs_[joint_id]->internal_joint_angle_ *
+        joint_link_pairs_[getLinkIndex("knee_l_passive")]->joint_mimic_multiplier_;
+    calcForwardKinematics(getLinkIndex("knee_l_passive"));
+
+    // Update shin_r_front_passive
+    joint_link_pairs_[getLinkIndex("shin_l_front_passive")]->internal_joint_angle_ =
+        joint_link_pairs_[getLinkIndex("shin_l_active")]->internal_joint_angle_ *
+        joint_link_pairs_[getLinkIndex("shin_l_front_passive")]->joint_mimic_multiplier_;
+    calcForwardKinematics(getLinkIndex("shin_l_front_passive"));
+
+    // Update thigh_r_rear_passive_mimic
+    joint_link_pairs_[getLinkIndex("thigh_l_rear_passive_mimic")]->internal_joint_angle_ =
+        joint_link_pairs_[getLinkIndex("shin_l_active")]->internal_joint_angle_ *
+        joint_link_pairs_[getLinkIndex("thigh_l_rear_passive_mimic")]->joint_mimic_multiplier_;
+    calcForwardKinematics(getLinkIndex("thigh_l_rear_passive_mimic"));
+
+    // Update thigh_r_rear_passive
+    joint_link_pairs_[getLinkIndex("thigh_l_rear_passive")]->internal_joint_angle_ =
+        joint_link_pairs_[joint_id]->internal_joint_angle_ *
+        joint_link_pairs_[getLinkIndex("thigh_l_rear_passive")]->joint_mimic_multiplier_;
+    calcForwardKinematics(getLinkIndex("thigh_l_rear_passive"));
+
+    // Update thigh_r_middle_passive
+    joint_link_pairs_[getLinkIndex("thigh_l_middle_passive")]->internal_joint_angle_ =
+        joint_link_pairs_[joint_id]->internal_joint_angle_ *
+        joint_link_pairs_[getLinkIndex("thigh_l_middle_passive")]->joint_mimic_multiplier_;
+    calcForwardKinematics(getLinkIndex("thigh_l_middle_passive"));
+  }
+
+  if (joint_id == getLinkIndex("shin_l_front_passive"))
+  {
+    // Update shin_r_active
+    joint_link_pairs_[getLinkIndex("shin_l_active")]->internal_joint_angle_ =
+        joint_link_pairs_[joint_id]->internal_joint_angle_ / joint_link_pairs_[joint_id]->joint_mimic_multiplier_;
+    calcForwardKinematics(getLinkIndex("shin_l_active"));
+
+    // Update ankle_r_pitch_passive
+    joint_link_pairs_[getLinkIndex("ankle_l_pitch_passive")]->internal_joint_angle_ =
+        joint_link_pairs_[getLinkIndex("shin_l_active")]->internal_joint_angle_ *
+        joint_link_pairs_[getLinkIndex("ankle_l_pitch_passive")]->joint_mimic_multiplier_;
+    calcForwardKinematics(getLinkIndex("ankle_l_pitch_passive"));
+
+    // Update shin_r_rear_passive
+    joint_link_pairs_[getLinkIndex("shin_l_rear_passive")]->internal_joint_angle_ =
+        joint_link_pairs_[getLinkIndex("shin_l_active")]->internal_joint_angle_ *
+        joint_link_pairs_[getLinkIndex("shin_l_rear_passive")]->joint_mimic_multiplier_;
+    calcForwardKinematics(getLinkIndex("shin_l_rear_passive"));
   }
 }
 
@@ -1016,8 +1078,6 @@ bool KurokoKinematics::calcInverseKinematics(int from, int to, const Eigen::Matr
 {
   bool ik_success = false;
   bool limit_success = false;
-
-  //  calcForwardKinematics(0);
 
   std::vector<int> idx = findRoute(from, to);
 

@@ -54,7 +54,7 @@ public:
                                         double yaw);
   bool calcInverseKinematicsForLeftLeg(double* out, double x, double y, double z, double roll, double pitch, double yaw);
 
-  LinkData* joint_link_pairs_[ALL_JOINT_ID + 1];
+  LinkData* joint_link_tree_[ALL_JOINT_ID + 1];
 
   LinkData* getLinkData(const std::string& link_name);
   LinkData* getLinkData(const int link_id);

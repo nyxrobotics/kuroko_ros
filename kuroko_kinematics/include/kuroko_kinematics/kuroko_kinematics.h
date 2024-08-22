@@ -49,7 +49,6 @@ public:
                              const Eigen::MatrixXd& tar_orientation, int max_iter, double ik_err,
                              const Eigen::MatrixXd& weight);
 
-  bool calcInverseKinematicsForLeg(double* out, double x, double y, double z, double roll, double pitch, double yaw);
   bool calcInverseKinematicsForRightLeg(double* out, double x, double y, double z, double roll, double pitch,
                                         double yaw);
   bool calcInverseKinematicsForLeftLeg(double* out, double x, double y, double z, double roll, double pitch, double yaw);

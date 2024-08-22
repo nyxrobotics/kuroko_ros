@@ -485,8 +485,8 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_pairs_[33]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
     joint_link_pairs_[34]->name_ = "shin_l_active";
-    joint_link_pairs_[34]->parent_ = 27;  // thigh_l_front_active
-    joint_link_pairs_[34]->sibling_ = -1;
+    joint_link_pairs_[34]->parent_ = 26;   // hip_l_pitch
+    joint_link_pairs_[34]->sibling_ = 37;  // thigh_l_middle_passive_link
     joint_link_pairs_[34]->child_ = 35;
     joint_link_pairs_[34]->joint_position_ = robotis_framework::getTransitionXYZ(-0.0185, 0.02925, -0.0305);
     joint_link_pairs_[34]->joint_orientation_ = robotis_framework::convertRPYToRotation(0, 1.047197551, 0);
@@ -528,7 +528,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_pairs_[36]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
 
     joint_link_pairs_[37]->name_ = "thigh_l_middle_passive";
-    joint_link_pairs_[37]->parent_ = 27;  // thigh_l_front_active
+    joint_link_pairs_[37]->parent_ = 26;  // hip_l_pitch
     joint_link_pairs_[37]->sibling_ = -1;
     joint_link_pairs_[37]->child_ = 38;
     joint_link_pairs_[37]->joint_position_ = robotis_framework::getTransitionXYZ(-0.0185, 0.02925, -0.0305);
@@ -1169,7 +1169,7 @@ bool KurokoKinematics::calcInverseKinematicsForRightLeg(double* out, double x, d
 
     // Calculate dependent joints
     out[3] = out[2] * joint_link_pairs_[14]->joint_mimic_multiplier_;  // knee_r_passive
-    out[4] = joint_link_pairs_[16]->joint_mimic_multiplier_ * out[2] /
+    out[4] = joint_link_pairs_[16]->joint_mimic_multiplier_ * out[4] /
              joint_link_pairs_[15]->joint_mimic_multiplier_;  // ankle_r_pitch_passive
     out[5] *= getJointDirection(getLinkIndex("ankle_r_roll"));
     out[6] *= getJointDirection(getLinkIndex("ankle_r_yaw"));
@@ -1209,7 +1209,7 @@ bool KurokoKinematics::calcInverseKinematicsForLeftLeg(double* out, double x, do
 
     // Calculate dependent joints
     out[3] = out[2] * joint_link_pairs_[28]->joint_mimic_multiplier_;  // knee_l_passive
-    out[4] = joint_link_pairs_[30]->joint_mimic_multiplier_ * out[2] /
+    out[4] = joint_link_pairs_[30]->joint_mimic_multiplier_ * out[4] /
              joint_link_pairs_[29]->joint_mimic_multiplier_;  // ankle_l_pitch_passive
     out[5] *= getJointDirection(getLinkIndex("ankle_l_roll"));
     out[6] *= getJointDirection(getLinkIndex("ankle_l_yaw"));

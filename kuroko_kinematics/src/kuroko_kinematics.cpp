@@ -167,7 +167,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_pairs_[11]->name_ = "hip_r_roll";
     joint_link_pairs_[11]->parent_ = 1;    // waist
     joint_link_pairs_[11]->sibling_ = 25;  // hip_l_roll
-    joint_link_pairs_[11]->child_ = 12;
+    joint_link_pairs_[11]->child_ = 12;    // hip_r_pitch
     joint_link_pairs_[11]->joint_position_ = robotis_framework::getTransitionXYZ(0, 0, -0.08425);
     joint_link_pairs_[11]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, 0.0, 0.0);
     joint_link_pairs_[11]->joint_axis_ = robotis_framework::getTransitionXYZ(1.0, 0.0, 0.0);
@@ -178,9 +178,9 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_pairs_[11]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
 
     joint_link_pairs_[12]->name_ = "hip_r_pitch";
-    joint_link_pairs_[12]->parent_ = 11;
+    joint_link_pairs_[12]->parent_ = 11;  // hip_r_roll
     joint_link_pairs_[12]->sibling_ = -1;
-    joint_link_pairs_[12]->child_ = 13;
+    joint_link_pairs_[12]->child_ = 13;  // thigh_r_front_active
     joint_link_pairs_[12]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, -0.027, 0.0);
     joint_link_pairs_[12]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, 0.0, 0.0);
     joint_link_pairs_[12]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, -1.0, 0.0);
@@ -191,9 +191,9 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_pairs_[12]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
 
     joint_link_pairs_[13]->name_ = "thigh_r_front_active";
-    joint_link_pairs_[13]->parent_ = 12;
+    joint_link_pairs_[13]->parent_ = 12;   // hip_r_pitch
     joint_link_pairs_[13]->sibling_ = 20;  // shin_r_active
-    joint_link_pairs_[13]->child_ = 14;
+    joint_link_pairs_[13]->child_ = 14;    // knee_r_passive
     joint_link_pairs_[13]->joint_position_ = robotis_framework::getTransitionXYZ(0.015, -0.02925, -0.0305);
     joint_link_pairs_[13]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, -0.785398163, 0.0);
     joint_link_pairs_[13]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 1.0, 0.0);
@@ -204,9 +204,9 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_pairs_[13]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
 
     joint_link_pairs_[14]->name_ = "knee_r_passive";
-    joint_link_pairs_[14]->parent_ = 13;
+    joint_link_pairs_[14]->parent_ = 13;  // thigh_r_front_active
     joint_link_pairs_[14]->sibling_ = -1;
-    joint_link_pairs_[14]->child_ = 15;
+    joint_link_pairs_[14]->child_ = 15;  // shin_r_front_passive
     joint_link_pairs_[14]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -0.1);
     joint_link_pairs_[14]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, 0.785398163, 0.0);
     joint_link_pairs_[14]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 1.0, 0.0);
@@ -219,9 +219,9 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_pairs_[14]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
 
     joint_link_pairs_[15]->name_ = "shin_r_front_passive";
-    joint_link_pairs_[15]->parent_ = 14;
-    joint_link_pairs_[15]->sibling_ = 24;
-    joint_link_pairs_[15]->child_ = 16;
+    joint_link_pairs_[15]->parent_ = 14;   // knee_r_passive
+    joint_link_pairs_[15]->sibling_ = 24;  // shin_r_rear_passive
+    joint_link_pairs_[15]->child_ = 16;    // ankle_r_roll
     joint_link_pairs_[15]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
     joint_link_pairs_[15]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, 0.785398163, 0.0);
     joint_link_pairs_[15]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 1.0, 0.0);
@@ -234,9 +234,9 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_pairs_[15]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
 
     joint_link_pairs_[16]->name_ = "ankle_r_pitch_passive";
-    joint_link_pairs_[16]->parent_ = 15;
+    joint_link_pairs_[16]->parent_ = 15;  // shin_r_front_passive
     joint_link_pairs_[16]->sibling_ = -1;
-    joint_link_pairs_[16]->child_ = 17;
+    joint_link_pairs_[16]->child_ = 17;  // ankle_r_roll
     joint_link_pairs_[16]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -0.1);
     joint_link_pairs_[16]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, -0.785398163, 0.0);
     joint_link_pairs_[16]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 1.0, 0.0);
@@ -249,9 +249,9 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_pairs_[16]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
 
     joint_link_pairs_[17]->name_ = "ankle_r_roll";
-    joint_link_pairs_[17]->parent_ = 16;
+    joint_link_pairs_[17]->parent_ = 16;  // ankle_r_pitch_passive
     joint_link_pairs_[17]->sibling_ = -1;
-    joint_link_pairs_[17]->child_ = 18;
+    joint_link_pairs_[17]->child_ = 18;  // ankle_r_yaw
     joint_link_pairs_[17]->joint_position_ = robotis_framework::getTransitionXYZ(-0.015, 0, -0.027);
     joint_link_pairs_[17]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, 0.0, 0.0);
     joint_link_pairs_[17]->joint_axis_ = robotis_framework::getTransitionXYZ(1.0, 0.0, 0.0);
@@ -262,9 +262,9 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_pairs_[17]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
 
     joint_link_pairs_[18]->name_ = "ankle_r_yaw";
-    joint_link_pairs_[18]->parent_ = 17;
+    joint_link_pairs_[18]->parent_ = 17;  // ankle_r_roll
     joint_link_pairs_[18]->sibling_ = -1;
-    joint_link_pairs_[18]->child_ = 19;
+    joint_link_pairs_[18]->child_ = 19;  // leg_r_end
     joint_link_pairs_[18]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -0.03825);
     joint_link_pairs_[18]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, 0.0, 0.0);
     joint_link_pairs_[18]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -1.0);
@@ -275,7 +275,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_pairs_[18]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
 
     joint_link_pairs_[19]->name_ = "leg_r_end";
-    joint_link_pairs_[19]->parent_ = 18;
+    joint_link_pairs_[19]->parent_ = 18;  // ankle_r_yaw
     joint_link_pairs_[19]->sibling_ = -1;
     joint_link_pairs_[19]->child_ = -1;
     joint_link_pairs_[19]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -0.004);
@@ -290,7 +290,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_pairs_[20]->name_ = "shin_r_active";
     joint_link_pairs_[20]->parent_ = 12;   // hip_r_pitch
     joint_link_pairs_[20]->sibling_ = 23;  // thigh_r_middle_passive_link
-    joint_link_pairs_[20]->child_ = 21;
+    joint_link_pairs_[20]->child_ = 21;    // thigh_r_rear_passive_mimic
     joint_link_pairs_[20]->joint_position_ = robotis_framework::getTransitionXYZ(-0.0185, -0.02925, -0.0305);
     joint_link_pairs_[20]->joint_orientation_ = robotis_framework::convertRPYToRotation(0, 1.047197551, 0);
     joint_link_pairs_[20]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 1.0, 0.0);
@@ -301,9 +301,9 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_pairs_[20]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
 
     joint_link_pairs_[21]->name_ = "thigh_r_rear_passive_mimic";
-    joint_link_pairs_[21]->parent_ = 20;
+    joint_link_pairs_[21]->parent_ = 20;  // shin_r_active
     joint_link_pairs_[21]->sibling_ = -1;
-    joint_link_pairs_[21]->child_ = 22;
+    joint_link_pairs_[21]->child_ = 22;  // thigh_r_rear_passive
     joint_link_pairs_[21]->joint_position_ = robotis_framework::getTransitionXYZ(0, 0, -0.03);
     joint_link_pairs_[21]->joint_orientation_ = robotis_framework::convertRPYToRotation(0, -1.832597551, 0);
     joint_link_pairs_[21]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 1.0, 0.0);
@@ -316,16 +316,16 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_pairs_[21]->link_inertia_ = robotis_framework::getInertiaXYZ(0, 0, 0, 0, 0, 0);
 
     joint_link_pairs_[22]->name_ = "thigh_r_rear_passive";
-    joint_link_pairs_[22]->parent_ = 21;
+    joint_link_pairs_[22]->parent_ = 21;  // thigh_r_rear_passive_mimic
     joint_link_pairs_[22]->sibling_ = -1;
-    joint_link_pairs_[22]->child_ = 23;
+    joint_link_pairs_[22]->child_ = -1;
     joint_link_pairs_[22]->joint_position_ = robotis_framework::getTransitionXYZ(0, 0, 0);
     joint_link_pairs_[22]->joint_orientation_ = robotis_framework::convertRPYToRotation(0, 0, 0);
     joint_link_pairs_[22]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 1.0, 0.0);
     joint_link_pairs_[22]->joint_limit_lower_ = -3.1;
     joint_link_pairs_[22]->joint_limit_upper_ = 3.1;
-    joint_link_pairs_[21]->joint_mimic_ = "thigh_r_front_active";
-    joint_link_pairs_[21]->joint_mimic_multiplier_ = 1.0;
+    joint_link_pairs_[22]->joint_mimic_ = "thigh_r_front_active";
+    joint_link_pairs_[22]->joint_mimic_multiplier_ = 1.0;
     joint_link_pairs_[22]->link_mass_ = 0.011;
     joint_link_pairs_[22]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0, 0, -0.05);
     joint_link_pairs_[22]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
@@ -333,14 +333,14 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_pairs_[23]->name_ = "thigh_r_middle_passive";
     joint_link_pairs_[23]->parent_ = 12;  // hip_r_pitch
     joint_link_pairs_[23]->sibling_ = -1;
-    joint_link_pairs_[23]->child_ = 24;
+    joint_link_pairs_[23]->child_ = -1;
     joint_link_pairs_[23]->joint_position_ = robotis_framework::getTransitionXYZ(-0.0185, -0.02925, -0.0305);
     joint_link_pairs_[23]->joint_orientation_ = robotis_framework::convertRPYToRotation(0, -0.785398163, 0);
     joint_link_pairs_[23]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 1.0, 0.0);
     joint_link_pairs_[23]->joint_limit_lower_ = -3.1;
     joint_link_pairs_[23]->joint_limit_upper_ = 3.1;
-    joint_link_pairs_[21]->joint_mimic_ = "thigh_r_front_active";
-    joint_link_pairs_[21]->joint_mimic_multiplier_ = 1.0;
+    joint_link_pairs_[23]->joint_mimic_ = "thigh_r_front_active";
+    joint_link_pairs_[23]->joint_mimic_multiplier_ = 1.0;
     joint_link_pairs_[23]->link_mass_ = 0.012;
     joint_link_pairs_[23]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0, 0, -0.05);
     joint_link_pairs_[23]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
@@ -348,7 +348,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_pairs_[24]->name_ = "shin_r_rear_passive";
     joint_link_pairs_[24]->parent_ = 14;  // knee_r_passive
     joint_link_pairs_[24]->sibling_ = -1;
-    joint_link_pairs_[24]->child_ = 25;
+    joint_link_pairs_[24]->child_ = -1;
     joint_link_pairs_[24]->joint_position_ = robotis_framework::getTransitionXYZ(-0.0335, 0, 0);
     joint_link_pairs_[24]->joint_orientation_ = robotis_framework::convertRPYToRotation(0, 0.785398163, 0);
     joint_link_pairs_[24]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 1.0, 0.0);
@@ -364,7 +364,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_pairs_[25]->name_ = "hip_l_roll";
     joint_link_pairs_[25]->parent_ = 1;  // waist
     joint_link_pairs_[25]->sibling_ = -1;
-    joint_link_pairs_[25]->child_ = 26;
+    joint_link_pairs_[25]->child_ = 26;  // hip_l_pitch
     joint_link_pairs_[25]->joint_position_ = robotis_framework::getTransitionXYZ(0, 0, -0.08425);
     joint_link_pairs_[25]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, 0.0, 0.0);
     joint_link_pairs_[25]->joint_axis_ = robotis_framework::getTransitionXYZ(-1.0, 0.0, 0.0);
@@ -375,9 +375,9 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_pairs_[25]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
 
     joint_link_pairs_[26]->name_ = "hip_l_pitch";
-    joint_link_pairs_[26]->parent_ = 25;
+    joint_link_pairs_[26]->parent_ = 25;  // hip_l_roll
     joint_link_pairs_[26]->sibling_ = -1;
-    joint_link_pairs_[26]->child_ = 27;
+    joint_link_pairs_[26]->child_ = 27;  // thigh_l_front_active
     joint_link_pairs_[26]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.027, 0.0);
     joint_link_pairs_[26]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, 0.0, 0.0);
     joint_link_pairs_[26]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 1.0, 0.0);
@@ -388,9 +388,9 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_pairs_[26]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
 
     joint_link_pairs_[27]->name_ = "thigh_l_front_active";
-    joint_link_pairs_[27]->parent_ = 26;
+    joint_link_pairs_[27]->parent_ = 26;   // hip_l_pitch
     joint_link_pairs_[27]->sibling_ = 34;  // shin_l_active
-    joint_link_pairs_[27]->child_ = 28;
+    joint_link_pairs_[27]->child_ = 28;    // knee_l_passive
     joint_link_pairs_[27]->joint_position_ = robotis_framework::getTransitionXYZ(0.015, 0.02925, -0.0305);
     joint_link_pairs_[27]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, -0.785398163, 0.0);
     joint_link_pairs_[27]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, -1.0, 0.0);
@@ -401,9 +401,9 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_pairs_[27]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
 
     joint_link_pairs_[28]->name_ = "knee_l_passive";
-    joint_link_pairs_[28]->parent_ = 27;
+    joint_link_pairs_[28]->parent_ = 27;  // thigh_l_front_active
     joint_link_pairs_[28]->sibling_ = -1;
-    joint_link_pairs_[28]->child_ = 29;
+    joint_link_pairs_[28]->child_ = 29;  // shin_l_front_passive
     joint_link_pairs_[28]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -0.1);
     joint_link_pairs_[28]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, 0.785398163, 0.0);
     joint_link_pairs_[28]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, -1.0, 0.0);
@@ -416,9 +416,9 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_pairs_[28]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
 
     joint_link_pairs_[29]->name_ = "shin_l_front_passive";
-    joint_link_pairs_[29]->parent_ = 28;
-    joint_link_pairs_[29]->sibling_ = 33;
-    joint_link_pairs_[29]->child_ = 30;
+    joint_link_pairs_[29]->parent_ = 28;   // knee_l_passive
+    joint_link_pairs_[29]->sibling_ = 33;  // shin_l_rear_passive
+    joint_link_pairs_[29]->child_ = 30;    // ankle_l_pitch_passive
     joint_link_pairs_[29]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
     joint_link_pairs_[29]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, 0.785398163, 0.0);
     joint_link_pairs_[29]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, -1.0, 0.0);
@@ -431,9 +431,9 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_pairs_[29]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
 
     joint_link_pairs_[30]->name_ = "ankle_l_pitch_passive";
-    joint_link_pairs_[30]->parent_ = 29;
+    joint_link_pairs_[30]->parent_ = 29;  // shin_l_front_passive
     joint_link_pairs_[30]->sibling_ = -1;
-    joint_link_pairs_[30]->child_ = 31;
+    joint_link_pairs_[30]->child_ = 31;  // ankle_l_roll
     joint_link_pairs_[30]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -0.1);
     joint_link_pairs_[30]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, -0.785398163, 0.0);
     joint_link_pairs_[30]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, -1.0, 0.0);
@@ -446,9 +446,9 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_pairs_[30]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
 
     joint_link_pairs_[31]->name_ = "ankle_l_roll";
-    joint_link_pairs_[31]->parent_ = 30;
+    joint_link_pairs_[31]->parent_ = 30;  // ankle_l_pitch_passive
     joint_link_pairs_[31]->sibling_ = -1;
-    joint_link_pairs_[31]->child_ = 32;
+    joint_link_pairs_[31]->child_ = 32;  // ankle_l_yaw
     joint_link_pairs_[31]->joint_position_ = robotis_framework::getTransitionXYZ(-0.015, 0, -0.027);
     joint_link_pairs_[31]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, 0.0, 0.0);
     joint_link_pairs_[31]->joint_axis_ = robotis_framework::getTransitionXYZ(1.0, 0.0, 0.0);
@@ -459,9 +459,9 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_pairs_[31]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
 
     joint_link_pairs_[32]->name_ = "ankle_l_yaw";
-    joint_link_pairs_[32]->parent_ = 31;
+    joint_link_pairs_[32]->parent_ = 31;  // ankle_l_roll
     joint_link_pairs_[32]->sibling_ = -1;
-    joint_link_pairs_[32]->child_ = 33;
+    joint_link_pairs_[32]->child_ = 33;  // leg_l_end
     joint_link_pairs_[32]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -0.03825);
     joint_link_pairs_[32]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, 0.0, 0.0);
     joint_link_pairs_[32]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -1.0);
@@ -472,7 +472,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_pairs_[32]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
 
     joint_link_pairs_[33]->name_ = "leg_l_end";
-    joint_link_pairs_[33]->parent_ = 32;
+    joint_link_pairs_[33]->parent_ = 32;  // ankle_l_yaw
     joint_link_pairs_[33]->sibling_ = -1;
     joint_link_pairs_[33]->child_ = -1;
     joint_link_pairs_[33]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -0.004);
@@ -487,7 +487,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_pairs_[34]->name_ = "shin_l_active";
     joint_link_pairs_[34]->parent_ = 26;   // hip_l_pitch
     joint_link_pairs_[34]->sibling_ = 37;  // thigh_l_middle_passive_link
-    joint_link_pairs_[34]->child_ = 35;
+    joint_link_pairs_[34]->child_ = 35;    // thigh_l_rear_passive_mimic
     joint_link_pairs_[34]->joint_position_ = robotis_framework::getTransitionXYZ(-0.0185, 0.02925, -0.0305);
     joint_link_pairs_[34]->joint_orientation_ = robotis_framework::convertRPYToRotation(0, 1.047197551, 0);
     joint_link_pairs_[34]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, -1.0, 0.0);
@@ -498,9 +498,9 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_pairs_[34]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
 
     joint_link_pairs_[35]->name_ = "thigh_l_rear_passive_mimic";
-    joint_link_pairs_[35]->parent_ = 34;
+    joint_link_pairs_[35]->parent_ = 34;  // shin_l_active
     joint_link_pairs_[35]->sibling_ = -1;
-    joint_link_pairs_[35]->child_ = 36;
+    joint_link_pairs_[35]->child_ = 36;  // thigh_l_rear_passive
     joint_link_pairs_[35]->joint_position_ = robotis_framework::getTransitionXYZ(0, 0, -0.03);
     joint_link_pairs_[35]->joint_orientation_ = robotis_framework::convertRPYToRotation(0, -1.832597551, 0);
     joint_link_pairs_[35]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, -1.0, 0.0);
@@ -513,9 +513,9 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_pairs_[35]->link_inertia_ = robotis_framework::getInertiaXYZ(0, 0, 0, 0, 0, 0);
 
     joint_link_pairs_[36]->name_ = "thigh_l_rear_passive";
-    joint_link_pairs_[36]->parent_ = 35;
+    joint_link_pairs_[36]->parent_ = 35;  // thigh_l_rear_passive_mimic
     joint_link_pairs_[36]->sibling_ = -1;
-    joint_link_pairs_[36]->child_ = 37;
+    joint_link_pairs_[36]->child_ = -1;
     joint_link_pairs_[36]->joint_position_ = robotis_framework::getTransitionXYZ(0, 0, 0);
     joint_link_pairs_[36]->joint_orientation_ = robotis_framework::convertRPYToRotation(0, 0, 0);
     joint_link_pairs_[36]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, -1.0, 0.0);
@@ -530,7 +530,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_pairs_[37]->name_ = "thigh_l_middle_passive";
     joint_link_pairs_[37]->parent_ = 26;  // hip_l_pitch
     joint_link_pairs_[37]->sibling_ = -1;
-    joint_link_pairs_[37]->child_ = 38;
+    joint_link_pairs_[37]->child_ = -1;
     joint_link_pairs_[37]->joint_position_ = robotis_framework::getTransitionXYZ(-0.0185, 0.02925, -0.0305);
     joint_link_pairs_[37]->joint_orientation_ = robotis_framework::convertRPYToRotation(0, -0.785398163, 0);
     joint_link_pairs_[37]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, -1.0, 0.0);
@@ -545,7 +545,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_pairs_[38]->name_ = "shin_l_rear_passive";
     joint_link_pairs_[38]->parent_ = 29;  // knee_l_passive
     joint_link_pairs_[38]->sibling_ = -1;
-    joint_link_pairs_[38]->child_ = 39;
+    joint_link_pairs_[38]->child_ = -1;
     joint_link_pairs_[38]->joint_position_ = robotis_framework::getTransitionXYZ(-0.0335, 0, 0);
     joint_link_pairs_[38]->joint_orientation_ = robotis_framework::convertRPYToRotation(0, 0.785398163, 0);
     joint_link_pairs_[38]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, -1.0, 0.0);

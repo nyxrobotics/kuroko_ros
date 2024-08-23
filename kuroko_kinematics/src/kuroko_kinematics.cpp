@@ -1222,7 +1222,9 @@ bool KurokoKinematics::calcInverseKinematicsForRightLeg(double* out, double x, d
   // std::cout << "Triangle Knee Line legth: " << triangle_knee_line_length << std::endl;
   // std::cout << "Triangle Thigh Line legth: " << tiangle_thigh_line_length << std::endl;
   // std::cout << "Triangle Shin Line legth: " << triangle_shin_line_length << std::endl;
-  if (triangle_knee_line_length > tiangle_thigh_line_length + triangle_shin_line_length)
+  if (triangle_knee_line_length > tiangle_thigh_line_length + triangle_shin_line_length ||
+      triangle_knee_line_length > triangle_knee_line_length + tiangle_thigh_line_length ||
+      tiangle_thigh_line_length > triangle_knee_line_length + triangle_shin_line_length)
   {
     std::cout << "Target position is out of reach" << std::endl;
     triangle_knee_angle = M_PI;
@@ -1277,18 +1279,40 @@ bool KurokoKinematics::calcInverseKinematicsForRightLeg(double* out, double x, d
                           (hip_roll - robotis_framework::convertRotationToRPY(
                                           joint_link_tree_[getLinkIndex("hip_r_roll")]->joint_orientation_)
                                           .coeff(0, 0));
+  hip_roll_joint = std::max(std::min(hip_roll_joint, joint_link_tree_[getLinkIndex("hip_r_roll")]->joint_limit_upper_),
+                            joint_link_tree_[getLinkIndex("hip_r_roll")]->joint_limit_lower_);
+  hip_pitch_joint =
+      std::max(std::min(hip_pitch_joint, joint_link_tree_[getLinkIndex("hip_r_pitch")]->joint_limit_upper_),
+               joint_link_tree_[getLinkIndex("hip_r_pitch")]->joint_limit_lower_);
+  thigh_pitch_joint =
+      std::max(std::min(thigh_pitch_joint, joint_link_tree_[getLinkIndex("thigh_r_front_active")]->joint_limit_upper_),
+               joint_link_tree_[getLinkIndex("thigh_r_front_active")]->joint_limit_lower_);
+  shin_pitch_joint =
+      std::max(std::min(shin_pitch_joint, joint_link_tree_[getLinkIndex("shin_r_front_passive")]->joint_limit_upper_),
+               joint_link_tree_[getLinkIndex("shin_r_front_passive")]->joint_limit_lower_);
+  ankle_roll_joint =
+      std::max(std::min(ankle_roll_joint, joint_link_tree_[getLinkIndex("ankle_r_roll")]->joint_limit_upper_),
+               joint_link_tree_[getLinkIndex("ankle_r_roll")]->joint_limit_lower_);
+  ankle_yaw_joint =
+      std::max(std::min(ankle_yaw_joint, joint_link_tree_[getLinkIndex("ankle_r_yaw")]->joint_limit_upper_),
+               joint_link_tree_[getLinkIndex("ankle_r_yaw")]->joint_limit_lower_);
+  double shin_active_joint =
+      shin_pitch_joint / joint_link_tree_[getLinkIndex("shin_r_front_passive")]->joint_mimic_multiplier_;
+  shin_active_joint =
+      std::max(std::min(shin_active_joint, joint_link_tree_[getLinkIndex("shin_r_active")]->joint_limit_upper_),
+               joint_link_tree_[getLinkIndex("shin_r_active")]->joint_limit_lower_);
 
   out[0] = hip_roll_joint;
   out[1] = hip_pitch_joint;
   out[2] = thigh_pitch_joint;
-  out[3] = shin_pitch_joint;
+  out[3] = shin_active_joint;
   out[4] = ankle_roll_joint;
   out[5] = ankle_yaw_joint;
   std::cout << "Inverse Kinematics result (Right Leg):" << std::endl;
   std::cout << "Joint ID: 11 (hip_r_roll), Angle: " << out[0] << std::endl;
   std::cout << "Joint ID: 12 (hip_r_pitch), Angle: " << out[1] << std::endl;
   std::cout << "Joint ID: 13 (thigh_r_front_active), Angle: " << out[2] << std::endl;
-  std::cout << "Joint ID: 15 (shin_r_front_passive), Angle: " << out[3] << std::endl;
+  std::cout << "Joint ID: 20 (shin_r_active), Angle: " << out[3] << std::endl;
   std::cout << "Joint ID: 17 (ankle_r_roll), Angle: " << out[4] << std::endl;
   std::cout << "Joint ID: 18 (ankle_r_yaw), Angle: " << out[5] << std::endl;
 
@@ -1365,7 +1389,9 @@ bool KurokoKinematics::calcInverseKinematicsForLeftLeg(double* out, double x, do
   // std::cout << "Triangle Knee Line legth: " << triangle_knee_line_length << std::endl;
   // std::cout << "Triangle Thigh Line legth: " << tiangle_thigh_line_length << std::endl;
   // std::cout << "Triangle Shin Line legth: " << triangle_shin_line_length << std::endl;
-  if (triangle_knee_line_length > tiangle_thigh_line_length + triangle_shin_line_length)
+  if (triangle_knee_line_length > tiangle_thigh_line_length + triangle_shin_line_length ||
+      triangle_knee_line_length > triangle_knee_line_length + tiangle_thigh_line_length ||
+      tiangle_thigh_line_length > triangle_knee_line_length + triangle_shin_line_length)
   {
     std::cout << "Target position is out of reach" << std::endl;
     triangle_knee_angle = M_PI;
@@ -1421,10 +1447,32 @@ bool KurokoKinematics::calcInverseKinematicsForLeftLeg(double* out, double x, do
                                           joint_link_tree_[getLinkIndex("hip_l_roll")]->joint_orientation_)
                                           .coeff(0, 0));
 
+  hip_roll_joint = std::max(std::min(hip_roll_joint, joint_link_tree_[getLinkIndex("hip_l_roll")]->joint_limit_upper_),
+                            joint_link_tree_[getLinkIndex("hip_l_roll")]->joint_limit_lower_);
+  hip_pitch_joint =
+      std::max(std::min(hip_pitch_joint, joint_link_tree_[getLinkIndex("hip_l_pitch")]->joint_limit_upper_),
+               joint_link_tree_[getLinkIndex("hip_l_pitch")]->joint_limit_lower_);
+  thigh_pitch_joint =
+      std::max(std::min(thigh_pitch_joint, joint_link_tree_[getLinkIndex("thigh_l_front_active")]->joint_limit_upper_),
+               joint_link_tree_[getLinkIndex("thigh_l_front_active")]->joint_limit_lower_);
+  shin_pitch_joint =
+      std::max(std::min(shin_pitch_joint, joint_link_tree_[getLinkIndex("shin_l_front_passive")]->joint_limit_upper_),
+               joint_link_tree_[getLinkIndex("shin_l_front_passive")]->joint_limit_lower_);
+  ankle_roll_joint =
+      std::max(std::min(ankle_roll_joint, joint_link_tree_[getLinkIndex("ankle_l_roll")]->joint_limit_upper_),
+               joint_link_tree_[getLinkIndex("ankle_l_roll")]->joint_limit_lower_);
+  ankle_yaw_joint =
+      std::max(std::min(ankle_yaw_joint, joint_link_tree_[getLinkIndex("ankle_l_yaw")]->joint_limit_upper_),
+               joint_link_tree_[getLinkIndex("ankle_l_yaw")]->joint_limit_lower_);
+  double shin_active_joint =
+      shin_pitch_joint / joint_link_tree_[getLinkIndex("shin_l_front_passive")]->joint_mimic_multiplier_;
+  shin_active_joint =
+      std::max(std::min(shin_active_joint, joint_link_tree_[getLinkIndex("shin_l_active")]->joint_limit_upper_),
+               joint_link_tree_[getLinkIndex("shin_l_active")]->joint_limit_lower_);
   out[0] = hip_roll_joint;
   out[1] = hip_pitch_joint;
   out[2] = thigh_pitch_joint;
-  out[3] = shin_pitch_joint;
+  out[3] = shin_active_joint;
   out[4] = ankle_roll_joint;
   out[5] = ankle_yaw_joint;
 
@@ -1432,7 +1480,7 @@ bool KurokoKinematics::calcInverseKinematicsForLeftLeg(double* out, double x, do
   std::cout << "Joint ID: 20 (hip_l_roll), Angle: " << out[0] << std::endl;
   std::cout << "Joint ID: 21 (hip_l_pitch), Angle: " << out[1] << std::endl;
   std::cout << "Joint ID: 22 (thigh_l_front_active), Angle: " << out[2] << std::endl;
-  std::cout << "Joint ID: 24 (shin_l_front_passive), Angle: " << out[3] << std::endl;
+  std::cout << "Joint ID: 34 (shin_l_active), Angle: " << out[3] << std::endl;
   std::cout << "Joint ID: 26 (ankle_l_roll), Angle: " << out[4] << std::endl;
   std::cout << "Joint ID: 27 (ankle_l_yaw), Angle: " << out[5] << std::endl;
 

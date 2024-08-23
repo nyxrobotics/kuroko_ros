@@ -215,6 +215,7 @@ double WalkingModule::wSin(double time, double period, double period_shift, doub
 bool WalkingModule::computeIK(double* out, double pos_x, double pos_y, double pos_z, double ori_roll, double ori_pitch,
                               double ori_yaw)
 {
+  // TODO
   double thigh_length = 93.0 * 0.001;  // m
   double calf_length = 93.0 * 0.001;   // m
   double ankle_length = 33.5 * 0.001;  // m

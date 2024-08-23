@@ -46,7 +46,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_tree_[1]->joint_limit_upper_ = 100.0;
     joint_link_tree_[1]->link_mass_ = 0.337;
     joint_link_tree_[1]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.00125, 0.0, -0.04875);
-    joint_link_tree_[1]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+    joint_link_tree_[1]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
     // Chest link
     joint_link_tree_[2]->name_ = "chest";
@@ -60,7 +60,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_tree_[2]->joint_limit_upper_ = 3.1;
     joint_link_tree_[2]->link_mass_ = 0.337;
     joint_link_tree_[2]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.057);
-    joint_link_tree_[2]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+    joint_link_tree_[2]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
     // Right Arm
     joint_link_tree_[3]->name_ = "shoulder_r_pitch";
@@ -74,7 +74,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_tree_[3]->joint_limit_upper_ = 3.1;
     joint_link_tree_[3]->link_mass_ = 0.022;
     joint_link_tree_[3]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, -0.024, 0.0);
-    joint_link_tree_[3]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+    joint_link_tree_[3]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
     joint_link_tree_[4]->name_ = "shoulder_r_roll";
     joint_link_tree_[4]->parent_ = 3;
@@ -87,7 +87,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_tree_[4]->joint_limit_upper_ = 2.0071;
     joint_link_tree_[4]->link_mass_ = 0.342;
     joint_link_tree_[4]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, -0.016, -0.02575);
-    joint_link_tree_[4]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+    joint_link_tree_[4]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
     joint_link_tree_[5]->name_ = "elbow_r_front_and_rear";
     joint_link_tree_[5]->parent_ = 4;
@@ -100,7 +100,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_tree_[5]->joint_limit_upper_ = 2.6180;
     joint_link_tree_[5]->link_mass_ = 0.063;
     joint_link_tree_[5]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0043, 0.0, -0.1);
-    joint_link_tree_[5]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+    joint_link_tree_[5]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
     joint_link_tree_[6]->name_ = "arm_r_end";
     joint_link_tree_[6]->parent_ = 5;
@@ -127,7 +127,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_tree_[7]->joint_limit_upper_ = 3.1;
     joint_link_tree_[7]->link_mass_ = 0.022;
     joint_link_tree_[7]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.024, 0.0);
-    joint_link_tree_[7]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+    joint_link_tree_[7]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
     joint_link_tree_[8]->name_ = "shoulder_l_roll";
     joint_link_tree_[8]->parent_ = 7;
@@ -140,7 +140,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_tree_[8]->joint_limit_upper_ = 1.0472;
     joint_link_tree_[8]->link_mass_ = 0.342;
     joint_link_tree_[8]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.016, -0.02575);
-    joint_link_tree_[8]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+    joint_link_tree_[8]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
     joint_link_tree_[9]->name_ = "elbow_l_front_and_rear";
     joint_link_tree_[9]->parent_ = 8;
@@ -153,7 +153,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_tree_[9]->joint_limit_upper_ = 2.6180;
     joint_link_tree_[9]->link_mass_ = 0.063;
     joint_link_tree_[9]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0043, 0.0, -0.104);
-    joint_link_tree_[9]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+    joint_link_tree_[9]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
     joint_link_tree_[10]->name_ = "arm_l_end";
     joint_link_tree_[10]->parent_ = 9;
@@ -180,7 +180,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_tree_[11]->joint_limit_upper_ = 1.8640;
     joint_link_tree_[11]->link_mass_ = 0.026;
     joint_link_tree_[11]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.00125, -0.0065, -0.004125);
-    joint_link_tree_[11]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+    joint_link_tree_[11]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
     // Right hip pitch
     joint_link_tree_[12]->name_ = "hip_r_pitch";
@@ -194,7 +194,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_tree_[12]->joint_limit_upper_ = 3.1;
     joint_link_tree_[12]->link_mass_ = 0.478;
     joint_link_tree_[12]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.00175, -0.049, -0.015);
-    joint_link_tree_[12]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+    joint_link_tree_[12]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
     // Right thigh front active
     joint_link_tree_[13]->name_ = "thigh_r_front_active";
@@ -208,7 +208,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_tree_[13]->joint_limit_upper_ = 1.8588;
     joint_link_tree_[13]->link_mass_ = 0.012;
     joint_link_tree_[13]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -0.05);
-    joint_link_tree_[13]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+    joint_link_tree_[13]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
     // Right knee passive
     joint_link_tree_[14]->name_ = "knee_r_passive";
@@ -224,7 +224,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_tree_[14]->joint_mimic_multiplier_ = -1.0;
     joint_link_tree_[14]->link_mass_ = 0.007;
     joint_link_tree_[14]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.01675, 0.0, 0.0);
-    joint_link_tree_[14]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+    joint_link_tree_[14]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
     // Right shin front passive
     joint_link_tree_[15]->name_ = "shin_r_front_passive";
@@ -240,7 +240,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_tree_[15]->joint_mimic_multiplier_ = 1.0;
     joint_link_tree_[15]->link_mass_ = 0.013;
     joint_link_tree_[15]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -0.05);
-    joint_link_tree_[15]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+    joint_link_tree_[15]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
     // Right ankle pitch passive
     joint_link_tree_[16]->name_ = "ankle_r_pitch_passive";
@@ -256,7 +256,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_tree_[16]->joint_mimic_multiplier_ = -1.0;
     joint_link_tree_[16]->link_mass_ = 0.104;
     joint_link_tree_[16]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.0285, 0, -0.013);
-    joint_link_tree_[16]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+    joint_link_tree_[16]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
     // Right ankle roll
     joint_link_tree_[17]->name_ = "ankle_r_roll";
@@ -270,7 +270,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_tree_[17]->joint_limit_upper_ = 1.5708;
     joint_link_tree_[17]->link_mass_ = 0.0136;
     joint_link_tree_[17]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0, -0.009375, -0.01175);
-    joint_link_tree_[17]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+    joint_link_tree_[17]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
     // Right ankle yaw
     joint_link_tree_[18]->name_ = "ankle_r_yaw";
@@ -284,7 +284,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_tree_[18]->joint_limit_upper_ = 3.1;
     joint_link_tree_[18]->link_mass_ = 0.043;
     joint_link_tree_[18]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -0.004);
-    joint_link_tree_[18]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+    joint_link_tree_[18]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
     // Right leg end
     joint_link_tree_[19]->name_ = "leg_r_end";
@@ -311,7 +311,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_tree_[20]->joint_limit_upper_ = 0.4974;
     joint_link_tree_[20]->link_mass_ = 0.008;
     joint_link_tree_[20]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.004745, 0, -0.015);
-    joint_link_tree_[20]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+    joint_link_tree_[20]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
     joint_link_tree_[21]->name_ = "thigh_r_rear_passive_mimic";
     joint_link_tree_[21]->parent_ = 20;  // shin_r_active
@@ -341,7 +341,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_tree_[22]->joint_mimic_multiplier_ = 1.0;
     joint_link_tree_[22]->link_mass_ = 0.011;
     joint_link_tree_[22]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0, 0, -0.05);
-    joint_link_tree_[22]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+    joint_link_tree_[22]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
     joint_link_tree_[23]->name_ = "thigh_r_middle_passive";
     joint_link_tree_[23]->parent_ = 12;  // hip_r_pitch
@@ -356,7 +356,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_tree_[23]->joint_mimic_multiplier_ = 1.0;
     joint_link_tree_[23]->link_mass_ = 0.012;
     joint_link_tree_[23]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0, 0, -0.05);
-    joint_link_tree_[23]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+    joint_link_tree_[23]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
     joint_link_tree_[24]->name_ = "shin_r_rear_passive";
     joint_link_tree_[24]->parent_ = 14;  // knee_r_passive
@@ -371,7 +371,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_tree_[24]->joint_mimic_multiplier_ = 1.0;
     joint_link_tree_[24]->link_mass_ = 0.016;
     joint_link_tree_[24]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0, 0, -0.05);
-    joint_link_tree_[24]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+    joint_link_tree_[24]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
     // Left Leg
     joint_link_tree_[25]->name_ = "hip_l_roll";
@@ -385,7 +385,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_tree_[25]->joint_limit_upper_ = 1.8640;
     joint_link_tree_[25]->link_mass_ = 0.026;
     joint_link_tree_[25]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.00125, 0.0065, -0.004125);
-    joint_link_tree_[25]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+    joint_link_tree_[25]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
     joint_link_tree_[26]->name_ = "hip_l_pitch";
     joint_link_tree_[26]->parent_ = 25;  // hip_l_roll
@@ -398,7 +398,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_tree_[26]->joint_limit_upper_ = 3.1;
     joint_link_tree_[26]->link_mass_ = 0.478;
     joint_link_tree_[26]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.00175, 0.049, -0.015);
-    joint_link_tree_[26]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+    joint_link_tree_[26]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
     joint_link_tree_[27]->name_ = "thigh_l_front_active";
     joint_link_tree_[27]->parent_ = 26;   // hip_l_pitch
@@ -411,7 +411,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_tree_[27]->joint_limit_upper_ = 0.4974;
     joint_link_tree_[27]->link_mass_ = 0.012;
     joint_link_tree_[27]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -0.05);
-    joint_link_tree_[27]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+    joint_link_tree_[27]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
     joint_link_tree_[28]->name_ = "knee_l_passive";
     joint_link_tree_[28]->parent_ = 27;  // thigh_l_front_active
@@ -426,7 +426,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_tree_[28]->joint_mimic_multiplier_ = -1.0;
     joint_link_tree_[28]->link_mass_ = 0.007;
     joint_link_tree_[28]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.01675, 0.0, 0.0);
-    joint_link_tree_[28]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+    joint_link_tree_[28]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
     joint_link_tree_[29]->name_ = "shin_l_front_passive";
     joint_link_tree_[29]->parent_ = 28;   // knee_l_passive
@@ -441,7 +441,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_tree_[29]->joint_mimic_multiplier_ = 1.0;
     joint_link_tree_[29]->link_mass_ = 0.013;
     joint_link_tree_[29]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -0.05);
-    joint_link_tree_[29]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+    joint_link_tree_[29]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
     joint_link_tree_[30]->name_ = "ankle_l_pitch_passive";
     joint_link_tree_[30]->parent_ = 29;  // shin_l_front_passive
@@ -456,7 +456,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_tree_[30]->joint_mimic_multiplier_ = -1.0;
     joint_link_tree_[30]->link_mass_ = 0.104;
     joint_link_tree_[30]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.0285, 0, -0.013);
-    joint_link_tree_[30]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+    joint_link_tree_[30]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
     joint_link_tree_[31]->name_ = "ankle_l_roll";
     joint_link_tree_[31]->parent_ = 30;  // ankle_l_pitch_passive
@@ -469,7 +469,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_tree_[31]->joint_limit_upper_ = 0.3704;
     joint_link_tree_[31]->link_mass_ = 0.0136;
     joint_link_tree_[31]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0, 0.009375, -0.01175);
-    joint_link_tree_[31]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+    joint_link_tree_[31]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
     joint_link_tree_[32]->name_ = "ankle_l_yaw";
     joint_link_tree_[32]->parent_ = 31;  // ankle_l_roll
@@ -482,7 +482,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_tree_[32]->joint_limit_upper_ = 3.1;
     joint_link_tree_[32]->link_mass_ = 0.043;
     joint_link_tree_[32]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -0.004);
-    joint_link_tree_[32]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+    joint_link_tree_[32]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
     joint_link_tree_[33]->name_ = "leg_l_end";
     joint_link_tree_[33]->parent_ = 32;  // ankle_l_yaw
@@ -508,7 +508,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_tree_[34]->joint_limit_upper_ = 1.8588;
     joint_link_tree_[34]->link_mass_ = 0.008;
     joint_link_tree_[34]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(-0.004745, 0, -0.015);
-    joint_link_tree_[34]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+    joint_link_tree_[34]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
     joint_link_tree_[35]->name_ = "thigh_l_rear_passive_mimic";
     joint_link_tree_[35]->parent_ = 34;  // shin_l_active
@@ -538,7 +538,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_tree_[36]->joint_mimic_multiplier_ = 1.0;
     joint_link_tree_[36]->link_mass_ = 0.011;
     joint_link_tree_[36]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0, 0, -0.05);
-    joint_link_tree_[36]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+    joint_link_tree_[36]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
     joint_link_tree_[37]->name_ = "thigh_l_middle_passive";
     joint_link_tree_[37]->parent_ = 26;  // hip_l_pitch
@@ -553,7 +553,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_tree_[37]->joint_mimic_multiplier_ = 1.0;
     joint_link_tree_[37]->link_mass_ = 0.012;
     joint_link_tree_[37]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0, 0, -0.05);
-    joint_link_tree_[37]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+    joint_link_tree_[37]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
     joint_link_tree_[38]->name_ = "shin_l_rear_passive";
     joint_link_tree_[38]->parent_ = 29;  // knee_l_passive
@@ -568,7 +568,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_tree_[38]->joint_mimic_multiplier_ = 1.0;
     joint_link_tree_[38]->link_mass_ = 0.016;
     joint_link_tree_[38]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0, 0, -0.05);
-    joint_link_tree_[38]->link_inertia_ = robotis_framework::getInertiaXYZ(0.01, 0.0, 0.0, 0.01, 0.0, 0.01);
+    joint_link_tree_[38]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
   }
 
   leg_side_offset_m_ =

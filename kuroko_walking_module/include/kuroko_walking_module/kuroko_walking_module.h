@@ -101,7 +101,6 @@ private:
 
   void publishStatusMsg(unsigned int type, std::string msg);
   double wSin(double time, double period, double period_shift, double mag, double mag_shift);
-  bool computeIK(double* out, double x, double y, double z, double a, double b, double c);
   void updateTimeParam();
   void updateMovementParam();
   void updatePoseParam();

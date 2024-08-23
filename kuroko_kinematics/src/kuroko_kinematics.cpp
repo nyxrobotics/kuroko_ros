@@ -576,7 +576,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
                        joint_link_tree_[getLinkIndex("hip_r_pitch")]->joint_position_.coeff(1, 0) +
                        joint_link_tree_[getLinkIndex("thigh_r_front_active")]->joint_position_.coeff(1, 0)));
   thigh_length_m_ = std::fabs(joint_link_tree_[getLinkIndex("knee_r_passive")]->joint_position_.coeff(2, 0));
-  calf_length_m_ = std::fabs(joint_link_tree_[getLinkIndex("ankle_r_pitch_passive")]->joint_position_.coeff(2, 0));
+  shin_length_m_ = std::fabs(joint_link_tree_[getLinkIndex("ankle_r_pitch_passive")]->joint_position_.coeff(2, 0));
   ankle_length_m_ = std::fabs(joint_link_tree_[getLinkIndex("ankle_r_roll")]->joint_position_.coeff(2, 0) +
                               joint_link_tree_[getLinkIndex("ankle_r_yaw")]->joint_position_.coeff(2, 0) +
                               joint_link_tree_[getLinkIndex("leg_r_end")]->joint_position_.coeff(2, 0));

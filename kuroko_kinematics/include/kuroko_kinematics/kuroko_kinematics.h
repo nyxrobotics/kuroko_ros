@@ -66,7 +66,7 @@ public:
                                    const Eigen::MatrixXd& K, const Eigen::MatrixXd& P);
 
   double thigh_length_m_;
-  double calf_length_m_;
+  double shin_length_m_;
   double ankle_length_m_;
   double leg_side_offset_m_;
 };

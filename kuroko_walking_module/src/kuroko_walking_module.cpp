@@ -35,19 +35,19 @@ WalkingModule::WalkingModule() : control_cycle_msec_(8), debug_(false)
   result_["shoulder_l_pitch"] = new robotis_framework::DynamixelState();
 
   // joint table
-  joint_table_["ankle_r_yaw"] = 0;
-  joint_table_["hip_r_roll"] = 1;
-  joint_table_["hip_r_pitch"] = 2;
-  joint_table_["thigh_r_front_active"] = 3;
-  joint_table_["shin_r_active"] = 4;
-  joint_table_["ankle_r_roll"] = 5;
+  joint_table_["hip_r_roll"] = 0;
+  joint_table_["hip_r_pitch"] = 1;
+  joint_table_["thigh_r_front_active"] = 2;
+  joint_table_["shin_r_active"] = 3;
+  joint_table_["ankle_r_roll"] = 4;
+  joint_table_["ankle_r_yaw"] = 5;
 
-  joint_table_["ankle_l_yaw"] = 6;
-  joint_table_["hip_l_roll"] = 7;
-  joint_table_["hip_l_pitch"] = 8;
-  joint_table_["thigh_l_front_active"] = 9;
-  joint_table_["shin_l_active"] = 10;
-  joint_table_["ankle_l_roll"] = 11;
+  joint_table_["hip_l_roll"] = 6;
+  joint_table_["hip_l_pitch"] = 7;
+  joint_table_["thigh_l_front_active"] = 8;
+  joint_table_["shin_l_active"] = 9;
+  joint_table_["ankle_l_roll"] = 10;
+  joint_table_["ankle_l_yaw"] = 11;
 
   joint_table_["shoulder_r_pitch"] = 12;
   joint_table_["shoulder_l_pitch"] = 13;
@@ -830,13 +830,13 @@ bool WalkingModule::computeLegAngle(double* leg_angle)
     // offset : rad
     double offset = 0;
 
-    if (i == joint_table_["hip_r_roll"])  // R_HIP_ROLL
+    if (i == 0)  // hip_r_roll
       offset += kuroko_kd_->getJointDirection("hip_r_roll") * pelvis_offset_r;
-    else if (i == joint_table_["hip_l_roll"])  // L_HIP_ROLL
+    else if (i == 6)  // hip_l_roll
       offset += kuroko_kd_->getJointDirection("hip_l_roll") * pelvis_offset_l;
-    else if (i == joint_table_["hip_r_pitch"])
+    else if (i == 1)  // hip_r_pitch
       offset -= kuroko_kd_->getJointDirection("hip_r_pitch") * hit_pitch_offset_;
-    else if (i == joint_table_["hip_l_pitch"])  // R_HIP_PITCH or L_HIP_PITCH
+    else if (i == 7)  // hip_l_pitch
       offset -= kuroko_kd_->getJointDirection("hip_l_pitch") * hit_pitch_offset_;
 
     leg_angle[i] += offset;

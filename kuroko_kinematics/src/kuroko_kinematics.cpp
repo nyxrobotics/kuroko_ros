@@ -1,4 +1,5 @@
 #include "kuroko_kinematics/kuroko_kinematics.h"
+#include <algorithm>
 #include <cmath>
 #include <iostream>
 
@@ -1159,34 +1160,43 @@ bool KurokoKinematics::calcInverseKinematicsForRightLeg(double* out, double x, d
       joint_link_tree_[getLinkIndex("thigh_r_front_active")]->joint_position_.coeff(2, 0);
   double thigh_length = joint_link_tree_[getLinkIndex("knee_r_passive")]->joint_position_.coeff(2, 0);
   double shin_length = joint_link_tree_[getLinkIndex("ankle_r_pitch_passive")]->joint_position_.coeff(2, 0);
-  double ankle_pitch_to_roll_offset_z = joint_link_tree_[getLinkIndex("ankle_r_roll")]->joint_position_.coeff(2, 0);
+  double shin_lower_to_roll_offset_z = joint_link_tree_[getLinkIndex("ankle_r_roll")]->joint_position_.coeff(2, 0);
   double ankle_roll_to_yaw_offset_z = joint_link_tree_[getLinkIndex("ankle_r_yaw")]->joint_position_.coeff(2, 0) +
                                       joint_link_tree_[getLinkIndex("leg_r_end")]->joint_position_.coeff(2, 0);
 
   // Ankle yaw
   double ankle_yaw = yaw;
+
   // Hip pitch
   double hip_pitch = pitch;
+
   // Hip roll
-  double ankle_roll_z = z - ankle_roll_to_yaw_offset_z * cos(roll);
-  double ankle_roll_y = y - ankle_roll_to_yaw_offset_z * sin(roll);
-  double ankle_roll_yz_plane_distance = sqrt(ankle_roll_z * ankle_roll_z + ankle_roll_y * ankle_roll_y);
-  double hip_pitch_z_height = sqrt(ankle_roll_yz_plane_distance * ankle_roll_yz_plane_distance -
-                                   hip_roll_to_pitch_offset_y * hip_roll_to_pitch_offset_y);
-  double waist_z_height = fabs(z);
-  double hip_roll_z = hip_pitch_z_height - waist_z_height;
-  double hip_roll_y = sqrt(hip_roll_to_pitch_offset_y * hip_roll_to_pitch_offset_y - hip_roll_z * hip_roll_z);
-  double hip_roll = atan2(hip_roll_z, hip_roll_y);
+  double waist_to_ankle_roll_x = x;
+  double waist_to_ankle_roll_y = y - ankle_roll_to_yaw_offset_z * sin(roll);
+  double waist_to_ankle_roll_z = z + ankle_roll_to_yaw_offset_z * cos(roll);
+  double waist_to_ankle_roll_yz_plane_distance =
+      sqrt(waist_to_ankle_roll_z * waist_to_ankle_roll_z + waist_to_ankle_roll_y * waist_to_ankle_roll_y);
+  double hip_pitch_to_ankle_roll_distance =
+      sqrt(waist_to_ankle_roll_yz_plane_distance * waist_to_ankle_roll_yz_plane_distance -
+           hip_roll_to_pitch_offset_y * hip_roll_to_pitch_offset_y);
+  double hip_roll = atan2(waist_to_ankle_roll_yz_plane_distance, hip_roll_to_pitch_offset_y) +
+                    atan2(waist_to_ankle_roll_z, waist_to_ankle_roll_y);
   // Ankle roll
   double ankle_roll = roll - hip_roll;
-  // Thigh pitch and shin pitch
-  double knee_angle, ankle_pitch;
+
+  // Calculate distances and angles for thigh pitch and shin pitch using atan2
+  double effective_leg_length = sqrt(pow(x, 2) + pow(z, 2));  // effective leg length from hip to ankle
+  double knee_pitch = atan2(effective_leg_length, y);         // knee pitch based on leg geometry
+  double ankle_pitch = atan2(z, x);                           // ankle pitch based on position
+
+  // Calculate the thigh pitch (hip pitch - knee pitch)
+  double thigh_pitch = knee_pitch - ankle_pitch;
 
   // Set the output joint angles
   double ankle_yaw_joint = ankle_yaw;
   double ankle_roll_joint = ankle_roll;
-  double shin_pitch_joint = 0;
-  double thigh_pitch_joint = knee_angle - ankle_pitch;
+  double shin_pitch_joint = ankle_pitch;
+  double thigh_pitch_joint = thigh_pitch;
   double hip_pitch_joint = hip_pitch;
   double hip_roll_joint = hip_roll;
 
@@ -1196,6 +1206,7 @@ bool KurokoKinematics::calcInverseKinematicsForRightLeg(double* out, double x, d
   out[3] = shin_pitch_joint;
   out[4] = ankle_roll_joint;
   out[5] = ankle_yaw_joint;
+
   std::cout << "Inverse Kinematics result (Right Leg):" << std::endl;
   std::cout << "Joint ID: 11 (hip_r_roll), Angle: " << out[0] << std::endl;
   std::cout << "Joint ID: 12 (hip_r_pitch), Angle: " << out[1] << std::endl;
@@ -1203,46 +1214,87 @@ bool KurokoKinematics::calcInverseKinematicsForRightLeg(double* out, double x, d
   std::cout << "Joint ID: 15 (shin_r_front_passive), Angle: " << out[3] << std::endl;
   std::cout << "Joint ID: 17 (ankle_r_roll), Angle: " << out[4] << std::endl;
   std::cout << "Joint ID: 18 (ankle_r_yaw), Angle: " << out[5] << std::endl;
+
   return true;
 }
 
 bool KurokoKinematics::calcInverseKinematicsForLeftLeg(double* out, double x, double y, double z, double roll,
                                                        double pitch, double yaw)
 {
+  std::cout << "Calculating Inverse Kinematics for Left Leg..." << std::endl;
+  std::cout << "Input Pose:" << std::endl;
+  std::cout << "X: " << x << std::endl;
+  std::cout << "Y: " << y << std::endl;
+  std::cout << "Z: " << z << std::endl;
   // Define link lengths based on the robot's dimensions
-  double thigh_length = thigh_length_m_;
-  double calf_length = calf_length_m_;
-  double ankle_length = ankle_length_m_;
+  double hip_roll_to_pitch_offset_y = joint_link_tree_[getLinkIndex("hip_l_pitch")]->joint_position_.coeff(1, 0);
+  double hip_pitch_to_thigh_upper_z =
+      joint_link_tree_[getLinkIndex("thigh_l_front_active")]->joint_position_.coeff(2, 0);
+  double thigh_length = joint_link_tree_[getLinkIndex("knee_l_passive")]->joint_position_.coeff(2, 0);
+  double shin_length = joint_link_tree_[getLinkIndex("ankle_l_pitch_passive")]->joint_position_.coeff(2, 0);
+  double shin_lower_to_roll_offset_z = joint_link_tree_[getLinkIndex("ankle_l_roll")]->joint_position_.coeff(2, 0);
+  double ankle_roll_to_yaw_offset_z = joint_link_tree_[getLinkIndex("ankle_l_yaw")]->joint_position_.coeff(2, 0) +
+                                      joint_link_tree_[getLinkIndex("leg_l_end")]->joint_position_.coeff(2, 0);
 
-  // Calculate the foot position offset by the ankle length
-  double foot_x = x - ankle_length * cos(pitch) * cos(yaw);
-  double foot_y = y - ankle_length * cos(pitch) * sin(yaw);
-  double foot_z = z - ankle_length * sin(pitch);
+  // Ankle yaw
+  double ankle_yaw = yaw;
 
-  // Calculate the knee pitch angle using the cosine rule
-  double leg_length = sqrt(foot_x * foot_x + foot_y * foot_y + foot_z * foot_z);
-  double knee_pitch_angle = acos((thigh_length * thigh_length + calf_length * calf_length - leg_length * leg_length) /
-                                 (2 * thigh_length * calf_length)) -
-                            M_PI;
+  // Hip pitch
+  double hip_pitch = pitch;
 
-  // Calculate the hip pitch angle
-  double hip_pitch_angle =
-      atan2(foot_z, sqrt(foot_x * foot_x + foot_y * foot_y)) + asin(calf_length * sin(knee_pitch_angle) / leg_length);
+  // Hip roll
+  double waist_to_ankle_roll_x = x;
 
-  // Calculate the hip roll angle
-  double hip_roll_angle = atan2(foot_y, foot_x);
+  double waist_to_ankle_roll_y = y - ankle_roll_to_yaw_offset_z * sin(roll);
+  double waist_to_ankle_roll_z = z + ankle_roll_to_yaw_offset_z * cos(roll);
+  double waist_to_ankle_roll_yz_plane_distance =
+      sqrt(waist_to_ankle_roll_z * waist_to_ankle_roll_z + waist_to_ankle_roll_y * waist_to_ankle_roll_y);
+  double hip_pitch_to_ankle_roll_distance =
+      sqrt(std::max(0.0, waist_to_ankle_roll_yz_plane_distance * waist_to_ankle_roll_yz_plane_distance -
+                             hip_roll_to_pitch_offset_y * hip_roll_to_pitch_offset_y));
+  double hip_roll = atan2(waist_to_ankle_roll_yz_plane_distance, hip_roll_to_pitch_offset_y) +
+                    atan2(waist_to_ankle_roll_y, waist_to_ankle_roll_z) - 0.5 * M_PI;
+  // Ankle roll
+  double ankle_roll = roll - hip_roll;
 
-  // Calculate the ankle pitch and roll angles
-  double ankle_pitch_angle = pitch - hip_pitch_angle - knee_pitch_angle;
-  double ankle_roll_angle = roll - hip_roll_angle;
+  // Thigh upper and Shin lower joints
+  double rolled_target_x = x;
+  double rolled_target_y = y * cos(hip_roll) - z * sin(hip_roll);
+  double rolled_target_z = y * sin(hip_roll) + z * cos(hip_roll);
+  double rolled_thigh_upper_x = -hip_pitch_to_thigh_upper_z * sin(hip_pitch);
+  double rolled_thigh_upper_y = hip_roll_to_pitch_offset_y;
+  double rolled_thigh_upper_z = -hip_pitch_to_thigh_upper_z * cos(hip_pitch);
+  double rolled_shin_lower_x = rolled_target_x;
+  double rolled_shin_lower_y = hip_roll_to_pitch_offset_y;
+  double rolled_shin_lower_z = rolled_target_z + ankle_roll_to_yaw_offset_z * cos(ankle_roll - hip_roll);
+  double effective_leg_length =
+      sqrt(pow(rolled_shin_lower_x - rolled_thigh_upper_x, 2) + pow(rolled_shin_lower_y - rolled_thigh_upper_y, 2) +
+           pow(rolled_shin_lower_z - rolled_thigh_upper_z, 2));
+  double triangle_knee_angle = acos((pow(thigh_length, 2) + pow(shin_length, 2) - pow(effective_leg_length, 2)) /
+                                    (2 * thigh_length * shin_length));
+  double triangle_thigh_angle = acos((pow(effective_leg_length, 2) + pow(thigh_length, 2) - pow(shin_length, 2)) /
+                                     (2 * effective_leg_length * thigh_length));
+  double triangle_shin_angle = acos((pow(effective_leg_length, 2) + pow(shin_length, 2) - pow(thigh_length, 2)) /
+                                    (2 * effective_leg_length * shin_length));
+  double triangle_knee_line_angle =
+      atan2(rolled_target_z - rolled_thigh_upper_z, rolled_target_x - rolled_thigh_upper_x);
+  double shin_pitch = -triangle_knee_line_angle + triangle_shin_angle;
+  double thigh_pitch = -triangle_knee_line_angle - triangle_thigh_angle;
 
   // Set the output joint angles
-  double ankle_yaw_joint = yaw;
-  double ankle_roll_joint = -hip_roll_angle;
-  double shin_pitch_joint = ankle_pitch_angle;
-  double thigh_pitch_joint = knee_pitch_angle - ankle_pitch_angle;
-  double hip_pitch_joint = pitch;
-  double hip_roll_joint = hip_roll_angle;
+  double ankle_yaw_joint = ankle_yaw;
+  double ankle_roll_joint = ankle_roll;
+  double shin_pitch_joint = shin_pitch;
+  double thigh_pitch_joint = thigh_pitch;
+  double hip_pitch_joint = hip_pitch;
+  double hip_roll_joint = hip_roll;
+
+  out[0] = hip_roll_joint;
+  out[1] = hip_pitch_joint;
+  out[2] = thigh_pitch_joint;
+  out[3] = shin_pitch_joint;
+  out[4] = ankle_roll_joint;
+  out[5] = ankle_yaw_joint;
 
   std::cout << "Inverse Kinematics result (Left Leg):" << std::endl;
   std::cout << "Joint ID: 20 (hip_l_roll), Angle: " << out[0] << std::endl;
@@ -1251,6 +1303,7 @@ bool KurokoKinematics::calcInverseKinematicsForLeftLeg(double* out, double x, do
   std::cout << "Joint ID: 24 (shin_l_front_passive), Angle: " << out[3] << std::endl;
   std::cout << "Joint ID: 26 (ankle_l_roll), Angle: " << out[4] << std::endl;
   std::cout << "Joint ID: 27 (ankle_l_yaw), Angle: " << out[5] << std::endl;
+
   return true;
 }
 

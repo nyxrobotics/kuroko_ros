@@ -37,18 +37,6 @@ public:
   Eigen::MatrixXd calcVWerr(const Eigen::MatrixXd& tar_position, const Eigen::MatrixXd& curr_position,
                             const Eigen::MatrixXd& tar_orientation, Eigen::MatrixXd curr_orientation);
 
-  bool calcInverseKinematics(int to, const Eigen::MatrixXd& tar_position, const Eigen::MatrixXd& tar_orientation,
-                             int max_iter, double ik_err);
-  bool calcInverseKinematics(int from, int to, const Eigen::MatrixXd& tar_position,
-                             const Eigen::MatrixXd& tar_orientation, int max_iter, double ik_err);
-
-  // with weight
-  bool calcInverseKinematics(int to, const Eigen::MatrixXd& tar_position, const Eigen::MatrixXd& tar_orientation,
-                             int max_iter, double ik_err, const Eigen::MatrixXd& weight);
-  bool calcInverseKinematics(int from, int to, const Eigen::MatrixXd& tar_position,
-                             const Eigen::MatrixXd& tar_orientation, int max_iter, double ik_err,
-                             const Eigen::MatrixXd& weight);
-
   bool calcInverseKinematicsForRightLeg(double* out, double x, double y, double z, double roll, double pitch,
                                         double yaw);
   bool calcInverseKinematicsForLeftLeg(double* out, double x, double y, double z, double roll, double pitch, double yaw);

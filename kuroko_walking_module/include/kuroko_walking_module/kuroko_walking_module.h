@@ -96,7 +96,6 @@ private:
   /* ROS Service Callback Functions */
   void processPhase(const double& time_unit);
   bool computeLegAngle(double* leg_angle);
-  void computeArmAngle(double* arm_angle);
   void sensoryFeedback(const double& rlGyroErr, const double& fbGyroErr, double* balance_angle);
 
   void publishStatusMsg(unsigned int type, std::string msg);

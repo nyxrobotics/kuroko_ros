@@ -1,3 +1,4 @@
+#include <iostream>
 #include <utility>
 
 #include "kuroko_walking_module/kuroko_walking_module.h"
@@ -31,9 +32,6 @@ WalkingModule::WalkingModule() : control_cycle_msec_(8), debug_(false)
   result_["ankle_l_roll"] = new robotis_framework::DynamixelState();
   result_["ankle_l_yaw"] = new robotis_framework::DynamixelState();
 
-  result_["shoulder_r_pitch"] = new robotis_framework::DynamixelState();
-  result_["shoulder_l_pitch"] = new robotis_framework::DynamixelState();
-
   // joint table
   joint_table_["hip_r_roll"] = 0;
   joint_table_["hip_r_pitch"] = 1;
@@ -49,13 +47,12 @@ WalkingModule::WalkingModule() : control_cycle_msec_(8), debug_(false)
   joint_table_["ankle_l_roll"] = 10;
   joint_table_["ankle_l_yaw"] = 11;
 
-  joint_table_["shoulder_r_pitch"] = 12;
-  joint_table_["shoulder_l_pitch"] = 13;
-
   target_position_ = Eigen::MatrixXd::Zero(1, result_.size());
   goal_position_ = Eigen::MatrixXd::Zero(1, result_.size());
   init_position_ = Eigen::MatrixXd::Zero(1, result_.size());
   joint_axis_direction_ = Eigen::MatrixXi::Zero(1, result_.size());
+  std::cout << "WalkingModule: Initialization, result size: " << result_.size() << std::endl;
+  std::cout << "WalkingModule: Initialization, joint_table size: " << joint_table_.size() << std::endl;
 }
 
 WalkingModule::~WalkingModule()
@@ -115,13 +112,11 @@ void WalkingModule::initialize(const int control_cycle_msec, robotis_framework::
   ctrl_running_ = false;
   real_running_ = false;
   time_ = 0;
-
-  //                     R_HIP_YAW, R_HIP_ROLL, R_HIP_PITCH, R_KNEE,
-  //                     R_ANKLE_PITCH, R_ANKLE_ROLL, L_HIP_YAW, L_HIP_ROLL,
-  //                     L_HIP_PITCH, L_KNEE, L_ANKLE_PITCH, L_ANKLE_ROLL,
-  //                     R_ARM_SWING, L_ARM_SWING
-  joint_axis_direction_ << -1, -1, -1, -1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1;
-  init_position_ << 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.0, -5.0;
+  // TODO: set joint directions from robot model
+  joint_axis_direction_ << 1, -1, 1, 1, 1,
+      -1,                    // hip_r_roll, hip_r_pitch, thigh_r_front_active, shin_r_active, ankle_r_roll, ankle_r_yaw
+      -1, 1, -1, -1, 1, -1;  // hip_l_roll, hip_l_pitch, thigh_l_front_active, shin_l_active, ankle_l_roll, ankle_l_yaw
+  init_position_ << 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0;
   init_position_ *= DEGREE2RADIAN;
 
   ros::NodeHandle ros_node;
@@ -333,8 +328,8 @@ void WalkingModule::process(std::map<std::string, robotis_framework::Dynamixel*>
   if (walking_state_ == WALKING_INIT_POSE)
   {
     int total_count = calc_joint_tra_.rows();
-    for (int id = 1; id <= result_.size(); id++)
-      target_position_.coeffRef(0, id) = calc_joint_tra_(init_pose_count_, id);
+    for (int id = 0; id < result_.size(); id++)
+      target_position_.coeffRef(0, id) = calc_joint_tra_(init_pose_count_, id + 1);
 
     init_pose_count_ += 1;
     if (init_pose_count_ >= total_count)
@@ -367,7 +362,7 @@ void WalkingModule::process(std::map<std::string, robotis_framework::Dynamixel*>
     bool get_angle = false;
     get_angle = computeLegAngle(&angle[0]);
 
-    computeArmAngle(&angle[12]);
+    // computeArmAngle(&angle[12]);
 
     double rl_gyro_err = 0.0 - sensors["gyro_x"];
     double fb_gyro_err = 0.0 - sensors["gyro_y"];
@@ -376,10 +371,10 @@ void WalkingModule::process(std::map<std::string, robotis_framework::Dynamixel*>
 
     double err_total = 0.0, err_max = 0.0;
     // set goal position
-    for (int idx = 0; idx < 14; idx++)
+    for (int idx = 0; idx < 12; idx++)
     {
       double goal_position = 0.0;
-      if (!get_angle && idx < 12)
+      if (!get_angle)
         goal_position = goal_position_.coeff(0, idx);
       else
         goal_position = init_position_.coeff(0, idx) + angle[idx] + balance_angle[idx];
@@ -439,13 +434,7 @@ void WalkingModule::process(std::map<std::string, robotis_framework::Dynamixel*>
   {
     std::string joint_name = state_it.first;
     int joint_index = joint_table_[joint_name];
-
     result_[joint_name]->goal_position_ = target_position_.coeff(0, joint_index);
-
-    // Todo : setting PID gain to the leg joints
-    // result_[joint_name]->position_p_gain_ = walking_param_.p_gain;
-    // result_[joint_name]->position_i_gain_ = walking_param_.i_gain;
-    // result_[joint_name]->position_d_gain_ = walking_param_.d_gain;
   }
 
   // time
@@ -702,12 +691,14 @@ bool WalkingModule::computeLegAngle(double* leg_angle)
   double leg_distance = kuroko_kd_->leg_side_offset_;
 
   // mm, rad
+  // Right leg target point
   ep[0] = swap.x_ + right_leg_move.x_ + x_offset_;
   ep[1] = swap.y_ + right_leg_move.y_ - (y_offset_ + leg_distance) / 2;
   ep[2] = swap.z_ + right_leg_move.z_ + z_offset_ - leg_length;
   ep[3] = swap.roll_ + right_leg_move.roll_ - r_offset_ / 2;
   ep[4] = swap.pitch_ + right_leg_move.pitch_ + p_offset_;
   ep[5] = swap.yaw_ + right_leg_move.yaw_ - a_offset_ / 2;
+  // Left leg target point
   ep[6] = swap.x_ + left_leg_move.x_ + x_offset_;
   ep[7] = swap.y_ + left_leg_move.y_ + (y_offset_ + leg_distance) / 2;
   ep[8] = swap.z_ + left_leg_move.z_ + z_offset_ - leg_length;
@@ -728,13 +719,13 @@ bool WalkingModule::computeLegAngle(double* leg_angle)
   }
   body_swing_z_ -= leg_length;
 
-  // right leg
+  // Right leg IK
   if (!kuroko_kd_->calcInverseKinematicsForRightLeg(&leg_angle[0], ep[0], ep[1], ep[2], ep[3], ep[4], ep[5]))
   {
     printf("IK not Solved EPR : %f %f %f %f %f %f\n", ep[0], ep[1], ep[2], ep[3], ep[4], ep[5]);
     return false;
   }
-
+  // Left leg IK
   if (!kuroko_kd_->calcInverseKinematicsForLeftLeg(&leg_angle[6], ep[6], ep[7], ep[8], ep[9], ep[10], ep[11]))
   {
     printf("IK not Solved EPL : %f %f %f %f %f %f\n", ep[6], ep[7], ep[8], ep[9], ep[10], ep[11]);
@@ -762,52 +753,40 @@ bool WalkingModule::computeLegAngle(double* leg_angle)
   return true;
 }
 
-void WalkingModule::computeArmAngle(double* arm_angle)
-{
-  // Compute arm swing
-  if (x_move_amplitude_ == 0)
-  {
-    arm_angle[0] = 0;  // Right
-    arm_angle[1] = 0;  // Left
-  }
-  else
-  {
-    arm_angle[0] = wSin(time_, period_time_, M_PI * 1.5, -x_move_amplitude_ * arm_swing_gain_ * 1000, 0) *
-                   kuroko_kd_->getJointDirection("shoulder_r_pitch") * DEGREE2RADIAN;
-    arm_angle[1] = wSin(time_, period_time_, M_PI * 1.5, x_move_amplitude_ * arm_swing_gain_ * 1000, 0) *
-                   kuroko_kd_->getJointDirection("shoulder_l_pitch") * DEGREE2RADIAN;
-  }
-}
-
 void WalkingModule::sensoryFeedback(const double& rlGyroErr, const double& fbGyroErr, double* balance_angle)
 {
   // adjust balance offset
   if (!static_cast<bool>(walking_param_.balance_enable))
     return;
 
+  std::cout << "rlGyroErr : " << rlGyroErr << ", fbGyroErr : " << fbGyroErr << std::endl;
+
   double internal_gain = 0.05;
+  // Roll joints
+  balance_angle[joint_table_["hip_r_roll"]] =
+      kuroko_kd_->getJointDirection("hip_r_roll") * internal_gain * rlGyroErr * walking_param_.balance_hip_roll_gain;
+  balance_angle[joint_table_["hip_l_roll"]] =
+      kuroko_kd_->getJointDirection("hip_l_roll") * internal_gain * rlGyroErr * walking_param_.balance_hip_roll_gain;
+  balance_angle[joint_table_["ankle_r_roll"]] = -kuroko_kd_->getJointDirection("ankle_r_roll") * internal_gain *
+                                                rlGyroErr * walking_param_.balance_ankle_roll_gain;
+  balance_angle[joint_table_["ankle_l_roll"]] = -kuroko_kd_->getJointDirection("ankle_l_roll") * internal_gain *
+                                                rlGyroErr * walking_param_.balance_ankle_roll_gain;
 
-  balance_angle[joint_table_["hip_r_roll"]] = kuroko_kd_->getJointDirection("hip_r_roll") * internal_gain * rlGyroErr *
-                                              walking_param_.balance_hip_roll_gain;  // R_HIP_ROLL
-  balance_angle[joint_table_["hip_l_roll"]] = kuroko_kd_->getJointDirection("hip_l_roll") * internal_gain * rlGyroErr *
-                                              walking_param_.balance_hip_roll_gain;  // L_HIP_ROLL
-
+  // Pitch joints
+  balance_angle[joint_table_["hip_r_pitch"]] =
+      kuroko_kd_->getJointDirection("hip_r_pitch") * internal_gain * fbGyroErr * walking_param_.balance_knee_gain;
+  balance_angle[joint_table_["hip_l_pitch"]] =
+      kuroko_kd_->getJointDirection("hip_l_pitch") * internal_gain * fbGyroErr * walking_param_.balance_knee_gain;
   balance_angle[joint_table_["thigh_r_front_active"]] = -kuroko_kd_->getJointDirection("thigh_r_front_active") *
                                                         internal_gain * fbGyroErr *
-                                                        walking_param_.balance_knee_gain;  // R_KNEE
+                                                        walking_param_.balance_ankle_pitch_gain;
   balance_angle[joint_table_["thigh_l_front_active"]] = -kuroko_kd_->getJointDirection("thigh_l_front_active") *
                                                         internal_gain * fbGyroErr *
-                                                        walking_param_.balance_knee_gain;  // L_KNEE
-
+                                                        walking_param_.balance_ankle_pitch_gain;
   balance_angle[joint_table_["shin_r_active"]] = -kuroko_kd_->getJointDirection("shin_r_active") * internal_gain *
-                                                 fbGyroErr * walking_param_.balance_ankle_pitch_gain;  // R_ANKLE_PITCH
+                                                 fbGyroErr * walking_param_.balance_ankle_pitch_gain;
   balance_angle[joint_table_["shin_l_active"]] = -kuroko_kd_->getJointDirection("shin_l_active") * internal_gain *
-                                                 fbGyroErr * walking_param_.balance_ankle_pitch_gain;  // L_ANKLE_PITCH
-
-  balance_angle[joint_table_["ankle_r_roll"]] = -kuroko_kd_->getJointDirection("ankle_r_roll") * internal_gain *
-                                                rlGyroErr * walking_param_.balance_ankle_roll_gain;  // R_ANKLE_ROLL
-  balance_angle[joint_table_["ankle_l_roll"]] = -kuroko_kd_->getJointDirection("ankle_l_roll") * internal_gain *
-                                                rlGyroErr * walking_param_.balance_ankle_roll_gain;  // L_ANKLE_ROLL
+                                                 fbGyroErr * walking_param_.balance_ankle_pitch_gain;
 }
 
 void WalkingModule::loadWalkingParam(const std::string& path)
@@ -825,7 +804,7 @@ void WalkingModule::loadWalkingParam(const std::string& path)
     return;
   }
 
-  // parse movement time
+  // Initial pose offset
   walking_param_.init_x_offset = doc["x_offset"].as<double>();
   walking_param_.init_y_offset = doc["y_offset"].as<double>();
   walking_param_.init_z_offset = doc["z_offset"].as<double>();
@@ -833,14 +812,15 @@ void WalkingModule::loadWalkingParam(const std::string& path)
   walking_param_.init_pitch_offset = doc["pitch_offset"].as<double>() * DEGREE2RADIAN;
   walking_param_.init_yaw_offset = doc["yaw_offset"].as<double>() * DEGREE2RADIAN;
   walking_param_.hip_pitch_offset = doc["hip_pitch_offset"].as<double>() * DEGREE2RADIAN;
-  // time
+  // Cycle Time
   walking_param_.period_time = doc["period_time"].as<double>() * 0.001;  // ms -> s
   walking_param_.dsp_ratio = doc["dsp_ratio"].as<double>();
   walking_param_.step_fb_ratio = doc["step_forward_back_ratio"].as<double>();
-  // walking
+  // Foot Height
+  walking_param_.z_move_amplitude = doc["foot_height"].as<double>();
+  // Target step length
   // walking_param_.x_move_amplitude
   // walking_param_.y_move_amplitude
-  walking_param_.z_move_amplitude = doc["foot_height"].as<double>();
   // walking_param_.angle_move_amplitude
   // walking_param_.move_aim_on
 
@@ -853,12 +833,6 @@ void WalkingModule::loadWalkingParam(const std::string& path)
   walking_param_.y_swap_amplitude = doc["swing_right_left"].as<double>();
   walking_param_.z_swap_amplitude = doc["swing_top_down"].as<double>();
   walking_param_.pelvis_offset = doc["pelvis_offset"].as<double>() * DEGREE2RADIAN;
-  walking_param_.arm_swing_gain = doc["arm_swing_gain"].as<double>();
-
-  // gain
-  walking_param_.p_gain = doc["p_gain"].as<int>();
-  walking_param_.i_gain = doc["i_gain"].as<int>();
-  walking_param_.d_gain = doc["d_gain"].as<int>();
 }
 
 void WalkingModule::saveWalkingParam(std::string& path)
@@ -880,15 +854,11 @@ void WalkingModule::saveWalkingParam(std::string& path)
   out_emitter << YAML::Key << "swing_right_left" << YAML::Value << walking_param_.y_swap_amplitude;
   out_emitter << YAML::Key << "swing_top_down" << YAML::Value << walking_param_.z_swap_amplitude;
   out_emitter << YAML::Key << "pelvis_offset" << YAML::Value << walking_param_.pelvis_offset * RADIAN2DEGREE;
-  out_emitter << YAML::Key << "arm_swing_gain" << YAML::Value << walking_param_.arm_swing_gain;
+  // out_emitter << YAML::Key << "arm_swing_gain" << YAML::Value << walking_param_.arm_swing_gain;
   out_emitter << YAML::Key << "balance_hip_roll_gain" << YAML::Value << walking_param_.balance_hip_roll_gain;
   out_emitter << YAML::Key << "balance_knee_gain" << YAML::Value << walking_param_.balance_knee_gain;
   out_emitter << YAML::Key << "balance_ankle_roll_gain" << YAML::Value << walking_param_.balance_ankle_roll_gain;
   out_emitter << YAML::Key << "balance_ankle_pitch_gain" << YAML::Value << walking_param_.balance_ankle_pitch_gain;
-
-  out_emitter << YAML::Key << "p_gain" << YAML::Value << walking_param_.p_gain;
-  out_emitter << YAML::Key << "i_gain" << YAML::Value << walking_param_.i_gain;
-  out_emitter << YAML::Key << "d_gain" << YAML::Value << walking_param_.d_gain;
   out_emitter << YAML::EndMap;
 
   // output to file
@@ -914,7 +884,7 @@ void WalkingModule::iniPoseTraGene(double mov_time)
   int all_time_steps = int(mov_time / smp_time) + 1;
   calc_joint_tra_.resize(all_time_steps, result_.size() + 1);
 
-  for (int id = 0; id <= result_.size(); id++)
+  for (int id = 0; id < result_.size(); id++)
   {
     double ini_value = goal_position_.coeff(0, id);
     double tar_value = target_position_.coeff(0, id);
@@ -923,7 +893,7 @@ void WalkingModule::iniPoseTraGene(double mov_time)
 
     tra = robotis_framework::calcMinimumJerkTra(ini_value, 0.0, 0.0, tar_value, 0.0, 0.0, smp_time, mov_time);
 
-    calc_joint_tra_.block(0, id, all_time_steps, 1) = tra;
+    calc_joint_tra_.block(0, id + 1, all_time_steps, 1) = tra;
   }
 
   if (debug_)

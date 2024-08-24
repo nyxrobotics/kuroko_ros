@@ -11,7 +11,7 @@ trajectory_controller:
   action_monitor_rate: 100
   allow_partial_joints_goal: True
   joints:
-    - waist
+    - chest
     - shoulder_r_pitch
     - shoulder_r_roll
     - elbow_r_front

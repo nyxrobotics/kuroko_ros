@@ -1,5 +1,5 @@
 init_pose:
-  waist: 0.00
+  chest: 0.00
   shoulder_r_pitch: 0.855
   shoulder_r_roll: 0.00
   elbow_r_front: -2.268

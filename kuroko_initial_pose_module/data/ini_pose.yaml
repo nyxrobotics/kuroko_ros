@@ -1,7 +1,7 @@
 # target pose [deg]
 mov_time: 2.0 # movement time
 tar_pose:
-  1: 0.0 # waist
+  1: 0.0 # chest
   2: 49.0 # shoulder_r_pitch
   3: 0.0 # shoulder_r_roll
   4: -130.0 # elbow_r_front
@@ -27,7 +27,7 @@ tar_pose:
 via_num: 0 # via-point number
 via_time: [4.0] # via-point time
 via_pose:
-  1: [0.0] # waist
+  1: [0.0] # chest
   2: [49.0] # shoulder_r_pitch
   3: [0.0] # shoulder_r_roll
   4: [-130.0] # elbow_r_front

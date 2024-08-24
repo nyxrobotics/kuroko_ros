@@ -403,7 +403,7 @@ void InitialPoseModule::publishStatusMsg(unsigned int type, std::string msg)
   robotis_controller_msgs::StatusMsg status_msg;
   status_msg.header.stamp = ros::Time::now();
   status_msg.type = type;
-  status_msg.module_name = "Base";
+  status_msg.module_name = "InitialPoseModule";
   status_msg.status_msg = std::move(msg);
 
   status_msg_pub_.publish(status_msg);

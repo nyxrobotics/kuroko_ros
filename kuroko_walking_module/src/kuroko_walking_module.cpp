@@ -695,17 +695,21 @@ bool WalkingModule::computeLegAngle(double* leg_angle)
   right_leg_move.roll_ = 0;
   right_leg_move.pitch_ = 0;
 
-  double leg_length = kuroko_kd_->thigh_length_m_ + kuroko_kd_->shin_length_m_ + kuroko_kd_->ankle_length_m_;
+  // Robot is in initial posture with legs extended directly below
+  // Height of the hips when the legs are fully extended
+  double leg_length = kuroko_kd_->leg_max_height_;
+  // Distance between left and right feet
+  double leg_distance = kuroko_kd_->leg_side_offset_;
 
   // mm, rad
   ep[0] = swap.x_ + right_leg_move.x_ + x_offset_;
-  ep[1] = swap.y_ + right_leg_move.y_ - y_offset_ / 2;
+  ep[1] = swap.y_ + right_leg_move.y_ - (y_offset_ + leg_distance) / 2;
   ep[2] = swap.z_ + right_leg_move.z_ + z_offset_ - leg_length;
   ep[3] = swap.roll_ + right_leg_move.roll_ - r_offset_ / 2;
   ep[4] = swap.pitch_ + right_leg_move.pitch_ + p_offset_;
   ep[5] = swap.yaw_ + right_leg_move.yaw_ - a_offset_ / 2;
   ep[6] = swap.x_ + left_leg_move.x_ + x_offset_;
-  ep[7] = swap.y_ + left_leg_move.y_ + y_offset_ / 2;
+  ep[7] = swap.y_ + left_leg_move.y_ + (y_offset_ + leg_distance) / 2;
   ep[8] = swap.z_ + left_leg_move.z_ + z_offset_ - leg_length;
   ep[9] = swap.roll_ + left_leg_move.roll_ + r_offset_ / 2;
   ep[10] = swap.pitch_ + left_leg_move.pitch_ + p_offset_;

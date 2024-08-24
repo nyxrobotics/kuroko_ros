@@ -33,6 +33,7 @@ OnlineWalkingModule::OnlineWalkingModule()
   result_["thigh_r_front_active"] = new robotis_framework::DynamixelState();
   result_["shin_r_active"] = new robotis_framework::DynamixelState();
   result_["ankle_r_roll"] = new robotis_framework::DynamixelState();
+  
   result_["ankle_l_yaw"] = new robotis_framework::DynamixelState();
   result_["hip_l_roll"] = new robotis_framework::DynamixelState();
   result_["hip_l_pitch"] = new robotis_framework::DynamixelState();
@@ -1479,35 +1480,35 @@ void OnlineWalkingModule::setFeedforwardControl()
 
   if (walking_leg_ == LEFT_LEG)
   {
-    support_leg_gain[joint_name_to_id_["ankle_r_yaw"] - 1] = 1.0;
     support_leg_gain[joint_name_to_id_["hip_r_roll"] - 1] = 1.0;
     support_leg_gain[joint_name_to_id_["hip_r_pitch"] - 1] = 1.0;
     support_leg_gain[joint_name_to_id_["thigh_r_front_active"] - 1] = 1.0;
     support_leg_gain[joint_name_to_id_["shin_r_active"] - 1] = 1.0;
     support_leg_gain[joint_name_to_id_["ankle_r_roll"] - 1] = 1.0;
+    support_leg_gain[joint_name_to_id_["ankle_r_yaw"] - 1] = 1.0;
 
-    support_leg_gain[joint_name_to_id_["ankle_l_yaw"] - 1] = 0.0;
     support_leg_gain[joint_name_to_id_["hip_l_roll"] - 1] = 0.0;
     support_leg_gain[joint_name_to_id_["hip_l_pitch"] - 1] = 0.0;
     support_leg_gain[joint_name_to_id_["thigh_l_front_active"] - 1] = 0.0;
     support_leg_gain[joint_name_to_id_["shin_l_active"] - 1] = 0.0;
     support_leg_gain[joint_name_to_id_["ankle_l_roll"] - 1] = 0.0;
+    support_leg_gain[joint_name_to_id_["ankle_l_yaw"] - 1] = 0.0;
   }
   else if (walking_leg_ == RIGHT_LEG)
   {
-    support_leg_gain[joint_name_to_id_["ankle_r_yaw"] - 1] = 0.0;
     support_leg_gain[joint_name_to_id_["hip_r_roll"] - 1] = 0.0;
     support_leg_gain[joint_name_to_id_["hip_r_pitch"] - 1] = 0.0;
     support_leg_gain[joint_name_to_id_["thigh_r_front_active"] - 1] = 0.0;
     support_leg_gain[joint_name_to_id_["shin_r_active"] - 1] = 0.0;
     support_leg_gain[joint_name_to_id_["ankle_r_roll"] - 1] = 0.0;
+    support_leg_gain[joint_name_to_id_["ankle_r_yaw"] - 1] = 0.0;
 
-    support_leg_gain[joint_name_to_id_["ankle_l_yaw"] - 1] = 1.0;
     support_leg_gain[joint_name_to_id_["hip_l_roll"] - 1] = 1.0;
     support_leg_gain[joint_name_to_id_["hip_l_pitch"] - 1] = 1.0;
     support_leg_gain[joint_name_to_id_["thigh_l_front_active"] - 1] = 1.0;
     support_leg_gain[joint_name_to_id_["shin_l_active"] - 1] = 1.0;
     support_leg_gain[joint_name_to_id_["ankle_l_roll"] - 1] = 1.0;
+    support_leg_gain[joint_name_to_id_["ankle_l_yaw"] - 1] = 1.0;
   }
 
   for (int i = 0; i < number_of_joints_; i++)
@@ -1519,25 +1520,14 @@ void OnlineWalkingModule::sensoryFeedback(const double& rlGyroErr, const double&
   // adjust balance offset
   double internal_gain = 0.05;
 
-  balance_angle[joint_name_to_id_["hip_r_roll"] - 1] =
-      -1.0 * internal_gain * rlGyroErr * balance_hip_roll_gain_;  // R_HIP_ROLL
-  balance_angle[joint_name_to_id_["hip_l_roll"] - 1] =
-      -1.0 * internal_gain * rlGyroErr * balance_hip_roll_gain_;  // L_HIP_ROLL
-
-  balance_angle[joint_name_to_id_["thigh_r_front_active"] - 1] =
-      1.0 * internal_gain * fbGyroErr * balance_knee_gain_;  // R_KNEE
-  balance_angle[joint_name_to_id_["thigh_l_front_active"] - 1] =
-      -1.0 * internal_gain * fbGyroErr * balance_knee_gain_;  // L_KNEE
-
-  balance_angle[joint_name_to_id_["shin_r_active"] - 1] =
-      -1.0 * internal_gain * fbGyroErr * balance_ankle_pitch_gain_;  // R_ANKLE_PITCH
-  balance_angle[joint_name_to_id_["shin_l_active"] - 1] =
-      1.0 * internal_gain * fbGyroErr * balance_ankle_pitch_gain_;  // L_ANKLE_PITCH
-
-  balance_angle[joint_name_to_id_["ankle_r_roll"] - 1] =
-      -1.0 * internal_gain * rlGyroErr * balance_ankle_roll_gain_;  // R_ANKLE_ROLL
-  balance_angle[joint_name_to_id_["ankle_l_roll"] - 1] =
-      -1.0 * internal_gain * rlGyroErr * balance_ankle_roll_gain_;  // L_ANKLE_ROLL
+  balance_angle[joint_name_to_id_["hip_r_roll"] - 1] = -1.0 * internal_gain * rlGyroErr * balance_hip_roll_gain_;
+  balance_angle[joint_name_to_id_["thigh_r_front_active"] - 1] = 1.0 * internal_gain * fbGyroErr * balance_knee_gain_;
+  balance_angle[joint_name_to_id_["shin_r_active"] - 1] = -1.0 * internal_gain * fbGyroErr * balance_ankle_pitch_gain_;
+  balance_angle[joint_name_to_id_["ankle_r_roll"] - 1] = -1.0 * internal_gain * rlGyroErr * balance_ankle_roll_gain_;
+  balance_angle[joint_name_to_id_["hip_l_roll"] - 1] = -1.0 * internal_gain * rlGyroErr * balance_hip_roll_gain_;
+  balance_angle[joint_name_to_id_["thigh_l_front_active"] - 1] = -1.0 * internal_gain * fbGyroErr * balance_knee_gain_;
+  balance_angle[joint_name_to_id_["shin_l_active"] - 1] = 1.0 * internal_gain * fbGyroErr * balance_ankle_pitch_gain_;
+  balance_angle[joint_name_to_id_["ankle_l_roll"] - 1] = -1.0 * internal_gain * rlGyroErr * balance_ankle_roll_gain_;
 }
 
 void OnlineWalkingModule::process(std::map<std::string, robotis_framework::Dynamixel*> dxls,

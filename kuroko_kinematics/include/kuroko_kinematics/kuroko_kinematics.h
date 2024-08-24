@@ -53,10 +53,8 @@ public:
   Eigen::MatrixXd calcPreviewParam(double preview_time, double control_cycle, double lipm_height,
                                    const Eigen::MatrixXd& K, const Eigen::MatrixXd& P);
 
-  double thigh_length_m_;
-  double shin_length_m_;
-  double ankle_length_m_;
-  double leg_side_offset_m_;
+  double leg_max_height_;
+  double leg_side_offset_;
 };
 
 }  // namespace motion_control

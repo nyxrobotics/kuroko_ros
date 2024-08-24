@@ -3,7 +3,7 @@
   <arg name="args" default=""/>
   <param name="demo_config" value="$(find kuroko_walking_gui)/config/gui_config.yaml"/>
 
-  <node pkg="kuroko_walking_gui" type="kuroko_walking_gui" name="kuroko_demo_opc" output="screen"
+  <node pkg="kuroko_walking_gui" type="kuroko_walking_gui" name="kuroko_walking_gui" output="screen"
     args="$(arg args)">
     <remap from="/kuroko_demo/ik_target_pose" to="/pose_panel/pose"/>
   </node>

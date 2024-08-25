@@ -28,6 +28,7 @@
   <depend>kuroko_initial_pose_module</depend>
   <depend>kuroko_head_control_module</depend>
   <depend>kuroko_walking_module</depend>
+  <depend>kuroko_upper_body_module</depend>
   <depend>kuroko_action_module</depend>
   <depend>kuroko_direct_control_module</depend>
   <depend>kuroko_online_walking_module</depend>

@@ -6,6 +6,7 @@
 #include "kuroko_online_walking_module/online_walking_module.h"
 #include "kuroko_tuning_module/tuning_module.h"
 #include "kuroko_walking_module/kuroko_walking_module.h"
+#include "kuroko_upper_body_module/kuroko_upper_body_module.h"
 #include <ros/ros.h>
 #include <std_msgs/String.h>
 

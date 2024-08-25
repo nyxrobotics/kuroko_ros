@@ -1,14 +1,3 @@
-#include <ros/ros.h>
-#include <sensor_msgs/Imu.h>
-#include <boost/thread.hpp>
-#include <eigen3/Eigen/Eigen>
-#include <map>
-
-#include "robotis_controller_msgs/StatusMsg.h"
-#include "robotis_controller_msgs/SyncWriteItem.h"
-#include "robotis_framework_common/sensor_module.h"
-#include "robotis_math/robotis_math_base.h"
-#include "robotis_math/robotis_linear_algebra.h"
 #include "kuroko_upper_body_module/kuroko_upper_body_module.h"
 
 namespace motion_control
@@ -75,16 +64,22 @@ void KurokoUpperBodyModule::imuCallback(const sensor_msgs::Imu::ConstPtr& msg)
 }
 
 void KurokoUpperBodyModule::process(std::map<std::string, robotis_framework::Dynamixel*> dxls,
-                                    std::map<std::string, double> sensors)
+                                    std::map<std::string, robotis_framework::Sensor*> sensors)
 {
-  // Simulate IMU data insertion into sensors map
-  sensors["imu_angular_velocity_x"] = imu_msg_.angular_velocity.x;
-  sensors["imu_angular_velocity_y"] = imu_msg_.angular_velocity.y;
-  sensors["imu_angular_velocity_z"] = imu_msg_.angular_velocity.z;
+  previous_result_["gyro_x"] = result_["gyro_x"];
+  previous_result_["gyro_y"] = result_["gyro_y"];
+  previous_result_["gyro_z"] = result_["gyro_z"];
+  previous_result_["acc_x"] = result_["acc_x"];
+  previous_result_["acc_y"] = result_["acc_y"];
+  previous_result_["acc_z"] = result_["acc_z"];
 
-  sensors["imu_linear_acceleration_x"] = imu_msg_.linear_acceleration.x;
-  sensors["imu_linear_acceleration_y"] = imu_msg_.linear_acceleration.y;
-  sensors["imu_linear_acceleration_z"] = imu_msg_.linear_acceleration.z;
+  // Simulate IMU data insertion into sensors map
+  result_["gyro_x"] = imu_msg_.angular_velocity.x;
+  result_["gyro_y"] = imu_msg_.angular_velocity.y;
+  result_["gyro_z"] = imu_msg_.angular_velocity.z;
+  result_["acc_x"] = imu_msg_.linear_acceleration.x;
+  result_["acc_y"] = imu_msg_.linear_acceleration.y;
+  result_["acc_z"] = imu_msg_.linear_acceleration.z;
 
   // Sample upper body motion code for shoulders and elbows
   double wave_angle = sin(ros::Time::now().toSec()) * DEGREE2RADIAN * 45.0;

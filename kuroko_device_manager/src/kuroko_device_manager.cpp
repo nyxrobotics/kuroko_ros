@@ -219,6 +219,7 @@ void KurokoDeviceManager::setupController()
   // controller->addMotionModule((MotionModule*)ActionModule::getInstance());
   controller_->addMotionModule((MotionModule*)InitialPoseModule::getInstance());
   controller_->addMotionModule((MotionModule*)WalkingModule::getInstance());
+  // controller_->addMotionModule((MotionModule*)KurokoUpperBodyModule::getInstance());
   // controller->addMotionModule((MotionModule*)HeadControlModule::getInstance());
   // controller->addMotionModule((MotionModule*)DirectControlModule::getInstance());
   // controller_->addMotionModule((MotionModule*)OnlineWalkingModule::getInstance());

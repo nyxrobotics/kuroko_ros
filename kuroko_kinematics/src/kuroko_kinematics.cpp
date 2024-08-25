@@ -28,8 +28,8 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_tree_[0]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
     joint_link_tree_[0]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, 0.0, 0.0);
     joint_link_tree_[0]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    joint_link_tree_[0]->joint_limit_lower_ = -100.0;
-    joint_link_tree_[0]->joint_limit_upper_ = 100.0;
+    joint_link_tree_[0]->joint_limit_lower_ = 0.0;
+    joint_link_tree_[0]->joint_limit_upper_ = 0.0;
     joint_link_tree_[0]->link_mass_ = 0.0;
     joint_link_tree_[0]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
     joint_link_tree_[0]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
@@ -42,8 +42,8 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_tree_[1]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
     joint_link_tree_[1]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, 0.0, 0.0);
     joint_link_tree_[1]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    joint_link_tree_[1]->joint_limit_lower_ = -100.0;
-    joint_link_tree_[1]->joint_limit_upper_ = 100.0;
+    joint_link_tree_[1]->joint_limit_lower_ = 0.0;
+    joint_link_tree_[1]->joint_limit_upper_ = 0.0;
     joint_link_tree_[1]->link_mass_ = 0.337;
     joint_link_tree_[1]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.00125, 0.0, -0.04875);
     joint_link_tree_[1]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
@@ -89,29 +89,29 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_tree_[4]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, -0.016, -0.02575);
     joint_link_tree_[4]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
-    joint_link_tree_[5]->name_ = "elbow_r_front_and_rear";
+    joint_link_tree_[5]->name_ = "elbow_r_front";
     joint_link_tree_[5]->parent_ = 4;
-    joint_link_tree_[5]->sibling_ = -1;
-    joint_link_tree_[5]->child_ = 6;
+    joint_link_tree_[5]->sibling_ = 6;
+    joint_link_tree_[5]->child_ = -1;
     joint_link_tree_[5]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.008, -0.052);
     joint_link_tree_[5]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, 0.0, 0.0);
     joint_link_tree_[5]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 1.0, 0.0);
     joint_link_tree_[5]->joint_limit_lower_ = -2.6180;
     joint_link_tree_[5]->joint_limit_upper_ = 2.6180;
-    joint_link_tree_[5]->link_mass_ = 0.063;
+    joint_link_tree_[5]->link_mass_ = 0.032;
     joint_link_tree_[5]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0043, 0.0, -0.1);
     joint_link_tree_[5]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
-    joint_link_tree_[6]->name_ = "arm_r_end";
-    joint_link_tree_[6]->parent_ = 5;
+    joint_link_tree_[6]->name_ = "elbow_r_rear";
+    joint_link_tree_[6]->parent_ = 4;
     joint_link_tree_[6]->sibling_ = -1;
     joint_link_tree_[6]->child_ = -1;
-    joint_link_tree_[6]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -0.208);
+    joint_link_tree_[6]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.008, -0.052);
     joint_link_tree_[6]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, 0.0, 0.0);
-    joint_link_tree_[6]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    joint_link_tree_[6]->joint_limit_lower_ = -100;
-    joint_link_tree_[6]->joint_limit_upper_ = 100;
-    joint_link_tree_[6]->link_mass_ = 0;
+    joint_link_tree_[6]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, -1.0, 0.0);
+    joint_link_tree_[6]->joint_limit_lower_ = -2.6180;
+    joint_link_tree_[6]->joint_limit_upper_ = 2.6180;
+    joint_link_tree_[6]->link_mass_ = 0.031;
     joint_link_tree_[6]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0, 0, 0);
     joint_link_tree_[6]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
@@ -142,29 +142,29 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_tree_[8]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.016, -0.02575);
     joint_link_tree_[8]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
-    joint_link_tree_[9]->name_ = "elbow_l_front_and_rear";
+    joint_link_tree_[9]->name_ = "elbow_l_front";
     joint_link_tree_[9]->parent_ = 8;
-    joint_link_tree_[9]->sibling_ = -1;
-    joint_link_tree_[9]->child_ = 10;
+    joint_link_tree_[9]->sibling_ = 10;
+    joint_link_tree_[9]->child_ = -1;
     joint_link_tree_[9]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, -0.008, -0.052);
     joint_link_tree_[9]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, 0.0, 0.0);
     joint_link_tree_[9]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, -1.0, 0.0);
     joint_link_tree_[9]->joint_limit_lower_ = -2.6180;
     joint_link_tree_[9]->joint_limit_upper_ = 2.6180;
-    joint_link_tree_[9]->link_mass_ = 0.063;
+    joint_link_tree_[9]->link_mass_ = 0.032;
     joint_link_tree_[9]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0043, 0.0, -0.104);
     joint_link_tree_[9]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
-    joint_link_tree_[10]->name_ = "arm_l_end";
-    joint_link_tree_[10]->parent_ = 9;
+    joint_link_tree_[10]->name_ = "elbow_l_rear";
+    joint_link_tree_[10]->parent_ = 8;
     joint_link_tree_[10]->sibling_ = -1;
     joint_link_tree_[10]->child_ = -1;
-    joint_link_tree_[10]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, 0.0, -0.208);
+    joint_link_tree_[10]->joint_position_ = robotis_framework::getTransitionXYZ(0.0, -0.008, -0.052);
     joint_link_tree_[10]->joint_orientation_ = robotis_framework::convertRPYToRotation(0.0, 0.0, 0.0);
-    joint_link_tree_[10]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 0.0, 0.0);
-    joint_link_tree_[10]->joint_limit_lower_ = -100;
-    joint_link_tree_[10]->joint_limit_upper_ = 100;
-    joint_link_tree_[10]->link_mass_ = 0;
+    joint_link_tree_[10]->joint_axis_ = robotis_framework::getTransitionXYZ(0.0, 1.0, 0.0);
+    joint_link_tree_[10]->joint_limit_lower_ = -2.6180;
+    joint_link_tree_[10]->joint_limit_upper_ = 2.6180;
+    joint_link_tree_[10]->link_mass_ = 0.031;
     joint_link_tree_[10]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0, 0, 0);
     joint_link_tree_[10]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
@@ -582,6 +582,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
                               joint_link_tree_[getLinkIndex("ankle_r_roll")]->joint_position_.coeff(2, 0) +
                               joint_link_tree_[getLinkIndex("ankle_r_yaw")]->joint_position_.coeff(2, 0) +
                               joint_link_tree_[getLinkIndex("leg_r_end")]->joint_position_.coeff(2, 0));
+  gripper_length_ = 0.208;
 }
 
 std::vector<int> KurokoKinematics::findRoute(int to)
@@ -1105,6 +1106,33 @@ bool KurokoKinematics::calcInverseKinematicsForLeftLeg(double* out, double x, do
   // std::cout << "Joint ID: 34 (shin_l_active), Angle: " << out[3] << std::endl;
   // std::cout << "Joint ID: 26 (ankle_l_roll), Angle: " << out[4] << std::endl;
   // std::cout << "Joint ID: 27 (ankle_l_yaw), Angle: " << out[5] << std::endl;
+
+  return true;
+}
+
+bool KurokoKinematics::calcInverseKinematicsForRightArm(double* out, double x, double y, double z,
+                                                        double shoulder_pitch, double gripoper_open_angle)
+{
+  // The punch is made with the right arm, but the left arm is also moved to counteract inertia
+  // The front and rear of the elbow are each part of a pair of scissors
+  // The joints of the chest and right hand together have a total of 4 DOFs, so by fixing the shoulder_pitch, the
+  // dimensions are aligned.
+
+  // out: chest, shoulder_r_pitch, shoulder_r_roll, elbow_r_front, elbow_r_rear,
+  // shoulder_l_pitch, shoulder_l_roll, elbow_l_front, elbow_l_rear
+
+  return true;
+}
+bool KurokoKinematics::calcInverseKinematicsForLeftArm(double* out, double x, double y, double z, double shoulder_pitch,
+                                                       double gripoper_open_angle)
+{
+  // The punch is made with the left arm, but the right arm is also moved to counteract inertia
+  // The front and rear of the elbow are each part of a pair of scissors
+  // The joints of the chest and right hand together have a total of 4 DOFs, so by fixing the shoulder_pitch, the
+  // dimensions are aligned.
+
+  // out: chest, shoulder_r_pitch, shoulder_r_roll, elbow_r_front, elbow_r_rear,
+  // shoulder_l_pitch, shoulder_l_roll, elbow_l_front, elbow_l_rear
 
   return true;
 }

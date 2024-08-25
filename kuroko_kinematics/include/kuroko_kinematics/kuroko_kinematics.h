@@ -41,6 +41,11 @@ public:
                                         double yaw);
   bool calcInverseKinematicsForLeftLeg(double* out, double x, double y, double z, double roll, double pitch, double yaw);
 
+  bool calcInverseKinematicsForRightArm(double* out, double x, double y, double z, double shoulder_pitch,
+                                        double gripoper_open_angle);
+  bool calcInverseKinematicsForLeftArm(double* out, double x, double y, double z, double shoulder_pitch,
+                                       double gripoper_open_angle);
+
   LinkData* joint_link_tree_[ALL_JOINT_ID + 1];
 
   LinkData* getLinkData(const std::string& link_name);
@@ -55,6 +60,7 @@ public:
 
   double leg_max_height_;
   double leg_side_offset_;
+  double gripper_length_;
 };
 
 }  // namespace motion_control

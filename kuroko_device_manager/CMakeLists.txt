@@ -23,9 +23,10 @@ find_package(
              kuroko_joint_controller
              robotis_math
              kuroko_kinematics
-             kuroko_walking_module
-             kuroko_online_walking_module
              kuroko_initial_pose_module
+             kuroko_walking_module
+             kuroko_action_module
+             kuroko_online_walking_module
              kuroko_tuning_module
 )
 

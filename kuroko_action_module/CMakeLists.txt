@@ -46,6 +46,17 @@ target_link_libraries(
   ${Boost_LIBRARIES}
 )
 
+# Check if C++17 or higher is available
+if(CMAKE_CXX_STANDARD
+   GREATER_EQUAL
+   17
+)
+  message(STATUS "Using C++17, linking with std::filesystem")
+else()
+  message(STATUS "Using C++11, linking with std::experimental::filesystem")
+  target_link_libraries(${PROJECT_NAME} stdc++fs)
+endif()
+
 install(
   TARGETS ${PROJECT_NAME}
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}

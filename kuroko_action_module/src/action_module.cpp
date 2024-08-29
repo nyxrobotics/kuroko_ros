@@ -1,3 +1,5 @@
+#include "kuroko_action_module/action_module.h"
+
 // Check if the C++ standard is 17 or later
 #if __cplusplus >= 201703L
 #include <filesystem>
@@ -6,8 +8,6 @@ namespace fs = std::filesystem;
 #include <experimental/filesystem>
 namespace fs = std::experimental::filesystem;
 #endif
-
-#include "kuroko_action_module/action_module.h"
 
 namespace motion_control
 {
@@ -25,6 +25,7 @@ ActionModule::ActionModule()
   , action_module_enabled_(false)
   , previous_running_(false)
   , present_running_(false)
+  , current_motion_("")  // Initialize current_motion_ to an empty string
 {
   module_name_ = "action_module";
   control_mode_ = robotis_framework::PositionControl;
@@ -297,8 +298,12 @@ void ActionModule::playMotionByName(const std::string& motion_name)
     return;
   }
 
+  current_motion_ = motion_name;  // Set current_motion_ to the selected motion
   const auto& positions = positions_map_[motion_name];
   const auto& time_from_start = time_from_start_map_[motion_name];
+
+  page_step_count_ = 0;  // Reset the step counter
+  playing_ = true;       // Set the motion as playing
 
   for (size_t i = 0; i < positions.size(); ++i)
   {
@@ -339,6 +344,39 @@ bool ActionModule::isRunning()
 void ActionModule::brake()
 {
   playing_ = false;
+}
+
+void ActionModule::stop()
+{
+  stop_playing_ = true;
+}
+
+void ActionModule::processMotionStep()
+{
+  if (!playing_)
+    return;
+
+  for (auto& joint_enable : action_joints_enable_)
+  {
+    if (joint_enable.second)
+    {
+      const std::string& joint_name = joint_enable.first;
+      robotis_framework::DynamixelState* dxl_state = action_result_[joint_name];
+
+      if (dxl_state != nullptr)
+      {
+        result_[joint_name]->goal_position_ = dxl_state->goal_position_;
+      }
+    }
+  }
+
+  page_step_count_++;
+
+  if (page_step_count_ >= positions_map_[current_motion_].size())
+  {
+    playing_ = false;
+    publishDoneMsg("Motion completed");
+  }
 }
 
 }  // namespace motion_control

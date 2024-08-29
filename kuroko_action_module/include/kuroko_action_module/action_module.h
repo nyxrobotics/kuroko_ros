@@ -1,6 +1,15 @@
 #ifndef KUROKO_ACTION_MODULE_H_
 #define KUROKO_ACTION_MODULE_H_
 
+// Check if the C++ standard is 17 or later
+#if __cplusplus >= 201703L
+#include <filesystem>
+namespace fs = std::filesystem;
+#else
+#include <experimental/filesystem>
+namespace fs = std::experimental::filesystem;
+#endif
+
 #define _USE_MATH_DEFINES
 #include <yaml-cpp/yaml.h>
 #include <map>
@@ -51,6 +60,7 @@ public:
   void process(std::map<std::string, robotis_framework::Dynamixel*> dxls,
                std::map<std::string, double> sensors) override;
 
+  void stop();
   bool isRunning();
   void brake();
 
@@ -74,6 +84,7 @@ private:
   bool action_module_enabled_;
   bool previous_running_;
   bool present_running_;
+  std::string current_motion_;  // Added to track the current motion
 
   std::map<std::string, int> joint_name_to_id_;
   std::map<int, std::string> joint_id_to_name_;
@@ -107,4 +118,5 @@ private:
 };
 
 }  // namespace motion_control
+
 #endif /* KUROKO_ACTION_MODULE_H_ */

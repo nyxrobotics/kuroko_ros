@@ -103,6 +103,7 @@ void ActionModule::loadYAMLFile(const std::string& file_name, const std::string&
   {
     motion_joint_names = config["joint_names"].as<std::vector<std::string>>();
     ROS_INFO_STREAM("Joint names loaded.");
+    ROS_INFO_STREAM("motion_joint_names: " << YAML::Dump(config["joint_names"]));  // motion_joint_namesの内容を表示
   }
   catch (const YAML::Exception& e)
   {
@@ -110,6 +111,9 @@ void ActionModule::loadYAMLFile(const std::string& file_name, const std::string&
     ROS_ERROR_STREAM("YAML Exception: " << e.what());
     return;
   }
+
+  ROS_INFO_STREAM(
+      "config_joint_names_: " << YAML::Dump(YAML::Node(config_joint_names_)));  // config_joint_names_の内容を表示
 
   std::vector<std::vector<double>> positions;
   std::vector<std::vector<double>> velocities;
@@ -128,7 +132,6 @@ void ActionModule::loadYAMLFile(const std::string& file_name, const std::string&
         continue;
       }
 
-      // Output the content of the points node for debugging
       ROS_INFO_STREAM("positions: " << point["positions"]);
       ROS_INFO_STREAM("velocities: " << point["velocities"]);
       ROS_INFO_STREAM("accelerations: " << point["accelerations"]);

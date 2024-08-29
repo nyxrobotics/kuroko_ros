@@ -3,111 +3,111 @@
 #define KUROKO_UPPER_BODY_ACTION_MODULE_H_
 
 #define _USE_MATH_DEFINES
-
-#include <cmath>
+#include <yaml-cpp/yaml.h>
+#include <map>
+#include <string>
+#include <vector>
+#include <boost/thread.hpp>
 #include <ros/ros.h>
 #include <ros/package.h>
 #include <ros/callback_queue.h>
-#include <std_msgs/Int32.h>
-#include <std_msgs/String.h>
-#include <boost/thread.hpp>
-
+// #include "robotis_framework_common/dynamixel_state.h"
+#include "robotis_framework_common/motion_module.h"
 #include "robotis_controller_msgs/StatusMsg.h"
+#include "std_msgs/String.h"
+#include "std_msgs/Int32.h"
 #include "op3_action_module_msgs/IsRunning.h"
 #include "op3_action_module_msgs/StartAction.h"
-#include "robotis_framework_common/motion_module.h"
-#include "upper_body_action_file_define.h"
 
 namespace motion_control
 {
-
-class UpperBodyActionModule : public robotis_framework::MotionModule, public robotis_framework::Singleton<UpperBodyActionModule>
+/**************************************
+ * Section             /----\
+ *                    /|    |\
+ *        /+---------/ |    | \
+ *       / |        |  |    |  \
+ * -----/  |        |  |    |   \----
+ *      PRE  MAIN   PRE MAIN POST PAUSE
+ ***************************************/
+enum class MotionSection
 {
- public:
+  PRE_SECTION,
+  MAIN_SECTION,
+  POST_SECTION,
+  PAUSE_SECTION
+};
+
+enum class FinishType
+{
+  ZERO_FINISH,
+  NONE_ZERO_FINISH
+};
+
+class UpperBodyActionModule : public robotis_framework::MotionModule,
+                              public robotis_framework::Singleton<UpperBodyActionModule>
+{
+public:
   UpperBodyActionModule();
   virtual ~UpperBodyActionModule();
 
-  void initialize(const int control_cycle_msec, robotis_framework::Robot *robot);
-  void process(std::map<std::string, robotis_framework::Dynamixel *> dxls, std::map<std::string, double> sensors);
+  void initialize(const int control_cycle_msec, robotis_framework::Robot* robot) override;
+  void process(std::map<std::string, robotis_framework::Dynamixel*> dxls,
+               std::map<std::string, double> sensors) override;
 
-  void stop();
   bool isRunning();
-
-  bool loadFile(std::string file_name);
-  bool createFile(std::string file_name);
-
-  bool start(int page_number);
-  bool start(std::string page_name);
-  bool start(int page_number, action_file_define::Page* page);
-
-  void onModuleEnable();
-  void onModuleDisable();
-
-  void brake();
   bool isRunning(int* playing_page_num, int* playing_step_num);
-  bool loadPage(int page_number, action_file_define::Page* page);
-  bool savePage(int page_number, action_file_define::Page* page);
-  void resetPage(action_file_define::Page* page);
-
-  void enableAllJoints();
-  void actionPlayProcess(std::map<std::string, robotis_framework::Dynamixel *> dxls);
 
 private:
-  const int PRE_SECTION;
-  const int MAIN_SECTION;
-  const int POST_SECTION;
-  const int PAUSE_SECTION;
-  const int ZERO_FINISH;
-  const int NONE_ZERO_FINISH;
-  const bool DEBUG_PRINT;
+  int control_cycle_msec_;
+  bool enable_;
 
-  void queueThread();
+  MotionSection current_section_;
+  FinishType finish_type_;
 
-  bool verifyChecksum( action_file_define::Page* page );
-  void setChecksum( action_file_define::Page* page );
-
-  void publishStatusMsg(unsigned int type, std::string msg);
-  void publishDoneMsg(std::string msg);
-
-  bool isRunningServiceCallback(op3_action_module_msgs::IsRunning::Request  &req,
-                                op3_action_module_msgs::IsRunning::Response &res);
-
-  void pageNumberCallback(const std_msgs::Int32::ConstPtr& msg);
-  void startActionCallback(const op3_action_module_msgs::StartAction::ConstPtr& msg);
-
-  int convertRadTow4095(double rad);
-  double convertw4095ToRad(int w4095);
-  std::string convertIntToString(int n);
-
-  std::map<std::string, bool> action_joints_enable_;
-  std::map<std::string, robotis_framework::DynamixelState *> action_result_;
-  int             control_cycle_msec_;
-  boost::thread   queue_thread_;
-
-  /* sample subscriber & publisher */
-  ros::Publisher status_msg_pub_;
-  ros::Publisher  done_msg_pub_;
-  /////////////////////////////////////////////////////////////////////////
-  std::map<std::string, int> joint_name_to_id_;
-  std::map<int, std::string> joint_id_to_name_;
-  FILE* action_file_;
-  action_file_define::Page play_page_;
-  action_file_define::Page next_play_page_;
-  action_file_define::Step current_step_;
-
-  int play_page_idx_;
-  bool first_driving_start_;
-  int page_step_count_;
-
+  std::string module_name_;
   bool playing_;
-  bool stop_playing_;
+  bool first_driving_start_;
   bool playing_finished_;
-
+  int page_step_count_;
+  int play_page_idx_;
+  bool stop_playing_;
   bool action_module_enabled_;
   bool previous_running_;
   bool present_running_;
+
+  std::map<std::string, int> joint_name_to_id_;
+  std::map<int, std::string> joint_id_to_name_;
+  std::map<std::string, robotis_framework::DynamixelState*> action_result_;
+  std::map<std::string, robotis_framework::DynamixelState*> result_;
+  std::map<std::string, bool> action_joints_enable_;
+
+  ros::Publisher status_msg_pub_;
+  ros::Publisher done_msg_pub_;
+
+  boost::thread queue_thread_;
+
+  void queueThread();
+  bool isRunningServiceCallback(op3_action_module_msgs::IsRunning::Request& req,
+                                op3_action_module_msgs::IsRunning::Response& res);
+  void pageNumberCallback(const std_msgs::Int32::ConstPtr& msg);
+  void startActionCallback(const op3_action_module_msgs::StartAction::ConstPtr& msg);
+  void publishStatusMsg(unsigned int type, std::string msg);
+  void publishDoneMsg(std::string msg);
+  bool loadMotionFromFile(const std::string& file_name);
+  void processMotionStep();
+  void brake();
+
+  // YAMLデータの読み込み関連
+  std::vector<std::string> joint_names_;
+  std::vector<std::vector<double>> positions_;
+  std::vector<std::vector<double>> velocities_;
+  std::vector<std::vector<double>> accelerations_;
+  std::vector<std::vector<double>> efforts_;
+  std::vector<double> time_from_start_;
+
+  // データの読み込み
+  void loadYAMLFile(const std::string& file_name);
 };
 
-}
-
+}  // namespace motion_control
 #endif /* KUROKO_UPPER_BODY_ACTION_MODULE_H_ */

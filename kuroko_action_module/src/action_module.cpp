@@ -119,6 +119,13 @@ void ActionModule::loadYAMLFile(const std::string& file_name, const std::string&
   {
     for (const auto& point : config["points"])
     {
+      if (!point["positions"] || !point["velocities"] || !point["accelerations"] || !point["effort"] ||
+          !point["time_from_start"])
+      {
+        ROS_ERROR_STREAM("One of the required fields in 'points' is missing in file: " << file_name);
+        continue;
+      }
+
       std::vector<double> position(config_joint_names_.size(), 0.0);
       std::vector<double> velocity(config_joint_names_.size(), 0.0);
       std::vector<double> acceleration(config_joint_names_.size(), 0.0);

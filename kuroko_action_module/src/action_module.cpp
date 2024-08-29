@@ -89,6 +89,7 @@ void ActionModule::loadYAMLFile(const std::string& file_name, const std::string&
   try
   {
     config = YAML::LoadFile(file_name);
+    ROS_INFO_STREAM("YAML file loaded successfully.");
   }
   catch (const YAML::Exception& e)
   {
@@ -101,6 +102,7 @@ void ActionModule::loadYAMLFile(const std::string& file_name, const std::string&
   try
   {
     motion_joint_names = config["joint_names"].as<std::vector<std::string>>();
+    ROS_INFO_STREAM("Joint names loaded.");
   }
   catch (const YAML::Exception& e)
   {
@@ -125,6 +127,13 @@ void ActionModule::loadYAMLFile(const std::string& file_name, const std::string&
         ROS_ERROR_STREAM("One of the required fields in 'points' is missing in file: " << file_name);
         continue;
       }
+
+      // Output the content of the points node for debugging
+      ROS_INFO_STREAM("positions: " << point["positions"]);
+      ROS_INFO_STREAM("velocities: " << point["velocities"]);
+      ROS_INFO_STREAM("accelerations: " << point["accelerations"]);
+      ROS_INFO_STREAM("effort: " << point["effort"]);
+      ROS_INFO_STREAM("time_from_start: " << point["time_from_start"]);
 
       std::vector<double> position(config_joint_names_.size(), 0.0);
       std::vector<double> velocity(config_joint_names_.size(), 0.0);

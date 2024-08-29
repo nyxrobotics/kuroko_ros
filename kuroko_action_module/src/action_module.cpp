@@ -85,21 +85,38 @@ void ActionModule::loadAllMotions(const std::string& directory)
 
 void ActionModule::loadYAMLFile(const std::string& file_name, const std::string& motion_name)
 {
+  YAML::Node config;
   try
   {
-    ROS_INFO_STREAM("Loading YAML file: " << file_name);
-    YAML::Node config = YAML::LoadFile(file_name);
-    ROS_INFO_STREAM("YAML file loaded successfully.");
+    config = YAML::LoadFile(file_name);
+  }
+  catch (const YAML::Exception& e)
+  {
+    ROS_ERROR_STREAM("Failed to load YAML file: " << file_name);
+    ROS_ERROR_STREAM("YAML Exception: " << e.what());
+    return;
+  }
 
-    std::vector<std::string> motion_joint_names = config["joint_names"].as<std::vector<std::string>>();
-    ROS_INFO_STREAM("Joint names loaded.");
+  std::vector<std::string> motion_joint_names;
+  try
+  {
+    motion_joint_names = config["joint_names"].as<std::vector<std::string>>();
+  }
+  catch (const YAML::Exception& e)
+  {
+    ROS_ERROR_STREAM("Failed to parse 'joint_names' in file: " << file_name);
+    ROS_ERROR_STREAM("YAML Exception: " << e.what());
+    return;
+  }
 
-    std::vector<std::vector<double>> positions;
-    std::vector<std::vector<double>> velocities;
-    std::vector<std::vector<double>> accelerations;
-    std::vector<std::vector<double>> efforts;
-    std::vector<double> time_from_start;
+  std::vector<std::vector<double>> positions;
+  std::vector<std::vector<double>> velocities;
+  std::vector<std::vector<double>> accelerations;
+  std::vector<std::vector<double>> efforts;
+  std::vector<double> time_from_start;
 
+  try
+  {
     for (const auto& point : config["points"])
     {
       std::vector<double> position(config_joint_names_.size(), 0.0);
@@ -126,20 +143,21 @@ void ActionModule::loadYAMLFile(const std::string& file_name, const std::string&
       efforts.emplace_back(effort);
       time_from_start.emplace_back(point["time_from_start"].as<double>());
     }
-
-    positions_map_[motion_name] = positions;
-    velocities_map_[motion_name] = velocities;
-    accelerations_map_[motion_name] = accelerations;
-    efforts_map_[motion_name] = efforts;
-    time_from_start_map_[motion_name] = time_from_start;
-
-    ROS_INFO_STREAM("Motion " << motion_name << " loaded successfully.");
   }
   catch (const YAML::Exception& e)
   {
+    ROS_ERROR_STREAM("Failed to parse 'points' in file: " << file_name);
     ROS_ERROR_STREAM("YAML Exception: " << e.what());
-    throw;
+    return;
   }
+
+  positions_map_[motion_name] = positions;
+  velocities_map_[motion_name] = velocities;
+  accelerations_map_[motion_name] = accelerations;
+  efforts_map_[motion_name] = efforts;
+  time_from_start_map_[motion_name] = time_from_start;
+
+  ROS_INFO_STREAM("Loaded motion: " << motion_name << " from file: " << file_name);
 }
 
 void ActionModule::queueThread()

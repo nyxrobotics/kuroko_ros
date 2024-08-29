@@ -68,16 +68,16 @@ void UpperBodyActionModule::queueThread()
 
   ros_node.setCallbackQueue(&callback_queue);
 
-  status_msg_pub_ = ros_node.advertise<robotis_controller_msgs::StatusMsg>("/robotis/status", 0);
-  done_msg_pub_ = ros_node.advertise<std_msgs::String>("/robotis/movement_done", 1);
+  status_msg_pub_ = ros_node.advertise<robotis_controller_msgs::StatusMsg>("/motion_control/status", 0);
+  done_msg_pub_ = ros_node.advertise<std_msgs::String>("/motion_control/movement_done", 1);
 
-  ros::Subscriber action_page_sub =
-      ros_node.subscribe("/robotis/action/page_num", 0, &UpperBodyActionModule::pageNumberCallback, this);
-  ros::Subscriber start_action_sub =
-      ros_node.subscribe("/robotis/action/start_action", 0, &UpperBodyActionModule::startActionCallback, this);
+  ros::Subscriber action_page_sub = ros_node.subscribe("/motion_control/upper_body_action/page_num", 0,
+                                                       &UpperBodyActionModule::pageNumberCallback, this);
+  ros::Subscriber start_action_sub = ros_node.subscribe("/motion_control/upper_body_action/start_action", 0,
+                                                        &UpperBodyActionModule::startActionCallback, this);
 
-  ros::ServiceServer is_running_server =
-      ros_node.advertiseService("/robotis/action/is_running", &UpperBodyActionModule::isRunningServiceCallback, this);
+  ros::ServiceServer is_running_server = ros_node.advertiseService(
+      "/motion_control/upper_body_action/is_running", &UpperBodyActionModule::isRunningServiceCallback, this);
 
   ros::WallDuration duration(control_cycle_msec_ / 1000.0);
   while (ros_node.ok())

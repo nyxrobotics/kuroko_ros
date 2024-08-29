@@ -68,7 +68,9 @@ void ActionModule::initialize(const int control_cycle_msec, robotis_framework::R
 void ActionModule::loadConfigJointNames(const std::string& file_name)
 {
   YAML::Node config = YAML::LoadFile(file_name);
+  ROS_INFO_STREAM("[ActionModule] Loaded Joint YAML file: " << file_name);
   config_joint_names_ = config["joint_names"].as<std::vector<std::string>>();
+  ROS_INFO_STREAM("[ActionModule] config_joint_names_:\n" << YAML::Dump(YAML::Node(config_joint_names_)));
 }
 
 void ActionModule::loadAllMotions(const std::string& directory)
@@ -88,7 +90,8 @@ void ActionModule::loadYAMLFile(const std::string& file_name, const std::string&
   try
   {
     YAML::Node config = YAML::LoadFile(file_name);
-    ROS_INFO_STREAM("YAML file content: " << config);
+    ROS_INFO_STREAM("[ActionModule] Loaded Motion YAML file: " << file_name);
+    // ROS_INFO_STREAM("YAML file content: " << config);
 
     std::vector<std::string> motion_joint_names = config["joint_names"].as<std::vector<std::string>>();
     std::vector<std::vector<double>> positions;
@@ -97,14 +100,14 @@ void ActionModule::loadYAMLFile(const std::string& file_name, const std::string&
     std::vector<std::vector<double>> efforts;
     std::vector<double> time_from_start;
 
-    ROS_INFO_STREAM("motion_joint_names: " << YAML::Dump(config["joint_names"]));
-    ROS_INFO_STREAM("config_joint_names_: " << YAML::Dump(YAML::Node(config_joint_names_)));
+    // ROS_INFO_STREAM("motion_joint_names: " << YAML::Dump(config["joint_names"]));
+    // ROS_INFO_STREAM("config_joint_names_: " << YAML::Dump(YAML::Node(config_joint_names_)));
 
     for (const auto& point : config["points"])
     {
       try
       {
-        ROS_INFO_STREAM("Point data: " << YAML::Dump(point));
+        // ROS_INFO_STREAM("Point data: " << YAML::Dump(point));
 
         // Extracting the data
         std::vector<double> position = point["positions"].as<std::vector<double>>();
@@ -130,22 +133,20 @@ void ActionModule::loadYAMLFile(const std::string& file_name, const std::string&
             mapped_effort[index] = effort[i];
           }
         }
-
         positions.emplace_back(mapped_position);
         velocities.emplace_back(mapped_velocity);
         accelerations.emplace_back(mapped_acceleration);
         efforts.emplace_back(mapped_effort);
         time_from_start.emplace_back(time_start);
-
-        ROS_INFO_STREAM("positions: " << YAML::Dump(YAML::Node(mapped_position)));
-        ROS_INFO_STREAM("velocities: " << YAML::Dump(YAML::Node(mapped_velocity)));
-        ROS_INFO_STREAM("accelerations: " << YAML::Dump(YAML::Node(mapped_acceleration)));
-        ROS_INFO_STREAM("effort: " << YAML::Dump(YAML::Node(mapped_effort)));
-        ROS_INFO_STREAM("time_from_start: " << time_start);
+        // ROS_INFO_STREAM("positions: " << YAML::Dump(YAML::Node(mapped_position)));
+        // ROS_INFO_STREAM("velocities: " << YAML::Dump(YAML::Node(mapped_velocity)));
+        // ROS_INFO_STREAM("accelerations: " << YAML::Dump(YAML::Node(mapped_acceleration)));
+        // ROS_INFO_STREAM("effort: " << YAML::Dump(YAML::Node(mapped_effort)));
+        // ROS_INFO_STREAM("time_from_start: " << time_start);
       }
       catch (const YAML::Exception& e)
       {
-        ROS_ERROR_STREAM("YAML Exception while parsing points: " << e.what());
+        ROS_ERROR_STREAM("[ActionModule] YAML Exception while parsing points: " << e.what());
         return;
       }
     }
@@ -155,10 +156,11 @@ void ActionModule::loadYAMLFile(const std::string& file_name, const std::string&
     accelerations_map_[motion_name] = accelerations;
     efforts_map_[motion_name] = efforts;
     time_from_start_map_[motion_name] = time_from_start;
+    ROS_INFO_STREAM("[ActionModule] Motion '" << motion_name << "' successfully loaded.");
   }
   catch (const YAML::Exception& e)
   {
-    ROS_ERROR_STREAM("Failed to load YAML file: " << file_name << " with error: " << e.what());
+    ROS_ERROR_STREAM("[ActionModule] Failed to load YAML file: " << file_name << " with error: " << e.what());
     return;
   }
 }

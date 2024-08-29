@@ -1,3 +1,12 @@
+// Check if the C++ standard is 17 or later
+#if __cplusplus >= 201703L
+#include <filesystem>
+namespace fs = std::filesystem;
+#else
+#include <experimental/filesystem>
+namespace fs = std::experimental::filesystem;
+#endif
+
 #include "kuroko_upper_body_action_module/upper_body_action_module.h"
 
 namespace motion_control
@@ -17,7 +26,7 @@ UpperBodyActionModule::UpperBodyActionModule()
   , previous_running_(false)
   , present_running_(false)
 {
-  module_name_ = "action_module";  // set unique module name
+  module_name_ = "action_module";
   control_mode_ = robotis_framework::PositionControl;
 }
 
@@ -31,7 +40,6 @@ void UpperBodyActionModule::initialize(const int control_cycle_msec, robotis_fra
   control_cycle_msec_ = control_cycle_msec;
   queue_thread_ = boost::thread(boost::bind(&UpperBodyActionModule::queueThread, this));
 
-  // init result, joint_id_table
   for (auto& dxl : robot->dxls_)
   {
     std::string joint_name = dxl.first;
@@ -47,10 +55,8 @@ void UpperBodyActionModule::initialize(const int control_cycle_msec, robotis_fra
   }
 
   ros::NodeHandle ros_node;
-  std::string path = ros::package::getPath("kuroko_upper_body_action_module") + "/data/motion.yaml";
-  std::string action_file_path = ros_node.param<std::string>("action_file_path", path);
-
-  loadYAMLFile(action_file_path);
+  std::string path = ros::package::getPath("kuroko_upper_body_action_module") + "/motion";
+  loadAllMotions(path);
 
   playing_ = false;
 }
@@ -62,17 +68,14 @@ void UpperBodyActionModule::queueThread()
 
   ros_node.setCallbackQueue(&callback_queue);
 
-  /* publisher */
   status_msg_pub_ = ros_node.advertise<robotis_controller_msgs::StatusMsg>("/robotis/status", 0);
   done_msg_pub_ = ros_node.advertise<std_msgs::String>("/robotis/movement_done", 1);
 
-  /* subscriber */
   ros::Subscriber action_page_sub =
       ros_node.subscribe("/robotis/action/page_num", 0, &UpperBodyActionModule::pageNumberCallback, this);
   ros::Subscriber start_action_sub =
       ros_node.subscribe("/robotis/action/start_action", 0, &UpperBodyActionModule::startActionCallback, this);
 
-  /* ROS Service Callback Functions */
   ros::ServiceServer is_running_server =
       ros_node.advertiseService("/robotis/action/is_running", &UpperBodyActionModule::isRunningServiceCallback, this);
 
@@ -100,7 +103,7 @@ void UpperBodyActionModule::pageNumberCallback(const std_msgs::Int32::ConstPtr& 
 
   if (msg->data == -1)
   {
-    stop();
+    stop_playing_ = true;
   }
   else if (msg->data == -2)
   {
@@ -131,7 +134,7 @@ void UpperBodyActionModule::startActionCallback(const op3_action_module_msgs::St
 
   if (msg->page_num == -1)
   {
-    stop();
+    stop_playing_ = true;
   }
   else if (msg->page_num == -2)
   {
@@ -220,32 +223,66 @@ void UpperBodyActionModule::process(std::map<std::string, robotis_framework::Dyn
   }
 }
 
-void UpperBodyActionModule::loadYAMLFile(const std::string& file_name)
+void UpperBodyActionModule::loadAllMotions(const std::string& directory)
+{
+  for (const auto& entry : fs::directory_iterator(directory))
+  {
+    if (entry.path().extension() == ".yaml")
+    {
+      std::string motion_name = entry.path().stem().string();
+      loadYAMLFile(entry.path().string(), motion_name);
+    }
+  }
+}
+
+void UpperBodyActionModule::loadYAMLFile(const std::string& file_name, const std::string& motion_name)
 {
   YAML::Node config = YAML::LoadFile(file_name);
 
   joint_names_ = config["joint_names"].as<std::vector<std::string>>();
+
+  std::vector<std::vector<double>> positions;
+  std::vector<std::vector<double>> velocities;
+  std::vector<std::vector<double>> accelerations;
+  std::vector<std::vector<double>> efforts;
+  std::vector<double> time_from_start;
+
   for (const auto& point : config["points"])
   {
-    positions_.emplace_back(point["positions"].as<std::vector<double>>());
-    velocities_.emplace_back(point["velocities"].as<std::vector<double>>());
-    accelerations_.emplace_back(point["accelerations"].as<std::vector<double>>());
-    efforts_.emplace_back(point["effort"].as<std::vector<double>>());
-    time_from_start_.emplace_back(point["time_from_start"].as<double>());
+    positions.emplace_back(point["positions"].as<std::vector<double>>());
+    velocities.emplace_back(point["velocities"].as<std::vector<double>>());
+    accelerations.emplace_back(point["accelerations"].as<std::vector<double>>());
+    efforts.emplace_back(point["effort"].as<std::vector<double>>());
+    time_from_start.emplace_back(point["time_from_start"].as<double>());
   }
+
+  positions_map_[motion_name] = positions;
+  velocities_map_[motion_name] = velocities;
+  accelerations_map_[motion_name] = accelerations;
+  efforts_map_[motion_name] = efforts;
+  time_from_start_map_[motion_name] = time_from_start;
 }
 
-void UpperBodyActionModule::processMotionStep()
+void UpperBodyActionModule::playMotionByName(const std::string& motion_name)
 {
-  // Process each step of the motion based on loaded YAML data
-  for (size_t i = 0; i < positions_.size(); ++i)
+  if (positions_map_.find(motion_name) == positions_map_.end())
+  {
+    ROS_ERROR_STREAM("Motion not found: " << motion_name);
+    return;
+  }
+
+  const auto& positions = positions_map_[motion_name];
+  const auto& time_from_start = time_from_start_map_[motion_name];
+
+  for (size_t i = 0; i < positions.size(); ++i)
   {
     for (size_t j = 0; j < joint_names_.size(); ++j)
     {
       std::string joint_name = joint_names_[j];
-      double position = positions_[i][j];
+      double position = positions[i][j];
       action_result_[joint_name]->goal_position_ = position;
     }
+    ros::Duration(time_from_start[i]).sleep();
   }
 }
 

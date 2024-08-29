@@ -1,4 +1,3 @@
-
 #ifndef KUROKO_UPPER_BODY_ACTION_MODULE_H_
 #define KUROKO_UPPER_BODY_ACTION_MODULE_H_
 
@@ -11,7 +10,6 @@
 #include <ros/ros.h>
 #include <ros/package.h>
 #include <ros/callback_queue.h>
-// #include "robotis_framework_common/dynamixel_state.h"
 #include "robotis_framework_common/motion_module.h"
 #include "robotis_controller_msgs/StatusMsg.h"
 #include "std_msgs/String.h"
@@ -57,6 +55,9 @@ public:
   bool isRunning();
   bool isRunning(int* playing_page_num, int* playing_step_num);
 
+  void loadAllMotions(const std::string& directory);
+  void playMotionByName(const std::string& motion_name);
+
 private:
   int control_cycle_msec_;
   bool enable_;
@@ -93,20 +94,18 @@ private:
   void startActionCallback(const op3_action_module_msgs::StartAction::ConstPtr& msg);
   void publishStatusMsg(unsigned int type, std::string msg);
   void publishDoneMsg(std::string msg);
-  bool loadMotionFromFile(const std::string& file_name);
   void processMotionStep();
   void brake();
 
-  // YAMLデータの読み込み関連
+  // YAML data management
   std::vector<std::string> joint_names_;
-  std::vector<std::vector<double>> positions_;
-  std::vector<std::vector<double>> velocities_;
-  std::vector<std::vector<double>> accelerations_;
-  std::vector<std::vector<double>> efforts_;
-  std::vector<double> time_from_start_;
+  std::map<std::string, std::vector<std::vector<double>>> positions_map_;
+  std::map<std::string, std::vector<std::vector<double>>> velocities_map_;
+  std::map<std::string, std::vector<std::vector<double>>> accelerations_map_;
+  std::map<std::string, std::vector<std::vector<double>>> efforts_map_;
+  std::map<std::string, std::vector<double>> time_from_start_map_;
 
-  // データの読み込み
-  void loadYAMLFile(const std::string& file_name);
+  void loadYAMLFile(const std::string& file_name, const std::string& motion_name);
 };
 
 }  // namespace motion_control

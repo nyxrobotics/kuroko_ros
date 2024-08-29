@@ -55,10 +55,76 @@ void UpperBodyActionModule::initialize(const int control_cycle_msec, robotis_fra
   }
 
   ros::NodeHandle ros_node;
-  std::string path = ros::package::getPath("kuroko_upper_body_action_module") + "/motion";
-  loadAllMotions(path);
+  std::string joint_names_path = ros::package::getPath("kuroko_upper_body_action_module") + "/config/joint_names.yaml";
+  loadConfigJointNames(joint_names_path);
+
+  std::string motion_path = ros::package::getPath("kuroko_upper_body_action_module") + "/motion";
+  loadAllMotions(motion_path);
 
   playing_ = false;
+}
+
+void UpperBodyActionModule::loadConfigJointNames(const std::string& file_name)
+{
+  YAML::Node config = YAML::LoadFile(file_name);
+  config_joint_names_ = config["joint_names"].as<std::vector<std::string>>();
+}
+
+void UpperBodyActionModule::loadAllMotions(const std::string& directory)
+{
+  for (const auto& entry : fs::directory_iterator(directory))
+  {
+    if (entry.path().extension() == ".yaml")
+    {
+      std::string motion_name = entry.path().stem().string();
+      loadYAMLFile(entry.path().string(), motion_name);
+    }
+  }
+}
+
+void UpperBodyActionModule::loadYAMLFile(const std::string& file_name, const std::string& motion_name)
+{
+  YAML::Node config = YAML::LoadFile(file_name);
+  std::vector<std::string> motion_joint_names = config["joint_names"].as<std::vector<std::string>>();
+
+  std::vector<std::vector<double>> positions;
+  std::vector<std::vector<double>> velocities;
+  std::vector<std::vector<double>> accelerations;
+  std::vector<std::vector<double>> efforts;
+  std::vector<double> time_from_start;
+
+  for (const auto& point : config["points"])
+  {
+    std::vector<double> position(config_joint_names_.size(), 0.0);
+    std::vector<double> velocity(config_joint_names_.size(), 0.0);
+    std::vector<double> acceleration(config_joint_names_.size(), 0.0);
+    std::vector<double> effort(config_joint_names_.size(), 0.0);
+
+    for (size_t i = 0; i < motion_joint_names.size(); ++i)
+    {
+      auto it = std::find(config_joint_names_.begin(), config_joint_names_.end(), motion_joint_names[i]);
+      if (it != config_joint_names_.end())
+      {
+        size_t index = std::distance(config_joint_names_.begin(), it);
+        position[index] = point["positions"][i].as<double>();
+        velocity[index] = point["velocities"][i].as<double>();
+        acceleration[index] = point["accelerations"][i].as<double>();
+        effort[index] = point["effort"][i].as<double>();
+      }
+    }
+
+    positions.emplace_back(position);
+    velocities.emplace_back(velocity);
+    accelerations.emplace_back(acceleration);
+    efforts.emplace_back(effort);
+    time_from_start.emplace_back(point["time_from_start"].as<double>());
+  }
+
+  positions_map_[motion_name] = positions;
+  velocities_map_[motion_name] = velocities;
+  accelerations_map_[motion_name] = accelerations;
+  efforts_map_[motion_name] = efforts;
+  time_from_start_map_[motion_name] = time_from_start;
 }
 
 void UpperBodyActionModule::queueThread()
@@ -68,16 +134,16 @@ void UpperBodyActionModule::queueThread()
 
   ros_node.setCallbackQueue(&callback_queue);
 
-  status_msg_pub_ = ros_node.advertise<robotis_controller_msgs::StatusMsg>("/motion_control/status", 0);
-  done_msg_pub_ = ros_node.advertise<std_msgs::String>("/motion_control/movement_done", 1);
+  status_msg_pub_ = ros_node.advertise<robotis_controller_msgs::StatusMsg>("/motion_control/status", 5);
+  done_msg_pub_ = ros_node.advertise<std_msgs::String>("/motion_control/movement_done", 5);
 
-  ros::Subscriber action_page_sub = ros_node.subscribe("/motion_control/upper_body_action/page_num", 0,
-                                                       &UpperBodyActionModule::pageNumberCallback, this);
-  ros::Subscriber start_action_sub = ros_node.subscribe("/motion_control/upper_body_action/start_action", 0,
-                                                        &UpperBodyActionModule::startActionCallback, this);
+  ros::Subscriber action_page_sub =
+      ros_node.subscribe("/motion_control/action/page_num", 5, &UpperBodyActionModule::pageNumberCallback, this);
+  ros::Subscriber start_action_sub =
+      ros_node.subscribe("/motion_control/action/start_action", 5, &UpperBodyActionModule::startActionCallback, this);
 
   ros::ServiceServer is_running_server = ros_node.advertiseService(
-      "/motion_control/upper_body_action/is_running", &UpperBodyActionModule::isRunningServiceCallback, this);
+      "/motion_control/action/is_running", &UpperBodyActionModule::isRunningServiceCallback, this);
 
   ros::WallDuration duration(control_cycle_msec_ / 1000.0);
   while (ros_node.ok())
@@ -223,46 +289,6 @@ void UpperBodyActionModule::process(std::map<std::string, robotis_framework::Dyn
   }
 }
 
-void UpperBodyActionModule::loadAllMotions(const std::string& directory)
-{
-  for (const auto& entry : fs::directory_iterator(directory))
-  {
-    if (entry.path().extension() == ".yaml")
-    {
-      std::string motion_name = entry.path().stem().string();
-      loadYAMLFile(entry.path().string(), motion_name);
-    }
-  }
-}
-
-void UpperBodyActionModule::loadYAMLFile(const std::string& file_name, const std::string& motion_name)
-{
-  YAML::Node config = YAML::LoadFile(file_name);
-
-  joint_names_ = config["joint_names"].as<std::vector<std::string>>();
-
-  std::vector<std::vector<double>> positions;
-  std::vector<std::vector<double>> velocities;
-  std::vector<std::vector<double>> accelerations;
-  std::vector<std::vector<double>> efforts;
-  std::vector<double> time_from_start;
-
-  for (const auto& point : config["points"])
-  {
-    positions.emplace_back(point["positions"].as<std::vector<double>>());
-    velocities.emplace_back(point["velocities"].as<std::vector<double>>());
-    accelerations.emplace_back(point["accelerations"].as<std::vector<double>>());
-    efforts.emplace_back(point["effort"].as<std::vector<double>>());
-    time_from_start.emplace_back(point["time_from_start"].as<double>());
-  }
-
-  positions_map_[motion_name] = positions;
-  velocities_map_[motion_name] = velocities;
-  accelerations_map_[motion_name] = accelerations;
-  efforts_map_[motion_name] = efforts;
-  time_from_start_map_[motion_name] = time_from_start;
-}
-
 void UpperBodyActionModule::playMotionByName(const std::string& motion_name)
 {
   if (positions_map_.find(motion_name) == positions_map_.end())
@@ -276,9 +302,9 @@ void UpperBodyActionModule::playMotionByName(const std::string& motion_name)
 
   for (size_t i = 0; i < positions.size(); ++i)
   {
-    for (size_t j = 0; j < joint_names_.size(); ++j)
+    for (size_t j = 0; j < config_joint_names_.size(); ++j)
     {
-      std::string joint_name = joint_names_[j];
+      std::string joint_name = config_joint_names_[j];
       double position = positions[i][j];
       action_result_[joint_name]->goal_position_ = position;
     }
@@ -314,4 +340,5 @@ void UpperBodyActionModule::brake()
 {
   playing_ = false;
 }
+
 }  // namespace motion_control

@@ -53,7 +53,7 @@ public:
                std::map<std::string, double> sensors) override;
 
   bool isRunning();
-  bool isRunning(int* playing_page_num, int* playing_step_num);
+  void brake();
 
   void loadAllMotions(const std::string& directory);
   void playMotionByName(const std::string& motion_name);
@@ -95,17 +95,16 @@ private:
   void publishStatusMsg(unsigned int type, std::string msg);
   void publishDoneMsg(std::string msg);
   void processMotionStep();
-  void brake();
 
-  // YAML data management
-  std::vector<std::string> joint_names_;
+  void loadConfigJointNames(const std::string& file_name);
+  void loadYAMLFile(const std::string& file_name, const std::string& motion_name);
+
+  std::vector<std::string> config_joint_names_;
   std::map<std::string, std::vector<std::vector<double>>> positions_map_;
   std::map<std::string, std::vector<std::vector<double>>> velocities_map_;
   std::map<std::string, std::vector<std::vector<double>>> accelerations_map_;
   std::map<std::string, std::vector<std::vector<double>>> efforts_map_;
   std::map<std::string, std::vector<double>> time_from_start_map_;
-
-  void loadYAMLFile(const std::string& file_name, const std::string& motion_name);
 };
 
 }  // namespace motion_control

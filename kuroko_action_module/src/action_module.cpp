@@ -85,47 +85,61 @@ void ActionModule::loadAllMotions(const std::string& directory)
 
 void ActionModule::loadYAMLFile(const std::string& file_name, const std::string& motion_name)
 {
-  YAML::Node config = YAML::LoadFile(file_name);
-  std::vector<std::string> motion_joint_names = config["joint_names"].as<std::vector<std::string>>();
-
-  std::vector<std::vector<double>> positions;
-  std::vector<std::vector<double>> velocities;
-  std::vector<std::vector<double>> accelerations;
-  std::vector<std::vector<double>> efforts;
-  std::vector<double> time_from_start;
-
-  for (const auto& point : config["points"])
+  try
   {
-    std::vector<double> position(config_joint_names_.size(), 0.0);
-    std::vector<double> velocity(config_joint_names_.size(), 0.0);
-    std::vector<double> acceleration(config_joint_names_.size(), 0.0);
-    std::vector<double> effort(config_joint_names_.size(), 0.0);
+    ROS_INFO_STREAM("Loading YAML file: " << file_name);
+    YAML::Node config = YAML::LoadFile(file_name);
+    ROS_INFO_STREAM("YAML file loaded successfully.");
 
-    for (size_t i = 0; i < motion_joint_names.size(); ++i)
+    std::vector<std::string> motion_joint_names = config["joint_names"].as<std::vector<std::string>>();
+    ROS_INFO_STREAM("Joint names loaded.");
+
+    std::vector<std::vector<double>> positions;
+    std::vector<std::vector<double>> velocities;
+    std::vector<std::vector<double>> accelerations;
+    std::vector<std::vector<double>> efforts;
+    std::vector<double> time_from_start;
+
+    for (const auto& point : config["points"])
     {
-      auto it = std::find(config_joint_names_.begin(), config_joint_names_.end(), motion_joint_names[i]);
-      if (it != config_joint_names_.end())
+      std::vector<double> position(config_joint_names_.size(), 0.0);
+      std::vector<double> velocity(config_joint_names_.size(), 0.0);
+      std::vector<double> acceleration(config_joint_names_.size(), 0.0);
+      std::vector<double> effort(config_joint_names_.size(), 0.0);
+
+      for (size_t i = 0; i < motion_joint_names.size(); ++i)
       {
-        size_t index = std::distance(config_joint_names_.begin(), it);
-        position[index] = point["positions"][i].as<double>();
-        velocity[index] = point["velocities"][i].as<double>();
-        acceleration[index] = point["accelerations"][i].as<double>();
-        effort[index] = point["effort"][i].as<double>();
+        auto it = std::find(config_joint_names_.begin(), config_joint_names_.end(), motion_joint_names[i]);
+        if (it != config_joint_names_.end())
+        {
+          size_t index = std::distance(config_joint_names_.begin(), it);
+          position[index] = point["positions"][i].as<double>();
+          velocity[index] = point["velocities"][i].as<double>();
+          acceleration[index] = point["accelerations"][i].as<double>();
+          effort[index] = point["effort"][i].as<double>();
+        }
       }
+
+      positions.emplace_back(position);
+      velocities.emplace_back(velocity);
+      accelerations.emplace_back(acceleration);
+      efforts.emplace_back(effort);
+      time_from_start.emplace_back(point["time_from_start"].as<double>());
     }
 
-    positions.emplace_back(position);
-    velocities.emplace_back(velocity);
-    accelerations.emplace_back(acceleration);
-    efforts.emplace_back(effort);
-    time_from_start.emplace_back(point["time_from_start"].as<double>());
-  }
+    positions_map_[motion_name] = positions;
+    velocities_map_[motion_name] = velocities;
+    accelerations_map_[motion_name] = accelerations;
+    efforts_map_[motion_name] = efforts;
+    time_from_start_map_[motion_name] = time_from_start;
 
-  positions_map_[motion_name] = positions;
-  velocities_map_[motion_name] = velocities;
-  accelerations_map_[motion_name] = accelerations;
-  efforts_map_[motion_name] = efforts;
-  time_from_start_map_[motion_name] = time_from_start;
+    ROS_INFO_STREAM("Motion " << motion_name << " loaded successfully.");
+  }
+  catch (const YAML::Exception& e)
+  {
+    ROS_ERROR_STREAM("YAML Exception: " << e.what());
+    throw;
+  }
 }
 
 void ActionModule::queueThread()

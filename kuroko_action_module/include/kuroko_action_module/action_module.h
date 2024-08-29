@@ -1,5 +1,5 @@
-#ifndef KUROKO_UPPER_BODY_ACTION_MODULE_H_
-#define KUROKO_UPPER_BODY_ACTION_MODULE_H_
+#ifndef KUROKO_ACTION_MODULE_H_
+#define KUROKO_ACTION_MODULE_H_
 
 #define _USE_MATH_DEFINES
 #include <yaml-cpp/yaml.h>
@@ -41,12 +41,11 @@ enum class FinishType
   NONE_ZERO_FINISH
 };
 
-class UpperBodyActionModule : public robotis_framework::MotionModule,
-                              public robotis_framework::Singleton<UpperBodyActionModule>
+class ActionModule : public robotis_framework::MotionModule, public robotis_framework::Singleton<ActionModule>
 {
 public:
-  UpperBodyActionModule();
-  virtual ~UpperBodyActionModule();
+  ActionModule();
+  virtual ~ActionModule();
 
   void initialize(const int control_cycle_msec, robotis_framework::Robot* robot) override;
   void process(std::map<std::string, robotis_framework::Dynamixel*> dxls,
@@ -108,4 +107,4 @@ private:
 };
 
 }  // namespace motion_control
-#endif /* KUROKO_UPPER_BODY_ACTION_MODULE_H_ */
+#endif /* KUROKO_ACTION_MODULE_H_ */

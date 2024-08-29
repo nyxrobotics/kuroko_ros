@@ -7,11 +7,11 @@ namespace fs = std::filesystem;
 namespace fs = std::experimental::filesystem;
 #endif
 
-#include "kuroko_upper_body_action_module/upper_body_action_module.h"
+#include "kuroko_action_module/action_module.h"
 
 namespace motion_control
 {
-UpperBodyActionModule::UpperBodyActionModule()
+ActionModule::ActionModule()
   : control_cycle_msec_(8)
   , enable_(false)
   , current_section_(MotionSection::PAUSE_SECTION)
@@ -30,15 +30,15 @@ UpperBodyActionModule::UpperBodyActionModule()
   control_mode_ = robotis_framework::PositionControl;
 }
 
-UpperBodyActionModule::~UpperBodyActionModule()
+ActionModule::~ActionModule()
 {
   queue_thread_.join();
 }
 
-void UpperBodyActionModule::initialize(const int control_cycle_msec, robotis_framework::Robot* robot)
+void ActionModule::initialize(const int control_cycle_msec, robotis_framework::Robot* robot)
 {
   control_cycle_msec_ = control_cycle_msec;
-  queue_thread_ = boost::thread(boost::bind(&UpperBodyActionModule::queueThread, this));
+  queue_thread_ = boost::thread(boost::bind(&ActionModule::queueThread, this));
 
   for (auto& dxl : robot->dxls_)
   {
@@ -55,22 +55,22 @@ void UpperBodyActionModule::initialize(const int control_cycle_msec, robotis_fra
   }
 
   ros::NodeHandle ros_node;
-  std::string joint_names_path = ros::package::getPath("kuroko_upper_body_action_module") + "/config/joint_names.yaml";
+  std::string joint_names_path = ros::package::getPath("kuroko_action_module") + "/config/joint_names.yaml";
   loadConfigJointNames(joint_names_path);
 
-  std::string motion_path = ros::package::getPath("kuroko_upper_body_action_module") + "/motion";
+  std::string motion_path = ros::package::getPath("kuroko_action_module") + "/motion";
   loadAllMotions(motion_path);
 
   playing_ = false;
 }
 
-void UpperBodyActionModule::loadConfigJointNames(const std::string& file_name)
+void ActionModule::loadConfigJointNames(const std::string& file_name)
 {
   YAML::Node config = YAML::LoadFile(file_name);
   config_joint_names_ = config["joint_names"].as<std::vector<std::string>>();
 }
 
-void UpperBodyActionModule::loadAllMotions(const std::string& directory)
+void ActionModule::loadAllMotions(const std::string& directory)
 {
   for (const auto& entry : fs::directory_iterator(directory))
   {
@@ -82,7 +82,7 @@ void UpperBodyActionModule::loadAllMotions(const std::string& directory)
   }
 }
 
-void UpperBodyActionModule::loadYAMLFile(const std::string& file_name, const std::string& motion_name)
+void ActionModule::loadYAMLFile(const std::string& file_name, const std::string& motion_name)
 {
   YAML::Node config = YAML::LoadFile(file_name);
   std::vector<std::string> motion_joint_names = config["joint_names"].as<std::vector<std::string>>();
@@ -127,7 +127,7 @@ void UpperBodyActionModule::loadYAMLFile(const std::string& file_name, const std
   time_from_start_map_[motion_name] = time_from_start;
 }
 
-void UpperBodyActionModule::queueThread()
+void ActionModule::queueThread()
 {
   ros::NodeHandle ros_node;
   ros::CallbackQueue callback_queue;
@@ -138,26 +138,26 @@ void UpperBodyActionModule::queueThread()
   done_msg_pub_ = ros_node.advertise<std_msgs::String>("/motion_control/movement_done", 5);
 
   ros::Subscriber action_page_sub =
-      ros_node.subscribe("/motion_control/action/page_num", 5, &UpperBodyActionModule::pageNumberCallback, this);
+      ros_node.subscribe("/motion_control/action/page_num", 5, &ActionModule::pageNumberCallback, this);
   ros::Subscriber start_action_sub =
-      ros_node.subscribe("/motion_control/action/start_action", 5, &UpperBodyActionModule::startActionCallback, this);
+      ros_node.subscribe("/motion_control/action/start_action", 5, &ActionModule::startActionCallback, this);
 
-  ros::ServiceServer is_running_server = ros_node.advertiseService(
-      "/motion_control/action/is_running", &UpperBodyActionModule::isRunningServiceCallback, this);
+  ros::ServiceServer is_running_server =
+      ros_node.advertiseService("/motion_control/action/is_running", &ActionModule::isRunningServiceCallback, this);
 
   ros::WallDuration duration(control_cycle_msec_ / 1000.0);
   while (ros_node.ok())
     callback_queue.callAvailable(duration);
 }
 
-bool UpperBodyActionModule::isRunningServiceCallback(op3_action_module_msgs::IsRunning::Request& req,
-                                                     op3_action_module_msgs::IsRunning::Response& res)
+bool ActionModule::isRunningServiceCallback(op3_action_module_msgs::IsRunning::Request& req,
+                                            op3_action_module_msgs::IsRunning::Response& res)
 {
   res.is_running = isRunning();
   return true;
 }
 
-void UpperBodyActionModule::pageNumberCallback(const std_msgs::Int32::ConstPtr& msg)
+void ActionModule::pageNumberCallback(const std_msgs::Int32::ConstPtr& msg)
 {
   if (!enable_)
   {
@@ -188,7 +188,7 @@ void UpperBodyActionModule::pageNumberCallback(const std_msgs::Int32::ConstPtr& 
   }
 }
 
-void UpperBodyActionModule::startActionCallback(const op3_action_module_msgs::StartAction::ConstPtr& msg)
+void ActionModule::startActionCallback(const op3_action_module_msgs::StartAction::ConstPtr& msg)
 {
   if (!enable_)
   {
@@ -236,8 +236,8 @@ void UpperBodyActionModule::startActionCallback(const op3_action_module_msgs::St
   }
 }
 
-void UpperBodyActionModule::process(std::map<std::string, robotis_framework::Dynamixel*> dxls,
-                                    std::map<std::string, double> sensors)
+void ActionModule::process(std::map<std::string, robotis_framework::Dynamixel*> dxls,
+                           std::map<std::string, double> sensors)
 {
   if (!enable_)
     return;
@@ -289,7 +289,7 @@ void UpperBodyActionModule::process(std::map<std::string, robotis_framework::Dyn
   }
 }
 
-void UpperBodyActionModule::playMotionByName(const std::string& motion_name)
+void ActionModule::playMotionByName(const std::string& motion_name)
 {
   if (positions_map_.find(motion_name) == positions_map_.end())
   {
@@ -312,7 +312,7 @@ void UpperBodyActionModule::playMotionByName(const std::string& motion_name)
   }
 }
 
-void UpperBodyActionModule::publishStatusMsg(unsigned int type, std::string msg)
+void ActionModule::publishStatusMsg(unsigned int type, std::string msg)
 {
   robotis_controller_msgs::StatusMsg status;
   status.header.stamp = ros::Time::now();
@@ -323,7 +323,7 @@ void UpperBodyActionModule::publishStatusMsg(unsigned int type, std::string msg)
   status_msg_pub_.publish(status);
 }
 
-void UpperBodyActionModule::publishDoneMsg(std::string msg)
+void ActionModule::publishDoneMsg(std::string msg)
 {
   std_msgs::String done_msg;
   done_msg.data = msg;
@@ -331,12 +331,12 @@ void UpperBodyActionModule::publishDoneMsg(std::string msg)
   done_msg_pub_.publish(done_msg);
 }
 
-bool UpperBodyActionModule::isRunning()
+bool ActionModule::isRunning()
 {
   return playing_;
 }
 
-void UpperBodyActionModule::brake()
+void ActionModule::brake()
 {
   playing_ = false;
 }

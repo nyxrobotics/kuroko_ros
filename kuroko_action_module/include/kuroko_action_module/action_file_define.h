@@ -1,6 +1,6 @@
 
-#ifndef UPPER_BODY_ACTION_FILE_DEFINE_H_
-#define UPPER_BODY_ACTION_FILE_DEFINE_H_
+#ifndef ACTION_FILE_DEFINE_H_
+#define ACTION_FILE_DEFINE_H_
 
 namespace motion_control
 {
@@ -53,4 +53,4 @@ typedef struct  // Page Structure (total 512unsigned char)
 }  // namespace action_file_define
 }  // namespace motion_control
 
-#endif /* UPPER_BODY_ACTION_FILE_DEFINE_H_ */
+#endif /* ACTION_FILE_DEFINE_H_ */

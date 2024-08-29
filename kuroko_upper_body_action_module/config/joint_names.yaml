@@ -1,0 +1,10 @@
+joint_names:
+  - chest
+  - shoulder_r_pitch
+  - shoulder_r_roll
+  - elbow_r_front
+  - elbow_r_rear
+  - shoulder_l_pitch
+  - shoulder_l_roll
+  - elbow_l_front
+  - elbow_l_rear

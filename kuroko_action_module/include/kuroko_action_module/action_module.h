@@ -67,6 +67,7 @@ public:
   void onModuleDisable();
   bool isRunning();
   void stop();
+  std::vector<std::string> getMotionNames();
 
 private:
   int control_cycle_msec_;

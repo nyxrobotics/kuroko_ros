@@ -23,6 +23,7 @@ find_package(
              interactive_markers
              cmake_modules
              eigen_conversions
+             kuroko_action_module
              robotis_controller_msgs
              op3_walking_module_msgs
              op3_online_walking_module_msgs
@@ -92,6 +93,7 @@ catkin_package(
     interactive_markers
     cmake_modules
     eigen_conversions
+    kuroko_action_module
     robotis_controller_msgs
     op3_walking_module_msgs
     op3_online_walking_module_msgs

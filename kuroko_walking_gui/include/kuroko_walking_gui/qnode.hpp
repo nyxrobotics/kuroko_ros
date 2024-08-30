@@ -44,6 +44,9 @@
 #include "op3_online_walking_module_msgs/Step2DArray.h"
 #include "op3_online_walking_module_msgs/WalkingParam.h"
 
+// Action module
+#include "kuroko_action_module/action_module.h"
+
 #endif
 
 #define DEG2RAD (M_PI / 180.0)

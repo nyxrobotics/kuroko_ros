@@ -427,4 +427,14 @@ void ActionModule::stop()
   stop_playing_ = true;
 }
 
+std::vector<std::string> ActionModule::getMotionNames()
+{
+  std::vector<std::string> motion_names;
+  for (const auto& motion : positions_map_)
+  {
+    motion_names.push_back(motion.first);
+  }
+  return motion_names;
+}
+
 }  // namespace motion_control

@@ -373,21 +373,6 @@ void ActionModule::publishDoneMsg(std::string msg)
   done_msg_pub_.publish(done_msg);
 }
 
-bool ActionModule::isRunning()
-{
-  return playing_;
-}
-
-void ActionModule::brake()
-{
-  playing_ = false;
-}
-
-void ActionModule::stop()
-{
-  stop_playing_ = true;
-}
-
 void ActionModule::processMotionStep()
 {
   if (!playing_)
@@ -414,6 +399,32 @@ void ActionModule::processMotionStep()
     playing_ = false;
     publishDoneMsg("Motion completed");
   }
+}
+
+void ActionModule::brake()
+{
+  playing_ = false;
+}
+
+void ActionModule::onModuleEnable()
+{
+  action_module_enabled_ = true;
+}
+
+void ActionModule::onModuleDisable()
+{
+  action_module_enabled_ = false;
+  brake();
+}
+
+bool ActionModule::isRunning()
+{
+  return playing_;
+}
+
+void ActionModule::stop()
+{
+  stop_playing_ = true;
 }
 
 }  // namespace motion_control

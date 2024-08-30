@@ -60,12 +60,13 @@ public:
   void process(std::map<std::string, robotis_framework::Dynamixel*> dxls,
                std::map<std::string, double> sensors) override;
 
-  void stop();
-  bool isRunning();
-  void brake();
-
   void loadAllMotions(const std::string& directory);
   void playMotionByName(const std::string& motion_name);
+  void brake();
+  void onModuleEnable();
+  void onModuleDisable();
+  bool isRunning();
+  void stop();
 
 private:
   int control_cycle_msec_;

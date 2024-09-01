@@ -20,8 +20,7 @@
   <xacro:include filename="$(find kuroko_description)/xacro/kuroko/transmission/leg_l.gazebo"/>
 
   <xacro:include filename="$(find kuroko_description)/xacro/sensors/imu/n100mini.xacro"/>
-  <xacro:include filename="$(find kuroko_description)/xacro/sensors/depth/maixsense_a075v.xacro"/>
-
+  <xacro:include filename="$(find kuroko_description)/xacro/sensors/camera/usb_camera.xacro"/>
 
   <!-- MACRO:Loading Gazebo Controllers for joints -->
   <xacro:macro name="gazebo_plugin_xacro" params="gazebo_motor_model">
@@ -66,6 +65,10 @@
     <xacro:n100mini_imu parent="chest_link" name="imu">
       <origin xyz="0 0 0.008" rpy="0 0 0"/>
     </xacro:n100mini_imu>
+    <xacro:usb_camera parent="waist_link" name="usb_camera">
+      <origin xyz="0.075230 0 -0.032085" rpy="0 0.1745329 0"/>
+    </xacro:usb_camera>
+
   </xacro:macro>
 
   <!-- Load Macros -->

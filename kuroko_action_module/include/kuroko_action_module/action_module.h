@@ -25,31 +25,10 @@ namespace fs = std::experimental::filesystem;
 #include "std_msgs/Int32.h"
 #include "op3_action_module_msgs/IsRunning.h"
 #include "op3_action_module_msgs/StartAction.h"
+#include "motion_files.h"
 
 namespace motion_control
 {
-/**************************************
- * Section             /----\
- *                    /|    |\
- *        /+---------/ |    | \
- *       / |        |  |    |  \
- * -----/  |        |  |    |   \----
- *      PRE  MAIN   PRE MAIN POST PAUSE
- ***************************************/
-enum class MotionSection
-{
-  PRE_SECTION,
-  MAIN_SECTION,
-  POST_SECTION,
-  PAUSE_SECTION
-};
-
-enum class FinishType
-{
-  ZERO_FINISH,
-  NONE_ZERO_FINISH
-};
-
 class ActionModule : public robotis_framework::MotionModule, public robotis_framework::Singleton<ActionModule>
 {
 public:
@@ -70,53 +49,41 @@ public:
   std::vector<std::string> getMotionNames();
 
 private:
+  boost::thread queue_thread_;
+  ros::Publisher status_msg_pub_;
+  ros::Publisher done_msg_pub_;
+
   int control_cycle_msec_;
-  bool enable_;
 
-  MotionSection current_section_;
-  FinishType finish_type_;
-
-  std::string module_name_;
-  bool playing_;
-  bool first_driving_start_;
-  bool playing_finished_;
-  int page_step_count_;
-  int play_page_idx_;
-  bool stop_playing_;
+  bool start_playing_requested_;
+  bool stop_playing_requested_;
+  bool joints_enabled_;
   bool action_module_enabled_;
-  bool previous_running_;
-  bool present_running_;
-  std::string current_motion_;  // Added to track the current motion
 
-  std::map<std::string, int> joint_name_to_id_;
-  std::map<int, std::string> joint_id_to_name_;
+  MotionFiles motion_files_;
+  MotionStatus motion_status_;
+
+  std::map<std::string, int> joint_name_to_dxl_id_;
+  std::map<int, std::string> dxl_id_to_joint_name_;
   std::map<std::string, robotis_framework::DynamixelState*> action_result_;
   std::map<std::string, robotis_framework::DynamixelState*> result_;
   std::map<std::string, bool> action_joints_enable_;
 
-  ros::Publisher status_msg_pub_;
-  ros::Publisher done_msg_pub_;
-
-  boost::thread queue_thread_;
-
   void queueThread();
+  void publishStatusMsg(unsigned int type, std::string msg);
+  void publishDoneMsg(std::string msg);
+
   bool isRunningServiceCallback(op3_action_module_msgs::IsRunning::Request& req,
                                 op3_action_module_msgs::IsRunning::Response& res);
   void pageNumberCallback(const std_msgs::Int32::ConstPtr& msg);
   void startActionCallback(const op3_action_module_msgs::StartAction::ConstPtr& msg);
-  void publishStatusMsg(unsigned int type, std::string msg);
-  void publishDoneMsg(std::string msg);
+  void startActionCallback(const op3_action_module_msgs::StartAction::ConstPtr& msg);
   void processMotionStep();
 
   void loadConfigJointNames(const std::string& file_name);
   void loadYAMLFile(const std::string& file_name, const std::string& motion_name);
 
   std::vector<std::string> config_joint_names_;
-  std::map<std::string, std::vector<std::vector<double>>> positions_map_;
-  std::map<std::string, std::vector<std::vector<double>>> velocities_map_;
-  std::map<std::string, std::vector<std::vector<double>>> accelerations_map_;
-  std::map<std::string, std::vector<std::vector<double>>> efforts_map_;
-  std::map<std::string, std::vector<double>> time_from_start_map_;
 };
 
 }  // namespace motion_control

@@ -33,7 +33,7 @@ OnlineWalkingModule::OnlineWalkingModule()
   result_["thigh_r_front_active"] = new robotis_framework::DynamixelState();
   result_["shin_r_active"] = new robotis_framework::DynamixelState();
   result_["ankle_r_roll"] = new robotis_framework::DynamixelState();
-  
+
   result_["ankle_l_yaw"] = new robotis_framework::DynamixelState();
   result_["hip_l_roll"] = new robotis_framework::DynamixelState();
   result_["hip_l_pitch"] = new robotis_framework::DynamixelState();
@@ -42,18 +42,18 @@ OnlineWalkingModule::OnlineWalkingModule()
   result_["ankle_l_roll"] = new robotis_framework::DynamixelState();
 
   /* leg */
-  joint_name_to_id_["ankle_r_yaw"] = 1;
-  joint_name_to_id_["ankle_l_yaw"] = 2;
-  joint_name_to_id_["hip_r_roll"] = 3;
-  joint_name_to_id_["hip_l_roll"] = 4;
-  joint_name_to_id_["hip_r_pitch"] = 5;
-  joint_name_to_id_["hip_l_pitch"] = 6;
-  joint_name_to_id_["thigh_r_front_active"] = 7;
-  joint_name_to_id_["thigh_l_front_active"] = 8;
-  joint_name_to_id_["shin_r_active"] = 9;
-  joint_name_to_id_["shin_l_active"] = 10;
-  joint_name_to_id_["ankle_r_roll"] = 11;
-  joint_name_to_id_["ankle_l_roll"] = 12;
+  joint_name_to_dxl_id_["ankle_r_yaw"] = 1;
+  joint_name_to_dxl_id_["ankle_l_yaw"] = 2;
+  joint_name_to_dxl_id_["hip_r_roll"] = 3;
+  joint_name_to_dxl_id_["hip_l_roll"] = 4;
+  joint_name_to_dxl_id_["hip_r_pitch"] = 5;
+  joint_name_to_dxl_id_["hip_l_pitch"] = 6;
+  joint_name_to_dxl_id_["thigh_r_front_active"] = 7;
+  joint_name_to_dxl_id_["thigh_l_front_active"] = 8;
+  joint_name_to_dxl_id_["shin_r_active"] = 9;
+  joint_name_to_dxl_id_["shin_l_active"] = 10;
+  joint_name_to_dxl_id_["ankle_r_roll"] = 11;
+  joint_name_to_dxl_id_["ankle_l_roll"] = 12;
 
   /* parameter */
   number_of_joints_ = 12;
@@ -337,35 +337,35 @@ void OnlineWalkingModule::parseJointFeedbackGainData(const std::string& path)
     return;
   }
 
-  joint_feedback_[joint_name_to_id_["ankle_r_yaw"] - 1].p_gain_ = doc["ankle_r_yaw_p_gain"].as<double>();
-  joint_feedback_[joint_name_to_id_["ankle_r_yaw"] - 1].d_gain_ = doc["ankle_r_yaw_d_gain"].as<double>();
-  joint_feedback_[joint_name_to_id_["hip_r_roll"] - 1].p_gain_ = doc["hip_r_roll_p_gain"].as<double>();
-  joint_feedback_[joint_name_to_id_["hip_r_roll"] - 1].d_gain_ = doc["hip_r_roll_d_gain"].as<double>();
-  joint_feedback_[joint_name_to_id_["hip_r_pitch"] - 1].p_gain_ = doc["hip_r_pitch_p_gain"].as<double>();
-  joint_feedback_[joint_name_to_id_["hip_r_pitch"] - 1].d_gain_ = doc["hip_r_pitch_d_gain"].as<double>();
-  joint_feedback_[joint_name_to_id_["thigh_r_front_active"] - 1].p_gain_ =
+  joint_feedback_[joint_name_to_dxl_id_["ankle_r_yaw"] - 1].p_gain_ = doc["ankle_r_yaw_p_gain"].as<double>();
+  joint_feedback_[joint_name_to_dxl_id_["ankle_r_yaw"] - 1].d_gain_ = doc["ankle_r_yaw_d_gain"].as<double>();
+  joint_feedback_[joint_name_to_dxl_id_["hip_r_roll"] - 1].p_gain_ = doc["hip_r_roll_p_gain"].as<double>();
+  joint_feedback_[joint_name_to_dxl_id_["hip_r_roll"] - 1].d_gain_ = doc["hip_r_roll_d_gain"].as<double>();
+  joint_feedback_[joint_name_to_dxl_id_["hip_r_pitch"] - 1].p_gain_ = doc["hip_r_pitch_p_gain"].as<double>();
+  joint_feedback_[joint_name_to_dxl_id_["hip_r_pitch"] - 1].d_gain_ = doc["hip_r_pitch_d_gain"].as<double>();
+  joint_feedback_[joint_name_to_dxl_id_["thigh_r_front_active"] - 1].p_gain_ =
       doc["thigh_r_front_active_p_gain"].as<double>();
-  joint_feedback_[joint_name_to_id_["thigh_r_front_active"] - 1].d_gain_ =
+  joint_feedback_[joint_name_to_dxl_id_["thigh_r_front_active"] - 1].d_gain_ =
       doc["thigh_r_front_active_d_gain"].as<double>();
-  joint_feedback_[joint_name_to_id_["shin_r_active"] - 1].p_gain_ = doc["shin_r_active_p_gain"].as<double>();
-  joint_feedback_[joint_name_to_id_["shin_r_active"] - 1].d_gain_ = doc["shin_r_active_d_gain"].as<double>();
-  joint_feedback_[joint_name_to_id_["ankle_r_roll"] - 1].p_gain_ = doc["ankle_r_roll_p_gain"].as<double>();
-  joint_feedback_[joint_name_to_id_["ankle_r_roll"] - 1].d_gain_ = doc["ankle_r_roll_d_gain"].as<double>();
+  joint_feedback_[joint_name_to_dxl_id_["shin_r_active"] - 1].p_gain_ = doc["shin_r_active_p_gain"].as<double>();
+  joint_feedback_[joint_name_to_dxl_id_["shin_r_active"] - 1].d_gain_ = doc["shin_r_active_d_gain"].as<double>();
+  joint_feedback_[joint_name_to_dxl_id_["ankle_r_roll"] - 1].p_gain_ = doc["ankle_r_roll_p_gain"].as<double>();
+  joint_feedback_[joint_name_to_dxl_id_["ankle_r_roll"] - 1].d_gain_ = doc["ankle_r_roll_d_gain"].as<double>();
 
-  joint_feedback_[joint_name_to_id_["ankle_l_yaw"] - 1].p_gain_ = doc["ankle_l_yaw_p_gain"].as<double>();
-  joint_feedback_[joint_name_to_id_["ankle_l_yaw"] - 1].d_gain_ = doc["ankle_l_yaw_d_gain"].as<double>();
-  joint_feedback_[joint_name_to_id_["hip_l_roll"] - 1].p_gain_ = doc["hip_l_roll_p_gain"].as<double>();
-  joint_feedback_[joint_name_to_id_["hip_l_roll"] - 1].d_gain_ = doc["hip_l_roll_d_gain"].as<double>();
-  joint_feedback_[joint_name_to_id_["hip_l_pitch"] - 1].p_gain_ = doc["hip_l_pitch_p_gain"].as<double>();
-  joint_feedback_[joint_name_to_id_["hip_l_pitch"] - 1].d_gain_ = doc["hip_l_pitch_d_gain"].as<double>();
-  joint_feedback_[joint_name_to_id_["thigh_l_front_active"] - 1].p_gain_ =
+  joint_feedback_[joint_name_to_dxl_id_["ankle_l_yaw"] - 1].p_gain_ = doc["ankle_l_yaw_p_gain"].as<double>();
+  joint_feedback_[joint_name_to_dxl_id_["ankle_l_yaw"] - 1].d_gain_ = doc["ankle_l_yaw_d_gain"].as<double>();
+  joint_feedback_[joint_name_to_dxl_id_["hip_l_roll"] - 1].p_gain_ = doc["hip_l_roll_p_gain"].as<double>();
+  joint_feedback_[joint_name_to_dxl_id_["hip_l_roll"] - 1].d_gain_ = doc["hip_l_roll_d_gain"].as<double>();
+  joint_feedback_[joint_name_to_dxl_id_["hip_l_pitch"] - 1].p_gain_ = doc["hip_l_pitch_p_gain"].as<double>();
+  joint_feedback_[joint_name_to_dxl_id_["hip_l_pitch"] - 1].d_gain_ = doc["hip_l_pitch_d_gain"].as<double>();
+  joint_feedback_[joint_name_to_dxl_id_["thigh_l_front_active"] - 1].p_gain_ =
       doc["thigh_l_front_active_p_gain"].as<double>();
-  joint_feedback_[joint_name_to_id_["thigh_l_front_active"] - 1].d_gain_ =
+  joint_feedback_[joint_name_to_dxl_id_["thigh_l_front_active"] - 1].d_gain_ =
       doc["thigh_l_front_active_d_gain"].as<double>();
-  joint_feedback_[joint_name_to_id_["shin_l_active"] - 1].p_gain_ = doc["shin_l_active_p_gain"].as<double>();
-  joint_feedback_[joint_name_to_id_["shin_l_active"] - 1].d_gain_ = doc["shin_l_active_d_gain"].as<double>();
-  joint_feedback_[joint_name_to_id_["ankle_l_roll"] - 1].p_gain_ = doc["ankle_l_roll_p_gain"].as<double>();
-  joint_feedback_[joint_name_to_id_["ankle_l_roll"] - 1].d_gain_ = doc["ankle_l_roll_d_gain"].as<double>();
+  joint_feedback_[joint_name_to_dxl_id_["shin_l_active"] - 1].p_gain_ = doc["shin_l_active_p_gain"].as<double>();
+  joint_feedback_[joint_name_to_dxl_id_["shin_l_active"] - 1].d_gain_ = doc["shin_l_active_d_gain"].as<double>();
+  joint_feedback_[joint_name_to_dxl_id_["ankle_l_roll"] - 1].p_gain_ = doc["ankle_l_roll_p_gain"].as<double>();
+  joint_feedback_[joint_name_to_dxl_id_["ankle_l_roll"] - 1].d_gain_ = doc["ankle_l_roll_d_gain"].as<double>();
 }
 
 void OnlineWalkingModule::parseJointFeedforwardGainData(const std::string& path)
@@ -383,21 +383,21 @@ void OnlineWalkingModule::parseJointFeedforwardGainData(const std::string& path)
     return;
   }
 
-  joint_feedforward_gain_[joint_name_to_id_["ankle_r_yaw"] - 1] = doc["ankle_r_yaw_gain"].as<double>();
-  joint_feedforward_gain_[joint_name_to_id_["hip_r_roll"] - 1] = doc["hip_r_roll_gain"].as<double>();
-  joint_feedforward_gain_[joint_name_to_id_["hip_r_pitch"] - 1] = doc["hip_r_pitch_gain"].as<double>();
-  joint_feedforward_gain_[joint_name_to_id_["thigh_r_front_active"] - 1] =
+  joint_feedforward_gain_[joint_name_to_dxl_id_["ankle_r_yaw"] - 1] = doc["ankle_r_yaw_gain"].as<double>();
+  joint_feedforward_gain_[joint_name_to_dxl_id_["hip_r_roll"] - 1] = doc["hip_r_roll_gain"].as<double>();
+  joint_feedforward_gain_[joint_name_to_dxl_id_["hip_r_pitch"] - 1] = doc["hip_r_pitch_gain"].as<double>();
+  joint_feedforward_gain_[joint_name_to_dxl_id_["thigh_r_front_active"] - 1] =
       doc["thigh_r_front_active_gain"].as<double>();
-  joint_feedforward_gain_[joint_name_to_id_["shin_r_active"] - 1] = doc["shin_r_active_gain"].as<double>();
-  joint_feedforward_gain_[joint_name_to_id_["ankle_r_roll"] - 1] = doc["ankle_r_roll_gain"].as<double>();
+  joint_feedforward_gain_[joint_name_to_dxl_id_["shin_r_active"] - 1] = doc["shin_r_active_gain"].as<double>();
+  joint_feedforward_gain_[joint_name_to_dxl_id_["ankle_r_roll"] - 1] = doc["ankle_r_roll_gain"].as<double>();
 
-  joint_feedforward_gain_[joint_name_to_id_["ankle_l_yaw"] - 1] = doc["ankle_l_yaw_gain"].as<double>();
-  joint_feedforward_gain_[joint_name_to_id_["hip_l_roll"] - 1] = doc["hip_l_roll_gain"].as<double>();
-  joint_feedforward_gain_[joint_name_to_id_["hip_l_pitch"] - 1] = doc["hip_l_pitch_gain"].as<double>();
-  joint_feedforward_gain_[joint_name_to_id_["thigh_l_front_active"] - 1] =
+  joint_feedforward_gain_[joint_name_to_dxl_id_["ankle_l_yaw"] - 1] = doc["ankle_l_yaw_gain"].as<double>();
+  joint_feedforward_gain_[joint_name_to_dxl_id_["hip_l_roll"] - 1] = doc["hip_l_roll_gain"].as<double>();
+  joint_feedforward_gain_[joint_name_to_dxl_id_["hip_l_pitch"] - 1] = doc["hip_l_pitch_gain"].as<double>();
+  joint_feedforward_gain_[joint_name_to_dxl_id_["thigh_l_front_active"] - 1] =
       doc["thigh_l_front_active_gain"].as<double>();
-  joint_feedforward_gain_[joint_name_to_id_["shin_l_active"] - 1] = doc["shin_l_active_gain"].as<double>();
-  joint_feedforward_gain_[joint_name_to_id_["ankle_l_roll"] - 1] = doc["ankle_l_roll_gain"].as<double>();
+  joint_feedforward_gain_[joint_name_to_dxl_id_["shin_l_active"] - 1] = doc["shin_l_active_gain"].as<double>();
+  joint_feedforward_gain_[joint_name_to_dxl_id_["ankle_l_roll"] - 1] = doc["ankle_l_roll_gain"].as<double>();
 }
 
 void OnlineWalkingModule::setWholebodyBalanceMsgCallback(const std_msgs::String::ConstPtr& msg)
@@ -603,7 +603,7 @@ void OnlineWalkingModule::goalJointPoseCallback(const op3_online_walking_module_
     for (size_t i = 0; i < msg.pose.name.size(); i++)
     {
       std::string joint_name = msg.pose.name[i];
-      goal_joint_pos_[joint_name_to_id_[joint_name] - 1] = msg.pose.position[i];
+      goal_joint_pos_[joint_name_to_dxl_id_[joint_name] - 1] = msg.pose.position[i];
     }
 
     joint_control_initialize_ = false;
@@ -1125,20 +1125,20 @@ void OnlineWalkingModule::calcRobotPose()
   Eigen::VectorXd r_leg_joint_pos, l_leg_joint_pos;
 
   r_leg_joint_pos.resize(6);
-  r_leg_joint_pos(0) = des_joint_pos_[joint_name_to_id_["ankle_r_yaw"] - 1];
-  r_leg_joint_pos(1) = des_joint_pos_[joint_name_to_id_["hip_r_roll"] - 1];
-  r_leg_joint_pos(2) = des_joint_pos_[joint_name_to_id_["hip_r_pitch"] - 1];
-  r_leg_joint_pos(3) = des_joint_pos_[joint_name_to_id_["thigh_r_front_active"] - 1];
-  r_leg_joint_pos(4) = des_joint_pos_[joint_name_to_id_["shin_r_active"] - 1];
-  r_leg_joint_pos(5) = des_joint_pos_[joint_name_to_id_["ankle_r_roll"] - 1];
+  r_leg_joint_pos(0) = des_joint_pos_[joint_name_to_dxl_id_["ankle_r_yaw"] - 1];
+  r_leg_joint_pos(1) = des_joint_pos_[joint_name_to_dxl_id_["hip_r_roll"] - 1];
+  r_leg_joint_pos(2) = des_joint_pos_[joint_name_to_dxl_id_["hip_r_pitch"] - 1];
+  r_leg_joint_pos(3) = des_joint_pos_[joint_name_to_dxl_id_["thigh_r_front_active"] - 1];
+  r_leg_joint_pos(4) = des_joint_pos_[joint_name_to_dxl_id_["shin_r_active"] - 1];
+  r_leg_joint_pos(5) = des_joint_pos_[joint_name_to_dxl_id_["ankle_r_roll"] - 1];
 
   l_leg_joint_pos.resize(6);
-  l_leg_joint_pos(0) = des_joint_pos_[joint_name_to_id_["ankle_l_yaw"] - 1];
-  l_leg_joint_pos(1) = des_joint_pos_[joint_name_to_id_["hip_l_roll"] - 1];
-  l_leg_joint_pos(2) = des_joint_pos_[joint_name_to_id_["hip_l_pitch"] - 1];
-  l_leg_joint_pos(3) = des_joint_pos_[joint_name_to_id_["thigh_l_front_active"] - 1];
-  l_leg_joint_pos(4) = des_joint_pos_[joint_name_to_id_["shin_l_active"] - 1];
-  l_leg_joint_pos(5) = des_joint_pos_[joint_name_to_id_["ankle_l_roll"] - 1];
+  l_leg_joint_pos(0) = des_joint_pos_[joint_name_to_dxl_id_["ankle_l_yaw"] - 1];
+  l_leg_joint_pos(1) = des_joint_pos_[joint_name_to_dxl_id_["hip_l_roll"] - 1];
+  l_leg_joint_pos(2) = des_joint_pos_[joint_name_to_dxl_id_["hip_l_pitch"] - 1];
+  l_leg_joint_pos(3) = des_joint_pos_[joint_name_to_dxl_id_["thigh_l_front_active"] - 1];
+  l_leg_joint_pos(4) = des_joint_pos_[joint_name_to_dxl_id_["shin_l_active"] - 1];
+  l_leg_joint_pos(5) = des_joint_pos_[joint_name_to_dxl_id_["ankle_l_roll"] - 1];
 
   kuroko_kdl_->setJointPosition(r_leg_joint_pos, l_leg_joint_pos);
 
@@ -1406,20 +1406,20 @@ bool OnlineWalkingModule::setBalanceControl()
   Eigen::VectorXd r_leg_joint_pos, l_leg_joint_pos;
 
   r_leg_joint_pos.resize(6);
-  r_leg_joint_pos(0) = des_joint_pos_[joint_name_to_id_["ankle_r_yaw"] - 1];
-  r_leg_joint_pos(1) = des_joint_pos_[joint_name_to_id_["hip_r_roll"] - 1];
-  r_leg_joint_pos(2) = des_joint_pos_[joint_name_to_id_["hip_r_pitch"] - 1];
-  r_leg_joint_pos(3) = des_joint_pos_[joint_name_to_id_["thigh_r_front_active"] - 1];
-  r_leg_joint_pos(4) = des_joint_pos_[joint_name_to_id_["shin_r_active"] - 1];
-  r_leg_joint_pos(5) = des_joint_pos_[joint_name_to_id_["ankle_r_roll"] - 1];
+  r_leg_joint_pos(0) = des_joint_pos_[joint_name_to_dxl_id_["ankle_r_yaw"] - 1];
+  r_leg_joint_pos(1) = des_joint_pos_[joint_name_to_dxl_id_["hip_r_roll"] - 1];
+  r_leg_joint_pos(2) = des_joint_pos_[joint_name_to_dxl_id_["hip_r_pitch"] - 1];
+  r_leg_joint_pos(3) = des_joint_pos_[joint_name_to_dxl_id_["thigh_r_front_active"] - 1];
+  r_leg_joint_pos(4) = des_joint_pos_[joint_name_to_dxl_id_["shin_r_active"] - 1];
+  r_leg_joint_pos(5) = des_joint_pos_[joint_name_to_dxl_id_["ankle_r_roll"] - 1];
 
   l_leg_joint_pos.resize(6);
-  l_leg_joint_pos(0) = des_joint_pos_[joint_name_to_id_["ankle_l_yaw"] - 1];
-  l_leg_joint_pos(1) = des_joint_pos_[joint_name_to_id_["hip_l_roll"] - 1];
-  l_leg_joint_pos(2) = des_joint_pos_[joint_name_to_id_["hip_l_pitch"] - 1];
-  l_leg_joint_pos(3) = des_joint_pos_[joint_name_to_id_["thigh_l_front_active"] - 1];
-  l_leg_joint_pos(4) = des_joint_pos_[joint_name_to_id_["shin_l_active"] - 1];
-  l_leg_joint_pos(5) = des_joint_pos_[joint_name_to_id_["ankle_l_roll"] - 1];
+  l_leg_joint_pos(0) = des_joint_pos_[joint_name_to_dxl_id_["ankle_l_yaw"] - 1];
+  l_leg_joint_pos(1) = des_joint_pos_[joint_name_to_dxl_id_["hip_l_roll"] - 1];
+  l_leg_joint_pos(2) = des_joint_pos_[joint_name_to_dxl_id_["hip_l_pitch"] - 1];
+  l_leg_joint_pos(3) = des_joint_pos_[joint_name_to_dxl_id_["thigh_l_front_active"] - 1];
+  l_leg_joint_pos(4) = des_joint_pos_[joint_name_to_dxl_id_["shin_l_active"] - 1];
+  l_leg_joint_pos(5) = des_joint_pos_[joint_name_to_dxl_id_["ankle_l_roll"] - 1];
 
   kuroko_kdl_->setJointPosition(r_leg_joint_pos, l_leg_joint_pos);
 
@@ -1435,19 +1435,19 @@ bool OnlineWalkingModule::setBalanceControl()
 
   if (ik_success)
   {
-    des_joint_pos_[joint_name_to_id_["ankle_r_yaw"] - 1] = r_leg_output[0];
-    des_joint_pos_[joint_name_to_id_["hip_r_roll"] - 1] = r_leg_output[1];
-    des_joint_pos_[joint_name_to_id_["hip_r_pitch"] - 1] = r_leg_output[2];
-    des_joint_pos_[joint_name_to_id_["thigh_r_front_active"] - 1] = r_leg_output[3];
-    des_joint_pos_[joint_name_to_id_["shin_r_active"] - 1] = r_leg_output[4];
-    des_joint_pos_[joint_name_to_id_["ankle_r_roll"] - 1] = r_leg_output[5];
+    des_joint_pos_[joint_name_to_dxl_id_["ankle_r_yaw"] - 1] = r_leg_output[0];
+    des_joint_pos_[joint_name_to_dxl_id_["hip_r_roll"] - 1] = r_leg_output[1];
+    des_joint_pos_[joint_name_to_dxl_id_["hip_r_pitch"] - 1] = r_leg_output[2];
+    des_joint_pos_[joint_name_to_dxl_id_["thigh_r_front_active"] - 1] = r_leg_output[3];
+    des_joint_pos_[joint_name_to_dxl_id_["shin_r_active"] - 1] = r_leg_output[4];
+    des_joint_pos_[joint_name_to_dxl_id_["ankle_r_roll"] - 1] = r_leg_output[5];
 
-    des_joint_pos_[joint_name_to_id_["ankle_l_yaw"] - 1] = l_leg_output[0];
-    des_joint_pos_[joint_name_to_id_["hip_l_roll"] - 1] = l_leg_output[1];
-    des_joint_pos_[joint_name_to_id_["hip_l_pitch"] - 1] = l_leg_output[2];
-    des_joint_pos_[joint_name_to_id_["thigh_l_front_active"] - 1] = l_leg_output[3];
-    des_joint_pos_[joint_name_to_id_["shin_l_active"] - 1] = l_leg_output[4];
-    des_joint_pos_[joint_name_to_id_["ankle_l_roll"] - 1] = l_leg_output[5];
+    des_joint_pos_[joint_name_to_dxl_id_["ankle_l_yaw"] - 1] = l_leg_output[0];
+    des_joint_pos_[joint_name_to_dxl_id_["hip_l_roll"] - 1] = l_leg_output[1];
+    des_joint_pos_[joint_name_to_dxl_id_["hip_l_pitch"] - 1] = l_leg_output[2];
+    des_joint_pos_[joint_name_to_dxl_id_["thigh_l_front_active"] - 1] = l_leg_output[3];
+    des_joint_pos_[joint_name_to_dxl_id_["shin_l_active"] - 1] = l_leg_output[4];
+    des_joint_pos_[joint_name_to_dxl_id_["ankle_l_roll"] - 1] = l_leg_output[5];
   }
 
   return ik_success;
@@ -1480,35 +1480,35 @@ void OnlineWalkingModule::setFeedforwardControl()
 
   if (walking_leg_ == LEFT_LEG)
   {
-    support_leg_gain[joint_name_to_id_["hip_r_roll"] - 1] = 1.0;
-    support_leg_gain[joint_name_to_id_["hip_r_pitch"] - 1] = 1.0;
-    support_leg_gain[joint_name_to_id_["thigh_r_front_active"] - 1] = 1.0;
-    support_leg_gain[joint_name_to_id_["shin_r_active"] - 1] = 1.0;
-    support_leg_gain[joint_name_to_id_["ankle_r_roll"] - 1] = 1.0;
-    support_leg_gain[joint_name_to_id_["ankle_r_yaw"] - 1] = 1.0;
+    support_leg_gain[joint_name_to_dxl_id_["hip_r_roll"] - 1] = 1.0;
+    support_leg_gain[joint_name_to_dxl_id_["hip_r_pitch"] - 1] = 1.0;
+    support_leg_gain[joint_name_to_dxl_id_["thigh_r_front_active"] - 1] = 1.0;
+    support_leg_gain[joint_name_to_dxl_id_["shin_r_active"] - 1] = 1.0;
+    support_leg_gain[joint_name_to_dxl_id_["ankle_r_roll"] - 1] = 1.0;
+    support_leg_gain[joint_name_to_dxl_id_["ankle_r_yaw"] - 1] = 1.0;
 
-    support_leg_gain[joint_name_to_id_["hip_l_roll"] - 1] = 0.0;
-    support_leg_gain[joint_name_to_id_["hip_l_pitch"] - 1] = 0.0;
-    support_leg_gain[joint_name_to_id_["thigh_l_front_active"] - 1] = 0.0;
-    support_leg_gain[joint_name_to_id_["shin_l_active"] - 1] = 0.0;
-    support_leg_gain[joint_name_to_id_["ankle_l_roll"] - 1] = 0.0;
-    support_leg_gain[joint_name_to_id_["ankle_l_yaw"] - 1] = 0.0;
+    support_leg_gain[joint_name_to_dxl_id_["hip_l_roll"] - 1] = 0.0;
+    support_leg_gain[joint_name_to_dxl_id_["hip_l_pitch"] - 1] = 0.0;
+    support_leg_gain[joint_name_to_dxl_id_["thigh_l_front_active"] - 1] = 0.0;
+    support_leg_gain[joint_name_to_dxl_id_["shin_l_active"] - 1] = 0.0;
+    support_leg_gain[joint_name_to_dxl_id_["ankle_l_roll"] - 1] = 0.0;
+    support_leg_gain[joint_name_to_dxl_id_["ankle_l_yaw"] - 1] = 0.0;
   }
   else if (walking_leg_ == RIGHT_LEG)
   {
-    support_leg_gain[joint_name_to_id_["hip_r_roll"] - 1] = 0.0;
-    support_leg_gain[joint_name_to_id_["hip_r_pitch"] - 1] = 0.0;
-    support_leg_gain[joint_name_to_id_["thigh_r_front_active"] - 1] = 0.0;
-    support_leg_gain[joint_name_to_id_["shin_r_active"] - 1] = 0.0;
-    support_leg_gain[joint_name_to_id_["ankle_r_roll"] - 1] = 0.0;
-    support_leg_gain[joint_name_to_id_["ankle_r_yaw"] - 1] = 0.0;
+    support_leg_gain[joint_name_to_dxl_id_["hip_r_roll"] - 1] = 0.0;
+    support_leg_gain[joint_name_to_dxl_id_["hip_r_pitch"] - 1] = 0.0;
+    support_leg_gain[joint_name_to_dxl_id_["thigh_r_front_active"] - 1] = 0.0;
+    support_leg_gain[joint_name_to_dxl_id_["shin_r_active"] - 1] = 0.0;
+    support_leg_gain[joint_name_to_dxl_id_["ankle_r_roll"] - 1] = 0.0;
+    support_leg_gain[joint_name_to_dxl_id_["ankle_r_yaw"] - 1] = 0.0;
 
-    support_leg_gain[joint_name_to_id_["hip_l_roll"] - 1] = 1.0;
-    support_leg_gain[joint_name_to_id_["hip_l_pitch"] - 1] = 1.0;
-    support_leg_gain[joint_name_to_id_["thigh_l_front_active"] - 1] = 1.0;
-    support_leg_gain[joint_name_to_id_["shin_l_active"] - 1] = 1.0;
-    support_leg_gain[joint_name_to_id_["ankle_l_roll"] - 1] = 1.0;
-    support_leg_gain[joint_name_to_id_["ankle_l_yaw"] - 1] = 1.0;
+    support_leg_gain[joint_name_to_dxl_id_["hip_l_roll"] - 1] = 1.0;
+    support_leg_gain[joint_name_to_dxl_id_["hip_l_pitch"] - 1] = 1.0;
+    support_leg_gain[joint_name_to_dxl_id_["thigh_l_front_active"] - 1] = 1.0;
+    support_leg_gain[joint_name_to_dxl_id_["shin_l_active"] - 1] = 1.0;
+    support_leg_gain[joint_name_to_dxl_id_["ankle_l_roll"] - 1] = 1.0;
+    support_leg_gain[joint_name_to_dxl_id_["ankle_l_yaw"] - 1] = 1.0;
   }
 
   for (int i = 0; i < number_of_joints_; i++)
@@ -1520,14 +1520,20 @@ void OnlineWalkingModule::sensoryFeedback(const double& rlGyroErr, const double&
   // adjust balance offset
   double internal_gain = 0.05;
 
-  balance_angle[joint_name_to_id_["hip_r_roll"] - 1] = -1.0 * internal_gain * rlGyroErr * balance_hip_roll_gain_;
-  balance_angle[joint_name_to_id_["thigh_r_front_active"] - 1] = 1.0 * internal_gain * fbGyroErr * balance_knee_gain_;
-  balance_angle[joint_name_to_id_["shin_r_active"] - 1] = -1.0 * internal_gain * fbGyroErr * balance_ankle_pitch_gain_;
-  balance_angle[joint_name_to_id_["ankle_r_roll"] - 1] = -1.0 * internal_gain * rlGyroErr * balance_ankle_roll_gain_;
-  balance_angle[joint_name_to_id_["hip_l_roll"] - 1] = -1.0 * internal_gain * rlGyroErr * balance_hip_roll_gain_;
-  balance_angle[joint_name_to_id_["thigh_l_front_active"] - 1] = -1.0 * internal_gain * fbGyroErr * balance_knee_gain_;
-  balance_angle[joint_name_to_id_["shin_l_active"] - 1] = 1.0 * internal_gain * fbGyroErr * balance_ankle_pitch_gain_;
-  balance_angle[joint_name_to_id_["ankle_l_roll"] - 1] = -1.0 * internal_gain * rlGyroErr * balance_ankle_roll_gain_;
+  balance_angle[joint_name_to_dxl_id_["hip_r_roll"] - 1] = -1.0 * internal_gain * rlGyroErr * balance_hip_roll_gain_;
+  balance_angle[joint_name_to_dxl_id_["thigh_r_front_active"] - 1] =
+      1.0 * internal_gain * fbGyroErr * balance_knee_gain_;
+  balance_angle[joint_name_to_dxl_id_["shin_r_active"] - 1] =
+      -1.0 * internal_gain * fbGyroErr * balance_ankle_pitch_gain_;
+  balance_angle[joint_name_to_dxl_id_["ankle_r_roll"] - 1] =
+      -1.0 * internal_gain * rlGyroErr * balance_ankle_roll_gain_;
+  balance_angle[joint_name_to_dxl_id_["hip_l_roll"] - 1] = -1.0 * internal_gain * rlGyroErr * balance_hip_roll_gain_;
+  balance_angle[joint_name_to_dxl_id_["thigh_l_front_active"] - 1] =
+      -1.0 * internal_gain * fbGyroErr * balance_knee_gain_;
+  balance_angle[joint_name_to_dxl_id_["shin_l_active"] - 1] =
+      1.0 * internal_gain * fbGyroErr * balance_ankle_pitch_gain_;
+  balance_angle[joint_name_to_dxl_id_["ankle_l_roll"] - 1] =
+      -1.0 * internal_gain * rlGyroErr * balance_ankle_roll_gain_;
 }
 
 void OnlineWalkingModule::process(std::map<std::string, robotis_framework::Dynamixel*> dxls,
@@ -1562,9 +1568,9 @@ void OnlineWalkingModule::process(std::map<std::string, robotis_framework::Dynam
     double goal_joint_pos = dxl->dxl_state_->goal_position_;
 
     if (!goal_initialize_)
-      des_joint_pos_[joint_name_to_id_[joint_name] - 1] = goal_joint_pos;
+      des_joint_pos_[joint_name_to_dxl_id_[joint_name] - 1] = goal_joint_pos;
 
-    curr_joint_pos_[joint_name_to_id_[joint_name] - 1] = curr_joint_pos;
+    curr_joint_pos_[joint_name_to_dxl_id_[joint_name] - 1] = curr_joint_pos;
   }
 
   goal_initialize_ = true;
@@ -1647,9 +1653,9 @@ void OnlineWalkingModule::process(std::map<std::string, robotis_framework::Dynam
   for (auto& state_iter : result_)
   {
     std::string joint_name = state_iter.first;
-    result_[joint_name]->goal_position_ = des_joint_pos_to_robot_[joint_name_to_id_[joint_name] - 1];
+    result_[joint_name]->goal_position_ = des_joint_pos_to_robot_[joint_name_to_dxl_id_[joint_name] - 1];
     goal_joint_msg.name.push_back(joint_name);
-    goal_joint_msg.position.push_back(des_joint_pos_[joint_name_to_id_[joint_name] - 1]);
+    goal_joint_msg.position.push_back(des_joint_pos_[joint_name_to_dxl_id_[joint_name] - 1]);
   }
 
   pelvis_pose_pub_.publish(pelvis_pose_msg);

@@ -90,7 +90,7 @@ private:
 
   ros::ServiceClient set_module_client_;
 
-  std::map<std::string, int> joint_name_to_id_;
+  std::map<std::string, int> joint_name_to_dxl_id_;
 
   bool has_goal_joints_;
   bool ini_pose_only_;

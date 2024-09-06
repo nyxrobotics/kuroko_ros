@@ -31,7 +31,7 @@ void TuningModule::initialize(const int control_cycle_msec, robotis_framework::R
     std::string joint_name = dxl.first;
     robotis_framework::Dynamixel* dxl_info = dxl.second;
 
-    joint_name_to_id_[joint_name] = dxl_info->id_;
+    joint_name_to_dxl_id_[joint_name] = dxl_info->id_;
     result_[joint_name] = new robotis_framework::DynamixelState();
     result_[joint_name]->goal_position_ = dxl_info->dxl_state_->goal_position_;
 
@@ -168,7 +168,7 @@ bool TuningModule::parseInitPoseData(const std::string& path)
 
     joint_name = yaml_it->first.as<std::string>();
     value = yaml_it->second.as<double>();
-    int id = joint_name_to_id_[joint_name];
+    int id = joint_name_to_dxl_id_[joint_name];
     ROS_DEBUG("Set initial pose:joint_name: %s, id: %d, value: %f", joint_name.c_str(), id, value);
 
     tuning_module_state_->joint_ini_pose_.coeffRef(id, 0) = value * DEGREE2RADIAN;
@@ -258,7 +258,7 @@ bool TuningModule::parseTunePoseData(const std::string& path, const std::string&
 
       joint_name = yaml_it->first.as<std::string>();
       value = yaml_it->second.as<double>();
-      int id = joint_name_to_id_[joint_name];
+      int id = joint_name_to_dxl_id_[joint_name];
 
       tuning_module_state_->joint_via_pose_.coeffRef(num, id) = value * DEGREE2RADIAN;
       ROS_INFO_STREAM("joint : " << joint_name << ", value : " << value);
@@ -277,7 +277,7 @@ bool TuningModule::parseTunePoseData(const std::string& path, const std::string&
 
     joint_name = yaml_it->first.as<std::string>();
     value = yaml_it->second.as<double>();
-    int id = joint_name_to_id_[joint_name];
+    int id = joint_name_to_dxl_id_[joint_name];
 
     tuning_module_state_->joint_ini_pose_.coeffRef(id, 0) = value * DEGREE2RADIAN;
     ROS_INFO_STREAM("joint : " << joint_name << ", value : " << value);
@@ -442,10 +442,10 @@ void TuningModule::poseGenerateProc(std::map<std::string, double>& joint_angle_p
     std::string joint_name = joint_angle_it.first;
     double joint_angle_rad = joint_angle_it.second;
 
-    std::map<std::string, int>::iterator joint_name_to_id_it = joint_name_to_id_.find(joint_name);
-    if (joint_name_to_id_it != joint_name_to_id_.end())
+    std::map<std::string, int>::iterator joint_name_to_dxl_id_it = joint_name_to_dxl_id_.find(joint_name);
+    if (joint_name_to_dxl_id_it != joint_name_to_dxl_id_.end())
     {
-      target_pose.coeffRef(joint_name_to_id_it->second, 0) = joint_angle_rad;
+      target_pose.coeffRef(joint_name_to_dxl_id_it->second, 0) = joint_angle_rad;
     }
   }
 
@@ -509,15 +509,15 @@ void TuningModule::process(std::map<std::string, robotis_framework::Dynamixel*> 
     int i_gain = dxl->dxl_state_->position_i_gain_;
     int d_gain = dxl->dxl_state_->position_d_gain_;
 
-    joint_state_->curr_joint_state_[joint_name_to_id_[joint_name]].position_ = joint_pres_position;
-    joint_state_->curr_joint_state_[joint_name_to_id_[joint_name]].p_gain_ = p_gain;
-    joint_state_->curr_joint_state_[joint_name_to_id_[joint_name]].i_gain_ = i_gain;
-    joint_state_->curr_joint_state_[joint_name_to_id_[joint_name]].d_gain_ = d_gain;
+    joint_state_->curr_joint_state_[joint_name_to_dxl_id_[joint_name]].position_ = joint_pres_position;
+    joint_state_->curr_joint_state_[joint_name_to_dxl_id_[joint_name]].p_gain_ = p_gain;
+    joint_state_->curr_joint_state_[joint_name_to_dxl_id_[joint_name]].i_gain_ = i_gain;
+    joint_state_->curr_joint_state_[joint_name_to_dxl_id_[joint_name]].d_gain_ = d_gain;
 
-    joint_state_->goal_joint_state_[joint_name_to_id_[joint_name]].position_ = joint_goal_position;
-    joint_state_->goal_joint_state_[joint_name_to_id_[joint_name]].p_gain_ = p_gain;
-    joint_state_->goal_joint_state_[joint_name_to_id_[joint_name]].i_gain_ = i_gain;
-    joint_state_->goal_joint_state_[joint_name_to_id_[joint_name]].d_gain_ = d_gain;
+    joint_state_->goal_joint_state_[joint_name_to_dxl_id_[joint_name]].position_ = joint_goal_position;
+    joint_state_->goal_joint_state_[joint_name_to_dxl_id_[joint_name]].p_gain_ = p_gain;
+    joint_state_->goal_joint_state_[joint_name_to_dxl_id_[joint_name]].i_gain_ = i_gain;
+    joint_state_->goal_joint_state_[joint_name_to_dxl_id_[joint_name]].d_gain_ = d_gain;
   }
 
   has_goal_joints_ = true;
@@ -546,11 +546,11 @@ void TuningModule::process(std::map<std::string, robotis_framework::Dynamixel*> 
       std::string joint_name;
       tuning_data_.joint_name_.getValue(joint_name);
 
-      std::map<std::string, int>::iterator joint_name_to_id_it = joint_name_to_id_.find(joint_name);
-      if (joint_name_to_id_it != joint_name_to_id_.end())
+      std::map<std::string, int>::iterator joint_name_to_dxl_id_it = joint_name_to_dxl_id_.find(joint_name);
+      if (joint_name_to_dxl_id_it != joint_name_to_dxl_id_.end())
       {
         // get tuning data
-        int joint_id = joint_name_to_id_it->second;
+        int joint_id = joint_name_to_dxl_id_it->second;
         tuning_data_.position_.getValue(joint_state_->goal_joint_state_[joint_id].position_);
 
         tuning_data_.p_gain_.getValue(joint_state_->goal_joint_state_[joint_id].p_gain_);
@@ -572,9 +572,9 @@ void TuningModule::process(std::map<std::string, robotis_framework::Dynamixel*> 
     if (!robot_torque_enable_data_[joint_name])
     {
       robot_tuning_data_[joint_name]->joint_offset_rad_ =
-          joint_state_->curr_joint_state_[joint_name_to_id_[joint_name]].position_ -
+          joint_state_->curr_joint_state_[joint_name_to_dxl_id_[joint_name]].position_ -
           robot_tuning_data_[joint_name]->goal_position_;
-      joint_state_->goal_joint_state_[joint_name_to_id_[joint_name]].position_ =
+      joint_state_->goal_joint_state_[joint_name_to_dxl_id_[joint_name]].position_ =
           robot_tuning_data_[joint_name]->goal_position_;
     }
 
@@ -582,14 +582,14 @@ void TuningModule::process(std::map<std::string, robotis_framework::Dynamixel*> 
     double offset_value = robot_tuning_data_[joint_name]->joint_offset_rad_;
 
     result_[joint_name]->goal_position_ =
-        joint_state_->goal_joint_state_[joint_name_to_id_[joint_name]].position_ + offset_value;
+        joint_state_->goal_joint_state_[joint_name_to_dxl_id_[joint_name]].position_ + offset_value;
     robot_tuning_data_[joint_name]->goal_position_ =
-        joint_state_->goal_joint_state_[joint_name_to_id_[joint_name]].position_;
+        joint_state_->goal_joint_state_[joint_name_to_dxl_id_[joint_name]].position_;
 
     // set pid gain
-    int p_gain = joint_state_->goal_joint_state_[joint_name_to_id_[joint_name]].p_gain_;
-    int i_gain = joint_state_->goal_joint_state_[joint_name_to_id_[joint_name]].i_gain_;
-    int d_gain = joint_state_->goal_joint_state_[joint_name_to_id_[joint_name]].d_gain_;
+    int p_gain = joint_state_->goal_joint_state_[joint_name_to_dxl_id_[joint_name]].p_gain_;
+    int i_gain = joint_state_->goal_joint_state_[joint_name_to_dxl_id_[joint_name]].i_gain_;
+    int d_gain = joint_state_->goal_joint_state_[joint_name_to_dxl_id_[joint_name]].d_gain_;
 
     if (p_gain != none_gain_)
     {
@@ -844,7 +844,7 @@ bool TuningModule::getPresentJointOffsetDataServiceCallback(
 
     // get present joint value
     //...
-    double present_value = joint_state_->curr_joint_state_[joint_name_to_id_[joint_name]].position_;
+    double present_value = joint_state_->curr_joint_state_[joint_name_to_dxl_id_[joint_name]].position_;
 
     // set message for respond
     joint_offset_pos.joint_name = joint_name;

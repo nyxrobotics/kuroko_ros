@@ -130,7 +130,7 @@ private:
   ros::ServiceServer offset_data_server_;
   ros::ServiceClient load_offset_client_;
 
-  std::map<std::string, int> joint_name_to_id_;
+  std::map<std::string, int> joint_name_to_dxl_id_;
   // data set for tuner client
   std::map<std::string, JointOffsetData*> robot_tuning_data_;
   std::map<std::string, bool> robot_torque_enable_data_;

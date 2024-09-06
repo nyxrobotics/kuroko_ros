@@ -31,7 +31,7 @@ void InitialPoseModule::initialize(const int control_cycle_msec, robotis_framewo
     std::string joint_name = dxl.first;
     robotis_framework::Dynamixel* dxl_info = dxl.second;
 
-    joint_name_to_id_[joint_name] = dxl_info->id_;
+    joint_name_to_dxl_id_[joint_name] = dxl_info->id_;
     result_[joint_name] = new robotis_framework::DynamixelState();
     result_[joint_name]->goal_position_ = dxl_info->dxl_state_->goal_position_;
   }
@@ -252,10 +252,10 @@ void InitialPoseModule::poseGenerateProc(std::map<std::string, double>& joint_an
     std::string joint_name = joint_angle_it.first;
     double joint_angle_rad = joint_angle_it.second;
 
-    std::map<std::string, int>::iterator joint_name_to_id_it = joint_name_to_id_.find(joint_name);
-    if (joint_name_to_id_it != joint_name_to_id_.end())
+    std::map<std::string, int>::iterator joint_name_to_dxl_id_it = joint_name_to_dxl_id_.find(joint_name);
+    if (joint_name_to_dxl_id_it != joint_name_to_dxl_id_.end())
     {
-      target_pose.coeffRef(joint_name_to_id_it->second, 0) = joint_angle_rad;
+      target_pose.coeffRef(joint_name_to_dxl_id_it->second, 0) = joint_angle_rad;
     }
   }
 
@@ -313,8 +313,8 @@ void InitialPoseModule::process(std::map<std::string, robotis_framework::Dynamix
     double joint_curr_position = dxl->dxl_state_->present_position_;
     double joint_goal_position = dxl->dxl_state_->goal_position_;
 
-    joint_state_->curr_joint_state_[joint_name_to_id_[joint_name]].position_ = joint_curr_position;
-    joint_state_->goal_joint_state_[joint_name_to_id_[joint_name]].position_ = joint_goal_position;
+    joint_state_->curr_joint_state_[joint_name_to_dxl_id_[joint_name]].position_ = joint_curr_position;
+    joint_state_->goal_joint_state_[joint_name_to_dxl_id_[joint_name]].position_ = joint_goal_position;
   }
 
   has_goal_joints_ = true;
@@ -337,7 +337,7 @@ void InitialPoseModule::process(std::map<std::string, robotis_framework::Dynamix
   {
     std::string joint_name = state_iter.first;
 
-    result_[joint_name]->goal_position_ = joint_state_->goal_joint_state_[joint_name_to_id_[joint_name]].position_;
+    result_[joint_name]->goal_position_ = joint_state_->goal_joint_state_[joint_name_to_dxl_id_[joint_name]].position_;
   }
 
   /*---------- initialize count number ----------*/

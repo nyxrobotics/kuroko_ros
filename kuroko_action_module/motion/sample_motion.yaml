@@ -1,29 +1,105 @@
-joint_names:
-  - chest
-  - shoulder_r_pitch
-  - shoulder_r_roll
-  - elbow_r_front
-  - elbow_r_rear
-  - shoulder_l_pitch
-  - shoulder_l_roll
-  - elbow_l_front
-  - elbow_l_rear
+sections:
+  - section_name: "start_section"
+    next_sections: ["loop_section"]
+    joint_trajectory:
+      joint_names:
+        - chest
+        - shoulder_r_pitch
+        - shoulder_r_roll
+        - elbow_r_front
+        - elbow_r_rear
+        - shoulder_l_pitch
+        - shoulder_l_roll
+        - elbow_l_front
+        - elbow_l_rear
+      points:
+        - positions: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+          velocities: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+          accelerations: [0, 0, 0, 0, 0, 0, 0, 0]
+          effort: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+          time_from_start: 0
+        - positions: [1.5708, 0, 0, 0, 0, 0, 0, 0, 0]
+          velocities: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+          accelerations: [0, 0, 0, 0, 0, 0, 0, 0]
+          effort: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+          time_from_start: 0.5
+        - positions: [1.5708, 0, 1.5708, 0, 0, 0, 0, 0, 0]
+          velocities: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+          accelerations: [0, 0, 0, 0, 0, 0, 0, 0]
+          effort: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+          time_from_start: 1.0
+        - positions: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+          velocities: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+          accelerations: [0, 0, 0, 0, 0, 0, 0, 0]
+          effort: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+          time_from_start: 1.1
 
-points:
-  - positions: [1.5708, 0, 0, 0, 0, 0, 0, 0, 0]
-    velocities: [0, 0, 0, 0, 0, 0, 0, 0, 0]
-    accelerations: [0, 0, 0, 0, 0, 0, 0, 0]
-    effort: [0, 0, 0, 0, 0, 0, 0, 0, 0]
-    time_from_start: 0.5
+  - section_name: "loop_section"
+    next_sections: ["loop_section", "finish_section"]
+    joint_trajectory:
+      joint_names:
+        - chest
+        - shoulder_r_pitch
+        - shoulder_r_roll
+        - elbow_r_front
+        - elbow_r_rear
+        - shoulder_l_pitch
+        - shoulder_l_roll
+        - elbow_l_front
+        - elbow_l_rear
+      points:
+        - positions: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+          velocities: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+          accelerations: [0, 0, 0, 0, 0, 0, 0, 0]
+          effort: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+          time_from_start: 0
+        - positions: [-1.5708, 0, 0, 0, 0, 0, 0, 0, 0]
+          velocities: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+          accelerations: [0, 0, 0, 0, 0, 0, 0, 0]
+          effort: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+          time_from_start: 0.5
+        - positions: [-1.5708, 0, 1.5708, 0, 0, 0, 0, 0, 0]
+          velocities: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+          accelerations: [0, 0, 0, 0, 0, 0, 0, 0]
+          effort: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+          time_from_start: 1.0
+        - positions: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+          velocities: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+          accelerations: [0, 0, 0, 0, 0, 0, 0, 0]
+          effort: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+          time_from_start: 1.1
 
-  - positions: [1.5708, 0, 1.5708, 0, 0, 0, 0, 0, 0]
-    velocities: [0, 0, 0, 0, 0, 0, 0, 0, 0]
-    accelerations: [0, 0, 0, 0, 0, 0, 0, 0]
-    effort: [0, 0, 0, 0, 0, 0, 0, 0, 0]
-    time_from_start: 1.0
-
-  - positions: [0, 0, 0, 0, 0, 0, 0, 0, 0]
-    velocities: [0, 0, 0, 0, 0, 0, 0, 0, 0]
-    accelerations: [0, 0, 0, 0, 0, 0, 0, 0]
-    effort: [0, 0, 0, 0, 0, 0, 0, 0, 0]
-    time_from_start: 1.5
+  - section_name: "finish_section"
+    next_sections: []
+    joint_trajectory:
+      joint_names:
+        - chest
+        - shoulder_r_pitch
+        - shoulder_r_roll
+        - elbow_r_front
+        - elbow_r_rear
+        - shoulder_l_pitch
+        - shoulder_l_roll
+        - elbow_l_front
+        - elbow_l_rear
+      points:
+        - positions: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+          velocities: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+          accelerations: [0, 0, 0, 0, 0, 0, 0, 0]
+          effort: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+          time_from_start: 0
+        - positions: [1.5708, 0, 0, 0, 0, 0, 0, 0, 0]
+          velocities: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+          accelerations: [0, 0, 0, 0, 0, 0, 0, 0]
+          effort: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+          time_from_start: 0.5
+        - positions: [1.5708, 0, 1.5708, 0, 0, 0, 0, 0, 0]
+          velocities: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+          accelerations: [0, 0, 0, 0, 0, 0, 0, 0]
+          effort: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+          time_from_start: 1.0
+        - positions: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+          velocities: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+          accelerations: [0, 0, 0, 0, 0, 0, 0, 0]
+          effort: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+          time_from_start: 1.1

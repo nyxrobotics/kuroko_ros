@@ -140,7 +140,7 @@ private:
   void setFeedbackControl();
   void resetBodyPose();
 
-  std::map<std::string, int> joint_name_to_id_;
+  std::map<std::string, int> joint_name_to_dxl_id_;
 
   double control_cycle_sec_;
   boost::thread queue_thread_;

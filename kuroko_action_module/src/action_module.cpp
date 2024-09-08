@@ -34,13 +34,37 @@ void ActionModule::initialize(const int control_cycle_msec, robotis_framework::R
   std::string motion_path = ros::package::getPath("kuroko_action_module") + "/motion";
   loadConfigJointNames(joint_names_path);
   ROS_INFO_STREAM("[ActionModule] Loading modules for each joint (joint_names.yaml)");
-  for (auto& dxl : robot->dxls_)
+  // for (auto& dxl : robot->dxls_)
+  // {
+  //   std::string joint_name = dxl.first;
+  //   // Check if the joint is in the list of joint names
+  //   if (std::find(config_joint_names_.begin(), config_joint_names_.end(), joint_name) == config_joint_names_.end())
+  //   {
+  //     ROS_WARN_STREAM("[ActionModule] Joint '" << joint_name << "' not found in the joint_names.yaml file.
+  //     Skipping."); continue;
+  //   }
+  //   // ROS_INFO_STREAM("[ActionModule] Loading module for joint: " << joint_name);
+  //   robotis_framework::Dynamixel* dxl_info = dxl.second;
+
+  //   joint_name_to_dxl_id_[joint_name] = dxl_info->id_;
+  //   dxl_id_to_joint_name_[dxl_info->id_] = joint_name;
+  //   action_result_[joint_name] = new robotis_framework::DynamixelState();
+  //   action_result_[joint_name]->goal_position_ = dxl_info->dxl_state_->goal_position_;
+  //   result_[joint_name] = new robotis_framework::DynamixelState();
+  //   result_[joint_name]->goal_position_ = dxl_info->dxl_state_->goal_position_;
+  //   action_joints_enable_[joint_name] = false;
+  // }
+  for (std::map<std::string, robotis_framework::Dynamixel*>::iterator it = robot->dxls_.begin();
+       it != robot->dxls_.end(); it++)
   {
-    std::string joint_name = dxl.first;
+    std::string joint_name = it->first;
     // Check if the joint is in the list of joint names
     if (std::find(config_joint_names_.begin(), config_joint_names_.end(), joint_name) == config_joint_names_.end())
+    {
+      ROS_WARN_STREAM("[ActionModule] Joint '" << joint_name << "' not found in the joint_names.yaml file. Skipping.");
       continue;
-    robotis_framework::Dynamixel* dxl_info = dxl.second;
+    }
+    robotis_framework::Dynamixel* dxl_info = it->second;
     joint_name_to_dxl_id_[joint_name] = dxl_info->id_;
     dxl_id_to_joint_name_[dxl_info->id_] = joint_name;
     action_result_[joint_name] = new robotis_framework::DynamixelState();
@@ -191,6 +215,7 @@ bool ActionModule::isRunningServiceCallback(op3_action_module_msgs::IsRunning::R
 
 void ActionModule::pageNumberCallback(const std_msgs::Int32::ConstPtr& msg)
 {
+  ROS_INFO_STREAM("[ActionModule] pageNumberCallback called");
   if (!enable_)
   {
     std::string status_msg = "Action Module is not enabled";
@@ -222,6 +247,7 @@ void ActionModule::pageNumberCallback(const std_msgs::Int32::ConstPtr& msg)
 
 void ActionModule::startActionCallback(const op3_action_module_msgs::StartAction::ConstPtr& msg)
 {
+  ROS_INFO_STREAM("[ActionModule] startActionCallback called");
   if (!enable_)
   {
     std::string status_msg = "Action Module is not enabled";
@@ -271,6 +297,7 @@ void ActionModule::startActionCallback(const op3_action_module_msgs::StartAction
 void ActionModule::process(std::map<std::string, robotis_framework::Dynamixel*> dxls,
                            std::map<std::string, double> sensors)
 {
+  ROS_INFO_STREAM("[ActionModule] process called");
   if (!joints_enabled_)
     return;
 
@@ -318,6 +345,7 @@ void ActionModule::process(std::map<std::string, robotis_framework::Dynamixel*> 
 
 void ActionModule::playMotionByName(const std::string& motion_name)
 {
+  ROS_INFO_STREAM("[ActionModule] playMotionByName called");
   if (motion_files_.hasMotion(motion_name))
   {
     ROS_ERROR_STREAM("Motion not found: " << motion_name);
@@ -366,7 +394,10 @@ void ActionModule::processMotionStep()
 {
   if (!motion_status_.is_running)
     return;
-
+  if (motion_status_.current_frame_in_section == 0)
+  {
+    ROS_INFO("[ActionModule] processMotionStep: start motion");
+  }
   for (auto& joint_enable : action_joints_enable_)
   {
     if (joint_enable.second)
@@ -387,6 +418,7 @@ void ActionModule::processMotionStep()
                                                      .joint_trajectory.points.size())
   {
     motion_status_.is_running = false;
+    ROS_INFO("[ActionModule] processMotionStep: finish motion");
     publishDoneMsg("Motion completed");
   }
 }

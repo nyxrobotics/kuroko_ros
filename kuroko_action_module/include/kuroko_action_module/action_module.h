@@ -42,10 +42,10 @@ public:
   void loadAllMotions(const std::string& directory);
   void playMotionByName(const std::string& motion_name);
   void brake();
-  void onModuleEnable();
-  void onModuleDisable();
-  bool isRunning();
-  void stop();
+  void onModuleEnable() override;
+  void onModuleDisable() override;
+  bool isRunning() override;
+  void stop() override;
   std::vector<std::string> getMotionNames();
 
 private:
@@ -77,7 +77,7 @@ private:
                                 op3_action_module_msgs::IsRunning::Response& res);
   void pageNumberCallback(const std_msgs::Int32::ConstPtr& msg);
   void startActionCallback(const op3_action_module_msgs::StartAction::ConstPtr& msg);
-  void startActionCallback(const op3_action_module_msgs::StartAction::ConstPtr& msg);
+  // void stopActionCallback(const op3_action_module_msgs::StartAction::ConstPtr& msg);
   void processMotionStep();
 
   void loadConfigJointNames(const std::string& file_name);

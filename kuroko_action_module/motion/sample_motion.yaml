@@ -27,12 +27,12 @@ sections:
           velocities: [0, 0, 0, 0, 0, 0, 0, 0, 0]
           accelerations: [0, 0, 0, 0, 0, 0, 0, 0]
           effort: [0, 0, 0, 0, 0, 0, 0, 0, 0]
-          time_from_start: 1.0
+          time_from_start: 0.5
         - positions: [0, 0, 0, 0, 0, 0, 0, 0, 0]
           velocities: [0, 0, 0, 0, 0, 0, 0, 0, 0]
           accelerations: [0, 0, 0, 0, 0, 0, 0, 0]
           effort: [0, 0, 0, 0, 0, 0, 0, 0, 0]
-          time_from_start: 1.1
+          time_from_start: 0.5
 
   - section_name: "loop_section"
     next_sections: ["loop_section", "finish_section"]
@@ -62,12 +62,12 @@ sections:
           velocities: [0, 0, 0, 0, 0, 0, 0, 0, 0]
           accelerations: [0, 0, 0, 0, 0, 0, 0, 0]
           effort: [0, 0, 0, 0, 0, 0, 0, 0, 0]
-          time_from_start: 1.0
+          time_from_start: 0.5
         - positions: [0, 0, 0, 0, 0, 0, 0, 0, 0]
           velocities: [0, 0, 0, 0, 0, 0, 0, 0, 0]
           accelerations: [0, 0, 0, 0, 0, 0, 0, 0]
           effort: [0, 0, 0, 0, 0, 0, 0, 0, 0]
-          time_from_start: 1.1
+          time_from_start: 0.5
 
   - section_name: "finish_section"
     next_sections: []
@@ -97,9 +97,9 @@ sections:
           velocities: [0, 0, 0, 0, 0, 0, 0, 0, 0]
           accelerations: [0, 0, 0, 0, 0, 0, 0, 0]
           effort: [0, 0, 0, 0, 0, 0, 0, 0, 0]
-          time_from_start: 1.0
+          time_from_start: 0.5
         - positions: [0, 0, 0, 0, 0, 0, 0, 0, 0]
           velocities: [0, 0, 0, 0, 0, 0, 0, 0, 0]
           accelerations: [0, 0, 0, 0, 0, 0, 0, 0]
           effort: [0, 0, 0, 0, 0, 0, 0, 0, 0]
-          time_from_start: 1.1
+          time_from_start: 0.5

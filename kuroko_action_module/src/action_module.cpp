@@ -1,4 +1,5 @@
 #include "kuroko_action_module/action_module.h"
+#include "ros/console.h"
 
 // Check if the C++ standard is 17 or later
 #if __cplusplus >= 201703L
@@ -69,6 +70,195 @@ void ActionModule::initialize(const int control_cycle_msec, robotis_framework::R
   control_cycle_msec_ = control_cycle_msec;
   queue_thread_ = boost::thread(boost::bind(&ActionModule::queueThread, this));
   ROS_INFO_STREAM("[ActionModule] Finish initialization");
+}
+
+void ActionModule::queueThread()
+{
+  ros::NodeHandle ros_node;
+  ros::CallbackQueue callback_queue;
+  ros::WallDuration duration(control_cycle_msec_ / 1000.0);
+
+  status_msg_pub_ = ros_node.advertise<robotis_controller_msgs::StatusMsg>("/motion_control/status", 5);
+  done_msg_pub_ = ros_node.advertise<std_msgs::String>("/motion_control/movement_done", 5);
+
+  ros::Subscriber action_page_sub =
+      ros_node.subscribe("/motion_control/action/page_num", 5, &ActionModule::pageNumberCallback, this);
+  ros::Subscriber start_action_sub =
+      ros_node.subscribe("/motion_control/action/start_action", 5, &ActionModule::startActionCallback, this);
+  ros::ServiceServer is_running_server =
+      ros_node.advertiseService("/motion_control/action/is_running", &ActionModule::isRunningServiceCallback, this);
+
+  ros_node.setCallbackQueue(&callback_queue);
+  while (ros_node.ok())
+    callback_queue.callAvailable(duration);
+}
+
+bool ActionModule::isRunningServiceCallback(op3_action_module_msgs::IsRunning::Request& req,
+                                            op3_action_module_msgs::IsRunning::Response& res)
+{
+  res.is_running = isRunning();
+  return true;
+}
+
+void ActionModule::pageNumberCallback(const std_msgs::Int32::ConstPtr& msg)
+{
+  ROS_INFO_STREAM("[ActionModule] pageNumberCallback called");
+  if (!enable_)
+  {
+    std::string status_msg = "Action Module is not enabled";
+    ROS_INFO_STREAM(status_msg);
+    publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_ERROR, status_msg);
+    return;
+  }
+
+  if (msg->data == -1)
+  {
+    stop();
+  }
+  else if (msg->data == -2)
+  {
+    brake();
+  }
+  else
+  {
+    for (auto& joint_enable : action_joints_enable_)
+      joint_enable.second = true;
+
+    processMotionStep();
+
+    std::string status_msg = "Succeed to start page " + std::to_string(msg->data);
+    ROS_INFO_STREAM(status_msg);
+    publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_INFO, status_msg);
+  }
+}
+
+void ActionModule::startActionCallback(const op3_action_module_msgs::StartAction::ConstPtr& msg)
+{
+  ROS_INFO_STREAM("[ActionModule] startActionCallback called");
+  if (!enable_)
+  {
+    std::string status_msg = "Action Module is not enabled";
+    ROS_INFO_STREAM(status_msg);
+    publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_ERROR, status_msg);
+    return;
+  }
+
+  if (msg->page_num == -1)
+  {
+    stop();
+  }
+  else if (msg->page_num == -2)
+  {
+    brake();
+  }
+  else
+  {
+    for (auto& joint_enable : action_joints_enable_)
+      joint_enable.second = false;
+
+    for (const auto& joint_name : msg->joint_name_array)
+    {
+      auto it = action_joints_enable_.find(joint_name);
+      if (it == action_joints_enable_.end())
+      {
+        std::string status_msg = "Invalid Joint Name : " + joint_name;
+        ROS_INFO_STREAM(status_msg);
+        publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_ERROR, status_msg);
+        publishDoneMsg("action_failed");
+        return;
+      }
+      else
+      {
+        it->second = true;
+      }
+    }
+
+    processMotionStep();
+
+    std::string status_msg = "Succeed to start page " + std::to_string(msg->page_num);
+    ROS_INFO_STREAM(status_msg);
+    publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_INFO, status_msg);
+  }
+}
+
+void ActionModule::process(std::map<std::string, robotis_framework::Dynamixel*> dxls,
+                           std::map<std::string, double> sensors)
+{
+  ROS_INFO_STREAM("[ActionModule] process called");
+  if (!joints_enabled_)
+    return;
+
+  if (action_module_enabled_)
+  {
+    for (auto& dxl : dxls)
+    {
+      std::string joint_name = dxl.first;
+      auto result_it = result_.find(joint_name);
+      if (result_it == result_.end())
+      {
+        ROS_INFO_STREAM("Joint " << joint_name << " NOT found in the result_ map, skipping");
+        continue;
+      }
+      else
+      {
+        ROS_INFO_STREAM("Joint " << joint_name << " found in the result_ map");
+        result_it->second->goal_position_ = dxl.second->dxl_state_->goal_position_;
+        action_result_[joint_name]->goal_position_ = dxl.second->dxl_state_->goal_position_;
+      }
+    }
+    action_module_enabled_ = false;
+  }
+
+  processMotionStep();
+
+  for (auto& action_enable : action_joints_enable_)
+  {
+    if (action_enable.second)
+      result_[action_enable.first]->goal_position_ = action_result_[action_enable.first]->goal_position_;
+  }
+
+  if (motion_status_.start_requested && !motion_status_.is_running)
+  {
+    std::string status_msg = "Action_Start";
+    publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_INFO, status_msg);
+  }
+  if (motion_status_.stop_requested && motion_status_.is_running)
+  {
+    for (auto& action_result : action_result_)
+      action_result.second->goal_position_ = result_[action_result.first]->goal_position_;
+
+    std::string status_msg = "Action_Finish";
+    publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_INFO, status_msg);
+    publishDoneMsg("action");
+  }
+}
+
+void ActionModule::playMotionByName(const std::string& motion_name)
+{
+  ROS_INFO_STREAM("[ActionModule] playMotionByName called");
+  if (motion_files_.hasMotion(motion_name))
+  {
+    ROS_ERROR_STREAM("Motion not found: " << motion_name);
+    return;
+  }
+
+  motion_status_.next_motion_name = motion_name;  // Set current_motion_ to the selected motion
+  MotionFile motion_file = motion_files_.getMotionFile(motion_name);
+  for (auto& section : motion_file.motion_sections)
+  {
+    std::string section_name = section.section_name;
+    ROS_INFO_STREAM("Playing section: " << section_name);
+    for (auto& point : section.joint_trajectory.points)
+    {
+      trajectory_msgs::JointTrajectory sorted_joint_trajectory = section.getSortedJointTrajectory(config_joint_names_);
+      for (size_t j = 0; j < config_joint_names_.size(); ++j)
+      {
+        std::string joint_name = config_joint_names_[j];
+        action_result_[joint_name]->goal_position_ = point.positions[j];
+      }
+      ros::Duration(point.time_from_start.toSec()).sleep();
+    }
+  }
 }
 
 void ActionModule::loadConfigJointNames(const std::string& file_name)
@@ -205,192 +395,6 @@ void ActionModule::loadMotionYAML(const std::string& file_name, const std::strin
   catch (YAML::Exception& e)
   {
     ROS_ERROR_STREAM("[ActionModule] Failed to load Motion YAML file: " << file_name << " Error: " << e.what());
-  }
-}
-
-void ActionModule::queueThread()
-{
-  ros::NodeHandle ros_node;
-  ros::CallbackQueue callback_queue;
-  ros::WallDuration duration(control_cycle_msec_ / 1000.0);
-
-  status_msg_pub_ = ros_node.advertise<robotis_controller_msgs::StatusMsg>("/motion_control/status", 5);
-  done_msg_pub_ = ros_node.advertise<std_msgs::String>("/motion_control/movement_done", 5);
-
-  ros::Subscriber action_page_sub =
-      ros_node.subscribe("/motion_control/action/page_num", 5, &ActionModule::pageNumberCallback, this);
-  ros::Subscriber start_action_sub =
-      ros_node.subscribe("/motion_control/action/start_action", 5, &ActionModule::startActionCallback, this);
-  ros::ServiceServer is_running_server =
-      ros_node.advertiseService("/motion_control/action/is_running", &ActionModule::isRunningServiceCallback, this);
-
-  ros_node.setCallbackQueue(&callback_queue);
-  while (ros_node.ok())
-    callback_queue.callAvailable(duration);
-}
-
-bool ActionModule::isRunningServiceCallback(op3_action_module_msgs::IsRunning::Request& req,
-                                            op3_action_module_msgs::IsRunning::Response& res)
-{
-  res.is_running = isRunning();
-  return true;
-}
-
-void ActionModule::pageNumberCallback(const std_msgs::Int32::ConstPtr& msg)
-{
-  ROS_INFO_STREAM("[ActionModule] pageNumberCallback called");
-  if (!enable_)
-  {
-    std::string status_msg = "Action Module is not enabled";
-    ROS_INFO_STREAM(status_msg);
-    publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_ERROR, status_msg);
-    return;
-  }
-
-  if (msg->data == -1)
-  {
-    motion_status_.stop_requested = true;
-  }
-  else if (msg->data == -2)
-  {
-    brake();
-  }
-  else
-  {
-    for (auto& joint_enable : action_joints_enable_)
-      joint_enable.second = true;
-
-    processMotionStep();
-
-    std::string status_msg = "Succeed to start page " + std::to_string(msg->data);
-    ROS_INFO_STREAM(status_msg);
-    publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_INFO, status_msg);
-  }
-}
-
-void ActionModule::startActionCallback(const op3_action_module_msgs::StartAction::ConstPtr& msg)
-{
-  ROS_INFO_STREAM("[ActionModule] startActionCallback called");
-  if (!enable_)
-  {
-    std::string status_msg = "Action Module is not enabled";
-    ROS_INFO_STREAM(status_msg);
-    publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_ERROR, status_msg);
-    return;
-  }
-
-  if (msg->page_num == -1)
-  {
-    motion_status_.stop_requested = true;
-  }
-  else if (msg->page_num == -2)
-  {
-    brake();
-  }
-  else
-  {
-    for (auto& joint_enable : action_joints_enable_)
-      joint_enable.second = false;
-
-    for (const auto& joint_name : msg->joint_name_array)
-    {
-      auto it = action_joints_enable_.find(joint_name);
-      if (it == action_joints_enable_.end())
-      {
-        std::string status_msg = "Invalid Joint Name : " + joint_name;
-        ROS_INFO_STREAM(status_msg);
-        publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_ERROR, status_msg);
-        publishDoneMsg("action_failed");
-        return;
-      }
-      else
-      {
-        it->second = true;
-      }
-    }
-
-    processMotionStep();
-
-    std::string status_msg = "Succeed to start page " + std::to_string(msg->page_num);
-    ROS_INFO_STREAM(status_msg);
-    publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_INFO, status_msg);
-  }
-}
-
-void ActionModule::process(std::map<std::string, robotis_framework::Dynamixel*> dxls,
-                           std::map<std::string, double> sensors)
-{
-  ROS_INFO_STREAM("[ActionModule] process called");
-  if (!joints_enabled_)
-    return;
-
-  if (action_module_enabled_)
-  {
-    for (auto& dxl : dxls)
-    {
-      std::string joint_name = dxl.first;
-      auto result_it = result_.find(joint_name);
-      if (result_it == result_.end())
-        continue;
-      else
-      {
-        result_it->second->goal_position_ = dxl.second->dxl_state_->goal_position_;
-        action_result_[joint_name]->goal_position_ = dxl.second->dxl_state_->goal_position_;
-      }
-    }
-    ROS_INFO_STREAM("Action Module is enabled");
-    action_module_enabled_ = false;
-  }
-
-  processMotionStep();
-
-  for (auto& action_enable : action_joints_enable_)
-  {
-    if (action_enable.second)
-      result_[action_enable.first]->goal_position_ = action_result_[action_enable.first]->goal_position_;
-  }
-
-  if (motion_status_.start_requested && !motion_status_.is_running)
-  {
-    std::string status_msg = "Action_Start";
-    publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_INFO, status_msg);
-  }
-  if (motion_status_.stop_requested && motion_status_.is_running)
-  {
-    for (auto& action_result : action_result_)
-      action_result.second->goal_position_ = result_[action_result.first]->goal_position_;
-
-    std::string status_msg = "Action_Finish";
-    publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_INFO, status_msg);
-    publishDoneMsg("action");
-  }
-}
-
-void ActionModule::playMotionByName(const std::string& motion_name)
-{
-  ROS_INFO_STREAM("[ActionModule] playMotionByName called");
-  if (motion_files_.hasMotion(motion_name))
-  {
-    ROS_ERROR_STREAM("Motion not found: " << motion_name);
-    return;
-  }
-
-  motion_status_.next_motion_name = motion_name;  // Set current_motion_ to the selected motion
-  MotionFile motion_file = motion_files_.getMotionFile(motion_name);
-  for (auto& section : motion_file.motion_sections)
-  {
-    std::string section_name = section.section_name;
-    ROS_INFO_STREAM("Playing section: " << section_name);
-    for (auto& point : section.joint_trajectory.points)
-    {
-      trajectory_msgs::JointTrajectory sorted_joint_trajectory = section.getSortedJointTrajectory(config_joint_names_);
-      for (size_t j = 0; j < config_joint_names_.size(); ++j)
-      {
-        std::string joint_name = config_joint_names_[j];
-        action_result_[joint_name]->goal_position_ = point.positions[j];
-      }
-      ros::Duration(point.time_from_start.toSec()).sleep();
-    }
   }
 }
 

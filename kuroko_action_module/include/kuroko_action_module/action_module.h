@@ -60,7 +60,6 @@ private:
 
   bool start_playing_requested_;
   bool stop_playing_requested_;
-  bool joints_enabled_;
   bool action_module_enabled_;
 
   MotionFiles motion_files_;
@@ -69,7 +68,6 @@ private:
   std::map<std::string, int> joint_name_to_dxl_id_;
   std::map<int, std::string> dxl_id_to_joint_name_;
   std::map<std::string, robotis_framework::DynamixelState*> action_result_;
-  std::map<std::string, robotis_framework::DynamixelState*> result_;
   std::map<std::string, bool> action_joints_enable_;
 
   void queueThread();

@@ -12,8 +12,13 @@ namespace fs = std::experimental::filesystem;
 
 namespace motion_control
 {
-ActionModule::ActionModule() : control_cycle_msec_(8), joints_enabled_(false)
+ActionModule::ActionModule()
+  : control_cycle_msec_(8)
+  , start_playing_requested_(false)
+  , stop_playing_requested_(false)
+  , action_module_enabled_(false)
 {
+  enable_ = false;
   module_name_ = "action_module";
   control_mode_ = robotis_framework::PositionControl;
   motion_status_.is_running = false;
@@ -29,6 +34,8 @@ ActionModule::~ActionModule()
 
 void ActionModule::initialize(const int control_cycle_msec, robotis_framework::Robot* robot)
 {
+  control_cycle_msec_ = control_cycle_msec;
+  queue_thread_ = boost::thread(boost::bind(&ActionModule::queueThread, this));
   ROS_INFO_STREAM("[ActionModule] Start initialization");
   ros::NodeHandle ros_node;
   std::string joint_names_path = ros::package::getPath("kuroko_action_module") + "/config/joint_names.yaml";
@@ -38,6 +45,7 @@ void ActionModule::initialize(const int control_cycle_msec, robotis_framework::R
   for (auto& dxl : robot->dxls_)
   {
     std::string joint_name = dxl.first;
+    robotis_framework::Dynamixel* dxl_info = dxl.second;
     // Check if the joint is in the list of joint names
     if (std::find(config_joint_names_.begin(), config_joint_names_.end(), joint_name) == config_joint_names_.end())
     {
@@ -45,7 +53,6 @@ void ActionModule::initialize(const int control_cycle_msec, robotis_framework::R
       continue;
     }
     ROS_INFO_STREAM("[ActionModule] Loading module for joint: " << joint_name);
-    robotis_framework::Dynamixel* dxl_info = dxl.second;
 
     joint_name_to_dxl_id_[joint_name] = dxl_info->id_;
     dxl_id_to_joint_name_[dxl_info->id_] = joint_name;
@@ -67,8 +74,6 @@ void ActionModule::initialize(const int control_cycle_msec, robotis_framework::R
   }
   loadAllMotions(motion_path);
   motion_status_.is_running = false;
-  control_cycle_msec_ = control_cycle_msec;
-  queue_thread_ = boost::thread(boost::bind(&ActionModule::queueThread, this));
   ROS_INFO_STREAM("[ActionModule] Finish initialization");
 }
 
@@ -76,7 +81,8 @@ void ActionModule::queueThread()
 {
   ros::NodeHandle ros_node;
   ros::CallbackQueue callback_queue;
-  ros::WallDuration duration(control_cycle_msec_ / 1000.0);
+
+  ros_node.setCallbackQueue(&callback_queue);
 
   status_msg_pub_ = ros_node.advertise<robotis_controller_msgs::StatusMsg>("/motion_control/status", 5);
   done_msg_pub_ = ros_node.advertise<std_msgs::String>("/motion_control/movement_done", 5);
@@ -88,7 +94,7 @@ void ActionModule::queueThread()
   ros::ServiceServer is_running_server =
       ros_node.advertiseService("/motion_control/action/is_running", &ActionModule::isRunningServiceCallback, this);
 
-  ros_node.setCallbackQueue(&callback_queue);
+  ros::WallDuration duration(control_cycle_msec_ / 1000.0);
   while (ros_node.ok())
     callback_queue.callAvailable(duration);
 }
@@ -185,7 +191,7 @@ void ActionModule::process(std::map<std::string, robotis_framework::Dynamixel*> 
                            std::map<std::string, double> sensors)
 {
   ROS_INFO_STREAM("[ActionModule] process called");
-  if (!joints_enabled_)
+  if (!enable_)
     return;
 
   if (action_module_enabled_)
@@ -458,15 +464,15 @@ void ActionModule::brake()
 
 void ActionModule::onModuleEnable()
 {
-  ROS_INFO_STREAM("[ActionModule] onModuleEnable called");
+  ROS_INFO_STREAM("[ActionModule] Module Enabled");
   action_module_enabled_ = true;
 }
 
 void ActionModule::onModuleDisable()
 {
-  ROS_INFO_STREAM("[ActionModule] onModuleDisable called");
-  action_module_enabled_ = false;
+  ROS_INFO_STREAM("[ActionModule] Module Disabled");
   brake();
+  action_module_enabled_ = false;
 }
 
 bool ActionModule::isRunning()

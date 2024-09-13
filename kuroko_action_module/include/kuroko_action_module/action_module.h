@@ -16,6 +16,7 @@ namespace fs = std::experimental::filesystem;
 #include <string>
 #include <vector>
 #include <boost/thread.hpp>
+#include <fstream>
 #include <ros/ros.h>
 #include <ros/package.h>
 #include <ros/callback_queue.h>
@@ -39,7 +40,9 @@ public:
   void process(std::map<std::string, robotis_framework::Dynamixel*> dxls,
                std::map<std::string, double> sensors) override;
 
+  void saveAllMotions(const std::string& directory);
   void loadAllMotions(const std::string& directory);
+
   void playMotionByName(const std::string& motion_name);
   void brake();
   void onModuleEnable() override;
@@ -77,11 +80,10 @@ private:
                                 op3_action_module_msgs::IsRunning::Response& res);
   void pageNumberCallback(const std_msgs::Int32::ConstPtr& msg);
   void startActionCallback(const op3_action_module_msgs::StartAction::ConstPtr& msg);
-  // void stopActionCallback(const op3_action_module_msgs::StartAction::ConstPtr& msg);
   void processMotionStep();
 
   void loadConfigJointNames(const std::string& file_name);
-  void loadYAMLFile(const std::string& file_name, const std::string& motion_name);
+  void loadMotionYAML(const std::string& file_name, const std::string& motion_name);
 
   std::vector<std::string> config_joint_names_;
 };

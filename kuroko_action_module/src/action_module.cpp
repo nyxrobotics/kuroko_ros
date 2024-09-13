@@ -79,6 +79,53 @@ void ActionModule::loadConfigJointNames(const std::string& file_name)
   ROS_INFO_STREAM("[ActionModule] config_joint_names_:\n" << YAML::Dump(YAML::Node(config_joint_names_)));
 }
 
+void ActionModule::saveAllMotions(const std::string& directory)
+{
+  // Ensure the directory exists
+  if (!fs::exists(directory))
+  {
+    fs::create_directories(directory);
+  }
+
+  for (const auto& motion_file : motion_files_.motion_files)
+  {
+    std::string file_path = directory + "/" + motion_file.motion_name + ".yaml";
+
+    // Create a YAML node to store the motion data
+    YAML::Node yaml_data;
+
+    for (const auto& section : motion_file.motion_sections)
+    {
+      YAML::Node section_node;
+      section_node["section_name"] = section.section_name;
+
+      YAML::Node joint_trajectory_node;
+      joint_trajectory_node["joint_names"] = section.joint_trajectory.joint_names;
+
+      for (const auto& point : section.joint_trajectory.points)
+      {
+        YAML::Node point_node;
+        point_node["positions"] = point.positions;
+        point_node["velocities"] = point.velocities;
+        point_node["effort"] = point.effort;
+        point_node["time_from_start"] = point.time_from_start.toSec();
+
+        joint_trajectory_node["points"].push_back(point_node);
+      }
+
+      section_node["joint_trajectory"] = joint_trajectory_node;
+      yaml_data["sections"].push_back(section_node);
+    }
+
+    // Write the YAML data to the file, overwriting if the file already exists
+    std::ofstream fout(file_path);
+    fout << yaml_data;
+    fout.close();
+
+    ROS_INFO_STREAM("[ActionModule] Motion " << motion_file.motion_name << " saved to " << file_path);
+  }
+}
+
 void ActionModule::loadAllMotions(const std::string& directory)
 {
   for (const auto& entry : fs::directory_iterator(directory))
@@ -86,83 +133,50 @@ void ActionModule::loadAllMotions(const std::string& directory)
     if (entry.path().extension() == ".yaml")
     {
       std::string motion_name = entry.path().stem().string();
-      loadYAMLFile(entry.path().string(), motion_name);
+      loadMotionYAML(entry.path().string(), motion_name);
     }
   }
 }
 
-void ActionModule::loadYAMLFile(const std::string& file_name, const std::string& motion_name)
+void ActionModule::loadMotionYAML(const std::string& file_name, const std::string& motion_name)
 {
   try
   {
     YAML::Node yaml_data = YAML::LoadFile(file_name);
     ROS_INFO_STREAM("[ActionModule] Loaded Motion YAML file: " << file_name);
 
-    // Read sections from YAML file
+    motion_control::MotionFile motion_file;
+    motion_file.motion_name = motion_name;
+
+    // Load sections from the YAML
     for (const auto& section : yaml_data["sections"])
     {
-      std::string section_name = section["section_name"].as<std::string>();
-      ROS_INFO_STREAM("[ActionModule] Loading section: " << section_name);
+      motion_control::MotionSection motion_section;
+      motion_section.section_name = section["section_name"].as<std::string>();
 
-      std::vector<std::string> motion_joint_names =
+      // Load joint trajectory
+      motion_section.joint_trajectory.joint_names =
           section["joint_trajectory"]["joint_names"].as<std::vector<std::string>>();
-      std::vector<std::vector<double>> positions;
-      std::vector<std::vector<double>> velocities;
-      std::vector<std::vector<double>> accelerations;
-      std::vector<std::vector<double>> efforts;
-      std::vector<double> time_from_start;
-
       for (const auto& point : section["joint_trajectory"]["points"])
       {
-        try
-        {
-          // Extract data from each point
-          std::vector<double> position = point["positions"].as<std::vector<double>>();
-          std::vector<double> velocity = point["velocities"].as<std::vector<double>>();
-          std::vector<double> acceleration = point["accelerations"].as<std::vector<double>>();
-          std::vector<double> effort = point["effort"].as<std::vector<double>>();
-          double time_start = point["time_from_start"].as<double>();
+        trajectory_msgs::JointTrajectoryPoint trajectory_point;
+        trajectory_point.positions = point["positions"].as<std::vector<double>>();
+        trajectory_point.velocities = point["velocities"].as<std::vector<double>>();
+        trajectory_point.effort = point["effort"].as<std::vector<double>>();
+        trajectory_point.time_from_start = ros::Duration(point["time_from_start"].as<double>());
 
-          std::vector<double> mapped_position(config_joint_names_.size(), 0.0);
-          std::vector<double> mapped_velocity(config_joint_names_.size(), 0.0);
-          std::vector<double> mapped_acceleration(config_joint_names_.size(), 0.0);
-          std::vector<double> mapped_effort(config_joint_names_.size(), 0.0);
-
-          // Map the joint values based on the config_joint_names_ order
-          for (size_t i = 0; i < motion_joint_names.size(); ++i)
-          {
-            auto it = std::find(config_joint_names_.begin(), config_joint_names_.end(), motion_joint_names[i]);
-            if (it != config_joint_names_.end())
-            {
-              size_t index = std::distance(config_joint_names_.begin(), it);
-              mapped_position[index] = position[i];
-              mapped_velocity[index] = velocity[i];
-              mapped_acceleration[index] = acceleration[i];
-              mapped_effort[index] = effort[i];
-            }
-          }
-          // Store the mapped values for each point
-          positions.emplace_back(mapped_position);
-          velocities.emplace_back(mapped_velocity);
-          accelerations.emplace_back(mapped_acceleration);
-          efforts.emplace_back(mapped_effort);
-          time_from_start.emplace_back(time_start);
-        }
-        catch (const YAML::Exception& e)
-        {
-          ROS_ERROR_STREAM("[ActionModule] YAML Exception while parsing points: " << e.what());
-          return;
-        }
+        motion_section.joint_trajectory.points.push_back(trajectory_point);
       }
-      // You can add code here to store the section data as needed
-      ROS_INFO_STREAM("[ActionModule] Section '" << section_name << "' successfully loaded.");
+      motion_file.motion_sections.push_back(motion_section);
     }
-    ROS_INFO_STREAM("[ActionModule] Motion '" << motion_name << "' successfully loaded.");
+
+    // Store the motion file in MotionFiles
+    motion_files_.motion_files.push_back(motion_file);
+    ROS_INFO_STREAM("[ActionModule] Motion " << motion_name << " loaded successfully.");
   }
-  catch (const YAML::Exception& e)
+  catch (YAML::Exception& e)
   {
-    ROS_ERROR_STREAM("[ActionModule] Failed to load YAML file: " << file_name << " with error: " << e.what());
-    return;
+    ROS_ERROR_STREAM("[ActionModule] Failed to load Motion YAML file: " << file_name << " Error: " << e.what());
   }
 }
 

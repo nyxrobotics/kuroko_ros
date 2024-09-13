@@ -27,6 +27,7 @@ public:
   std::vector<MotionFile> motion_files;
   MotionFile getMotionFile(const std::string& motion_name);
   bool hasMotion(const std::string& motion_name);
+  std::vector<std::string> getMotionNames();
 };
 class MotionStatus
 {

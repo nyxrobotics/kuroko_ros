@@ -85,4 +85,14 @@ bool MotionFiles::hasMotion(const std::string& motion_name)
   return false;
 }
 
+std::vector<std::string> MotionFiles::getMotionNames()
+{
+  std::vector<std::string> motion_names;
+  for (const auto& motion : motion_files)
+  {
+    motion_names.push_back(motion.motion_name);
+  }
+  return motion_names;
+}
+
 }  // namespace motion_control

@@ -94,7 +94,7 @@ void ActionModule::queueThread()
   done_msg_pub_ = ros_node.advertise<std_msgs::String>("/motion_control/movement_done", 5);
 
   ros::Subscriber action_page_sub =
-      ros_node.subscribe("/motion_control/action/page_num", 5, &ActionModule::pageNumberCallback, this);
+      ros_node.subscribe("/motion_control/action/page_num", 5, &ActionModule::motionNumberCallback, this);
   ros::Subscriber start_action_sub =
       ros_node.subscribe("/motion_control/action/start_action", 5, &ActionModule::startActionCallback, this);
   ros::ServiceServer is_running_server =
@@ -112,9 +112,9 @@ bool ActionModule::isRunningServiceCallback(op3_action_module_msgs::IsRunning::R
   return true;
 }
 
-void ActionModule::pageNumberCallback(const std_msgs::Int32::ConstPtr& msg)
+void ActionModule::motionNumberCallback(const std_msgs::Int32::ConstPtr& msg)
 {
-  ROS_INFO_STREAM("[ActionModule] pageNumberCallback called");
+  ROS_INFO_STREAM("[ActionModule] motionNumberCallback called");
   if (!enable_)
   {
     std::string status_msg = "Action Module is not enabled";
@@ -133,12 +133,34 @@ void ActionModule::pageNumberCallback(const std_msgs::Int32::ConstPtr& msg)
   }
   else
   {
+    // ROS_INFO("Setting all joints to true");
     for (auto& joint_enable : action_joints_enable_)
+    {
       joint_enable.second = true;
-
-    processMotionStep();
-
-    std::string status_msg = "Succeed to start page " + std::to_string(msg->data);
+    }
+    // ROS_INFO("Getting motion names");
+    std::vector<std::string> motion_names = motion_files_.getMotionNames();
+    // ROS_INFO("Motioin names:");
+    // for (const auto& motion_name : motion_names)
+    // {
+    //   ROS_INFO_STREAM("- " << motion_name);
+    // }
+    int motion_id = msg->data;
+    motion_id = 0;
+    // if (motion_id < 0 || motion_id >= motion_names.size() - 1)
+    // {
+    //   std::string status_msg = "[ActionModule] Invalid Motion ID : " + std::to_string(msg->data);
+    //   ROS_INFO_STREAM(status_msg);
+    //   publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_ERROR, status_msg);
+    //   publishDoneMsg("[ActionModule] action_failed");
+    //   return;
+    // }
+    ROS_INFO_STREAM("Setting next motion name");
+    std::string motion_name = motion_names[motion_id];
+    motion_status_.next_motion_name = motion_name;
+    motion_status_.start_requested = true;
+    // std::string status_msg = "Succeed to start page " + std::to_string(msg->data);
+    std::string status_msg = "Succeed to start motion: " + motion_name;
     ROS_INFO_STREAM(status_msg);
     publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_INFO, status_msg);
   }
@@ -184,9 +206,6 @@ void ActionModule::startActionCallback(const op3_action_module_msgs::StartAction
         it->second = true;
       }
     }
-
-    processMotionStep();
-
     std::string status_msg = "Succeed to start page " + std::to_string(msg->page_num);
     ROS_INFO_STREAM(status_msg);
     publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_INFO, status_msg);
@@ -234,7 +253,7 @@ void ActionModule::process(std::map<std::string, robotis_framework::Dynamixel*> 
       if (action_joints_enable_[joint_name])
       {
         double goal_position = sorted_trajectory.points[motion_status_.current_frame_in_section].positions[i];
-        action_result_[joint_name]->goal_position_ = goal_position;
+        result_[joint_name]->goal_position_ = goal_position;
       }
     }
     send_next_frame_ = false;
@@ -448,26 +467,33 @@ void ActionModule::processMotionStep()
     motion_status_.stop_requested = false;
     motion_status_.abort_requested = false;
     motion_status_.current_time_in_section = 0.0;
+    send_next_frame_ = true;
+    ROS_INFO_STREAM(
+        "[ActionModule] processMotionStep: move to initial frame: " << motion_status_.current_frame_in_section);
+    return;
   }
-  else if (motion_status_.start_requested && motion_status_.next_motion_name != "")
+  else if (motion_status_.start_requested && motion_status_.next_motion_name == motion_status_.current_motion_name &&
+           motion_status_.is_running)
   {
-    ROS_INFO_STREAM("[ActionModule] processMotionStep: stop current motion " << motion_status_.current_motion_name
-                                                                             << " and start next motion "
-                                                                             << motion_status_.next_motion_name);
+    motion_status_.start_requested = false;
+    ROS_INFO_STREAM("[ActionModule] processMotionStep: already running motion: " << motion_status_.current_motion_name);
+  }
+  else if (motion_status_.start_requested && motion_status_.next_motion_name != "" &&
+           motion_status_.next_motion_name != motion_status_.current_motion_name)
+  {
+    // ROS_INFO_STREAM("[ActionModule] processMotionStep: stop current motion " << motion_status_.current_motion_name
+    //                                                                          << " and start next motion "
+    //                                                                          << motion_status_.next_motion_name);
     motion_status_.stop_requested = true;
   }
   // Send joint angle target values at the timing of frame switching
-  ROS_INFO_STREAM(
-      "[ActionModule] processMotionStep: current_frame_in_section: " << motion_status_.current_frame_in_section);
-  double current_frame_end_time = 0;
-  for (int i = 0; i < motion_status_.current_frame_in_section; i++)
-  {
-    current_frame_end_time += motion_files_.getMotionFile(motion_status_.current_motion_name)
-                                  .getMotionSection(motion_status_.current_section_name)
-                                  .joint_trajectory.points[i]
-                                  .time_from_start.toSec();
-  }
-  ROS_INFO_STREAM("[ActionModule] processMotionStep: current_frame_end_time: " << current_frame_end_time);
+  // ROS_INFO_STREAM(
+  //     "[ActionModule] processMotionStep: current_frame_in_section: " << motion_status_.current_frame_in_section);
+  double current_frame_end_time = motion_files_.getMotionFile(motion_status_.current_motion_name)
+                                      .getMotionSection(motion_status_.current_section_name)
+                                      .joint_trajectory.points[motion_status_.current_frame_in_section]
+                                      .time_from_start.toSec();
+  // ROS_INFO_STREAM("[ActionModule] processMotionStep: current_frame_end_time: " << current_frame_end_time);
   if (motion_status_.current_time_in_section >= current_frame_end_time)
   {
     send_next_frame_ = true;
@@ -479,6 +505,8 @@ void ActionModule::processMotionStep()
     {
       // If there is a next frame in the section, move to it
       motion_status_.current_frame_in_section++;
+      ROS_INFO_STREAM(
+          "[ActionModule] processMotionStep: move to next frame: " << motion_status_.current_frame_in_section);
     }
     else if (!motion_files_.getMotionFile(motion_status_.current_motion_name)
                   .getMotionSection(motion_status_.current_section_name)
@@ -489,17 +517,19 @@ void ActionModule::processMotionStep()
                                                 .getMotionSection(motion_status_.current_section_name)
                                                 .next_sections[0];
       motion_status_.current_frame_in_section = 0;
+      ROS_INFO_STREAM("[ActionModule] processMotionStep: move to next section: " << motion_status_.current_section_name);
     }
     else
     {
       // If there is no next frame or section, finish the motion
       motion_status_.is_running = false;
+      send_next_frame_ = false;
       ROS_INFO("[ActionModule] processMotionStep: finish motion");
       publishDoneMsg("Motion completed");
     }
   }
-  ROS_INFO_STREAM(
-      "[ActionModule] processMotionStep: current_frame_in_section: " << motion_status_.current_frame_in_section);
+  // ROS_INFO_STREAM(
+  //     "[ActionModule] processMotionStep: current_frame_in_section: " << motion_status_.current_frame_in_section);
 }
 
 void ActionModule::brake()

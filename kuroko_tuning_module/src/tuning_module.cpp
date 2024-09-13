@@ -634,7 +634,7 @@ void TuningModule::stop()
 
 void TuningModule::onModuleEnable()
 {
-  ROS_INFO("Tuning module is enabled");
+  ROS_INFO("[TuningModule] Module Enabled");
 
   // load offset file
   parseOffsetData(offset_path_);
@@ -645,6 +645,7 @@ void TuningModule::onModuleEnable()
 
 void TuningModule::onModuleDisable()
 {
+  ROS_INFO("[TuningModule] Module Disabled");
   tuning_data_.clearData();
   has_goal_joints_ = false;
 

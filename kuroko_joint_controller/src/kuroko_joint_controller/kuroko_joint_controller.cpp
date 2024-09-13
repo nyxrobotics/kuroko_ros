@@ -1796,7 +1796,11 @@ void KurokoJointController::setCtrlModule(std::string module_name)
 void KurokoJointController::setJointCtrlModuleCallback(const robotis_controller_msgs::JointCtrlModule::ConstPtr& msg)
 {
   if (msg->joint_name.size() != msg->module_name.size())
+  {
+    ROS_ERROR("[KurokoJointController] Joint name(%d) and module name(%d) size is not matched", msg->joint_name.size(),
+              msg->module_name.size());
     return;
+  }
 
   if (set_module_thread_.joinable())
     set_module_thread_.join();

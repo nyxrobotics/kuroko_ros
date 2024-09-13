@@ -361,10 +361,7 @@ void MainWindow::updateHeadAngles(double pan, double tilt)
   is_updating_ = true;
 
   ui_.head_pan_slider->setValue(pan * 180.0 / M_PI);
-  // ui.head_pan_spinbox->setValue( pan * 180.0 / M_PI );
   ui_.head_tilt_slider->setValue(tilt * 180.0 / M_PI);
-  // ui.head_tilt_spinbox->setValue( tilt * 180.0 / M_PI );
-
   is_updating_ = false;
 }
 
@@ -395,7 +392,6 @@ void MainWindow::updateWalkingParams(op3_walking_module_msgs::WalkingParam param
   ui_.dSpinBox_period_time->setValue(params.period_time * 1000);  // s -> ms
   ui_.dSpinBox_dsp_ratio->setValue(params.dsp_ratio);
   ui_.dSpinBox_step_fb_ratio->setValue(params.step_fb_ratio);
-  ;
   // walking
   ui_.dSpinBox_x_move_amplitude->setValue(params.x_move_amplitude);
   ui_.dSpinBox_y_move_amplitude->setValue(params.y_move_amplitude);
@@ -565,7 +561,14 @@ void MainWindow::initModeUnit()
 
   // make motion tab
   if (qnode_kuroko_.getModeIndex("action_module") != -1)
+  {
+    std::cout << "Action module" << std::endl;
     initMotionUnit();
+  }
+  else
+  {
+    std::cout << "No action module" << std::endl;
+  }
 }
 
 void MainWindow::initMotionUnit()

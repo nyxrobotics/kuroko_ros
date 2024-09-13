@@ -93,10 +93,10 @@ void QNodeKuroko::refreshWalkingParam()
 
     // update ui
     Q_EMIT updateWalkingParameters(walking_param_);
-    log(INFO, "Get walking parameters");
+    log(INFO, "Get Walking Parameters");
   }
   else
-    log(ERROR, "Fail to get walking parameters.");
+    log(ERROR, "Fail to Get Walking Parameters");
 }
 
 void QNodeKuroko::saveWalkingParam()
@@ -105,7 +105,7 @@ void QNodeKuroko::saveWalkingParam()
   command_msg.data = "save";
   set_walking_command_pub_.publish(command_msg);
 
-  log(INFO, "Save Walking parameters.");
+  log(INFO, "Save Walking Parameters");
 }
 
 void QNodeKuroko::applyWalkingParam(const op3_walking_module_msgs::WalkingParam& walking_param)
@@ -113,7 +113,7 @@ void QNodeKuroko::applyWalkingParam(const op3_walking_module_msgs::WalkingParam&
   walking_param_ = walking_param;
 
   set_walking_param_pub_.publish(walking_param_);
-  log(INFO, "Apply Walking parameters.");
+  log(INFO, "Apply Walking Parameters");
 }
 
 void QNodeKuroko::initGyro()

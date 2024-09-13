@@ -868,13 +868,13 @@ void WalkingModule::saveWalkingParam(std::string& path)
 
 void WalkingModule::onModuleEnable()
 {
+  ROS_INFO("[WalkingModule] Module Enabled");
   walking_state_ = WALKING_ENABLE;
-  ROS_INFO("Walking Enable");
 }
 
 void WalkingModule::onModuleDisable()
 {
-  ROS_INFO("Walking Disable");
+  ROS_INFO("[WalkingModule] Module Disabled");
   walking_state_ = WALKING_DISABLE;
 }
 

@@ -323,17 +323,14 @@ void QNodeKuroko::getJointControlMode()
     log(INFO, "Get current Mode");
   }
   else
-    log(ERROR, "Fail to get current joint control module.");
+    log(ERROR, "Fail to get current joint control module");
 }
 
 void QNodeKuroko::refreshCurrentJointControlCallback(const robotis_controller_msgs::JointCtrlModule::ConstPtr& msg)
 {
-  ROS_INFO("set current joint module");
-  // int _index = 0;
-
+  ROS_INFO("refreshCurrentJointControlCallback");
   std::vector<int> modules;
   modules.resize(getJointSize());
-
   std::map<std::string, int> joint_module_map;
 
   // clear current using modules

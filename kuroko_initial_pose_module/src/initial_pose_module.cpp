@@ -13,6 +13,7 @@ InitialPoseModule::InitialPoseModule()
 
   initial_pose_module_state_ = new InitialPoseModuleState();
   joint_state_ = new BaseJointState();
+  initial_pose_module_state_->is_moving_ = false;
 }
 
 InitialPoseModule::~InitialPoseModule()
@@ -162,7 +163,7 @@ void InitialPoseModule::initPoseMsgCallback(const std_msgs::String::ConstPtr& ms
     }
   }
   else
-    ROS_INFO("previous task is alive");
+    ROS_INFO("[InitialPoseModule] previous task is alive");
 
   return;
 }
@@ -368,11 +369,12 @@ void InitialPoseModule::stop()
 
 void InitialPoseModule::onModuleEnable()
 {
-  ROS_INFO("Initial Pose Module is enabled");
+  ROS_INFO("[InitialPoseModule] Module Enabled");
 }
 
 void InitialPoseModule::onModuleDisable()
 {
+  ROS_INFO("[InitialPoseModule] Module Disabled");
   has_goal_joints_ = false;
 }
 

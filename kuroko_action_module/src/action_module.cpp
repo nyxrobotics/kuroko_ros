@@ -99,6 +99,12 @@ void ActionModule::saveAllMotions(const std::string& directory)
       YAML::Node section_node;
       section_node["section_name"] = section.section_name;
 
+      // Add next_sections if available
+      if (!section.next_sections.empty())
+      {
+        section_node["next_sections"] = section.next_sections;
+      }
+
       YAML::Node joint_trajectory_node;
       joint_trajectory_node["joint_names"] = section.joint_trajectory.joint_names;
 
@@ -107,8 +113,15 @@ void ActionModule::saveAllMotions(const std::string& directory)
         YAML::Node point_node;
         point_node["positions"] = point.positions;
         point_node["velocities"] = point.velocities;
+        point_node["accelerations"] = point.accelerations;  // Include accelerations
         point_node["effort"] = point.effort;
         point_node["time_from_start"] = point.time_from_start.toSec();
+
+        // Set points to flow style
+        point_node["positions"].SetStyle(YAML::EmitterStyle::Flow);
+        point_node["velocities"].SetStyle(YAML::EmitterStyle::Flow);
+        point_node["accelerations"].SetStyle(YAML::EmitterStyle::Flow);  // Set accelerations to flow style
+        point_node["effort"].SetStyle(YAML::EmitterStyle::Flow);
 
         joint_trajectory_node["points"].push_back(point_node);
       }
@@ -154,19 +167,34 @@ void ActionModule::loadMotionYAML(const std::string& file_name, const std::strin
       motion_control::MotionSection motion_section;
       motion_section.section_name = section["section_name"].as<std::string>();
 
+      // Load next_sections
+      if (section["next_sections"])
+      {
+        motion_section.next_sections = section["next_sections"].as<std::vector<std::string>>();
+      }
+
       // Load joint trajectory
       motion_section.joint_trajectory.joint_names =
           section["joint_trajectory"]["joint_names"].as<std::vector<std::string>>();
+
       for (const auto& point : section["joint_trajectory"]["points"])
       {
         trajectory_msgs::JointTrajectoryPoint trajectory_point;
         trajectory_point.positions = point["positions"].as<std::vector<double>>();
         trajectory_point.velocities = point["velocities"].as<std::vector<double>>();
+
+        // Load accelerations if available
+        if (point["accelerations"])
+        {
+          trajectory_point.accelerations = point["accelerations"].as<std::vector<double>>();
+        }
+
         trajectory_point.effort = point["effort"].as<std::vector<double>>();
         trajectory_point.time_from_start = ros::Duration(point["time_from_start"].as<double>());
 
         motion_section.joint_trajectory.points.push_back(trajectory_point);
       }
+
       motion_file.motion_sections.push_back(motion_section);
     }
 

@@ -1,6 +1,7 @@
 sections:
-  - section_name: "start_section"
-    next_sections: ["loop_section"]
+  - section_name: start_section
+    next_sections:
+      - loop_section
     joint_trajectory:
       joint_names:
         - chest
@@ -33,9 +34,10 @@ sections:
           accelerations: [0, 0, 0, 0, 0, 0, 0, 0]
           effort: [0, 0, 0, 0, 0, 0, 0, 0, 0]
           time_from_start: 0.5
-
-  - section_name: "loop_section"
-    next_sections: ["loop_section", "finish_section"]
+  - section_name: loop_section
+    next_sections:
+      - loop_section
+      - finish_section
     joint_trajectory:
       joint_names:
         - chest
@@ -68,9 +70,7 @@ sections:
           accelerations: [0, 0, 0, 0, 0, 0, 0, 0]
           effort: [0, 0, 0, 0, 0, 0, 0, 0, 0]
           time_from_start: 0.5
-
-  - section_name: "finish_section"
-    next_sections: []
+  - section_name: finish_section
     joint_trajectory:
       joint_names:
         - chest

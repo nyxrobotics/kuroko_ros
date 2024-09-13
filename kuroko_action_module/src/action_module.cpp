@@ -34,37 +34,18 @@ void ActionModule::initialize(const int control_cycle_msec, robotis_framework::R
   std::string motion_path = ros::package::getPath("kuroko_action_module") + "/motion";
   loadConfigJointNames(joint_names_path);
   ROS_INFO_STREAM("[ActionModule] Loading modules for each joint (joint_names.yaml)");
-  // for (auto& dxl : robot->dxls_)
-  // {
-  //   std::string joint_name = dxl.first;
-  //   // Check if the joint is in the list of joint names
-  //   if (std::find(config_joint_names_.begin(), config_joint_names_.end(), joint_name) == config_joint_names_.end())
-  //   {
-  //     ROS_WARN_STREAM("[ActionModule] Joint '" << joint_name << "' not found in the joint_names.yaml file.
-  //     Skipping."); continue;
-  //   }
-  //   // ROS_INFO_STREAM("[ActionModule] Loading module for joint: " << joint_name);
-  //   robotis_framework::Dynamixel* dxl_info = dxl.second;
-
-  //   joint_name_to_dxl_id_[joint_name] = dxl_info->id_;
-  //   dxl_id_to_joint_name_[dxl_info->id_] = joint_name;
-  //   action_result_[joint_name] = new robotis_framework::DynamixelState();
-  //   action_result_[joint_name]->goal_position_ = dxl_info->dxl_state_->goal_position_;
-  //   result_[joint_name] = new robotis_framework::DynamixelState();
-  //   result_[joint_name]->goal_position_ = dxl_info->dxl_state_->goal_position_;
-  //   action_joints_enable_[joint_name] = false;
-  // }
-  for (std::map<std::string, robotis_framework::Dynamixel*>::iterator it = robot->dxls_.begin();
-       it != robot->dxls_.end(); it++)
+  for (auto& dxl : robot->dxls_)
   {
-    std::string joint_name = it->first;
+    std::string joint_name = dxl.first;
     // Check if the joint is in the list of joint names
     if (std::find(config_joint_names_.begin(), config_joint_names_.end(), joint_name) == config_joint_names_.end())
     {
-      ROS_WARN_STREAM("[ActionModule] Joint '" << joint_name << "' not found in the joint_names.yaml file. Skipping.");
+      ROS_WARN_STREAM("[ActionModule] Joint " << joint_name << " not found in the joint_names.yaml file. Skipping.");
       continue;
     }
-    robotis_framework::Dynamixel* dxl_info = it->second;
+    ROS_INFO_STREAM("[ActionModule] Loading module for joint: " << joint_name);
+    robotis_framework::Dynamixel* dxl_info = dxl.second;
+
     joint_name_to_dxl_id_[joint_name] = dxl_info->id_;
     dxl_id_to_joint_name_[dxl_info->id_] = joint_name;
     action_result_[joint_name] = new robotis_framework::DynamixelState();

@@ -1,6 +1,6 @@
 
-#ifndef MOTON_FILES_H_
-#define MOTON_FILES_H_
+#ifndef MOTION_FILES_H_
+#define MOTION_FILES_H_
 
 #include <trajectory_msgs/JointTrajectory.h>
 
@@ -42,4 +42,4 @@ public:
 };
 }  // namespace motion_control
 
-#endif /* MOTON_FILES_H_ */
+#endif /* MOTION_FILES_H_ */

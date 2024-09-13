@@ -1,5 +1,0 @@
-kuroko_description
-====
-  
-
-  

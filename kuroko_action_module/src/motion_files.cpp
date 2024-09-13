@@ -1,8 +1,8 @@
-#include "motion_files.h"
+#include "kuroko_action_module/motion_files.h"
 
 namespace motion_control
 {
-trajectory_msgs::JointTrajectory MotionSection::getSortedJointTrajectory(const std::vector<std::string> joint_names_in);
+trajectory_msgs::JointTrajectory MotionSection::getSortedJointTrajectory(const std::vector<std::string> joint_names_in)
 {
   trajectory_msgs::JointTrajectory joint_trajectory_out;
   // Set the joint names and initialize output trajectory
@@ -62,7 +62,7 @@ MotionSection MotionFile::getMotionSection(const std::string& section_name)
 
 MotionFile MotionFiles::getMotionFile(const std::string& motion_name)
 {
-  for (const auto& file : motion_sections)
+  for (const auto& file : motion_files)
   {
     if (file.motion_name == motion_name)
     {
@@ -75,7 +75,7 @@ MotionFile MotionFiles::getMotionFile(const std::string& motion_name)
 
 bool MotionFiles::hasMotion(const std::string& motion_name)
 {
-  for (const auto& file : motion_sections)
+  for (const auto& file : motion_files)
   {
     if (file.motion_name == motion_name)
     {

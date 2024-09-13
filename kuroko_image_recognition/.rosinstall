@@ -1,0 +1,4 @@
+- git:
+      local-name: mask_rcnn_ros
+      uri: git@github.com:akio/mask_rcnn_ros.git
+      version: kinetic-devel

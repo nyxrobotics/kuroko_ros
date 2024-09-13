@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+
+<launch>
+  <node name="mask_rcnn" pkg="mask_rcnn_ros" type="mask_rcnn_node.py" output="screen">
+    <remap from="/camera/rgb/image_raw" to="/camera/resized/image"/>
+    <param name="~visualization" value="true"/>
+    <param name="~model_path" value="/home/nyx/lib/roboone_auto_dataset/export_coco/output/model_final.pth"/>
+    <param name="~class_names" value="[person, roboone]"/>
+  </node>
+</launch>

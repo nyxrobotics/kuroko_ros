@@ -43,7 +43,7 @@ public:
   void saveAllMotions(const std::string& directory);
   void loadAllMotions(const std::string& directory);
 
-  void playMotionByName(const std::string& motion_name);
+  bool playMotionByName(const std::string& motion_name);
   void brake();
   void onModuleEnable() override;
   void onModuleDisable() override;
@@ -61,6 +61,7 @@ private:
   bool start_playing_requested_;
   bool stop_playing_requested_;
   bool action_module_enabled_;
+  bool send_next_frame_;
 
   MotionFiles motion_files_;
   MotionStatus motion_status_;

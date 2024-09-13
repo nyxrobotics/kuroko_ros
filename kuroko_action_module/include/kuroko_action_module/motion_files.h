@@ -38,6 +38,7 @@ public:
   std::string current_motion_name;
   std::string current_section_name;
   int current_frame_in_section;
+  double current_time_in_section;
   std::string next_motion_name;
 };
 }  // namespace motion_control

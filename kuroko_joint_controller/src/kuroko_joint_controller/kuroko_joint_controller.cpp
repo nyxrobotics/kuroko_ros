@@ -15,12 +15,13 @@ KurokoJointController::KurokoJointController()
   , init_pose_loaded_(false)
   , timer_thread_(0)
   , controller_mode_(MOTION_MODULE_MODE)
-  , debug_print_(false)
+  , debug_print_(true)
   , robot_(nullptr)
   , gazebo_mode_(false)
   , gazebo_robot_name_("kuroko")
 {
   direct_sync_write_.clear();
+  ROS_INFO("[KurokoJointController] Initialized");
 }
 
 void KurokoJointController::initializeSyncWrite()
@@ -28,7 +29,7 @@ void KurokoJointController::initializeSyncWrite()
   if (gazebo_mode_)
     return;
 
-  // ROS_INFO("FIRST BULKREAD");
+  ROS_INFO("[KurokoJointController::initializeSyncWrite] FIRST BULKREAD");
   for (auto& it : port_to_bulk_read_)
     it.second->txRxPacket();
   for (auto& it : port_to_bulk_read_)
@@ -39,7 +40,7 @@ void KurokoJointController::initializeSyncWrite()
     {
       if (++error_count > 10)
       {
-        ROS_ERROR("[KurokoJointController] first bulk read fail!!");
+        ROS_ERROR("[KurokoJointController::initializeSyncWrite] First bulk read failed!!");
         exit(-1);
       }
       usleep(10 * 1000);
@@ -47,7 +48,7 @@ void KurokoJointController::initializeSyncWrite()
     } while (result != COMM_SUCCESS);
   }
   init_pose_loaded_ = true;
-  // ROS_INFO("FIRST BULKREAD END");
+  ROS_INFO("[KurokoJointController::initializeSyncWrite] FIRST BULKREAD END");
 
   // clear syncwrite param setting
   for (auto& it : port_to_sync_write_position_)
@@ -96,6 +97,7 @@ void KurokoJointController::initializeSyncWrite()
       it.second->clearParam();
   }
 
+  ROS_INFO("[KurokoJointController::initializeSyncWrite] SyncWrite Params Cleared");
   // set init syncwrite param(from data of bulkread)
   for (auto& it : robot_->dxls_)
   {
@@ -184,6 +186,7 @@ bool KurokoJointController::initialize(const std::string& robot_file_path, const
   if (gazebo_mode_)
   {
     queue_thread_ = boost::thread(boost::bind(&KurokoJointController::msgQueueThread, this));
+    ROS_INFO("[KurokoJointController::initialize] Running in gazebo mode");
     return true;
   }
 
@@ -195,7 +198,8 @@ bool KurokoJointController::initialize(const std::string& robot_file_path, const
 
     if (!port->setBaudRate(port->getBaudRate()))
     {
-      ROS_ERROR("PORT [%s] SETUP ERROR! (baudrate: %d)", port_name.c_str(), port->getBaudRate());
+      ROS_ERROR("[KurokoJointController::initialize] PORT [%s] setup error (baudrate: %d)", port_name.c_str(),
+                port->getBaudRate());
       exit(-1);
     }
 
@@ -295,8 +299,8 @@ bool KurokoJointController::initialize(const std::string& robot_file_path, const
   }
 
   initializeDevice(init_file_path);
-
   queue_thread_ = boost::thread(boost::bind(&KurokoJointController::msgQueueThread, this));
+  ROS_INFO("[KurokoJointController::initialize] Initialization complete");
   return true;
 }
 
@@ -411,7 +415,7 @@ void KurokoJointController::initializeDevice(const std::string& init_file_path)
   }
   catch (const std::exception& e)
   {
-    ROS_INFO("Dynamixel Init file not found.");
+    ROS_WARN("[KurokoJointController::initializeDevice] Failed to load init file: %s", e.what());
   }
 
   // [ BulkRead ] StartAddress : Present Position , Length : 10 (
@@ -590,6 +594,7 @@ void KurokoJointController::initializeDevice(const std::string& init_file_path)
     if (bulkread_start_addr != 0)
       port_to_bulk_read_[sensor->port_name_]->addParam(sensor->id_, bulkread_start_addr, bulkread_data_length);
   }
+  ROS_INFO("[KurokoJointController::initializeDevice] Device Initialization Complete");
 }
 
 void KurokoJointController::gazeboTimerThread()
@@ -759,6 +764,8 @@ void KurokoJointController::startTimer()
       ROS_ERROR("Creating timer thread failed: %s", strerror(error));
       exit(-1);
     }
+
+    ROS_INFO("[KurokoJointController::startTimer] Timer thread started");
   }
 
   this->is_timer_running_ = true;
@@ -1028,7 +1035,7 @@ void KurokoJointController::process()
       if (debug_print_)
       {
         time_duration = ros::Time::now() - start_time;
-        fprintf(stderr, "(%2.6f) BulkRead Rx & update state \n", time_duration.nsec * 0.000001);
+        ROS_INFO("[KurokoJointController::process] Process() DONE in %2.6f ms", time_duration.toSec() * 1000);
       }
 
       // SyncWrite

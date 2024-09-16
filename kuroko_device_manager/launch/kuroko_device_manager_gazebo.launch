@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <launch>
-  <param name="gazebo" value="true" type="bool"/>
+  <param name="is_gazebo" value="true" type="bool"/>
   <param name="gazebo_robot_name" value="kuroko"/>
 
   <param name="offset_file_path" value="$(find kuroko_device_manager)/config/offset.yaml"/>
@@ -9,7 +9,5 @@
   <param name="device_name" value="/dev/ttyUSB0"/>
 
   <!-- kuroko Manager -->
-  <node pkg="kuroko_device_manager" type="kuroko_device_manager" name="kuroko_device_manager" output="screen">
-    <param name="gazebo" value="true"/>
-  </node>
+  <node pkg="kuroko_device_manager" type="kuroko_device_manager" name="kuroko_device_manager" output="screen"/>
 </launch>

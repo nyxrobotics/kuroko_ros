@@ -139,7 +139,7 @@ void KurokoDeviceManager::loadParameters(ros::NodeHandle& nh)
   nh.param<std::string>("init_file_path", init_file_, "");
   nh.param<std::string>("device_name", device_name_, sub_controller_device_);
   nh.param<int>("baud_rate", baudrate_, baud_rate_);
-  nh.param<bool>("gazebo", controller_->gazebo_mode_, false);
+  nh.param<bool>("is_gazebo", controller_->gazebo_mode_, false);
 }
 
 void KurokoDeviceManager::setupROS(ros::NodeHandle& nh)

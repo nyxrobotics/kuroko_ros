@@ -97,7 +97,7 @@ hip_r_pitch:
   position_p_gain: 900
   return_delay_time: 1
 
-thigh_r_front_active:
+thigh_r_active:
   max_position_limit: 4095
   min_position_limit: 0
   operating_mode: 3
@@ -151,7 +151,7 @@ hip_l_pitch:
   position_p_gain: 900
   return_delay_time: 1
 
-thigh_l_front_active:
+thigh_l_active:
   max_position_limit: 4095
   min_position_limit: 0
   operating_mode: 3

@@ -10,13 +10,13 @@ joint_names:
   - elbow_l_rear
   - hip_r_roll
   - hip_r_pitch
-  - thigh_r_front_active
+  - thigh_r_active
   - shin_r_active
   - ankle_r_roll
   - ankle_r_yaw
   - hip_l_roll
   - hip_l_pitch
-  - thigh_l_front_active
+  - thigh_l_active
   - shin_l_active
   - ankle_l_roll
   - ankle_l_yaw

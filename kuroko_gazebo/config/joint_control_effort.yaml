@@ -51,10 +51,10 @@ lhip_r_pitch_position:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
   joint: hip_r_pitch
-thigh_r_front_active_position:
+thigh_r_active_position:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
-  joint: thigh_r_front_active
+  joint: thigh_r_active
 shin_r_active_position:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
@@ -76,10 +76,10 @@ lhip_l_pitch_position:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
   joint: hip_l_pitch
-thigh_l_front_active_position:
+thigh_l_active_position:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }
-  joint: thigh_l_front_active
+  joint: thigh_l_active
 shin_l_active_position:
   type: effort_controllers/JointPositionController
   pid: { p: 40.0, i: 0.0, d: 0.1 }

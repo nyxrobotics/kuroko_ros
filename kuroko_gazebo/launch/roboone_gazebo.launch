@@ -56,13 +56,13 @@
       elbow_l_rear_position
       hip_r_roll_position
       hip_r_pitch_position
-      thigh_r_front_active_position
+      thigh_r_active_position
       shin_r_active_position
       ankle_r_roll_position
       ankle_r_yaw_position
       hip_l_roll_position
       hip_l_pitch_position
-      thigh_l_front_active_position
+      thigh_l_active_position
       shin_l_active_position
       ankle_l_roll_position
       ankle_l_yaw_position

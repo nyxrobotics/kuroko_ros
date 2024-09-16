@@ -20,14 +20,14 @@ WalkingModule::WalkingModule() : control_cycle_msec_(8), debug_(false)
   // result
   result_["hip_r_roll"] = new robotis_framework::DynamixelState();
   result_["hip_r_pitch"] = new robotis_framework::DynamixelState();
-  result_["thigh_r_front_active"] = new robotis_framework::DynamixelState();
+  result_["thigh_r_active"] = new robotis_framework::DynamixelState();
   result_["shin_r_active"] = new robotis_framework::DynamixelState();
   result_["ankle_r_roll"] = new robotis_framework::DynamixelState();
   result_["ankle_r_yaw"] = new robotis_framework::DynamixelState();
 
   result_["hip_l_roll"] = new robotis_framework::DynamixelState();
   result_["hip_l_pitch"] = new robotis_framework::DynamixelState();
-  result_["thigh_l_front_active"] = new robotis_framework::DynamixelState();
+  result_["thigh_l_active"] = new robotis_framework::DynamixelState();
   result_["shin_l_active"] = new robotis_framework::DynamixelState();
   result_["ankle_l_roll"] = new robotis_framework::DynamixelState();
   result_["ankle_l_yaw"] = new robotis_framework::DynamixelState();
@@ -35,14 +35,14 @@ WalkingModule::WalkingModule() : control_cycle_msec_(8), debug_(false)
   // joint table
   joint_table_["hip_r_roll"] = 0;
   joint_table_["hip_r_pitch"] = 1;
-  joint_table_["thigh_r_front_active"] = 2;
+  joint_table_["thigh_r_active"] = 2;
   joint_table_["shin_r_active"] = 3;
   joint_table_["ankle_r_roll"] = 4;
   joint_table_["ankle_r_yaw"] = 5;
 
   joint_table_["hip_l_roll"] = 6;
   joint_table_["hip_l_pitch"] = 7;
-  joint_table_["thigh_l_front_active"] = 8;
+  joint_table_["thigh_l_active"] = 8;
   joint_table_["shin_l_active"] = 9;
   joint_table_["ankle_l_roll"] = 10;
   joint_table_["ankle_l_yaw"] = 11;
@@ -114,8 +114,8 @@ void WalkingModule::initialize(const int control_cycle_msec, robotis_framework::
   time_ = 0;
   // TODO: set joint directions from robot model
   joint_axis_direction_ << 1, -1, 1, 1, 1,
-      -1,                    // hip_r_roll, hip_r_pitch, thigh_r_front_active, shin_r_active, ankle_r_roll, ankle_r_yaw
-      -1, 1, -1, -1, 1, -1;  // hip_l_roll, hip_l_pitch, thigh_l_front_active, shin_l_active, ankle_l_roll, ankle_l_yaw
+      -1,                    // hip_r_roll, hip_r_pitch, thigh_r_active, shin_r_active, ankle_r_roll, ankle_r_yaw
+      -1, 1, -1, -1, 1, -1;  // hip_l_roll, hip_l_pitch, thigh_l_active, shin_l_active, ankle_l_roll, ankle_l_yaw
   init_position_ << 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0;
   init_position_ *= DEGREE2RADIAN;
 
@@ -777,12 +777,10 @@ void WalkingModule::sensoryFeedback(const double& rlGyroErr, const double& fbGyr
       kuroko_kd_->getJointDirection("hip_r_pitch") * internal_gain * fbGyroErr * walking_param_.balance_knee_gain;
   balance_angle[joint_table_["hip_l_pitch"]] =
       kuroko_kd_->getJointDirection("hip_l_pitch") * internal_gain * fbGyroErr * walking_param_.balance_knee_gain;
-  balance_angle[joint_table_["thigh_r_front_active"]] = -kuroko_kd_->getJointDirection("thigh_r_front_active") *
-                                                        internal_gain * fbGyroErr *
-                                                        walking_param_.balance_ankle_pitch_gain;
-  balance_angle[joint_table_["thigh_l_front_active"]] = -kuroko_kd_->getJointDirection("thigh_l_front_active") *
-                                                        internal_gain * fbGyroErr *
-                                                        walking_param_.balance_ankle_pitch_gain;
+  balance_angle[joint_table_["thigh_r_active"]] = -kuroko_kd_->getJointDirection("thigh_r_active") * internal_gain *
+                                                  fbGyroErr * walking_param_.balance_ankle_pitch_gain;
+  balance_angle[joint_table_["thigh_l_active"]] = -kuroko_kd_->getJointDirection("thigh_l_active") * internal_gain *
+                                                  fbGyroErr * walking_param_.balance_ankle_pitch_gain;
   balance_angle[joint_table_["shin_r_active"]] = -kuroko_kd_->getJointDirection("shin_r_active") * internal_gain *
                                                  fbGyroErr * walking_param_.balance_ankle_pitch_gain;
   balance_angle[joint_table_["shin_l_active"]] = -kuroko_kd_->getJointDirection("shin_l_active") * internal_gain *

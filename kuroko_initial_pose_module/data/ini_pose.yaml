@@ -12,13 +12,13 @@ tar_pose:
   9: -130.0 # elbow_l_rear
   10: 0.0 # hip_r_roll
   11: 0.0 # hip_r_pitch
-  12: -5.0 # thigh_r_front_active
+  12: -5.0 # thigh_r_active
   13: -10.0 # shin_r_active
   14: 0.0 # ankle_r_roll
   15: 0.0 # ankle_r_yaw
   16: 0.0 # hip_l_roll
   17: 0.0 # hip_l_pitch
-  18: 5.0 # thigh_l_front_active
+  18: 5.0 # thigh_l_active
   19: 10.0 # shin_l_active
   20: 0.0 # ankle_l_roll
   21: 0.0 # ankle_l_yaw
@@ -38,13 +38,13 @@ via_pose:
   9: [-130.0] # elbow_l_rear
   10: [0.0] # hip_r_roll
   11: [0.0] # hip_r_pitch
-  12: [-5.0] # thigh_r_front_active
+  12: [-5.0] # thigh_r_active
   13: [-10.0] # shin_r_active
   14: [0.0] # ankle_r_roll
   15: [0.0] # ankle_r_yaw
   16: [0.0] # hip_l_roll
   17: [0.0] # hip_l_pitch
-  18: [5.0] # thigh_l_front_active
+  18: [5.0] # thigh_l_active
   19: [10.0] # shin_l_active
   20: [0.0] # ankle_l_roll
   21: [0.0] # ankle_l_yaw

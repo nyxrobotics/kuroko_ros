@@ -205,7 +205,7 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        thigh_l_front_active_link:
+        thigh_l_active_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -224,7 +224,7 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-        thigh_r_front_active_link:
+        thigh_r_active_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -319,7 +319,7 @@ Visualization Manager:
           Value: true
         shoulder_r_roll_link:
           Value: true
-        thigh_l_front_active_link:
+        thigh_l_active_link:
           Value: true
         thigh_l_middle_passive_link:
           Value: true
@@ -327,7 +327,7 @@ Visualization Manager:
           Value: true
         thigh_l_rear_passive_mimic_link:
           Value: true
-        thigh_r_front_active_link:
+        thigh_r_active_link:
           Value: true
         thigh_r_middle_passive_link:
           Value: true
@@ -370,7 +370,7 @@ Visualization Manager:
                     thigh_l_rear_passive_mimic_link:
                       thigh_l_rear_passive_link:
                         {}
-                  thigh_l_front_active_link:
+                  thigh_l_active_link:
                     knee_l_passive_link:
                       shin_l_front_passive_link:
                         ankle_l_pitch_passive_link:
@@ -387,7 +387,7 @@ Visualization Manager:
                     thigh_r_rear_passive_mimic_link:
                       thigh_r_rear_passive_link:
                         {}
-                  thigh_r_front_active_link:
+                  thigh_r_active_link:
                     knee_r_passive_link:
                       shin_r_front_passive_link:
                         ankle_r_pitch_passive_link:

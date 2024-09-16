@@ -49,12 +49,12 @@ void KurokoKinematics::initialize(const Eigen::MatrixXd& pelvis_position, const 
   std::vector<double> min_position_limit, max_position_limit;
 
   // Right Leg Chain
-  rleg_chain_.addSegment(KDL::Segment("base", KDL::Joint(KDL::Joint::None),
-                                      KDL::Frame(KDL::Rotation(pelvis_xx, pelvis_yx, pelvis_zx, pelvis_xy, pelvis_yy,
-                                                               pelvis_zy, pelvis_xz, pelvis_yz, pelvis_zz),
-                                                 KDL::Vector(pelvis_x, pelvis_y, pelvis_z)),
-                                      KDL::RigidBodyInertia(0.0, KDL::Vector(0.0, 0.0, 0.0),
-                                                            KDL::RotationalInertia(0.0, 0.0, 0.0, 0.0, 0.0, 0.0))));
+  rleg_chain_.addSegment(KDL::Segment(
+      "base", KDL::Joint(KDL::Joint::None),
+      KDL::Frame(KDL::Rotation(pelvis_xx, pelvis_yx, pelvis_zx, pelvis_xy, pelvis_yy, pelvis_zy, pelvis_xz, pelvis_yz,
+                               pelvis_zz),
+                 KDL::Vector(pelvis_x, pelvis_y, pelvis_z)),
+      KDL::RigidBodyInertia(0.0, KDL::Vector(0.0, 0.0, 0.0), KDL::RotationalInertia(0.0, 0.0, 0.0, 0.0, 0.0, 0.0))));
   rleg_chain_.addSegment(KDL::Segment("waist", KDL::Joint(KDL::Joint::None), KDL::Frame(KDL::Vector(0, 0, -0.08425)),
                                       KDL::RigidBodyInertia(0.337, KDL::Vector(0.00125, 0.0, -0.04875),
                                                             KDL::RotationalInertia(0.0, 0.0, 0.0, 0.0, 0.0, 0.0))));
@@ -65,7 +65,7 @@ void KurokoKinematics::initialize(const Eigen::MatrixXd& pelvis_position, const 
                                       KDL::Frame(KDL::Vector(0.015, -0.02925, -0.0305)),
                                       KDL::RigidBodyInertia(0.478, KDL::Vector(-0.00175, -0.049, -0.015),
                                                             KDL::RotationalInertia(0.0, 0.0, 0.0, 0.0, 0.0, 0.0))));
-  rleg_chain_.addSegment(KDL::Segment("thigh_r_front_active", KDL::Joint(KDL::Joint::RotY),
+  rleg_chain_.addSegment(KDL::Segment("thigh_r_active", KDL::Joint(KDL::Joint::RotY),
                                       KDL::Frame(KDL::Vector(0.0, 0.0, -0.1)),
                                       KDL::RigidBodyInertia(0.0012, KDL::Vector(0.0, 0.0, -0.05),
                                                             KDL::RotationalInertia(0.0, 0.0, 0.0, 0.0, 0.0, 0.0))));
@@ -88,17 +88,17 @@ void KurokoKinematics::initialize(const Eigen::MatrixXd& pelvis_position, const 
                                       KDL::Frame(KDL::Vector(0.0, 0.0, -0.004)),
                                       KDL::RigidBodyInertia(0.043, KDL::Vector(0.0, 0.0, -0.004),
                                                             KDL::RotationalInertia(0.0, 0.0, 0.0, 0.0, 0.0, 0.0))));
-  rleg_chain_.addSegment(KDL::Segment("leg_r_end", KDL::Joint(KDL::Joint::None), KDL::Frame(KDL::Vector(0.0, 0.0, 0.0)),
-                                      KDL::RigidBodyInertia(0.0, KDL::Vector(0.0, 0.0, 0.0),
-                                                            KDL::RotationalInertia(0.0, 0.0, 0.0, 0.0, 0.0, 0.0))));
+  rleg_chain_.addSegment(KDL::Segment(
+      "leg_r_end", KDL::Joint(KDL::Joint::None), KDL::Frame(KDL::Vector(0.0, 0.0, 0.0)),
+      KDL::RigidBodyInertia(0.0, KDL::Vector(0.0, 0.0, 0.0), KDL::RotationalInertia(0.0, 0.0, 0.0, 0.0, 0.0, 0.0))));
 
   // Left Leg Chain
-  rleg_chain_.addSegment(KDL::Segment("base", KDL::Joint(KDL::Joint::None),
-                                      KDL::Frame(KDL::Rotation(pelvis_xx, pelvis_yx, pelvis_zx, pelvis_xy, pelvis_yy,
-                                                               pelvis_zy, pelvis_xz, pelvis_yz, pelvis_zz),
-                                                 KDL::Vector(pelvis_x, pelvis_y, pelvis_z)),
-                                      KDL::RigidBodyInertia(0.0, KDL::Vector(0.0, 0.0, 0.0),
-                                                            KDL::RotationalInertia(0.0, 0.0, 0.0, 0.0, 0.0, 0.0))));
+  rleg_chain_.addSegment(KDL::Segment(
+      "base", KDL::Joint(KDL::Joint::None),
+      KDL::Frame(KDL::Rotation(pelvis_xx, pelvis_yx, pelvis_zx, pelvis_xy, pelvis_yy, pelvis_zy, pelvis_xz, pelvis_yz,
+                               pelvis_zz),
+                 KDL::Vector(pelvis_x, pelvis_y, pelvis_z)),
+      KDL::RigidBodyInertia(0.0, KDL::Vector(0.0, 0.0, 0.0), KDL::RotationalInertia(0.0, 0.0, 0.0, 0.0, 0.0, 0.0))));
   rleg_chain_.addSegment(KDL::Segment("waist", KDL::Joint(KDL::Joint::None), KDL::Frame(KDL::Vector(0, 0, -0.08425)),
                                       KDL::RigidBodyInertia(0.337, KDL::Vector(0.00125, 0.0, -0.04875),
                                                             KDL::RotationalInertia(0.0, 0.0, 0.0, 0.0, 0.0, 0.0))));
@@ -109,7 +109,7 @@ void KurokoKinematics::initialize(const Eigen::MatrixXd& pelvis_position, const 
                                       KDL::Frame(KDL::Vector(0.015, 0.02925, -0.0305)),
                                       KDL::RigidBodyInertia(0.478, KDL::Vector(-0.00175, 0.049, -0.015),
                                                             KDL::RotationalInertia(0.0, 0.0, 0.0, 0.0, 0.0, 0.0))));
-  rleg_chain_.addSegment(KDL::Segment("thigh_l_front_active", KDL::Joint(KDL::Joint::RotY),
+  rleg_chain_.addSegment(KDL::Segment("thigh_l_active", KDL::Joint(KDL::Joint::RotY),
                                       KDL::Frame(KDL::Vector(0.0, 0.0, -0.1)),
                                       KDL::RigidBodyInertia(0.0012, KDL::Vector(0.0, 0.0, -0.05),
                                                             KDL::RotationalInertia(0.0, 0.0, 0.0, 0.0, 0.0, 0.0))));
@@ -132,9 +132,9 @@ void KurokoKinematics::initialize(const Eigen::MatrixXd& pelvis_position, const 
                                       KDL::Frame(KDL::Vector(0.0, 0.0, -0.004)),
                                       KDL::RigidBodyInertia(0.043, KDL::Vector(0.0, 0.0, -0.004),
                                                             KDL::RotationalInertia(0.0, 0.0, 0.0, 0.0, 0.0, 0.0))));
-  rleg_chain_.addSegment(KDL::Segment("leg_l_end", KDL::Joint(KDL::Joint::None), KDL::Frame(KDL::Vector(0.0, 0.0, 0.0)),
-                                      KDL::RigidBodyInertia(0.0, KDL::Vector(0.0, 0.0, 0.0),
-                                                            KDL::RotationalInertia(0.0, 0.0, 0.0, 0.0, 0.0, 0.0))));
+  rleg_chain_.addSegment(KDL::Segment(
+      "leg_l_end", KDL::Joint(KDL::Joint::None), KDL::Frame(KDL::Vector(0.0, 0.0, 0.0)),
+      KDL::RigidBodyInertia(0.0, KDL::Vector(0.0, 0.0, 0.0), KDL::RotationalInertia(0.0, 0.0, 0.0, 0.0, 0.0, 0.0))));
 
   // Set Joint Limits
   min_position_limit.push_back(-180.0);

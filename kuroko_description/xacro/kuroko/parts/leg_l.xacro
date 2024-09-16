@@ -40,19 +40,19 @@
       <xacro:box_inertial xyz="-0.00175 0.049 -0.015" rpy="0 0 0" size="0.067 0.098 0.0585"
         mass="0.478"/>
     </link>
-    <joint name="thigh_l_front_active" type="revolute">
+    <joint name="thigh_l_active" type="revolute">
       <parent link="hip_l_pitch_link"/>
-      <child link="thigh_l_front_active_link"/>
+      <child link="thigh_l_active_link"/>
       <origin xyz="0.015 0.02925 -0.0305" rpy="0 -0.785398163 0"/>
       <axis xyz="0 -1 0"/>
       <limit effort="1000.0" lower="-1.8588" upper="0.4974" velocity="10.0"/>
       <dynamics damping="0.0" friction="0.0"/>
     </joint>
-    <link name="thigh_l_front_active_link">
+    <link name="thigh_l_active_link">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="package://kuroko_description/meshes/kuroko/obj/thigh_l_front_active.obj"/>
+          <mesh filename="package://kuroko_description/meshes/kuroko/obj/thigh_l_active.obj"/>
         </geometry>
       </visual>
       <xacro:box_collision xyz="0 0 -0.05" rpy="0 0 0" size="0.014 0.0445 0.114"/>
@@ -85,7 +85,7 @@
       <axis xyz="0 -1 0"/>
       <limit effort="1000.0" lower="-3.1" upper="3.1" velocity="10.0"/>
       <dynamics damping="0.0" friction="0.0"/>
-      <mimic joint="thigh_l_front_active" multiplier="1" offset="0"/>
+      <mimic joint="thigh_l_active" multiplier="1" offset="0"/>
     </joint>
     <xacro:if value="$(arg gazebo)">
       <xacro:gazebo_poassive_joint name="thigh_l_middle_passive_loop" xyz="-0.0335 0 0"
@@ -120,7 +120,7 @@
         <axis xyz="0 -1 0"/>
         <limit effort="1000.0" lower="-3.1" upper="3.1" velocity="10.0"/>
         <dynamics damping="0.0" friction="0.0"/>
-        <mimic joint="thigh_l_front_active" multiplier="1" offset="0"/>
+        <mimic joint="thigh_l_active" multiplier="1" offset="0"/>
       </joint>
     </xacro:unless>
     <xacro:if value="$(arg gazebo)">
@@ -147,13 +147,13 @@
     </link>
 
     <joint name="knee_l_passive" type="revolute">
-      <parent link="thigh_l_front_active_link"/>
+      <parent link="thigh_l_active_link"/>
       <child link="knee_l_passive_link"/>
       <origin xyz="0 0 -0.1" rpy="0 0.785398163 0"/>
       <axis xyz="0 -1 0"/>
       <limit effort="1000.0" lower="-0.4974" upper="1.8588" velocity="10.0"/>
       <dynamics damping="0.0" friction="0.0"/>
-      <mimic joint="thigh_l_front_active" multiplier="-1" offset="0"/>
+      <mimic joint="thigh_l_active" multiplier="-1" offset="0"/>
     </joint>
     <link name="knee_l_passive_link">
       <visual>

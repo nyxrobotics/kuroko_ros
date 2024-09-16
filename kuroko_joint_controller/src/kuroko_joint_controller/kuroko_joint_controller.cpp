@@ -733,7 +733,7 @@ void KurokoJointController::startTimer()
 
     pthread_attr_init(&attr);
 
-    error = pthread_attr_setschedpolicy(&attr, SCHED_RR);
+    error = pthread_attr_setschedpolicy(&attr, SCHED_OTHER);
     if (error != 0)
       ROS_ERROR("pthread_attr_setschedpolicy error = %d\n", error);
     error = pthread_attr_setinheritsched(&attr, PTHREAD_EXPLICIT_SCHED);
@@ -741,15 +741,22 @@ void KurokoJointController::startTimer()
       ROS_ERROR("pthread_attr_setinheritsched error = %d\n", error);
 
     memset(&param, 0, sizeof(param));
-    param.sched_priority = 31;  // RT
+    int max_priority = sched_get_priority_max(SCHED_OTHER);
+    if (max_priority == -1)
+    {
+      ROS_ERROR("Failed to get max priority");
+      pthread_attr_destroy(&attr);
+      return;
+    }
+    param.sched_priority = max_priority;
     error = pthread_attr_setschedparam(&attr, &param);
     if (error != 0)
-      ROS_ERROR("pthread_attr_setschedparam error = %d\n", error);
+      ROS_ERROR("pthread_attr_setschedparam: %s", strerror(error));
 
     // create and start the thread
     if ((error = pthread_create(&this->timer_thread_, &attr, this->timerThread, this)) != 0)
     {
-      ROS_ERROR("Creating timer thread failed!!");
+      ROS_ERROR("Creating timer thread failed: %s", strerror(error));
       exit(-1);
     }
   }

@@ -2,6 +2,7 @@
 #include <ros/package.h>
 
 #include <utility>
+#include "ros/console.h"
 
 #include "kuroko_joint_controller/kuroko_joint_controller.h"
 
@@ -31,21 +32,29 @@ void KurokoJointController::initializeSyncWrite()
 
   ROS_INFO("[KurokoJointController::initializeSyncWrite] FIRST BULKREAD");
   for (auto& it : port_to_bulk_read_)
-    it.second->txRxPacket();
+  {
+    if (it.second != NULL)
+    {
+      it.second->txRxPacket();
+    }
+  }
   for (auto& it : port_to_bulk_read_)
   {
-    int error_count = 0;
-    int result = COMM_SUCCESS;
-    do
+    if (it.second != NULL)
     {
-      if (++error_count > 10)
+      int error_count = 0;
+      int result = COMM_SUCCESS;
+      do
       {
-        ROS_ERROR("[KurokoJointController::initializeSyncWrite] First bulk read failed!!");
-        exit(-1);
-      }
-      usleep(10 * 1000);
-      result = it.second->txRxPacket();
-    } while (result != COMM_SUCCESS);
+        if (++error_count > 10)
+        {
+          ROS_ERROR("[KurokoJointController::initializeSyncWrite] First bulk read failed!!");
+          exit(-1);
+        }
+        usleep(10 * 1000);
+        result = it.second->txRxPacket();
+      } while (result != COMM_SUCCESS);
+    }
   }
   init_pose_loaded_ = true;
   ROS_INFO("[KurokoJointController::initializeSyncWrite] FIRST BULKREAD END");
@@ -423,7 +432,9 @@ void KurokoJointController::initializeDevice(const std::string& init_file_path)
   for (auto& it : robot_->ports_)
   {
     if (port_to_bulk_read_[it.first] != nullptr)
+    {
       port_to_bulk_read_[it.first]->clearParam();
+    }
   }
   for (auto& it : robot_->dxls_)
   {
@@ -727,7 +738,10 @@ void KurokoJointController::startTimer()
 
     for (auto& it : port_to_bulk_read_)
     {
-      it.second->txPacket();
+      if (it.second != NULL)
+      {
+        it.second->txPacket();
+      }
     }
 
     usleep(8 * 1000);
@@ -789,7 +803,9 @@ void KurokoJointController::stopTimer()
       for (auto& it : port_to_bulk_read_)
       {
         if (it.second != NULL)
+        {
           it.second->rxPacket();
+        }
       }
 
       for (auto& it : port_to_sync_write_position_)
@@ -929,15 +945,21 @@ void KurokoJointController::process()
       // BulkRead Rx
       for (auto& it : port_to_bulk_read_)
       {
-        robot_->ports_[it.first]->setPacketTimeout(0.0);
-        if (debug_print_)
+        if (it.second != NULL)
         {
-          int result = it.second->rxPacket();
-          if (result != COMM_SUCCESS)
-            ROS_ERROR_STREAM("Bulk Read Fail : " << it.first);
+          robot_->ports_[it.first]->setPacketTimeout(0.0);
+          if (debug_print_)
+          {
+            int result = it.second->rxPacket();
+            if (result != COMM_SUCCESS)
+            {
+              ROS_ERROR_STREAM("Bulk Read Fail : " << it.first);
+              ROS_ERROR_STREAM("Result : " << result);
+            }
+          }
+          else
+            it.second->rxPacket();
         }
-        else
-          it.second->rxPacket();
       }
 
       // -> save to robot->dxls_[]->dxl_state_
@@ -1043,83 +1065,121 @@ void KurokoJointController::process()
 
       if (!direct_sync_write_.empty())
       {
+        ROS_INFO("Direct SyncWrite");
         for (auto& i : direct_sync_write_)
         {
-          i->txPacket();
-          i->clearParam();
+          if (i != NULL)
+          {
+            i->txPacket();
+            i->clearParam();
+          }
         }
         direct_sync_write_.clear();
       }
 
       if (!port_to_sync_write_position_p_gain_.empty())
       {
+        ROS_INFO("SyncWrite Position P Gain");
         for (auto& it : port_to_sync_write_position_p_gain_)
         {
-          it.second->txPacket();
-          it.second->clearParam();
+          if (it.second != NULL)
+          {
+            it.second->txPacket();
+            it.second->clearParam();
+          }
         }
       }
       if (!port_to_sync_write_position_i_gain_.empty())
       {
+        ROS_INFO("SyncWrite Position I Gain");
         for (auto& it : port_to_sync_write_position_i_gain_)
         {
-          it.second->txPacket();
-          it.second->clearParam();
+          if (it.second != NULL)
+          {
+            it.second->txPacket();
+            it.second->clearParam();
+          }
         }
       }
       if (!port_to_sync_write_position_d_gain_.empty())
       {
+        ROS_INFO("SyncWrite Position D Gain");
         for (auto& it : port_to_sync_write_position_d_gain_)
         {
-          it.second->txPacket();
-          it.second->clearParam();
+          if (it.second != NULL)
+          {
+            it.second->txPacket();
+            it.second->clearParam();
+          }
         }
       }
       if (!port_to_sync_write_velocity_p_gain_.empty())
       {
+        ROS_INFO("SyncWrite Velocity P Gain");
         for (auto& it : port_to_sync_write_velocity_p_gain_)
         {
-          it.second->txPacket();
-          it.second->clearParam();
+          if (it.second != NULL)
+          {
+            it.second->txPacket();
+            it.second->clearParam();
+          }
         }
       }
       if (!port_to_sync_write_velocity_i_gain_.empty())
       {
+        ROS_INFO("SyncWrite Velocity I Gain");
         for (auto& it : port_to_sync_write_velocity_i_gain_)
         {
-          it.second->txPacket();
-          it.second->clearParam();
+          if (it.second != NULL)
+          {
+            it.second->txPacket();
+            it.second->clearParam();
+          }
         }
       }
       if (!port_to_sync_write_velocity_d_gain_.empty())
       {
+        ROS_INFO("SyncWrite Velocity D Gain");
         for (auto& it : port_to_sync_write_velocity_d_gain_)
         {
           it.second->txPacket();
           it.second->clearParam();
         }
       }
+
       for (auto& it : port_to_sync_write_position_)
       {
+        ROS_INFO("SyncWrite Position");
         if (it.second != NULL)
+        {
           it.second->txPacket();
+        }
       }
       for (auto& it : port_to_sync_write_velocity_)
       {
+        ROS_INFO("SyncWrite Velocity");
         if (it.second != NULL)
+        {
           it.second->txPacket();
+        }
       }
       for (auto& it : port_to_sync_write_current_)
       {
+        ROS_INFO("SyncWrite Current");
         if (it.second != NULL)
+        {
           it.second->txPacket();
+        }
       }
-
       queue_mutex_.unlock();
-
       // BulkRead Tx
       for (auto& it : port_to_bulk_read_)
-        it.second->txPacket();
+      {
+        if (it.second != NULL)
+        {
+          it.second->txPacket();
+        }
+      }
 
       if (debug_print_)
       {
@@ -1184,8 +1244,11 @@ void KurokoJointController::process()
       // BulkRead Rx
       for (auto& it : port_to_bulk_read_)
       {
-        robot_->ports_[it.first]->setPacketTimeout(0.0);
-        it.second->rxPacket();
+        if (it.second != nullptr)
+        {
+          robot_->ports_[it.first]->setPacketTimeout(0.0);
+          it.second->rxPacket();
+        }
       }
 
       // -> save to robot->dxls_[]->dxl_state_
@@ -1242,29 +1305,26 @@ void KurokoJointController::process()
         }
       }
 
-      queue_mutex_.lock();
-
-      //      for (auto& it : port_to_sync_write_position_)
-      //      {
-      //        it.second->txPacket();
-      //        it.second->clearParam();
-      //      }
-
       if (!direct_sync_write_.empty())
       {
+        queue_mutex_.lock();
         for (auto& i : direct_sync_write_)
         {
           i->txPacket();
           i->clearParam();
         }
         direct_sync_write_.clear();
+        queue_mutex_.unlock();
       }
-
-      queue_mutex_.unlock();
 
       // BulkRead Tx
       for (auto& it : port_to_bulk_read_)
-        it.second->txPacket();
+      {
+        if (it.second != nullptr)
+        {
+          it.second->txPacket();
+        }
+      }
     }
   }
 
@@ -1736,8 +1796,11 @@ void KurokoJointController::setControllerModeCallback(const std_msgs::String::Co
   {
     for (auto& it : port_to_bulk_read_)
     {
-      robot_->ports_[it.first]->setPacketTimeout(0.0);
-      it.second->rxPacket();
+      if (it.second != nullptr)
+      {
+        robot_->ports_[it.first]->setPacketTimeout(0.0);
+        it.second->rxPacket();
+      }
     }
     controller_mode_ = DIRECT_CONTROL_MODE;
   }
@@ -1745,7 +1808,10 @@ void KurokoJointController::setControllerModeCallback(const std_msgs::String::Co
   {
     for (auto& it : port_to_bulk_read_)
     {
-      it.second->txPacket();
+      if (it.second != nullptr)
+      {
+        it.second->txPacket();
+      }
     }
     controller_mode_ = MOTION_MODULE_MODE;
   }

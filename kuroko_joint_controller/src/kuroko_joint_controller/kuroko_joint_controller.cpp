@@ -51,7 +51,7 @@ void KurokoJointController::initializeSyncWrite()
           ROS_ERROR("[KurokoJointController::initializeSyncWrite] First bulk read failed!!");
           exit(-1);
         }
-        usleep(10 * 1000);
+        usleep(8 * 1000);
         result = it.second->txRxPacket();
       } while (result != COMM_SUCCESS);
     }
@@ -1877,8 +1877,8 @@ void KurokoJointController::setJointCtrlModuleCallback(const robotis_controller_
 {
   if (msg->joint_name.size() != msg->module_name.size())
   {
-    ROS_ERROR("[KurokoJointController] Joint name(%d) and module name(%d) size is not matched", msg->joint_name.size(),
-              msg->module_name.size());
+    ROS_ERROR("[KurokoJointController] Joint name(%zu) and module name(%zu) size is not matched",
+              msg->joint_name.size(), msg->module_name.size());
     return;
   }
 

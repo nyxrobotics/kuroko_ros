@@ -135,7 +135,7 @@ void KurokoDeviceManager::loadParameters(ros::NodeHandle& nh)
   nh.param<std::string>("robot_file_path", robot_file_, "");
   nh.param<std::string>("init_file_path", init_file_, "");
   nh.param<std::string>("device_name", device_name_, "/dev/ttyUSB0");
-  nh.param<int>("baud_rate", baudrate_, 57600);
+  nh.param<int>("baud_rate", baudrate_, 2000000);
   nh.param<bool>("is_gazebo", controller_->gazebo_mode_, false);
 }
 

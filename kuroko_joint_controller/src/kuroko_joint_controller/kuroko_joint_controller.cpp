@@ -16,7 +16,7 @@ KurokoJointController::KurokoJointController()
   , init_pose_loaded_(false)
   , timer_thread_(0)
   , controller_mode_(MOTION_MODULE_MODE)
-  , debug_print_(true)
+  , debug_print_(false)
   , robot_(nullptr)
   , gazebo_mode_(false)
   , gazebo_robot_name_("kuroko")
@@ -1070,7 +1070,7 @@ void KurokoJointController::process()
 
       if (!direct_sync_write_.empty())
       {
-        ROS_INFO("Direct SyncWrite");
+        // ROS_INFO("Direct SyncWrite");
         for (auto& i : direct_sync_write_)
         {
           if (i != NULL)
@@ -1084,7 +1084,7 @@ void KurokoJointController::process()
 
       if (!port_to_sync_write_position_p_gain_.empty())
       {
-        ROS_INFO("SyncWrite Position P Gain");
+        // ROS_INFO("SyncWrite Position P Gain");
         for (auto& it : port_to_sync_write_position_p_gain_)
         {
           if (it.second != NULL)
@@ -1096,7 +1096,7 @@ void KurokoJointController::process()
       }
       if (!port_to_sync_write_position_i_gain_.empty())
       {
-        ROS_INFO("SyncWrite Position I Gain");
+        // ROS_INFO("SyncWrite Position I Gain");
         for (auto& it : port_to_sync_write_position_i_gain_)
         {
           if (it.second != NULL)
@@ -1108,7 +1108,7 @@ void KurokoJointController::process()
       }
       if (!port_to_sync_write_position_d_gain_.empty())
       {
-        ROS_INFO("SyncWrite Position D Gain");
+        // ROS_INFO("SyncWrite Position D Gain");
         for (auto& it : port_to_sync_write_position_d_gain_)
         {
           if (it.second != NULL)
@@ -1120,7 +1120,7 @@ void KurokoJointController::process()
       }
       if (!port_to_sync_write_velocity_p_gain_.empty())
       {
-        ROS_INFO("SyncWrite Velocity P Gain");
+        // ROS_INFO("SyncWrite Velocity P Gain");
         for (auto& it : port_to_sync_write_velocity_p_gain_)
         {
           if (it.second != NULL)
@@ -1132,7 +1132,7 @@ void KurokoJointController::process()
       }
       if (!port_to_sync_write_velocity_i_gain_.empty())
       {
-        ROS_INFO("SyncWrite Velocity I Gain");
+        // ROS_INFO("SyncWrite Velocity I Gain");
         for (auto& it : port_to_sync_write_velocity_i_gain_)
         {
           if (it.second != NULL)
@@ -1144,7 +1144,7 @@ void KurokoJointController::process()
       }
       if (!port_to_sync_write_velocity_d_gain_.empty())
       {
-        ROS_INFO("SyncWrite Velocity D Gain");
+        // ROS_INFO("SyncWrite Velocity D Gain");
         for (auto& it : port_to_sync_write_velocity_d_gain_)
         {
           it.second->txPacket();
@@ -1154,7 +1154,7 @@ void KurokoJointController::process()
 
       for (auto& it : port_to_sync_write_position_)
       {
-        ROS_INFO("SyncWrite Position");
+        // ROS_INFO("SyncWrite Position");
         if (it.second != NULL)
         {
           it.second->txPacket();
@@ -1162,7 +1162,7 @@ void KurokoJointController::process()
       }
       for (auto& it : port_to_sync_write_velocity_)
       {
-        ROS_INFO("SyncWrite Velocity");
+        // ROS_INFO("SyncWrite Velocity");
         if (it.second != NULL)
         {
           it.second->txPacket();
@@ -1170,7 +1170,7 @@ void KurokoJointController::process()
       }
       for (auto& it : port_to_sync_write_current_)
       {
-        ROS_INFO("SyncWrite Current");
+        // ROS_INFO("SyncWrite Current");
         if (it.second != NULL)
         {
           it.second->txPacket();

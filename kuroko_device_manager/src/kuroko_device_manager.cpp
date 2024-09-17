@@ -124,12 +124,9 @@ void KurokoDeviceManager::dxlTorqueCheckCallback(const std_msgs::String::ConstPt
 
 void KurokoDeviceManager::loadParameters(ros::NodeHandle& nh)
 {
-  baud_rate_ = 2000000;
   protocol_version_ = 2.0;
-  sub_controller_id_ = 200;
   dxl_broadcast_id_ = 254;
   default_dxl_id_ = 1;
-  sub_controller_device_ = "/dev/ttyUSB0";
   power_ctrl_table_ = 24;
   rgb_led_ctrl_table_ = 26;
   torque_on_ctrl_table_ = 64;
@@ -137,8 +134,8 @@ void KurokoDeviceManager::loadParameters(ros::NodeHandle& nh)
   nh.param<std::string>("offset_file_path", offset_file_, "");
   nh.param<std::string>("robot_file_path", robot_file_, "");
   nh.param<std::string>("init_file_path", init_file_, "");
-  nh.param<std::string>("device_name", device_name_, sub_controller_device_);
-  nh.param<int>("baud_rate", baudrate_, baud_rate_);
+  nh.param<std::string>("device_name", device_name_, "/dev/ttyUSB0");
+  nh.param<int>("baud_rate", baudrate_, 57600);
   nh.param<bool>("is_gazebo", controller_->gazebo_mode_, false);
 }
 
@@ -155,7 +152,7 @@ void KurokoDeviceManager::setupController()
   if (!controller_->gazebo_mode_)
   {
     port_handler_ = PortHandler::getPortHandler(device_name_.c_str());
-    bool set_port_result = port_handler_->setBaudRate(baud_rate_);
+    bool set_port_result = port_handler_->setBaudRate(baudrate_);
     if (!set_port_result)
       ROS_ERROR("Error Set port");
 
@@ -164,7 +161,7 @@ void KurokoDeviceManager::setupController()
     int torque_on_count = 0;
     while (torque_on_count < 5)
     {
-      int err_status = packet_handler->write1ByteTxRx(port_handler_, sub_controller_id_, power_ctrl_table_, 1);
+      int err_status = packet_handler->write1ByteTxRx(port_handler_, dxl_broadcast_id_, power_ctrl_table_, 1);
       if (err_status != 0)
         ROS_ERROR("Torque on DXLs! [%s]", packet_handler->getRxPacketError(err_status));
       else
@@ -180,7 +177,7 @@ void KurokoDeviceManager::setupController()
     int led_full_unit = 0x1F;
     int led_range = 5;
     int led_value = led_full_unit << led_range;
-    int err_status = packet_handler->write2ByteTxRx(port_handler_, sub_controller_id_, rgb_led_ctrl_table_, led_value);
+    int err_status = packet_handler->write2ByteTxRx(port_handler_, dxl_broadcast_id_, rgb_led_ctrl_table_, led_value);
 
     if (err_status != 0)
       ROS_ERROR("Fail to control LED [%s]", packet_handler->getRxPacketError(err_status));

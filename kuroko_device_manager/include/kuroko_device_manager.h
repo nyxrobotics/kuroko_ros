@@ -32,12 +32,9 @@ private:
 
   ros::NodeHandle nh_;
 
-  int baud_rate_;
   double protocol_version_;
-  int sub_controller_id_;
   int dxl_broadcast_id_;
   int default_dxl_id_;
-  std::string sub_controller_device_;
   int power_ctrl_table_;
   int rgb_led_ctrl_table_;
   int torque_on_ctrl_table_;

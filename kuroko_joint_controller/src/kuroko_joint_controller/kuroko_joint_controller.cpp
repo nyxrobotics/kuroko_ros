@@ -22,7 +22,6 @@ KurokoJointController::KurokoJointController()
   , gazebo_robot_name_("kuroko")
 {
   direct_sync_write_.clear();
-  ROS_INFO("[KurokoJointController] Initialized");
 }
 
 void KurokoJointController::initializeSyncWrite()
@@ -30,31 +29,28 @@ void KurokoJointController::initializeSyncWrite()
   if (gazebo_mode_)
     return;
 
-  ROS_INFO("[KurokoJointController::initializeSyncWrite] FIRST BULKREAD");
   for (auto& it : port_to_bulk_read_)
   {
-    if (it.second != NULL)
-    {
-      it.second->txRxPacket();
-    }
+    if (it.second == NULL)
+      continue;
+    it.second->txRxPacket();
   }
   for (auto& it : port_to_bulk_read_)
   {
-    if (it.second != NULL)
+    if (it.second == NULL)
+      continue;
+    int error_count = 0;
+    int result = COMM_SUCCESS;
+    do
     {
-      int error_count = 0;
-      int result = COMM_SUCCESS;
-      do
+      if (++error_count > 10)
       {
-        if (++error_count > 10)
-        {
-          ROS_ERROR("[KurokoJointController::initializeSyncWrite] First bulk read failed!!");
-          exit(-1);
-        }
-        usleep(8 * 1000);
-        result = it.second->txRxPacket();
-      } while (result != COMM_SUCCESS);
-    }
+        ROS_ERROR("[KurokoJointController::initializeSyncWrite] First bulk read failed!!");
+        exit(-1);
+      }
+      usleep(8 * 1000);
+      result = it.second->txRxPacket();
+    } while (result != COMM_SUCCESS);
   }
   init_pose_loaded_ = true;
   ROS_INFO("[KurokoJointController::initializeSyncWrite] FIRST BULKREAD END");
@@ -62,48 +58,57 @@ void KurokoJointController::initializeSyncWrite()
   // clear syncwrite param setting
   for (auto& it : port_to_sync_write_position_)
   {
-    if (it.second != NULL)
-      it.second->clearParam();
+    if (it.second == NULL)
+      continue;
+    it.second->clearParam();
   }
   for (auto& it : port_to_sync_write_position_p_gain_)
   {
-    if (it.second != NULL)
-      it.second->clearParam();
+    if (it.second == NULL)
+      continue;
+    it.second->clearParam();
   }
   for (auto& it : port_to_sync_write_position_i_gain_)
   {
-    if (it.second != NULL)
-      it.second->clearParam();
+    if (it.second == NULL)
+      continue;
+    it.second->clearParam();
   }
   for (auto& it : port_to_sync_write_position_d_gain_)
   {
-    if (it.second != NULL)
-      it.second->clearParam();
+    if (it.second == NULL)
+      continue;
+    it.second->clearParam();
   }
   for (auto& it : port_to_sync_write_velocity_)
   {
-    if (it.second != NULL)
-      it.second->clearParam();
+    if (it.second == NULL)
+      continue;
+    it.second->clearParam();
   }
   for (auto& it : port_to_sync_write_velocity_p_gain_)
   {
-    if (it.second != NULL)
-      it.second->clearParam();
+    if (it.second == NULL)
+      continue;
+    it.second->clearParam();
   }
   for (auto& it : port_to_sync_write_velocity_i_gain_)
   {
-    if (it.second != NULL)
-      it.second->clearParam();
+    if (it.second == NULL)
+      continue;
+    it.second->clearParam();
   }
   for (auto& it : port_to_sync_write_velocity_d_gain_)
   {
-    if (it.second != NULL)
-      it.second->clearParam();
+    if (it.second == NULL)
+      continue;
+    it.second->clearParam();
   }
   for (auto& it : port_to_sync_write_current_)
   {
-    if (it.second != NULL)
-      it.second->clearParam();
+    if (it.second == NULL)
+      continue;
+    it.second->clearParam();
   }
 
   ROS_INFO("[KurokoJointController::initializeSyncWrite] SyncWrite Params Cleared");
@@ -447,12 +452,12 @@ void KurokoJointController::initializeDevice(const std::string& init_file_path)
     int bulkread_start_addr = 0;
     int bulkread_data_length = 0;
 
-    //    // bulk read default : present position
-    //    if(dxl->present_position_item != 0)
-    //    {
-    //        bulkread_start_addr    = dxl->present_position_item->address;
-    //        bulkread_data_length   = dxl->present_position_item->data_length;
-    //    }
+    // bulk read default : present position
+    // if (dxl->present_position_item_ != 0)
+    // {
+    //   bulkread_start_addr = dxl->present_position_item_->address_;
+    //   bulkread_data_length = dxl->present_position_item_->data_length_;
+    // }
 
     uint8_t torque_enabled = 0;
     read1Byte(joint_name, dxl->torque_enable_item_->address_, &torque_enabled);

@@ -34,4 +34,8 @@
     local-name: robotis/humanoid_msgs
     uri: git@github.com:ahornung/humanoid_msgs.git
     version: master
+- git:
+    local-name: fdilink_ahrs
+    uri: git@github.com:sbgisen/fdilink_ahrs.git
+    version: master
 

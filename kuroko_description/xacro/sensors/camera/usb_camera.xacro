@@ -55,9 +55,9 @@
         <plugin name="${name}_camera_plugin" filename="libgazebo_ros_camera.so">
           <alwaysOn>true</alwaysOn>
           <updateRate>30</updateRate>
-          <cameraName>usb_camera</cameraName>
-          <imageTopicName>image_raw</imageTopicName>
-          <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+          <cameraName>camera</cameraName>
+          <imageTopicName>resized/image</imageTopicName>
+          <cameraInfoTopicName>resized/camera_info</cameraInfoTopicName>
           <frameName>${name}_optical_link</frameName>
           <hackBaseline>0</hackBaseline>
           <autoDistortion>true</autoDistortion>

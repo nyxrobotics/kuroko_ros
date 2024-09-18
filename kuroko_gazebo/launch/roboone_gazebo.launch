@@ -80,8 +80,5 @@
     <param name="use_tf_static" value="false"/>
   </node>
 
-  <!-- <include file="$(find kuroko_motion)/launch/set_home_position.launch">
-    <arg name="node_start_delay" value="6.0"/>
-    <arg name="use_trajectory_control" value="$(arg use_trajectory_control)"/>
-  </include> -->
+  <include file="$(find kuroko_device_manager)/launch/kuroko_device_manager_gazebo.launch"/>
 </launch>

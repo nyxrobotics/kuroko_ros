@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-  <xacro:macro name="n100_gazebo" params="name update_rate">
+  <xacro:macro name="n100mini_gazebo" params="name update_rate">
     <gazebo reference="${name}_link">
       <material>Gazebo/Gray</material>
     </gazebo>
@@ -9,8 +9,8 @@
         <alwaysOn>true</alwaysOn>
         <updateRate>${update_rate}</updateRate>
         <bodyName>${name}_link</bodyName>
-        <topicName>${name}/data</topicName>
-        <serviceName>${name}/service</serviceName>
+        <topicName>/kuroko/sensors/imu/data</topicName>
+        <serviceName>/kuroko/sensors/imu/service</serviceName>
         <frameId>${name}_link</frameId>
         <gaussianNoise>0</gaussianNoise>
         <xyzOffset>0 0 0</xyzOffset>
@@ -21,7 +21,7 @@
         <alwaysOn>true</alwaysOn>
         <updateRate>${update_rate}</updateRate>
         <bodyName>${name}_link</bodyName>
-        <topicName>${name}/mag</topicName>
+        <topicName>/kuroko/sensors/imu/mag</topicName>
         <frameId>${name}_link</frameId>
         <useMagneticFieldMsgs>true</useMagneticFieldMsgs>
         <magnitude>0.000047</magnitude>

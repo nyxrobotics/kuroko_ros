@@ -3,8 +3,8 @@
   xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
   xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
   xmlns:xacro="http://www.ros.org/wiki/xacro">
-  <xacro:include filename="n100mini_gazebo.xacro"/>
-  <xacro:macro name="n100mini_imu" params="name parent:='base_link' update_rate:=400 *origin">
+  <xacro:include filename="imu_n100mini_gazebo.xacro"/>
+  <xacro:macro name="imu_n100mini" params="name parent:='base_link' update_rate:=400 *origin">
     <xacro:property name="depth" value="0.0245"/>
     <xacro:property name="width" value="0.0245"/>
     <xacro:property name="height" value="0.0145"/>

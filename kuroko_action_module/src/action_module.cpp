@@ -146,7 +146,7 @@ void ActionModule::motionNumberCallback(const std_msgs::Int32::ConstPtr& msg)
     //   ROS_INFO_STREAM("- " << motion_name);
     // }
     int motion_id = msg->data;
-    if (motion_id < 0 || motion_id >= motion_names.size() - 1)
+    if (motion_id < 0 || motion_id > motion_names.size() - 1)
     {
       std::string status_msg = "[ActionModule] Invalid Motion ID : " + std::to_string(msg->data);
       ROS_INFO_STREAM(status_msg);

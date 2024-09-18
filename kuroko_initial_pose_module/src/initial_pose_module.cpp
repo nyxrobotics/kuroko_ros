@@ -41,7 +41,7 @@ void InitialPoseModule::initialize(const int control_cycle_msec, robotis_framewo
 
   /* Load ROS Parameter */
   ros_node.param<std::string>("init_pose_file_path", init_pose_file_path_,
-                              ros::package::getPath("kuroko_initial_pose_module") + "/data/ini_pose.yaml");
+                              ros::package::getPath("kuroko_initial_pose_module") + "/data/initial_pose.yaml");
 
   /* publish topics */
   status_msg_pub_ = ros_node.advertise<robotis_controller_msgs::StatusMsg>("/motion_control/status", 1);
@@ -54,7 +54,7 @@ void InitialPoseModule::parseInitPoseData(const std::string& path)
   ROS_INFO("InitialPoseModule - Loading: %s", path.c_str());
   try
   {
-    // load yaml
+    // Load YAML file
     doc = YAML::LoadFile(path);
   }
   catch (const std::exception& e)
@@ -63,61 +63,30 @@ void InitialPoseModule::parseInitPoseData(const std::string& path)
     return;
   }
 
-  // parse movement time
-  double mov_time;
-  mov_time = doc["mov_time"].as<double>();
-
+  // Set default mov_time to 2.0 if not provided
+  double mov_time = doc["mov_time"] ? doc["mov_time"].as<double>() : 2.0;
   initial_pose_module_state_->mov_time_ = mov_time;
 
-  // parse via-point number
-  int via_num;
-  via_num = doc["via_num"].as<int>();
-
-  initial_pose_module_state_->via_num_ = via_num;
-
-  // parse via-point time
-  std::vector<double> via_time;
-  via_time = doc["via_time"].as<std::vector<double>>();
-
-  initial_pose_module_state_->via_time_.resize(via_num, 1);
-  for (int num = 0; num < via_num; num++)
-    initial_pose_module_state_->via_time_.coeffRef(num, 0) = via_time[num];
-
-  // parse via-point pose
-  initial_pose_module_state_->joint_via_pose_.resize(via_num, MAX_JOINT_ID + 1);
-  initial_pose_module_state_->joint_via_dpose_.resize(via_num, MAX_JOINT_ID + 1);
-  initial_pose_module_state_->joint_via_ddpose_.resize(via_num, MAX_JOINT_ID + 1);
-
-  initial_pose_module_state_->joint_via_pose_.fill(0.0);
-  initial_pose_module_state_->joint_via_dpose_.fill(0.0);
-  initial_pose_module_state_->joint_via_ddpose_.fill(0.0);
-
-  YAML::Node via_pose_node = doc["via_pose"];
-  for (YAML::iterator yaml_it = via_pose_node.begin(); yaml_it != via_pose_node.end(); ++yaml_it)
-  {
-    int id;
-    std::vector<double> value;
-
-    id = yaml_it->first.as<int>();
-    value = yaml_it->second.as<std::vector<double>>();
-
-    for (int num = 0; num < via_num; num++)
-      initial_pose_module_state_->joint_via_pose_.coeffRef(num, id) = value[num] * DEGREE2RADIAN;
-  }
-
-  // parse target pose
-  YAML::Node tar_pose_node = doc["tar_pose"];
+  // Parse initial pose (joint positions)
+  YAML::Node tar_pose_node = doc["initial_pose"];
   for (YAML::iterator yaml_it = tar_pose_node.begin(); yaml_it != tar_pose_node.end(); ++yaml_it)
   {
-    int id;
-    double value;
+    std::string joint_name = yaml_it->first.as<std::string>();
+    double value = yaml_it->second.as<double>();
 
-    id = yaml_it->first.as<int>();
-    value = yaml_it->second.as<double>();
-
-    initial_pose_module_state_->joint_ini_pose_.coeffRef(id, 0) = value * DEGREE2RADIAN;
+    // Check if joint name exists in joint_name_to_dxl_id_ map
+    if (joint_name_to_dxl_id_.find(joint_name) != joint_name_to_dxl_id_.end())
+    {
+      int id = joint_name_to_dxl_id_[joint_name];
+      initial_pose_module_state_->joint_ini_pose_.coeffRef(id, 0) = value;
+    }
+    else
+    {
+      ROS_WARN("Joint name %s not found in joint_name_to_dxl_id_", joint_name.c_str());
+    }
   }
 
+  // Calculate total number of time steps
   initial_pose_module_state_->all_time_steps_ =
       int(initial_pose_module_state_->mov_time_ / initial_pose_module_state_->smp_time_) + 1;
   initial_pose_module_state_->calc_joint_tra_.resize(initial_pose_module_state_->all_time_steps_, MAX_JOINT_ID + 1);

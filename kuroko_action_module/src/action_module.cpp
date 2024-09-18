@@ -146,21 +146,19 @@ void ActionModule::motionNumberCallback(const std_msgs::Int32::ConstPtr& msg)
     //   ROS_INFO_STREAM("- " << motion_name);
     // }
     int motion_id = msg->data;
-    motion_id = 0;
-    // if (motion_id < 0 || motion_id >= motion_names.size() - 1)
-    // {
-    //   std::string status_msg = "[ActionModule] Invalid Motion ID : " + std::to_string(msg->data);
-    //   ROS_INFO_STREAM(status_msg);
-    //   publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_ERROR, status_msg);
-    //   publishDoneMsg("[ActionModule] action_failed");
-    //   return;
-    // }
+    if (motion_id < 0 || motion_id >= motion_names.size() - 1)
+    {
+      std::string status_msg = "[ActionModule] Invalid Motion ID : " + std::to_string(msg->data);
+      ROS_INFO_STREAM(status_msg);
+      publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_ERROR, status_msg);
+      publishDoneMsg("[ActionModule] action_failed");
+      return;
+    }
     ROS_INFO_STREAM("Setting next motion name");
     std::string motion_name = motion_names[motion_id];
     motion_status_.next_motion_name = motion_name;
     motion_status_.start_requested = true;
-    // std::string status_msg = "Succeed to start page " + std::to_string(msg->data);
-    std::string status_msg = "Succeed to start motion: " + motion_name;
+    std::string status_msg = "Succeed to start motion id:" + std::to_string(msg->data) + ", name:" + motion_name;
     ROS_INFO_STREAM(status_msg);
     publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_INFO, status_msg);
   }
@@ -356,13 +354,25 @@ void ActionModule::saveAllMotions(const std::string& directory)
 
 void ActionModule::loadAllMotions(const std::string& directory)
 {
+  std::vector<fs::path> yaml_files;
+
+  // Collect YAML files in the directory
   for (const auto& entry : fs::directory_iterator(directory))
   {
     if (entry.path().extension() == ".yaml")
     {
-      std::string motion_name = entry.path().stem().string();
-      loadMotionYAML(entry.path().string(), motion_name);
+      yaml_files.push_back(entry.path());
     }
+  }
+
+  // Sort the files by their filename
+  std::sort(yaml_files.begin(), yaml_files.end());
+
+  // Load each YAML file in the sorted order
+  for (const auto& file : yaml_files)
+  {
+    std::string motion_name = file.stem().string();
+    loadMotionYAML(file.string(), motion_name);
   }
 }
 

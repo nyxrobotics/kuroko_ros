@@ -444,21 +444,26 @@ void ActionModule::publishDoneMsg(std::string msg)
 
 void ActionModule::processMotionStep()
 {
+  // Update the current time within the section
   motion_status_.current_time_in_section += control_cycle_msec_ / 1000.0;
+
+  // Check if motion is not running and no start is requested
   if (!motion_status_.is_running && !motion_status_.start_requested)
-  {
     return;
-  }
-  else if (!motion_status_.is_running && motion_status_.start_requested && motion_status_.next_motion_name != "")
+
+  // Start the motion if it's requested
+  if (!motion_status_.is_running && motion_status_.start_requested && !motion_status_.next_motion_name.empty())
   {
-    ROS_INFO_STREAM("[ActionModule] processMotionStep: start motion " << motion_status_.current_motion_name);
+    ROS_INFO_STREAM("[ActionModule] processMotionStep: start motion " << motion_status_.next_motion_name);
     motion_status_.current_motion_name = motion_status_.next_motion_name;
+
     if (!motion_files_.hasMotion(motion_status_.current_motion_name))
     {
       ROS_ERROR_STREAM("[ActionModule] processMotionStep: motion " << motion_status_.current_motion_name
                                                                    << " not found");
       return;
     }
+
     motion_status_.current_section_name =
         motion_files_.getMotionFile(motion_status_.current_motion_name).motion_sections[0].section_name;
     motion_status_.current_frame_in_section = 0;
@@ -468,68 +473,127 @@ void ActionModule::processMotionStep()
     motion_status_.abort_requested = false;
     motion_status_.current_time_in_section = 0.0;
     send_next_frame_ = true;
+
     ROS_INFO_STREAM(
         "[ActionModule] processMotionStep: move to initial frame: " << motion_status_.current_frame_in_section);
     return;
   }
-  else if (motion_status_.start_requested && motion_status_.next_motion_name == motion_status_.current_motion_name &&
-           motion_status_.is_running)
+
+  // Get the current section's joint trajectory points
+  const auto& points = motion_files_.getMotionFile(motion_status_.current_motion_name)
+                           .getMotionSection(motion_status_.current_section_name)
+                           .joint_trajectory.points;
+
+  // Skip interpolation for the first frame, directly move to the next frame
+  if (motion_status_.current_frame_in_section == 0)
   {
-    motion_status_.start_requested = false;
-    ROS_INFO_STREAM("[ActionModule] processMotionStep: already running motion: " << motion_status_.current_motion_name);
+    const auto& first_frame = points[0];
+    for (size_t i = 0; i < first_frame.positions.size(); i++)
+    {
+      std::string joint_name = config_joint_names_[i];
+      if (action_joints_enable_[joint_name])
+      {
+        result_[joint_name]->goal_position_ = first_frame.positions[i];
+        result_[joint_name]->goal_velocity_ = first_frame.velocities[i];
+      }
+    }
+    // Move to the next frame
+    motion_status_.current_frame_in_section++;
+    return;
   }
-  else if (motion_status_.start_requested && motion_status_.next_motion_name != "" &&
-           motion_status_.next_motion_name != motion_status_.current_motion_name)
+
+  // Get the previous and current frame for interpolation
+  const auto& previous_frame = points[motion_status_.current_frame_in_section - 1];
+  const auto& current_frame = points[motion_status_.current_frame_in_section];
+
+  // Calculate the cumulative time up to the previous frame
+  double total_time_until_previous_frame = 0.0;
+  for (int i = 0; i < motion_status_.current_frame_in_section; ++i)
   {
-    // ROS_INFO_STREAM("[ActionModule] processMotionStep: stop current motion " << motion_status_.current_motion_name
-    //                                                                          << " and start next motion "
-    //                                                                          << motion_status_.next_motion_name);
-    motion_status_.stop_requested = true;
+    total_time_until_previous_frame += points[i].time_from_start.toSec();
   }
-  // Send joint angle target values at the timing of frame switching
-  // ROS_INFO_STREAM(
-  //     "[ActionModule] processMotionStep: current_frame_in_section: " << motion_status_.current_frame_in_section);
-  double current_frame_end_time = motion_files_.getMotionFile(motion_status_.current_motion_name)
-                                      .getMotionSection(motion_status_.current_section_name)
-                                      .joint_trajectory.points[motion_status_.current_frame_in_section]
-                                      .time_from_start.toSec();
-  // ROS_INFO_STREAM("[ActionModule] processMotionStep: current_frame_end_time: " << current_frame_end_time);
-  if (motion_status_.current_time_in_section >= current_frame_end_time)
+
+  // Calculate the time elapsed within the current frame
+  double current_time_in_frame = motion_status_.current_time_in_section - total_time_until_previous_frame;
+  double target_time_in_frame = current_frame.time_from_start.toSec();  // Only use current frame's time_from_start
+
+  // Perform interpolation between the previous and current frame
+  if (current_time_in_frame < target_time_in_frame)
   {
-    send_next_frame_ = true;
-    motion_status_.current_time_in_section -= current_frame_end_time;
-    if (motion_status_.current_frame_in_section < motion_files_.getMotionFile(motion_status_.current_motion_name)
-                                                          .getMotionSection(motion_status_.current_section_name)
-                                                          .joint_trajectory.points.size() -
-                                                      1)
+    for (size_t i = 0; i < previous_frame.positions.size(); i++)
     {
-      // If there is a next frame in the section, move to it
-      motion_status_.current_frame_in_section++;
-      ROS_INFO_STREAM(
-          "[ActionModule] processMotionStep: move to next frame: " << motion_status_.current_frame_in_section);
-    }
-    else if (!motion_files_.getMotionFile(motion_status_.current_motion_name)
-                  .getMotionSection(motion_status_.current_section_name)
-                  .next_sections.empty())
-    {
-      // If there is a next section in the motion, move to it
-      motion_status_.current_section_name = motion_files_.getMotionFile(motion_status_.current_motion_name)
-                                                .getMotionSection(motion_status_.current_section_name)
-                                                .next_sections[0];
-      motion_status_.current_frame_in_section = 0;
-      ROS_INFO_STREAM("[ActionModule] processMotionStep: move to next section: " << motion_status_.current_section_name);
-    }
-    else
-    {
-      // If there is no next frame or section, finish the motion
-      motion_status_.is_running = false;
-      send_next_frame_ = false;
-      ROS_INFO("[ActionModule] processMotionStep: finish motion");
-      publishDoneMsg("Motion completed");
+      std::string joint_name = config_joint_names_[i];
+      if (action_joints_enable_[joint_name])
+      {
+        double start_position = previous_frame.positions[i];
+        double goal_position = current_frame.positions[i];
+        double velocity = current_frame.velocities[i];  // Use the velocity of the current frame
+
+        // Calculate the distance to travel
+        double distance = goal_position - start_position;
+
+        // If the velocity is not sufficient to reach the goal in time, adjust the velocity
+        double required_velocity = distance / target_time_in_frame;
+
+        // Adjust the velocity's sign to ensure movement towards the goal
+        if ((goal_position - start_position) * velocity < 0)
+        {
+          velocity = -velocity;  // Flip the sign if it's moving in the wrong direction
+        }
+
+        // If the current velocity is too slow, overwrite it with the required velocity
+        if (std::abs(velocity) < std::abs(required_velocity))
+        {
+          velocity = required_velocity;
+        }
+
+        // Calculate the position based on the velocity and time
+        double new_position = start_position + velocity * current_time_in_frame;
+
+        // Clamp the position to avoid overshooting the goal
+        if ((velocity > 0 && new_position > goal_position) || (velocity < 0 && new_position < goal_position))
+        {
+          new_position = goal_position;
+        }
+
+        // Set the calculated position
+        result_[joint_name]->goal_position_ = new_position;
+        result_[joint_name]->goal_velocity_ = velocity;
+      }
     }
   }
-  // ROS_INFO_STREAM(
-  //     "[ActionModule] processMotionStep: current_frame_in_section: " << motion_status_.current_frame_in_section);
+
+  // If the current frame's time has elapsed, move to the next frame
+  if (current_time_in_frame >= target_time_in_frame)
+  {
+    // Move to the next frame
+    motion_status_.current_frame_in_section++;
+
+    // If we reached the last frame, ensure it is sent with velocity set to 0
+    if (motion_status_.current_frame_in_section >= points.size())
+    {
+      const auto& last_frame = points.back();
+      for (size_t i = 0; i < last_frame.positions.size(); i++)
+      {
+        std::string joint_name = config_joint_names_[i];
+        if (action_joints_enable_[joint_name])
+        {
+          // Explicitly send the last frame's position with velocity set to 0
+          result_[joint_name]->goal_position_ = last_frame.positions[i];
+          result_[joint_name]->goal_velocity_ = 0.0;
+        }
+      }
+
+      // Check if enough time has passed for the last frame
+      if (motion_status_.current_time_in_section >= last_frame.time_from_start.toSec())
+      {
+        motion_status_.is_running = false;
+        send_next_frame_ = false;
+        ROS_INFO("[ActionModule] processMotionStep: finish motion");
+        publishDoneMsg("Motion completed");
+      }
+    }
+  }
 }
 
 void ActionModule::brake()

@@ -203,7 +203,7 @@ void KurokoDeviceManager::setupController()
     throw std::runtime_error("ROBOTIS Controller Initialize Fail");
   }
 
-  if (!offset_file_.empty())
+  if (!offset_file_.empty() && !controller_->gazebo_mode_)
     controller_->loadOffset(offset_file_);
 
   usleep(300 * 1000);

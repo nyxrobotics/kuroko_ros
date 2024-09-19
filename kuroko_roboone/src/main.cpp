@@ -3,13 +3,10 @@
 
 int main(int argc, char** argv)
 {
-    ros::init(argc, argv, "roboone_auto");
-    ros::NodeHandle nh;
+  ros::init(argc, argv, "roboone_auto");
+  ros::NodeHandle nh;
+  RobooneAuto roboone_auto(nh);
+  ros::spin();  // Keep the node running
 
-    RobooneAuto roboone_auto(nh);
-    roboone_auto.init();  // Initialize modules and states
-
-    ros::spin();  // Keep the node running
-
-    return 0;
+  return 0;
 }

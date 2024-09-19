@@ -166,14 +166,47 @@ void RobooneAuto::manageState()
   }
   else if (current_state_ == "WALKING")
   {
-    // 傾きが30度を超えたら転倒状態に移行
+    // 自律移動中にIMUの傾きが30度を超えた場合、歩行を停止して「歩行一時停止状態」に遷移
     double pitch = quaternionToPitch(last_imu_.orientation);
-    if (std::abs(pitch) > 0.52 && (ros::Time::now() - last_imu_time_).toSec() >= 2.0)
+    double roll = quaternionToRoll(last_imu_.orientation);
+
+    if (std::abs(pitch) > 0.52 || std::abs(roll) > 0.52)
     {
+      transitionToPauseWalkingState();
+    }
+    else
+    {
+      // 攻撃処理の判定
+      handleAttack();
+    }
+  }
+  else if (current_state_ == "PAUSE_WALKING")
+  {
+    // 歩行一時停止状態でIMUの傾きが±15度以内に戻ったら再び自律移動状態へ遷移
+    double pitch = quaternionToPitch(last_imu_.orientation);
+    double roll = quaternionToRoll(last_imu_.orientation);
+
+    if (std::abs(pitch) < 0.26 && std::abs(roll) < 0.26)
+    {
+      ROS_INFO("IMU stabilized. Returning to WALKING state.");
+      startWalking();
+      current_state_ = "WALKING";
+    }
+    else if ((ros::Time::now() - fall_detected_time_).toSec() > 3.0)
+    {
+      // 歩行一時停止状態が3秒以上続いた場合は「転倒状態」へ遷移
       transitionToFallState();
     }
-    // 攻撃処理の判定
-    handleAttack();
+    else
+    {
+      ROS_INFO("curent time: %f, last imu time: %f", ros::Time::now().toSec(), last_imu_time_.toSec());
+    }
+  }
+  else if (current_state_ == "FALL")
+  {
+    // 転倒状態の処理
+    ROS_INFO("Handling FALL state.");
+    handleFall();
   }
 }
 
@@ -195,22 +228,42 @@ void RobooneAuto::transitionToAutoMoveState()
   startWalking();
 }
 
+// 歩行一時停止状態への遷移
+void RobooneAuto::transitionToPauseWalkingState()
+{
+  ROS_INFO("Transitioning to PAUSE_WALKING state due to excessive tilt.");
+  stopWalking();  // 歩行を停止
+  current_state_ = "PAUSE_WALKING";
+  fall_detected_time_ = ros::Time::now();
+}
+
 // 転倒状態への遷移
 void RobooneAuto::transitionToFallState()
 {
-  stopWalking();
-  setCtrlModule("action_module");
+  ROS_INFO("Transitioning to FALL state.");
+  current_state_ = "FALL";
+}
 
-  if (quaternionToPitch(last_imu_.orientation) > 0)
+// 転倒状態の処理
+void RobooneAuto::handleFall()
+{
+  setCtrlModule("action_module");
+  double pitch = quaternionToPitch(last_imu_.orientation);
+
+  if (pitch > 0)
   {
-    executeAction(0);
+    executeAction(0);  // 前起き上がりモーション
   }
   else
   {
-    executeAction(1);
+    executeAction(1);  // 後起き上がりモーション
   }
+  // Sleep 7 seconds
+  ros::Duration(7.0).sleep();
+
+  // モーション再生完了後、walking_moduleをロードして再び自律移動状態に遷移
   setCtrlModule("walking_module");
-  current_state_ = "WALKING";
+  current_state_ = "PAUSE_WALKING";
 }
 
 // 脱力状態への遷移
@@ -220,7 +273,6 @@ void RobooneAuto::transitionToIdleState()
   current_state_ = "IDLE";
 }
 
-// 攻撃処理
 // 攻撃処理
 void RobooneAuto::handleAttack()
 {
@@ -305,6 +357,14 @@ double RobooneAuto::quaternionToPitch(const geometry_msgs::Quaternion& q)
   double roll, pitch, yaw;
   tf::Matrix3x3(quat).getRPY(roll, pitch, yaw);
   return pitch;
+}
+double RobooneAuto::quaternionToRoll(const geometry_msgs::Quaternion& q)
+{
+  tf::Quaternion quat;
+  tf::quaternionMsgToTF(q, quat);
+  double roll, pitch, yaw;
+  tf::Matrix3x3(quat).getRPY(roll, pitch, yaw);
+  return roll;
 }
 
 // Utility function to convert quaternion to yaw (radians)

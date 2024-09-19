@@ -50,8 +50,11 @@ private:
   void transitionToFallState();      // 転倒状態への遷移
   void transitionToIdleState();      // 脱力状態への遷移
   void transitionToAutoMoveState();  // 自律移動状態への遷移
+  void transitionToPauseWalkingState();
+  void handleFall();
 
   double quaternionToYaw(const geometry_msgs::Quaternion& q);
+  double quaternionToRoll(const geometry_msgs::Quaternion& q);
   double quaternionToPitch(const geometry_msgs::Quaternion& q);
 
   ros::Subscriber joy_sub_, imu_sub_, camera_info_sub_;
@@ -76,7 +79,7 @@ private:
   sensor_msgs::Imu last_imu_;
   jsk_recognition_msgs::RectArray last_rects_;
   sensor_msgs::CameraInfo last_camera_info_;  // 最新のカメラインフォを保持する変数
-  ros::Time last_rects_time_, last_imu_time_, last_joy_time_;
+  ros::Time last_rects_time_, last_imu_time_, last_joy_time_, fall_detected_time_;
 
   double atk_rects_size_;
 };

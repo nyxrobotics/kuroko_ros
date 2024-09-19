@@ -1,30 +1,25 @@
 #include "roboone_auto.h"
-#include <std_msgs/String.h>
-#include <std_msgs/Int32.h>
-#include <op3_walking_module_msgs/WalkingParam.h>
-#include <ros/ros.h>
-#include <robotis_controller_msgs/SetModule.h>
+#include <sensor_msgs/CameraInfo.h>
 
-// Constructor
+// コンストラクタ
 RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   : atk_rects_size_(0.5)
   , class_sub_(nh, "/object_detection/output/class", 1)
   , label_sub_(nh, "/object_detection/output/labels", 1)
   , rect_sub_(nh, "/object_detection/output/rects", 1)
   , sync_(SyncPolicy(10), class_sub_, label_sub_, rect_sub_)
-  , client_(nh.serviceClient<robotis_controller_msgs::SetModule>(
-        "/motion_control/set_present_ctrl_modules"))  // クライアントをメンバ変数として初期化
+  , client_(nh.serviceClient<robotis_controller_msgs::SetModule>("/motion_control/set_present_ctrl_modules"))
 {
   joy_sub_ = nh.subscribe("/gamepad/joy", 1, &RobooneAuto::joyCallback, this);
   imu_sub_ = nh.subscribe("/kuroko/sensors/imu/data", 1, &RobooneAuto::imuCallback, this);
+  camera_info_sub_ = nh.subscribe("/camera/resized/camera_info", 1, &RobooneAuto::cameraInfoCallback, this);
+
   sync_.registerCallback(boost::bind(&RobooneAuto::yoloCallback, this, _1, _2, _3));
 
-  // Publishers for walking and motion control
   walking_command_pub_ = nh.advertise<std_msgs::String>("/motion_control/walking/command", 1);
   walking_params_pub_ = nh.advertise<op3_walking_module_msgs::WalkingParam>("/motion_control/walking/set_params", 1);
   action_page_pub_ = nh.advertise<std_msgs::Int32>("/motion_control/action/page_num", 1);
 
-  // Initialize joint names from joint_names.yaml
   joint_names_ = { "chest",         "shoulder_r_pitch", "shoulder_r_roll", "elbow_r_front",
                    "elbow_r_rear",  "shoulder_l_pitch", "shoulder_l_roll", "elbow_l_front",
                    "elbow_l_rear",  "hip_r_roll",       "hip_r_pitch",     "thigh_r_active",
@@ -32,25 +27,16 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
                    "hip_l_pitch",   "thigh_l_active",   "shin_l_active",   "ankle_l_roll",
                    "ankle_l_yaw" };
 
-  // Initialize state variables
-  current_state_ = IDLE;
-  previous_state_ = IDLE;
-  next_state_ = IDLE;
-
+  current_state_ = "IDLE";
+  running_ = true;
+  state_thread_ = std::thread(&RobooneAuto::stateThread, this);
   // Initialize last_joy_ with default size
   last_joy_.axes.resize(2);
   last_joy_.buttons.resize(10);
-
-  // Initialize thread control flag
-  running_ = true;
-
-  // Start the state management thread
-  state_thread_ = std::thread(&RobooneAuto::stateThread, this);
-
-  ROS_INFO("Modules initialized.");
+  ROS_INFO("RobooneAuto initialized.");
 }
 
-// Destructor
+// デストラクタ
 RobooneAuto::~RobooneAuto()
 {
   running_ = false;
@@ -59,7 +45,6 @@ RobooneAuto::~RobooneAuto()
     state_thread_.join();
   }
 }
-
 // Function to set the control module
 bool RobooneAuto::setCtrlModule(const std::string& module_name)
 {
@@ -97,11 +82,18 @@ void RobooneAuto::stopWalking()
   msg.data = "stop";
   walking_command_pub_.publish(msg);
 }
-
 // Set walking parameters with specified initial values
 void RobooneAuto::setWalkingParams(double x_move, double y_move, double angle_move)
 {
   op3_walking_module_msgs::WalkingParam params;
+  double normalization_factor = sqrt(pow(angle_move / 0.26, 2) + pow(x_move / 0.02, 2) + pow(y_move / 0.015, 2));
+
+  if (normalization_factor > 1.0)
+  {
+    x_move /= normalization_factor;
+    y_move /= normalization_factor;
+    angle_move /= normalization_factor;
+  }
 
   // Initial values from the provided topic output
   params.init_x_offset = 0.019999999552965164;
@@ -141,7 +133,6 @@ void RobooneAuto::setWalkingParams(double x_move, double y_move, double angle_mo
   // Publish the walking parameters
   walking_params_pub_.publish(params);
 }
-
 // Execute an action by ID
 void RobooneAuto::executeAction(int action_id)
 {
@@ -152,10 +143,10 @@ void RobooneAuto::executeAction(int action_id)
   action_page_pub_.publish(msg);
 }
 
-// State management thread
+// 状態管理スレッド
 void RobooneAuto::stateThread()
 {
-  ros::Rate rate(10);  // 10 Hz loop
+  ros::Rate rate(10);
   while (running_)
   {
     manageState();
@@ -163,112 +154,84 @@ void RobooneAuto::stateThread()
   }
 }
 
-// Manage state transitions
+// 状態管理処理
 void RobooneAuto::manageState()
 {
   std::lock_guard<std::mutex> lock(state_mutex_);
 
-  if (current_state_ != INIT_POSE && last_joy_.buttons[0])
+  if (current_state_ == "INIT_POSE" && last_joy_.buttons[2])
+  {
+    transitionToAutoMoveState();
+  }
+  else if (current_state_ != "IDLE" && last_joy_.buttons[1])
+  {
+    transitionToIdleState();
+  }
+  else if (current_state_ != "INIT_POSE" && last_joy_.buttons[0])
   {
     transitionToInitPose();
   }
-  else if (current_state_ != IDLE && last_joy_.buttons[1])
+  else if (current_state_ == "WALKING")
   {
-    current_state_ = IDLE;
-    freeAllJoints();
-  }
-  else if (current_state_ == INIT_POSE && last_joy_.buttons[2])
-  {
-    transitionToWalking();
-  }
-
-  if (current_state_ == WALKING)
-  {
+    // 傾きが30度を超えたら転倒状態に移行
     double pitch = quaternionToPitch(last_imu_.orientation);
     if (std::abs(pitch) > 30.0 && (ros::Time::now() - last_imu_time_).toSec() >= 2.0)
     {
       transitionToFallState();
     }
+    // 攻撃処理の判定
     handleAttack();
   }
 }
 
-// Transition to initial pose by loading "initial_pose_module", "action_module", and "walking_module"
+// 初期姿勢への遷移
 void RobooneAuto::transitionToInitPose()
 {
   ROS_INFO("Transitioning to INIT_POSE state.");
-
-  // Load initial_pose_module
-  if (!setCtrlModule("initial_pose_module"))
-  {
-    ROS_ERROR("Failed to set control module to initial_pose_module.");
-    return;
-  }
-  // Load action_module
-  if (!setCtrlModule("action_module"))
-  {
-    ROS_ERROR("Failed to set control module to action_module.");
-    return;
-  }
-  current_state_ = INIT_POSE;
+  setCtrlModule("initial_pose_module");
+  setCtrlModule("action_module");
+  setCtrlModule("walking_module");
+  current_state_ = "INIT_POSE";
 }
 
-// Transition to walking by loading "walking_module"
-void RobooneAuto::transitionToWalking()
+// 自律移動への遷移
+void RobooneAuto::transitionToAutoMoveState()
 {
-  ROS_INFO("Transitioning to WALKING (Autonomous Movement) state.");
-
-  // Load walking_module
-  if (setCtrlModule("walking_module"))
-  {
-    startWalking();
-    current_state_ = WALKING;
-  }
-  else
-  {
-    ROS_ERROR("Failed to set control module to walking_module.");
-  }
+  ROS_INFO("Transitioning to AUTO_MOVE state.");
+  current_state_ = "WALKING";
+  startWalking();
 }
 
-// Transition to fall state by loading "action_module", executing fall recovery, and then loading "walking_module"
+// 転倒状態への遷移
 void RobooneAuto::transitionToFallState()
 {
-  ROS_INFO("Transitioning to FALL state.");
+  stopWalking();
+  setCtrlModule("action_module");
 
-  // Load action_module
-  if (!setCtrlModule("action_module"))
-  {
-    ROS_ERROR("Failed to set control module to action_module.");
-    return;
-  }
-
-  // Execute fall recovery motion based on pitch direction
   if (quaternionToPitch(last_imu_.orientation) > 0)
   {
-    executeAction(0);  // Execute front fall recovery
+    executeAction(0);
   }
   else
   {
-    executeAction(1);  // Execute back fall recovery
+    executeAction(1);
   }
-
-  // Load initial_pose_module after fall recovery
-  if (!setCtrlModule("initial_pose_module"))
-  {
-    ROS_ERROR("Failed to set control module to initial_pose_module.");
-    return;
-  }
-
-  current_state_ = FALL;
+  setCtrlModule("walking_module");
+  current_state_ = "WALKING";
 }
 
-// Handle attack logic
+// 脱力状態への遷移
+void RobooneAuto::transitionToIdleState()
+{
+  freeAllJoints();
+  current_state_ = "IDLE";
+}
+
+// 攻撃処理
 void RobooneAuto::handleAttack()
 {
-  if (last_rects_.rects.empty())
-  {
-    return;  // No recognized objects
-  }
+  if (last_rects_.rects.empty() || last_camera_info_.height == 0 || last_camera_info_.width == 0)
+    return;
 
   auto it = std::max_element(last_rects_.rects.begin(), last_rects_.rects.end(),
                              [](const jsk_recognition_msgs::Rect& a, const jsk_recognition_msgs::Rect& b) {
@@ -277,42 +240,35 @@ void RobooneAuto::handleAttack()
 
   if (it != last_rects_.rects.end())
   {
-    double area = (it->width * it->height) / (960 * 600);
-    if (area > atk_rects_size_)
+    double rect_area = (it->width * it->height) / double(last_camera_info_.width * last_camera_info_.height);
+    if (rect_area > atk_rects_size_)
     {
       stopWalking();
-      executeAction(2);  // Execute attack action
+      executeAction(2);
+      ROS_INFO("Attack initiated based on object size.");
+
+      // 相手に向かって歩く
+      double rect_center_x = it->x + it->width / 2.0;
+      double image_center_x = last_camera_info_.width / 2.0;
+      double x_offset = (rect_center_x - image_center_x) / image_center_x;
+
+      double angle_move = -x_offset * 15.0 * (M_PI / 180.0);  // 最大15度までの旋回
+      setWalkingParams(0.02, 0.0, angle_move);                // 0.02m前進しつつ旋回
       startWalking();
     }
   }
 }
 
-// Free all joints by loading "none" control module
+// Free all joints and switch to "none" control module
 void RobooneAuto::freeAllJoints()
 {
-  ROS_INFO("Freeing all joints and switching to none module.");
-  if (setCtrlModule("none"))
-  {
-    std_msgs::String msg;
-    msg.data = "free";
-    walking_command_pub_.publish(msg);
-  }
-  else
-  {
-    ROS_ERROR("Failed to set control module to none.");
-  }
+  setCtrlModule("none");
+  std_msgs::String msg;
+  msg.data = "free";
+  walking_command_pub_.publish(msg);
 }
 
-// Utility functions to convert quaternion to yaw/pitch
-double RobooneAuto::quaternionToYaw(const geometry_msgs::Quaternion& q)
-{
-  tf::Quaternion quat;
-  tf::quaternionMsgToTF(q, quat);
-  double roll, pitch, yaw;
-  tf::Matrix3x3(quat).getRPY(roll, pitch, yaw);
-  return yaw;
-}
-
+// Utility function to convert quaternion to pitch (radians)
 double RobooneAuto::quaternionToPitch(const geometry_msgs::Quaternion& q)
 {
   tf::Quaternion quat;
@@ -322,7 +278,17 @@ double RobooneAuto::quaternionToPitch(const geometry_msgs::Quaternion& q)
   return pitch;
 }
 
-// Joy callback function
+// Utility function to convert quaternion to yaw (radians)
+double RobooneAuto::quaternionToYaw(const geometry_msgs::Quaternion& q)
+{
+  tf::Quaternion quat;
+  tf::quaternionMsgToTF(q, quat);
+  double roll, pitch, yaw;
+  tf::Matrix3x3(quat).getRPY(roll, pitch, yaw);
+  return yaw;
+}
+
+// Joyコールバック
 void RobooneAuto::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
 {
   std::lock_guard<std::mutex> lock(state_mutex_);
@@ -330,7 +296,7 @@ void RobooneAuto::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
   last_joy_time_ = ros::Time::now();
 }
 
-// IMU callback function
+// IMUコールバック
 void RobooneAuto::imuCallback(const sensor_msgs::Imu::ConstPtr& imu)
 {
   std::lock_guard<std::mutex> lock(state_mutex_);
@@ -338,7 +304,14 @@ void RobooneAuto::imuCallback(const sensor_msgs::Imu::ConstPtr& imu)
   last_imu_time_ = ros::Time::now();
 }
 
-// YOLO callback function
+// カメラインフォコールバック
+void RobooneAuto::cameraInfoCallback(const sensor_msgs::CameraInfo::ConstPtr& camera_info)
+{
+  std::lock_guard<std::mutex> lock(state_mutex_);
+  last_camera_info_ = *camera_info;
+}
+
+// YOLOコールバック
 void RobooneAuto::yoloCallback(const jsk_recognition_msgs::ClassificationResult::ConstPtr& class_msg,
                                const jsk_recognition_msgs::LabelArray::ConstPtr& label_msg,
                                const jsk_recognition_msgs::RectArray::ConstPtr& rect_msg)

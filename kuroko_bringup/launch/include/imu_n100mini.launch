@@ -11,8 +11,8 @@
     <param name="publish_tf" value="false"/>
     <param name="gain" value="0.01"/>
     <param name="orientation_stddev" value="0.0316"/>
-    <remap from="imu/data_raw" to="/kuroko/sensors/imu/data"/>
-    <remap from="imu/data" to="/ahrs_imu/imu_data"/>
+    <remap from="imu/data_raw" to="/kuroko/sensors/imu/data_raw"/>
+    <remap from="imu/data" to="/kuroko/sensors/imu/data"/>
   </node>
 
 </launch>

@@ -26,6 +26,9 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   // Initialize last_joy_ with default size
   last_joy_.axes.resize(2);
   last_joy_.buttons.resize(10);
+  robot_detected_time_ = ros::Time(0);
+  fall_detected_time_ = ros::Time(0);
+  attacked_time_ = ros::Time(0);
   ROS_INFO("RobooneAuto initialized.");
 }
 
@@ -282,61 +285,98 @@ void RobooneAuto::handleAttack()
     return;
   }
 
-  auto it = std::max_element(last_rects_.rects.begin(), last_rects_.rects.end(),
-                             [](const jsk_recognition_msgs::Rect& a, const jsk_recognition_msgs::Rect& b) {
-                               return a.width * a.height < b.width * b.height;
-                             });
+  bool roboone_found = false;
+  jsk_recognition_msgs::Rect largest_rect;
 
-  if (it != last_rects_.rects.end())
+  // robooneラベルを持つrectを探し、その中で一番大きいものを見つける
+  for (size_t i = 0; i < last_rects_.rects.size(); ++i)
   {
-    double rect_area = (it->width * it->height) / double(last_camera_info_.width * last_camera_info_.height);
-    ROS_INFO("Largest rect found with area: %f", rect_area);
-
-    if (rect_area > atk_rects_size_)
+    if (last_class_.label_names[i] == "roboone")
     {
-      ROS_INFO("Attack triggered! Rect area is larger than threshold.");
+      roboone_found = true;
+      if (largest_rect.width * largest_rect.height < last_rects_.rects[i].width * last_rects_.rects[i].height)
+      {
+        largest_rect = last_rects_.rects[i];
+      }
+    }
+  }
+
+  if (roboone_found)
+  {
+    robot_detected_time_ = ros::Time::now();  // robooneが見つかった時刻を記録
+    double rect_area =
+        (largest_rect.width * largest_rect.height) / double(last_camera_info_.width * last_camera_info_.height);
+    ROS_INFO("Largest roboone rect found with area: %f", rect_area);
+
+    if (rect_area > atk_rects_size_ && (ros::Time::now() - robot_detected_time_).toSec() <= 5.0)
+    {
+      ROS_INFO("Attack triggered! Rect area is larger than threshold and detected within 5 seconds.");
 
       // 歩行を停止し攻撃を開始
       stopWalking();
       executeAction(2);
-
-      // 攻撃後の処理（相手に向かって移動）
-      double rect_center_x = it->x + it->width / 2.0;
-      double image_center_x = last_camera_info_.width / 2.0;
-      double x_offset = (rect_center_x - image_center_x) / image_center_x;
-
-      // カメラ中央からの相対位置に基づいて旋回量を計算 (ラジアンに変換)
-      double angle_move = -x_offset * (15.0 * M_PI / 180.0);  // 最大15度の旋回
-      ROS_INFO("Calculated angle move (radians): %f", angle_move);
-
-      // 前進は0.02m、左右移動はなし
-      setWalkingParams(0.02, 0.0, angle_move);  // 0.02m前進しながら旋回
-
-      ROS_INFO("Moving towards target with x_move: 0.02, angle_move (radians): %f", angle_move);
+      // 攻撃後の処理：0.02m後退、旋回は0
+      setWalkingParams(-0.02, 0.0, 0.0);
+      ROS_INFO("Retreating after attack.");
       startWalking();
+      ros::Duration(3.0).sleep();         // 3秒待機
+      attacked_time_ = ros::Time::now();  // 攻撃実行時刻を記録
     }
     else
     {
-      ROS_INFO("Target detected but too small for attack (area: %f)", rect_area);
+      ROS_INFO("Target detected but too small for attack or detected over 5 seconds ago (area: %f)", rect_area);
 
-      // 相手の方に向かって歩行処理
-      double rect_center_x = it->x + it->width / 2.0;
-      double image_center_x = last_camera_info_.width / 2.0;
-      double x_offset = (rect_center_x - image_center_x) / image_center_x;
+      // 攻撃後の7秒間旋回のみ許可（前後左右移動は0）
+      if ((ros::Time::now() - attacked_time_).toSec() <= 6.0)
+      {
+        double rect_center_x = largest_rect.x + largest_rect.width / 2.0;
+        double image_center_x = last_camera_info_.width / 2.0;
+        double x_offset = (rect_center_x - image_center_x) / image_center_x;
 
-      // 中央からのずれに基づいて旋回角を計算
-      double angle_move = -x_offset * (15.0 * M_PI / 180.0);  // 最大15度の旋回
-      ROS_INFO("Calculated angle move (radians): %f", angle_move);
+        // 中央からのずれに基づいて旋回角を計算
+        double angle_move = -x_offset * (15.0 * M_PI / 180.0);  // 最大15度の旋回
+        ROS_INFO("Calculated angle move for rotation only (radians): %f", angle_move);
 
-      // 0.02m前進しつつ旋回
-      setWalkingParams(0.02, 0.0, angle_move);
-      ROS_INFO("Moving towards target with x_move: 0.02, angle_move (radians): %f", angle_move);
-      startWalking();
+        // 前後左右の移動は0で、旋回のみ許可
+        setWalkingParams(0.0, 0.0, angle_move);
+        ROS_INFO("Rotating in place with angle_move (radians): %f", angle_move);
+        startWalking();
+      }
+      else
+      {
+        // robooneが最後に見えた時刻が5秒以上前の場合、その場で旋回
+        if ((ros::Time::now() - robot_detected_time_).toSec() > 2.0)
+        {
+          ROS_INFO("roboone was last detected more than 5 seconds ago. Rotating in place.");
+
+          // 最後に見えた方向に15度旋回
+          double angle_move = (15.0 * M_PI / 180.0);  // 15度の旋回
+          setWalkingParams(0.0, 0.0, angle_move);     // 前進・後退は0で上書き
+          ROS_INFO("Rotating 15 degrees in place (radians): %f", angle_move);
+          startWalking();
+        }
+        else
+        {
+          // 相手の方に向かって歩行処理
+          double rect_center_x = largest_rect.x + largest_rect.width / 2.0;
+          double image_center_x = last_camera_info_.width / 2.0;
+          double x_offset = (rect_center_x - image_center_x) / image_center_x;
+
+          // 中央からのずれに基づいて旋回角を計算
+          double angle_move = -x_offset * (15.0 * M_PI / 180.0);  // 最大15度の旋回
+          ROS_INFO("Calculated angle move (radians): %f", angle_move);
+
+          // 0.02m前進しつつ旋回
+          setWalkingParams(0.02, 0.0, angle_move);
+          ROS_INFO("Moving towards target with x_move: 0.02, angle_move (radians): %f", angle_move);
+          startWalking();
+        }
+      }
     }
   }
   else
   {
-    ROS_WARN("No valid rects found for movement.");
+    ROS_WARN("No roboone label found.");
   }
 }
 
@@ -406,6 +446,9 @@ void RobooneAuto::yoloCallback(const jsk_recognition_msgs::ClassificationResult:
                                const jsk_recognition_msgs::RectArray::ConstPtr& rect_msg)
 {
   std::lock_guard<std::mutex> lock(state_mutex_);
+  last_class_ = *class_msg;
   last_rects_ = *rect_msg;
+  last_labels_ = *label_msg;
+
   last_rects_time_ = ros::Time::now();
 }

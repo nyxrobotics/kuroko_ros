@@ -77,9 +77,11 @@ private:
   ros::Time action_start_time_;
   sensor_msgs::Joy last_joy_;
   sensor_msgs::Imu last_imu_;
+  jsk_recognition_msgs::ClassificationResult last_class_;
   jsk_recognition_msgs::RectArray last_rects_;
+  jsk_recognition_msgs::LabelArray last_labels_;
   sensor_msgs::CameraInfo last_camera_info_;  // 最新のカメラインフォを保持する変数
-  ros::Time last_rects_time_, last_imu_time_, last_joy_time_, fall_detected_time_;
+  ros::Time last_rects_time_, last_imu_time_, last_joy_time_, fall_detected_time_, robot_detected_time_, attacked_time_;
 
   double atk_rects_size_;
 };

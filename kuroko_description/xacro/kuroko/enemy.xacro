@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<robot name="kuroko" xmlns:xacro="http://www.ros.org/wiki/xacro">
+<robot name="enemy" xmlns:xacro="http://www.ros.org/wiki/xacro">
   <xacro:arg name="gazebo" default="false"/>
   <xacro:arg name="gazebo_motor_model" default="dc"/>
   <xacro:arg name="gazebo_hw_interface" default="position"/>
@@ -26,7 +26,7 @@
     <xacro:if value="${gazebo_motor_model=='default'}">
       <gazebo>
         <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
-          <robotNamespace>kuroko</robotNamespace>
+          <robotNamespace>enemy</robotNamespace>
           <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
           <legacyModeNS>true</legacyModeNS>
         </plugin>
@@ -35,7 +35,7 @@
     <xacro:if value="${gazebo_motor_model=='dc'}">
       <gazebo>
         <plugin name="gazebo_ros_control" filename="libgazebo_dc_motor.so">
-          <robotNamespace>kuroko</robotNamespace>
+          <robotNamespace>enemy</robotNamespace>
           <robotSimType>gazebo_dc_motor/DefaultRobotHWSim</robotSimType>
           <legacyModeNS>false</legacyModeNS>
         </plugin>
@@ -61,12 +61,6 @@
     <xacro:leg_r_gazebo gazebo_hw_interface="${gazebo_hw_interface}"/>
     <xacro:leg_l_xacro gazebo="$(arg gazebo)"/>
     <xacro:leg_l_gazebo gazebo_hw_interface="${gazebo_hw_interface}"/>
-    <xacro:imu_n100mini parent="chest_link" name="imu">
-      <origin xyz="0 0 0.008" rpy="0 0 0"/>
-    </xacro:imu_n100mini>
-    <xacro:usb_camera parent="waist_link" name="camera">
-      <origin xyz="0.075230 0 -0.032085" rpy="0 0.1745329 0"/>
-    </xacro:usb_camera>
   </xacro:macro>
 
   <!-- Load Macros -->

@@ -3,7 +3,7 @@
 
 // コンストラクタ
 RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
-  : atk_rects_size_(0.5)
+  : atk_rects_size_(0.2)
   , class_sub_(nh, "/object_detection/output/class", 1)
   , label_sub_(nh, "/object_detection/output/labels", 1)
   , rect_sub_(nh, "/object_detection/output/rects", 1)
@@ -19,13 +19,6 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   walking_command_pub_ = nh.advertise<std_msgs::String>("/motion_control/walking/command", 1);
   walking_params_pub_ = nh.advertise<op3_walking_module_msgs::WalkingParam>("/motion_control/walking/set_params", 1);
   action_page_pub_ = nh.advertise<std_msgs::Int32>("/motion_control/action/page_num", 1);
-
-  joint_names_ = { "chest",         "shoulder_r_pitch", "shoulder_r_roll", "elbow_r_front",
-                   "elbow_r_rear",  "shoulder_l_pitch", "shoulder_l_roll", "elbow_l_front",
-                   "elbow_l_rear",  "hip_r_roll",       "hip_r_pitch",     "thigh_r_active",
-                   "shin_r_active", "ankle_r_roll",     "ankle_r_yaw",     "hip_l_roll",
-                   "hip_l_pitch",   "thigh_l_active",   "shin_l_active",   "ankle_l_roll",
-                   "ankle_l_yaw" };
 
   current_state_ = "IDLE";
   running_ = true;
@@ -175,7 +168,7 @@ void RobooneAuto::manageState()
   {
     // 傾きが30度を超えたら転倒状態に移行
     double pitch = quaternionToPitch(last_imu_.orientation);
-    if (std::abs(pitch) > 30.0 && (ros::Time::now() - last_imu_time_).toSec() >= 2.0)
+    if (std::abs(pitch) > 0.52 && (ros::Time::now() - last_imu_time_).toSec() >= 2.0)
     {
       transitionToFallState();
     }
@@ -228,10 +221,14 @@ void RobooneAuto::transitionToIdleState()
 }
 
 // 攻撃処理
+// 攻撃処理
 void RobooneAuto::handleAttack()
 {
   if (last_rects_.rects.empty() || last_camera_info_.height == 0 || last_camera_info_.width == 0)
+  {
+    ROS_WARN("No recognized objects or camera info is missing.");
     return;
+  }
 
   auto it = std::max_element(last_rects_.rects.begin(), last_rects_.rects.end(),
                              [](const jsk_recognition_msgs::Rect& a, const jsk_recognition_msgs::Rect& b) {
@@ -241,21 +238,53 @@ void RobooneAuto::handleAttack()
   if (it != last_rects_.rects.end())
   {
     double rect_area = (it->width * it->height) / double(last_camera_info_.width * last_camera_info_.height);
+    ROS_INFO("Largest rect found with area: %f", rect_area);
+
     if (rect_area > atk_rects_size_)
     {
+      ROS_INFO("Attack triggered! Rect area is larger than threshold.");
+
+      // 歩行を停止し攻撃を開始
       stopWalking();
       executeAction(2);
-      ROS_INFO("Attack initiated based on object size.");
 
-      // 相手に向かって歩く
+      // 攻撃後の処理（相手に向かって移動）
       double rect_center_x = it->x + it->width / 2.0;
       double image_center_x = last_camera_info_.width / 2.0;
       double x_offset = (rect_center_x - image_center_x) / image_center_x;
 
-      double angle_move = -x_offset * 15.0 * (M_PI / 180.0);  // 最大15度までの旋回
-      setWalkingParams(0.02, 0.0, angle_move);                // 0.02m前進しつつ旋回
+      // カメラ中央からの相対位置に基づいて旋回量を計算 (ラジアンに変換)
+      double angle_move = -x_offset * (15.0 * M_PI / 180.0);  // 最大15度の旋回
+      ROS_INFO("Calculated angle move (radians): %f", angle_move);
+
+      // 前進は0.02m、左右移動はなし
+      setWalkingParams(0.02, 0.0, angle_move);  // 0.02m前進しながら旋回
+
+      ROS_INFO("Moving towards target with x_move: 0.02, angle_move (radians): %f", angle_move);
       startWalking();
     }
+    else
+    {
+      ROS_INFO("Target detected but too small for attack (area: %f)", rect_area);
+
+      // 相手の方に向かって歩行処理
+      double rect_center_x = it->x + it->width / 2.0;
+      double image_center_x = last_camera_info_.width / 2.0;
+      double x_offset = (rect_center_x - image_center_x) / image_center_x;
+
+      // 中央からのずれに基づいて旋回角を計算
+      double angle_move = -x_offset * (15.0 * M_PI / 180.0);  // 最大15度の旋回
+      ROS_INFO("Calculated angle move (radians): %f", angle_move);
+
+      // 0.02m前進しつつ旋回
+      setWalkingParams(0.02, 0.0, angle_move);
+      ROS_INFO("Moving towards target with x_move: 0.02, angle_move (radians): %f", angle_move);
+      startWalking();
+    }
+  }
+  else
+  {
+    ROS_WARN("No valid rects found for movement.");
   }
 }
 

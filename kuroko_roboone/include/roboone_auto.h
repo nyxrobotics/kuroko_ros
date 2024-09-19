@@ -65,8 +65,6 @@ private:
                                                     jsk_recognition_msgs::LabelArray, jsk_recognition_msgs::RectArray>
       SyncPolicy;
   message_filters::Synchronizer<SyncPolicy> sync_;
-
-  std::vector<std::string> joint_names_;
   std::mutex state_mutex_;
   std::thread state_thread_;
   bool running_;

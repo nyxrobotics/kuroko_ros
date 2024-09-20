@@ -83,7 +83,7 @@ void RobooneAuto::stopWalking()
 void RobooneAuto::setWalkingParams(double x_move, double y_move, double angle_move)
 {
   op3_walking_module_msgs::WalkingParam params;
-  double normalization_factor = sqrt(pow(angle_move / 0.26, 2) + pow(x_move / 0.02, 2) + pow(y_move / 0.015, 2));
+  double normalization_factor = std::abs(angle_move / 0.26) + std::abs(x_move / 0.02) + std::abs(y_move / 0.015);
 
   if (normalization_factor > 1.0)
   {
@@ -345,10 +345,6 @@ void RobooneAuto::handleAttack()
       else
       {
         // 相手の方に向かって歩行処理
-        double rect_center_x = largest_rect.x + largest_rect.width / 2.0;
-        double image_center_x = last_camera_info_.width / 2.0;
-        double x_offset = (rect_center_x - image_center_x) / image_center_x;
-
         // 中央からのずれに基づいて旋回角を計算
         double angle_move = -x_offset * (15.0 * M_PI / 180.0);  // 最大15度の旋回
         ROS_INFO("Calculated angle move (radians): %f", angle_move);

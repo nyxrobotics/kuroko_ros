@@ -270,6 +270,7 @@ void RobooneAuto::handleFall()
   setCtrlModule("walking_module");
   current_state_ = "PAUSE_WALKING";
   fall_detected_time_ = ros::Time::now() + ros::Duration(1.0);
+  robot_detected_time_ = ros::Time(0);
 }
 
 // 脱力状態への遷移
@@ -339,16 +340,17 @@ void RobooneAuto::handleAttack()
       if ((ros::Time::now() - attacked_time_).toSec() < 1.0)
       {
         stopWalking();
+        robot_detected_time_ = ros::Time(0);
         setWalkingParams(0.0, 0.0, 0.0);
       }
-      // 攻撃後の3秒間は後退のみ許可
-      else if ((ros::Time::now() - attacked_time_).toSec() < 4.0)
+      // 攻撃後の2秒間は後退のみ許可
+      else if ((ros::Time::now() - attacked_time_).toSec() < 3.0)
       {
         setWalkingParams(-0.02, 0.0, 0.0);
         startWalking();
       }
-      // 攻撃後の7秒間旋回のみ許可（前後左右移動は0）
-      else if ((ros::Time::now() - attacked_time_).toSec() < 10.0)
+      // 攻撃後の6秒間旋回のみ許可（前後左右移動は0）
+      else if ((ros::Time::now() - attacked_time_).toSec() < 8.0)
       {
         // 中央からのずれに基づいて旋回角を計算
         double angle_move = -x_offset * (15.0 * M_PI / 180.0);  // 最大15度の旋回

@@ -267,7 +267,7 @@ void RobooneAuto::handleFall()
   // モーション再生完了後、一時停止状態に遷移、3秒待機
   setCtrlModule("walking_module");
   current_state_ = "PAUSE_WALKING";
-  fall_detected_time_ = ros::Time::now() + ros::Duration(3.0);
+  fall_detected_time_ = ros::Time::now() + ros::Duration(1.0);
 }
 
 // 脱力状態への遷移
@@ -312,26 +312,32 @@ void RobooneAuto::handleAttack()
     double image_center_x = last_camera_info_.width / 2.0;
     double x_offset = (rect_center_x - image_center_x) / image_center_x;
     last_target_detected_direction_ = x_offset > 0 ? -1 : 1;
-    if (rect_area > atk_rects_size_ && (ros::Time::now() - attacked_time_).toSec() > 1.0)
+    if (rect_area > atk_rects_size_ && (ros::Time::now() - attacked_time_).toSec() > 5.0)
     {
       ROS_INFO("Attack triggered! Rect area is larger than threshold and detected within 5 seconds.");
       // 歩行を停止し攻撃を開始
       stopWalking();
       executeAction(2);
-      ros::Duration(1.0).sleep();  // 3秒待機
-      // 攻撃後の処理：0.02m後退、旋回は0
-      setWalkingParams(-0.02, 0.0, 0.0);
-      ROS_INFO("Retreating after attack.");
-      startWalking();
-      ros::Duration(3.0).sleep();         // 3秒待機
       attacked_time_ = ros::Time::now();  // 攻撃実行時刻を記録
     }
     else
     {
       ROS_INFO("Target detected but too small for attack or detected over 2 seconds ago (area: %f)", rect_area);
 
+      // 攻撃後の1秒間は歩行停止
+      if ((ros::Time::now() - attacked_time_).toSec() < 1.0)
+      {
+        stopWalking();
+        setWalkingParams(0.0, 0.0, 0.0);
+      }
+      // 攻撃後の3秒間は後退のみ許可
+      else if ((ros::Time::now() - attacked_time_).toSec() < 4.0)
+      {
+        setWalkingParams(-0.02, 0.0, 0.0);
+        startWalking();
+      }
       // 攻撃後の7秒間旋回のみ許可（前後左右移動は0）
-      if ((ros::Time::now() - attacked_time_).toSec() < 6.0)
+      else if ((ros::Time::now() - attacked_time_).toSec() < 10.0)
       {
         // 中央からのずれに基づいて旋回角を計算
         double angle_move = -x_offset * (15.0 * M_PI / 180.0);  // 最大15度の旋回

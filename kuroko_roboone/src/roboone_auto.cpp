@@ -29,6 +29,7 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   robot_detected_time_ = ros::Time(0);
   fall_detected_time_ = ros::Time(0);
   attacked_time_ = ros::Time(0);
+  last_target_detected_direction_ = 1;
   ROS_INFO("RobooneAuto initialized.");
 }
 
@@ -244,15 +245,15 @@ void RobooneAuto::transitionToPauseWalkingState()
 void RobooneAuto::transitionToFallState()
 {
   ROS_INFO("Transitioning to FALL state.");
+  setCtrlModule("action_module");
+  ros::Duration(1.0).sleep();
   current_state_ = "FALL";
 }
 
 // 転倒状態の処理
 void RobooneAuto::handleFall()
 {
-  setCtrlModule("action_module");
   double pitch = quaternionToPitch(last_imu_.orientation);
-
   if (pitch > 0)
   {
     executeAction(0);  // 前起き上がりモーション
@@ -261,12 +262,12 @@ void RobooneAuto::handleFall()
   {
     executeAction(1);  // 後起き上がりモーション
   }
-  // Sleep 7 seconds
-  ros::Duration(7.0).sleep();
 
-  // モーション再生完了後、walking_moduleをロードして再び自律移動状態に遷移
+  ros::Duration(1.0).sleep();
+  // モーション再生完了後、一時停止状態に遷移、3秒待機
   setCtrlModule("walking_module");
   current_state_ = "PAUSE_WALKING";
+  fall_detected_time_ = ros::Time::now() + ros::Duration(3.0);
 }
 
 // 脱力状態への遷移
@@ -279,9 +280,9 @@ void RobooneAuto::transitionToIdleState()
 // 攻撃処理
 void RobooneAuto::handleAttack()
 {
-  if (last_rects_.rects.empty() || last_camera_info_.height == 0 || last_camera_info_.width == 0)
+  if (last_camera_info_.height == 0 || last_camera_info_.width == 0)
   {
-    ROS_WARN("No recognized objects or camera info is missing.");
+    ROS_WARN("Camera info is missing.");
     return;
   }
 
@@ -294,6 +295,7 @@ void RobooneAuto::handleAttack()
     if (last_class_.label_names[i] == "roboone")
     {
       roboone_found = true;
+      robot_detected_time_ = ros::Time::now();  // robooneが見つかった時刻を記録
       if (largest_rect.width * largest_rect.height < last_rects_.rects[i].width * last_rects_.rects[i].height)
       {
         largest_rect = last_rects_.rects[i];
@@ -301,20 +303,22 @@ void RobooneAuto::handleAttack()
     }
   }
 
-  if (roboone_found)
+  if ((ros::Time::now() - robot_detected_time_).toSec() < 2.0)
   {
-    robot_detected_time_ = ros::Time::now();  // robooneが見つかった時刻を記録
     double rect_area =
         (largest_rect.width * largest_rect.height) / double(last_camera_info_.width * last_camera_info_.height);
     ROS_INFO("Largest roboone rect found with area: %f", rect_area);
-
-    if (rect_area > atk_rects_size_ && (ros::Time::now() - robot_detected_time_).toSec() <= 5.0)
+    double rect_center_x = largest_rect.x + largest_rect.width / 2.0;
+    double image_center_x = last_camera_info_.width / 2.0;
+    double x_offset = (rect_center_x - image_center_x) / image_center_x;
+    last_target_detected_direction_ = x_offset > 0 ? -1 : 1;
+    if (rect_area > atk_rects_size_ && (ros::Time::now() - attacked_time_).toSec() > 1.0)
     {
       ROS_INFO("Attack triggered! Rect area is larger than threshold and detected within 5 seconds.");
-
       // 歩行を停止し攻撃を開始
       stopWalking();
       executeAction(2);
+      ros::Duration(1.0).sleep();  // 3秒待機
       // 攻撃後の処理：0.02m後退、旋回は0
       setWalkingParams(-0.02, 0.0, 0.0);
       ROS_INFO("Retreating after attack.");
@@ -324,15 +328,11 @@ void RobooneAuto::handleAttack()
     }
     else
     {
-      ROS_INFO("Target detected but too small for attack or detected over 5 seconds ago (area: %f)", rect_area);
+      ROS_INFO("Target detected but too small for attack or detected over 2 seconds ago (area: %f)", rect_area);
 
       // 攻撃後の7秒間旋回のみ許可（前後左右移動は0）
-      if ((ros::Time::now() - attacked_time_).toSec() <= 6.0)
+      if ((ros::Time::now() - attacked_time_).toSec() < 6.0)
       {
-        double rect_center_x = largest_rect.x + largest_rect.width / 2.0;
-        double image_center_x = last_camera_info_.width / 2.0;
-        double x_offset = (rect_center_x - image_center_x) / image_center_x;
-
         // 中央からのずれに基づいて旋回角を計算
         double angle_move = -x_offset * (15.0 * M_PI / 180.0);  // 最大15度の旋回
         ROS_INFO("Calculated angle move for rotation only (radians): %f", angle_move);
@@ -344,39 +344,29 @@ void RobooneAuto::handleAttack()
       }
       else
       {
-        // robooneが最後に見えた時刻が5秒以上前の場合、その場で旋回
-        if ((ros::Time::now() - robot_detected_time_).toSec() > 2.0)
-        {
-          ROS_INFO("roboone was last detected more than 5 seconds ago. Rotating in place.");
+        // 相手の方に向かって歩行処理
+        double rect_center_x = largest_rect.x + largest_rect.width / 2.0;
+        double image_center_x = last_camera_info_.width / 2.0;
+        double x_offset = (rect_center_x - image_center_x) / image_center_x;
 
-          // 最後に見えた方向に15度旋回
-          double angle_move = (15.0 * M_PI / 180.0);  // 15度の旋回
-          setWalkingParams(0.0, 0.0, angle_move);     // 前進・後退は0で上書き
-          ROS_INFO("Rotating 15 degrees in place (radians): %f", angle_move);
-          startWalking();
-        }
-        else
-        {
-          // 相手の方に向かって歩行処理
-          double rect_center_x = largest_rect.x + largest_rect.width / 2.0;
-          double image_center_x = last_camera_info_.width / 2.0;
-          double x_offset = (rect_center_x - image_center_x) / image_center_x;
+        // 中央からのずれに基づいて旋回角を計算
+        double angle_move = -x_offset * (15.0 * M_PI / 180.0);  // 最大15度の旋回
+        ROS_INFO("Calculated angle move (radians): %f", angle_move);
 
-          // 中央からのずれに基づいて旋回角を計算
-          double angle_move = -x_offset * (15.0 * M_PI / 180.0);  // 最大15度の旋回
-          ROS_INFO("Calculated angle move (radians): %f", angle_move);
-
-          // 0.02m前進しつつ旋回
-          setWalkingParams(0.02, 0.0, angle_move);
-          ROS_INFO("Moving towards target with x_move: 0.02, angle_move (radians): %f", angle_move);
-          startWalking();
-        }
+        // 0.02m前進しつつ旋回
+        setWalkingParams(0.02, 0.0, angle_move);
+        ROS_INFO("Moving towards target with x_move: 0.02, angle_move (radians): %f", angle_move);
+        startWalking();
       }
     }
   }
   else
   {
     ROS_WARN("No roboone label found.");
+    double angle_move = last_target_detected_direction_ * (15.0 * M_PI / 180.0);  // 最大15度の旋回
+    setWalkingParams(0.0, 0.0, angle_move);
+    ROS_INFO("Rotating in place with angle_move (radians): %f", angle_move);
+    startWalking();
   }
 }
 

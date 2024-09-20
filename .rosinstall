@@ -38,4 +38,8 @@
     local-name: fdilink_ahrs
     uri: git@github.com:sbgisen/fdilink_ahrs.git
     version: master
+- git:
+    local-name: yolov8
+    uri: git@github.com:sbgisen/yolov8.git
+    version: develop
 

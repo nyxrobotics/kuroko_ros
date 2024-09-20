@@ -40,4 +40,5 @@ rosdep update
 rosdep install -r -y -i --from-paths .
 catkin source
 catkin config --cmake-args -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=Release
+roscd yolov8 && pipenv install
 catkin build

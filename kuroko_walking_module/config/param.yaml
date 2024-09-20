@@ -1,7 +1,7 @@
 x_offset: 0.02
-y_offset: 0.04
+y_offset: 0.06
 z_offset: 0.065
-roll_offset: -5.0
+roll_offset: -2.0
 pitch_offset: 0
 yaw_offset: 0
 hip_pitch_offset: 5

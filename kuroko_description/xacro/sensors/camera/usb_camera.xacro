@@ -40,8 +40,8 @@
         <camera name="camera">
           <horizontal_fov>1.76</horizontal_fov>
           <image>
-            <width>960</width>
-            <height>600</height>
+            <width>320</width>
+            <height>240</height>
             <format>B8G8R8</format>
           </image>
           <distortion>
@@ -54,7 +54,7 @@
         </camera>
         <plugin name="${name}_camera_plugin" filename="libgazebo_ros_camera.so">
           <alwaysOn>true</alwaysOn>
-          <updateRate>30</updateRate>
+          <updateRate>90</updateRate>
           <cameraName>camera</cameraName>
           <imageTopicName>resized/image</imageTopicName>
           <cameraInfoTopicName>resized/camera_info</cameraInfoTopicName>

@@ -7,8 +7,8 @@
   <arg name="model_name" default="$(find kuroko_image_recognition)/trained/best.pt"/>
   <!-- <arg if="$(arg segmentation)" name="model_name" default="yolov8x-seg.pt"/> -->
   <!-- <arg unless="$(arg segmentation)" name="model_name" default="yolov8x-seg.pt"/> -->
-  <arg if="$(arg is_gazebo)" name="threshold" default="0.02"/>
-  <arg unless="$(arg is_gazebo)" name="threshold" default="0.2"/>
+  <arg if="$(arg is_gazebo)" name="threshold" default="0.3"/>
+  <arg unless="$(arg is_gazebo)" name="threshold" default="0.3"/>
   <arg name="iou_threshold" default="0.1"/>
   <arg name="verbose" default="false"/>
   <arg name="max_detection" default="3"/>

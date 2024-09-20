@@ -314,11 +314,20 @@ void RobooneAuto::handleAttack()
     last_target_detected_direction_ = x_offset > 0 ? -1 : 1;
     if (rect_area > atk_rects_size_ && (ros::Time::now() - attacked_time_).toSec() > 5.0)
     {
-      ROS_INFO("Attack triggered! Rect area is larger than threshold and detected within 5 seconds.");
-      // 歩行を停止し攻撃を開始
-      stopWalking();
-      executeAction(2);
-      attacked_time_ = ros::Time::now();  // 攻撃実行時刻を記録
+      // 相手が倒れている場合、attacked_time_を9秒前にリセット
+      if (largest_rect.y > last_camera_info_.height * 0.2)
+      {
+        ROS_INFO("Target is in fall state, resetting attacked_time_ to 9 seconds ago.");
+        attacked_time_ = ros::Time::now() - ros::Duration(9.0);
+      }
+      else
+      {
+        ROS_INFO("Attack triggered! Rect area is larger than threshold and detected within 5 seconds.");
+        // 歩行を停止し攻撃を開始
+        stopWalking();
+        executeAction(2);
+        attacked_time_ = ros::Time::now();  // 攻撃実行時刻を記録
+      }
     }
     else
     {

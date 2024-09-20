@@ -217,6 +217,8 @@ void RobooneAuto::manageState()
 // 初期姿勢への遷移
 void RobooneAuto::transitionToInitPose()
 {
+  enableAllJoints();
+  ros::Duration(0.1).sleep();
   ROS_INFO("Transitioning to INIT_POSE state.");
   setCtrlModule("initial_pose_module");
   setCtrlModule("action_module");
@@ -381,13 +383,20 @@ void RobooneAuto::handleAttack()
   }
 }
 
-// Free all joints and switch to "none" control module
+// Free all joints by loading action module and playing motion ID -2
 void RobooneAuto::freeAllJoints()
 {
-  setCtrlModule("none");
-  std_msgs::String msg;
-  msg.data = "free";
-  walking_command_pub_.publish(msg);
+  setCtrlModule("action_module");  // Load the action module
+  ROS_INFO("Executing action -2 to free all joints.");
+  executeAction(-2);  // Play motion ID -2 to free the joints
+}
+
+// Enable all joints by loading action module and playing motion ID -1
+void RobooneAuto::enableAllJoints()
+{
+  setCtrlModule("action_module");  // Load the action module
+  ROS_INFO("Executing action -1 to enable all joints.");
+  executeAction(-1);  // Play motion ID -1 to enable the joints
 }
 
 // Utility function to convert quaternion to pitch (radians)

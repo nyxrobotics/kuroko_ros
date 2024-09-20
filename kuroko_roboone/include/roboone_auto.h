@@ -33,6 +33,7 @@ public:
   void manageState();  // 状態管理関数
   bool setCtrlModule(const std::string& module_name);
   void freeAllJoints();
+  void enableAllJoints();
 
 private:
   void stateThread();

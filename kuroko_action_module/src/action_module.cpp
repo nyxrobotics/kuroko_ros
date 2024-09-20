@@ -92,6 +92,7 @@ void ActionModule::queueThread()
 
   status_msg_pub_ = ros_node.advertise<robotis_controller_msgs::StatusMsg>("/motion_control/status", 5);
   done_msg_pub_ = ros_node.advertise<std_msgs::String>("/motion_control/movement_done", 5);
+  sync_write_pub_ = ros_node.advertise<robotis_controller_msgs::SyncWriteItem>("/motion_control/sync_write_item", 5);
 
   ros::Subscriber action_page_sub =
       ros_node.subscribe("/motion_control/action/page_num", 5, &ActionModule::motionNumberCallback, this);
@@ -125,10 +126,14 @@ void ActionModule::motionNumberCallback(const std_msgs::Int32::ConstPtr& msg)
 
   if (msg->data == -1)
   {
+    ROS_INFO("Stopping all joints");
+    torqueOnAll();
     stop();
   }
   else if (msg->data == -2)
   {
+    ROS_INFO("Braking all joints");
+    torqueOffAll();
     brake();
   }
   else
@@ -643,6 +648,42 @@ std::vector<std::string> ActionModule::getMotionNames()
     motion_names.push_back(motion.motion_name);
   }
   return motion_names;
+}
+
+void ActionModule::torqueOnAll()
+{
+  robotis_controller_msgs::SyncWriteItem syncwrite_msg;
+  syncwrite_msg.item_name = "torque_enable";
+
+  // Iterate through all dxls to enable torque
+  for (const auto& dxl : joint_name_to_dxl_id_)
+  {
+    syncwrite_msg.joint_name.push_back(dxl.first);  // Add joint name
+    syncwrite_msg.value.push_back(1);               // Enable torque (1)
+  }
+
+  // Publish SyncWrite message to enable torque for all joints
+  sync_write_pub_.publish(syncwrite_msg);
+
+  ROS_INFO("Torque enabled for all joints");
+}
+
+void ActionModule::torqueOffAll()
+{
+  robotis_controller_msgs::SyncWriteItem syncwrite_msg;
+  syncwrite_msg.item_name = "torque_enable";
+
+  // Iterate through all dxls to disable torque
+  for (const auto& dxl : joint_name_to_dxl_id_)
+  {
+    syncwrite_msg.joint_name.push_back(dxl.first);  // Add joint name
+    syncwrite_msg.value.push_back(0);               // Disable torque (0)
+  }
+
+  // Publish SyncWrite message to disable torque for all joints
+  sync_write_pub_.publish(syncwrite_msg);
+
+  ROS_INFO("Torque disabled for all joints");
 }
 
 }  // namespace motion_control

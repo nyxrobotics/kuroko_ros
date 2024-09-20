@@ -22,6 +22,7 @@ namespace fs = std::experimental::filesystem;
 #include <ros/callback_queue.h>
 #include "robotis_framework_common/motion_module.h"
 #include "robotis_controller_msgs/StatusMsg.h"
+#include "robotis_controller_msgs/SyncWriteItem.h"
 #include "std_msgs/String.h"
 #include "std_msgs/Int32.h"
 #include "op3_action_module_msgs/IsRunning.h"
@@ -50,11 +51,14 @@ public:
   bool isRunning() override;
   void stop() override;
   std::vector<std::string> getMotionNames();
+  void torqueOnAll();
+  void torqueOffAll();
 
 private:
   boost::thread queue_thread_;
   ros::Publisher status_msg_pub_;
   ros::Publisher done_msg_pub_;
+  ros::Publisher sync_write_pub_;
 
   int control_cycle_msec_;
 

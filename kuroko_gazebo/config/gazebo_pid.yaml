@@ -17,7 +17,7 @@ gazebo_dc_motor:
       antiwindup: false
       publish_state: true
     shoulder_r_roll:
-      p: 16.62
+      p: 42.41
       i: 0.0
       d: 0.0
       i_clamp: 0.2
@@ -46,7 +46,7 @@ gazebo_dc_motor:
       antiwindup: false
       publish_state: true
     shoulder_l_roll:
-      p: 16.62
+      p: 42.41
       i: 0.0
       d: 0.0
       i_clamp: 0.2

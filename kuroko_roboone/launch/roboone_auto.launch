@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<launch>
+    <node name="roboone_auto" pkg="kuroko_roboone" type="kuroko_roboone_node" output="screen">
+    </node>
+</launch>

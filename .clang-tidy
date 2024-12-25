@@ -11,6 +11,7 @@ Checks:          '-*,
                   modernize-make-unique,
                   modernize-avoid-bind,
                   misc-unused-parameters,
+                  misc-include-cleaner,
                   readability-named-parameter,
                   readability-redundant-smartptr-get,
                   readability-redundant-string-cstr,
@@ -42,7 +43,35 @@ CheckOptions:
   # variable names
   - key:             readability-identifier-naming.VariableCase
     value:           lower_case
+  - key:             readability-identifier-naming.MemberCase
+    value:           lower_case
+  - key:             readability-identifier-naming.MemberPrefix
+    value:           ''
+  - key:             readability-identifier-naming.MemberSuffix
+    value:           '_'
+  - key:             readability-identifier-naming.ClassMemberCase
+    value:           lower_case
+  - key:             readability-identifier-naming.ClassMemberPrefix
+    value:           ''
   - key:             readability-identifier-naming.ClassMemberSuffix
+    value:           '_'
+  - key:             readability-identifier-naming.PrivateMemberCase
+    value:           lower_case
+  - key:             readability-identifier-naming.PrivateMemberPrefix
+    value:           ''
+  - key:             readability-identifier-naming.PrivateMemberSuffix
+    value:           '_'
+  - key:             readability-identifier-naming.PublicMemberCase
+    value:           lower_case
+  - key:             readability-identifier-naming.PublicMemberPrefix
+    value:           ''
+  - key:             readability-identifier-naming.PublicMemberSuffix
+    value:           '_'
+  - key:             readability-identifier-naming.ProtectedMemberCase
+    value:           lower_case
+  - key:             readability-identifier-naming.ProtectedMemberPrefix
+    value:           ''
+  - key:             readability-identifier-naming.ProtectedMemberSuffix
     value:           '_'
   # const static or global variables are UPPER_CASE
   - key:             readability-identifier-naming.EnumConstantCase
@@ -53,4 +82,3 @@ CheckOptions:
     value:           UPPER_CASE
   - key:             readability-identifier-naming.GlobalVariableCase
     value:           UPPER_CASE
-...

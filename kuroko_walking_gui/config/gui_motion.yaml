@@ -1,0 +1,24 @@
+motion:
+  -2: BREAK
+  -1: STOP
+  0: WakeupFront
+  1: WakeupRear
+  2: AttackFront
+  3: Stand up
+  4: Walk Ready
+  5: Yes Go
+  6: Oops
+  # soccer
+  7: Init pose
+  8: Right Kick
+  9: Left Kick
+  10: Keeper Ready
+  11: Defence to Right
+  12: Defence to Left
+  # action demo
+  13: Foot play
+  14: Roll back
+  15: Look
+  16: Push up
+motion_shortcut:
+# motion_index : button id (0 ~ 9)

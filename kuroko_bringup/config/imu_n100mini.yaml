@@ -1,0 +1,8 @@
+ahrs_imu:
+  ahrs_driver:
+    imu_topic: /kuroko/sensors/imu/data_raw
+    port: /dev/ttyIMU
+    imu_frame: chest_link
+    imu_mag_covVec: [0.001, 0.001, 0.001]
+    imu_gyro_covVec: [0.000001, 0.000001, 0.000001]
+    imu_accel_covVec: [0.001, 0.001, 0.001]

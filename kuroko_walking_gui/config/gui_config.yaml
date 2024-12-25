@@ -1,0 +1,41 @@
+id_joint:
+  1: chest
+  2: shoulder_r_pitch
+  3: shoulder_r_roll
+  4: elbow_r_front
+  5: elbow_r_rear
+  6: shoulder_l_pitch
+  7: shoulder_l_roll
+  8: elbow_l_front
+  9: elbow_l_rear
+  10: hip_r_roll
+  11: hip_r_pitch
+  12: thigh_r_active
+  13: shin_r_active
+  14: ankle_r_roll
+  15: ankle_r_yaw
+  16: hip_l_roll
+  17: hip_l_pitch
+  18: thigh_l_active
+  19: shin_l_active
+  20: ankle_l_roll
+  21: ankle_l_yaw
+module_list:
+  [
+    none,
+    head_control_module,
+    initial_pose_module,
+    walking_module,
+    manipulation_module,
+    action_module,
+    walking_module,
+    direct_control_module,
+    online_walking_module,
+  ]
+module_button:
+  1: none
+  2: head_control_module
+  3: action_module
+  4: walking_module
+  5: online_walking_module
+  6: direct_control_module

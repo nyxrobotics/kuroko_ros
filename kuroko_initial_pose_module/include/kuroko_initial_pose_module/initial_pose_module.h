@@ -1,0 +1,103 @@
+#ifndef INITIAL_POSE_MODULE_H_
+#define INITIAL_POSE_MODULE_H_
+
+#include <boost/thread.hpp>
+#include <map>
+#include <yaml-cpp/yaml.h>
+
+#include <geometry_msgs/Pose.h>
+#include <ros/callback_queue.h>
+#include <ros/package.h>
+#include <ros/ros.h>
+#include <std_msgs/Float64.h>
+#include <std_msgs/Int16.h>
+#include <std_msgs/String.h>
+
+#include "kuroko_kinematics/kuroko_kinematics.h"
+#include "robotis_controller_msgs/JointCtrlModule.h"
+#include "robotis_controller_msgs/SetModule.h"
+#include "robotis_controller_msgs/StatusMsg.h"
+#include "robotis_framework_common/motion_module.h"
+#include "robotis_math/robotis_math.h"
+
+#include "initial_pose_module_state.h"
+
+namespace motion_control
+{
+class BaseJointData
+{
+public:
+  double position_;
+  double velocity_;
+  double effort_;
+
+  int p_gain_;
+  int i_gain_;
+  int d_gain_;
+};
+
+class BaseJointState
+{
+public:
+  BaseJointData curr_joint_state_[MAX_JOINT_ID + 1];
+  BaseJointData goal_joint_state_[MAX_JOINT_ID + 1];
+  BaseJointData fake_joint_state_[MAX_JOINT_ID + 1];
+};
+
+class InitialPoseModule : public robotis_framework::MotionModule, public robotis_framework::Singleton<InitialPoseModule>
+{
+public:
+  InitialPoseModule();
+  ~InitialPoseModule() override;
+
+  /* ROS Framework Functions */
+  void initialize(const int control_cycle_msec, robotis_framework::Robot* robot) override;
+  void process(std::map<std::string, robotis_framework::Dynamixel*> dxls,
+               std::map<std::string, double> sensors) override;
+
+  void stop() override;
+  bool isRunning() override;
+
+  void onModuleEnable() override;
+  void onModuleDisable() override;
+
+  /* ROS Topic Callback Functions */
+  void initPoseMsgCallback(const std_msgs::String::ConstPtr& msg);
+
+  /* ROS Calculation Functions */
+  void initPoseTrajGenerateProc();
+
+  void poseGenerateProc(Eigen::MatrixXd joint_angle_pose);
+  void poseGenerateProc(std::map<std::string, double>& joint_angle_pose);
+
+  /* Parameter */
+  InitialPoseModuleState* initial_pose_module_state_;
+  BaseJointState* joint_state_;
+
+private:
+  void queueThread();
+  void setCtrlModule(const std::string& module);
+  void callServiceSettingModule(const std::string& module_name);
+  void parseInitPoseData(const std::string& path);
+  void publishStatusMsg(unsigned int type, std::string msg);
+
+  int control_cycle_msec_;
+  boost::thread queue_thread_;
+  boost::thread tra_gene_tread_;
+
+  ros::Publisher status_msg_pub_;
+  ros::Publisher set_ctrl_module_pub_;
+
+  ros::ServiceClient set_module_client_;
+
+  std::map<std::string, int> joint_name_to_dxl_id_;
+
+  bool has_goal_joints_;
+  bool ini_pose_only_;
+
+  std::string init_pose_file_path_;
+};
+
+}  // namespace motion_control
+
+#endif /* INITIAL_POSE_MODULE_H_ */

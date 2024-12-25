@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- -*- mode: XML -*- -->
+<launch>
+  <rosparam command="load" file="$(find kuroko_bringup)/config/imu_n100mini.yaml"/>
+
+  <include file="$(find fdilink_ahrs)/launch/ahrs_driver.launch"/>
+
+  <!-- Combining accelerometers and gyroscopes to obtain orientation -->
+  <node pkg="imu_filter_madgwick" ns="ahrs_imu" type="imu_filter_node" name="imu_filter_madgwick" output="screen" respawn="false">
+    <param name="use_mag" value="false"/>
+    <param name="publish_tf" value="false"/>
+    <param name="gain" value="0.01"/>
+    <param name="orientation_stddev" value="0.0316"/>
+    <remap from="imu/data_raw" to="/kuroko/sensors/imu/data_raw"/>
+    <remap from="imu/data" to="/kuroko/sensors/imu/data"/>
+  </node>
+
+</launch>

@@ -2,3 +2,44 @@
     local-name: gazebo_dc_motor
     uri: git@github.com:nyxrobotics/gazebo_dc_motor.git
     version: develop
+- git:
+    local-name: robotis/robotis_math
+    uri: git@github.com:ROBOTIS-GIT/ROBOTIS-Math.git
+    version: master
+- git:
+    local-name: robotis/robotis_framework
+    uri: git@github.com:ROBOTIS-GIT/ROBOTIS-Framework.git
+    version: master
+- git:
+    local-name: robotis/robotis_controller_msgs
+    uri: git@github.com:ROBOTIS-GIT/ROBOTIS-Framework-msgs.git
+    version: master
+- git:
+    local-name: robotis/robotis_op3_tools
+    uri: git@github.com:sbgisen/ROBOTIS-OP3-Tools.git
+    version: feature/noetic
+- git:
+    local-name: robotis/robotis_op3_msgs
+    uri: git@github.com:ROBOTIS-GIT/ROBOTIS-OP3-msgs.git
+    version: master
+- git:
+    local-name: robotis/robotis_op3
+    uri: git@github.com:sbgisen/ROBOTIS-OP3.git
+    version: feature/noetic
+- git:
+    local-name: robotis/humanoid_navigation
+    uri: git@github.com:sbgisen/humanoid_navigation.git
+    version: feature/noetic
+- git:
+    local-name: robotis/humanoid_msgs
+    uri: git@github.com:ahornung/humanoid_msgs.git
+    version: master
+- git:
+    local-name: fdilink_ahrs
+    uri: git@github.com:sbgisen/fdilink_ahrs.git
+    version: master
+- git:
+    local-name: yolov8
+    uri: git@github.com:sbgisen/yolov8.git
+    version: develop
+

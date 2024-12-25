@@ -1,0 +1,22 @@
+init_pose:
+  chest: 0.00
+  shoulder_r_pitch: 0.855
+  shoulder_r_roll: 0.00
+  elbow_r_front: -2.268
+  elbow_r_rear: 2.268
+  shoulder_l_pitch: -0.855
+  shoulder_l_roll: 0.00
+  elbow_l_front: 2.268
+  elbow_l_rear: -2.268
+  hip_r_roll: 0.00
+  hip_r_pitch: 0.00
+  thigh_r_active: -0.087
+  shin_r_active: -0.175
+  ankle_r_roll: 0.00
+  ankle_r_yaw: 0.00
+  hip_l_roll: 0.00
+  hip_l_pitch: 0.00
+  thigh_l_active: 0.087
+  shin_l_active: 0.175
+  ankle_l_roll: 0.00
+  ankle_l_yaw: 0.00

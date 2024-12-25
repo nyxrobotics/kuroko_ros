@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>kuroko_kinematics</name>
+  <version>0.0.0</version>
+  <description> The kuroko_balance_control package </description>
+  <author>nyxrobotics</author>
+  <author email="nyxroboticss@gmail.com">nyxrobotics</author>
+  <maintainer email="nyxroboticss@gmail.com">nyxrobotics</maintainer>
+  <license>Apache 2.0</license>
+  <url type="website">https://github.com/nyxrobotics</url>
+  <url type="repository">https://github.com/nyxrobotics/kuroko_ros</url>
+  <url type="bugtracker">https://github.com/nyxrobotics/kuroko_ros/issues</url>
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>roscpp</depend>
+  <depend>cmake_modules</depend>
+  <depend>robotis_math</depend>
+  <depend>eigen</depend>
+</package>

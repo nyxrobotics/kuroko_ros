@@ -1,0 +1,94 @@
+# Publish all joint states -----------------------------------
+joint_state_controller:
+  type: joint_state_controller/JointStateController
+  publish_rate: 1000
+
+# Position Controllers ---------------------------------------
+chest_position:
+  type: effort_controllers/JointPositionController
+  pid: { p: 40.0, i: 0.0, d: 0.1 }
+  joint: chest
+
+shoulder_r_pitch_position:
+  type: effort_controllers/JointPositionController
+  pid: { p: 40.0, i: 0.0, d: 0.1 }
+  joint: shoulder_r_pitch
+shoulder_r_roll_position:
+  type: effort_controllers/JointPositionController
+  pid: { p: 40.0, i: 0.0, d: 0.1 }
+  joint: shoulder_r_roll
+elbow_r_front_position:
+  type: effort_controllers/JointPositionController
+  pid: { p: 40.0, i: 0.0, d: 0.1 }
+  joint: elbow_r_front
+elbow_r_rear_position:
+  type: effort_controllers/JointPositionController
+  pid: { p: 40.0, i: 0.0, d: 0.1 }
+  joint: elbow_r_rear
+
+shoulder_l_pitch_position:
+  type: effort_controllers/JointPositionController
+  pid: { p: 40.0, i: 0.0, d: 0.1 }
+  joint: shoulder_l_pitch
+shoulder_l_roll_position:
+  type: effort_controllers/JointPositionController
+  pid: { p: 40.0, i: 0.0, d: 0.1 }
+  joint: shoulder_l_roll
+elbow_l_front_position:
+  type: effort_controllers/JointPositionController
+  pid: { p: 40.0, i: 0.0, d: 0.1 }
+  joint: elbow_l_front
+elbow_l_rear_position:
+  type: effort_controllers/JointPositionController
+  pid: { p: 40.0, i: 0.0, d: 0.1 }
+  joint: elbow_l_rear
+
+hip_r_roll_position:
+  type: effort_controllers/JointPositionController
+  pid: { p: 40.0, i: 0.0, d: 0.1 }
+  joint: hip_r_roll
+lhip_r_pitch_position:
+  type: effort_controllers/JointPositionController
+  pid: { p: 40.0, i: 0.0, d: 0.1 }
+  joint: hip_r_pitch
+thigh_r_active_position:
+  type: effort_controllers/JointPositionController
+  pid: { p: 40.0, i: 0.0, d: 0.1 }
+  joint: thigh_r_active
+shin_r_active_position:
+  type: effort_controllers/JointPositionController
+  pid: { p: 40.0, i: 0.0, d: 0.1 }
+  joint: shin_r_active
+ankle_r_roll_position:
+  type: effort_controllers/JointPositionController
+  pid: { p: 40.0, i: 0.0, d: 0.1 }
+  joint: ankle_r_roll
+ankle_r_yaw_position:
+  type: effort_controllers/JointPositionController
+  pid: { p: 40.0, i: 0.0, d: 0.1 }
+  joint: ankle_r_yaw
+
+hip_l_roll_position:
+  type: effort_controllers/JointPositionController
+  pid: { p: 40.0, i: 0.0, d: 0.1 }
+  joint: hip_l_roll
+lhip_l_pitch_position:
+  type: effort_controllers/JointPositionController
+  pid: { p: 40.0, i: 0.0, d: 0.1 }
+  joint: hip_l_pitch
+thigh_l_active_position:
+  type: effort_controllers/JointPositionController
+  pid: { p: 40.0, i: 0.0, d: 0.1 }
+  joint: thigh_l_active
+shin_l_active_position:
+  type: effort_controllers/JointPositionController
+  pid: { p: 40.0, i: 0.0, d: 0.1 }
+  joint: shin_l_active
+ankle_l_roll_position:
+  type: effort_controllers/JointPositionController
+  pid: { p: 40.0, i: 0.0, d: 0.1 }
+  joint: ankle_l_roll
+ankle_l_yaw_position:
+  type: effort_controllers/JointPositionController
+  pid: { p: 40.0, i: 0.0, d: 0.1 }
+  joint: ankle_l_yaw

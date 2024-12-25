@@ -1,0 +1,96 @@
+#====================================
+# init pose for offset tuner
+#====================================
+init_pose:
+  move_time: 4.0 # sec
+  target_pose: # degree
+    chest: 0.0
+    shoulder_r_pitch: 0.0
+    shoulder_r_roll: 0.0
+    elbow_r_rear: 0.0
+    elbow_r_front: 0.0
+    shoulder_l_pitch: 0.0
+    shoulder_l_roll: 0.0
+    elbow_l_front: 0.0
+    elbow_l_rear: 0.0
+    hip_r_roll: 0.0
+    hip_r_pitch: 0.0
+    thigh_r_active: 0.0
+    shin_r_active: 0.0
+    ankle_r_roll: 0.0
+    ankle_r_yaw: 0.0
+    hip_l_roll: 0.0
+    hip_l_pitch: 0.0
+    thigh_l_active: 0.0
+    shin_l_active: 0.0
+    ankle_l_roll: 0.0
+    ankle_l_yaw: 0.0
+
+#====================================
+# preset poses for gain tuner
+#====================================
+tune_pose_01:
+  move_time: [4.0] # sec
+  target_pose: [ready_pose]
+
+tune_pose_02:
+  move_time: [4.0, 4.0] # sec
+  target_pose: [init_pose, ready_pose]
+
+tune_pose_03:
+  move_time: [4.0] # sec
+  target_pose: [init_pose]
+
+tune_pose_04:
+  move_time: [4.0, 4.0, 3.0, 2.0] # sec
+  target_pose: [ready_pose, init_pose, ready_pose, init_pose]
+
+#====================================
+# pose data for preset pose
+#====================================
+pose_data:
+  ready_pose: # DEG
+    chest: 0.0
+    shoulder_r_pitch: 49.0
+    shoulder_r_roll: 0.0
+    elbow_r_front: -130.0
+    elbow_r_rear: 130.0
+    shoulder_l_pitch: 49.0
+    shoulder_l_roll: 0.0
+    elbow_l_front: 130.0
+    elbow_l_rear: -130.0
+    hip_r_roll: 0.0
+    hip_r_pitch: 0.0
+    thigh_r_active: 70.0
+    shin_r_active: -70.0
+    ankle_r_roll: 0.0
+    ankle_r_yaw: 0.0
+    hip_l_roll: 0.0
+    hip_l_pitch: 0.0
+    thigh_l_active: 70.0
+    shin_l_active: -70.0
+    ankle_l_roll: 0.0
+    ankle_l_yaw: 0.0
+
+  init_pose: # degree
+    chest: 0.0
+    shoulder_r_pitch: 0.0
+    shoulder_r_roll: 0.0
+    elbow_r_rear: 0.0
+    elbow_r_front: 0.0
+    shoulder_l_pitch: 0.0
+    shoulder_l_roll: 0.0
+    elbow_l_rear: 0.0
+    elbow_l_front: 0.0
+    hip_r_roll: 0.0
+    hip_r_pitch: 0.0
+    thigh_r_active: 0.0
+    shin_r_active: 0.0
+    ankle_r_roll: 0.0
+    ankle_r_yaw: 0.0
+    hip_l_roll: 0.0
+    hip_l_pitch: 0.0
+    thigh_l_active: 0.0
+    shin_l_active: 0.0
+    ankle_l_roll: 0.0
+    ankle_l_yaw: 0.0

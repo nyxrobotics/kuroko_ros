@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>kuroko_action_module</name>
+  <version>0.0.0</version>
+  <description> The kuroko_action_module package </description>
+  <author email="nyxroboticss@gmail.com">nyxrobotics</author>
+  <maintainer email="nyxroboticss@gmail.com">nyxrobotics</maintainer>
+  <license>Apache 2.0</license>
+  <url type="website">https://github.com/nyxrobotics</url>
+  <url type="repository">https://github.com/nyxrobotics/kuroko_ros</url>
+  <url type="bugtracker">https://github.com/nyxrobotics/kuroko_ros/issues</url>
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>roscpp</depend>
+  <depend>roslib</depend>
+  <depend>std_msgs</depend>
+  <depend>robotis_controller_msgs</depend>
+  <depend>op3_action_module_msgs</depend>
+  <depend>robotis_framework_common</depend>
+  <depend>robotis_device</depend>
+  <depend>boost</depend>
+</package>

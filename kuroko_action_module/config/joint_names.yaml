@@ -1,0 +1,22 @@
+joint_names:
+  - chest
+  - shoulder_r_pitch
+  - shoulder_r_roll
+  - elbow_r_front
+  - elbow_r_rear
+  - shoulder_l_pitch
+  - shoulder_l_roll
+  - elbow_l_front
+  - elbow_l_rear
+  - hip_r_roll
+  - hip_r_pitch
+  - thigh_r_active
+  - shin_r_active
+  - ankle_r_roll
+  - ankle_r_yaw
+  - hip_l_roll
+  - hip_l_pitch
+  - thigh_l_active
+  - shin_l_active
+  - ankle_l_roll
+  - ankle_l_yaw

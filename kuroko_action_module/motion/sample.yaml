@@ -1,0 +1,132 @@
+sections:
+  - section_name: start_section
+    continue_section: "loop_section"  # Section to proceed after this one completes
+    stop_section: "finish_section"    # Section to proceed when stop condition (e.g., key release) is met
+    jump_sections: []                # No additional jump sections
+    joint_trajectory:
+      joint_names:
+        - chest
+        - shoulder_r_pitch
+        - shoulder_r_roll
+        - elbow_r_front
+        - elbow_r_rear
+        - shoulder_l_pitch
+        - shoulder_l_roll
+        - elbow_l_front
+        - elbow_l_rear
+        - hip_r_roll
+        - hip_r_pitch
+        - thigh_r_active
+        - shin_r_active
+        - ankle_r_roll
+        - ankle_r_yaw
+        - hip_l_roll
+        - hip_l_pitch
+        - thigh_l_active
+        - shin_l_active
+        - ankle_l_roll
+        - ankle_l_yaw
+      points:
+        - positions: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+          velocities: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+          accelerations: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+          time_from_start: 0.1
+
+  - section_name: loop_section
+    continue_section: "loop_section"  # This section loops back to itself
+    stop_section: "finish_section"    # Section to proceed when stop condition is met
+    jump_sections: ["abort_section"] # Allows a jump to the abort section on specific input
+    joint_trajectory:
+      joint_names:
+        - chest
+        - shoulder_r_pitch
+        - shoulder_r_roll
+        - elbow_r_front
+        - elbow_r_rear
+        - shoulder_l_pitch
+        - shoulder_l_roll
+        - elbow_l_front
+        - elbow_l_rear
+        - hip_r_roll
+        - hip_r_pitch
+        - thigh_r_active
+        - shin_r_active
+        - ankle_r_roll
+        - ankle_r_yaw
+        - hip_l_roll
+        - hip_l_pitch
+        - thigh_l_active
+        - shin_l_active
+        - ankle_l_roll
+        - ankle_l_yaw
+      points:
+        - positions: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+          velocities: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+          accelerations: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+          time_from_start: 0.1
+
+  - section_name: finish_section
+    continue_section: ""  # No further sections
+    stop_section: ""      # No further sections
+    jump_sections: []      # No jumps
+    joint_trajectory:
+      joint_names:
+        - chest
+        - shoulder_r_pitch
+        - shoulder_r_roll
+        - elbow_r_front
+        - elbow_r_rear
+        - shoulder_l_pitch
+        - shoulder_l_roll
+        - elbow_l_front
+        - elbow_l_rear
+        - hip_r_roll
+        - hip_r_pitch
+        - thigh_r_active
+        - shin_r_active
+        - ankle_r_roll
+        - ankle_r_yaw
+        - hip_l_roll
+        - hip_l_pitch
+        - thigh_l_active
+        - shin_l_active
+        - ankle_l_roll
+        - ankle_l_yaw
+      points:
+        - positions: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+          velocities: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+          accelerations: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+          time_from_start: 0.1
+
+  - section_name: abort_section
+    continue_section: ""  # No further sections
+    stop_section: ""      # No further sections
+    jump_sections: []      # No jumps
+    joint_trajectory:
+      joint_names:
+        - chest
+        - shoulder_r_pitch
+        - shoulder_r_roll
+        - elbow_r_front
+        - elbow_r_rear
+        - shoulder_l_pitch
+        - shoulder_l_roll
+        - elbow_l_front
+        - elbow_l_rear
+        - hip_r_roll
+        - hip_r_pitch
+        - thigh_r_active
+        - shin_r_active
+        - ankle_r_roll
+        - ankle_r_yaw
+        - hip_l_roll
+        - hip_l_pitch
+        - thigh_l_active
+        - shin_l_active
+        - ankle_l_roll
+        - ankle_l_yaw
+      points:
+        - positions: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+          velocities: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+          accelerations: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+          time_from_start: 0.1

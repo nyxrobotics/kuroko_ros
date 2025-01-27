@@ -1,6 +1,8 @@
 sections:
   - section_name: start_section
-    next_sections: []
+    continue_section: ""
+    stop_section: ""
+    jump_sections: []
     joint_trajectory:
       joint_names:
         - chest

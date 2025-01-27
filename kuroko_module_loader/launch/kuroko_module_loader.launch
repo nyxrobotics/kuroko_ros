@@ -4,10 +4,10 @@
   <param name="gazebo_robot_name" value="kuroko"/>
 
   <param name="offset_file_path" value="$(find kuroko_tuning_module)/data/offset.yaml"/>
-  <param name="robot_file_path" value="$(find kuroko_device_manager)/config/kuroko.robot"/>
-  <param name="init_file_path" value="$(find kuroko_device_manager)/config/dxl_init_kuroko.yaml"/>
+  <param name="robot_file_path" value="$(find kuroko_module_loader)/config/kuroko.robot"/>
+  <param name="init_file_path" value="$(find kuroko_module_loader)/config/dxl_init_kuroko.yaml"/>
   <param name="device_name" value="/dev/ttyDynamixel"/>
 
   <!-- kuroko Manager -->
-  <node pkg="kuroko_device_manager" type="kuroko_device_manager" name="kuroko_device_manager" output="screen"/>
+  <node pkg="kuroko_module_loader" type="kuroko_module_loader" name="kuroko_module_loader" output="screen"/>
 </launch>

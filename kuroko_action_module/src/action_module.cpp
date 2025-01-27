@@ -247,9 +247,20 @@ void ActionModule::process(std::map<std::string, robotis_framework::Dynamixel*> 
   if (send_next_frame_)
   {
     ROS_INFO_STREAM("[ActionModule] Sending next frame: " << motion_status_.current_frame_in_section);
-    trajectory_msgs::JointTrajectory sorted_trajectory = motion_files_.getMotionFile(motion_status_.current_motion_name)
-                                                             .getMotionSection(motion_status_.current_section_name)
-                                                             .getSortedJointTrajectory(config_joint_names_);
+    MotionFile* motion_file = motion_files_.getMotionFile(motion_status_.current_motion_name);
+    if (motion_file == nullptr)
+    {
+      ROS_ERROR_STREAM("[ActionModule] process: motion file not found");
+      return;
+    }
+    MotionSection* motion_section = motion_file->getMotionSection(motion_status_.current_section_name);
+    if (motion_section == nullptr)
+    {
+      ROS_ERROR_STREAM("[ActionModule] process: motion section not found");
+      return;
+    }
+
+    trajectory_msgs::JointTrajectory sorted_trajectory = motion_section->getSortedJointTrajectory(config_joint_names_);
     for (int i = 0; i < sorted_trajectory.joint_names.size(); i++)
     {
       std::string joint_name = sorted_trajectory.joint_names[i];
@@ -285,7 +296,7 @@ bool ActionModule::playMotionByName(const std::string& motion_name)
 
   motion_status_.next_motion_name = motion_name;  // Set current_motion_ to the selected motion
   motion_status_.start_requested = true;          // Set start_requested to true
-  MotionFile motion_file = motion_files_.getMotionFile(motion_name);
+  MotionFile motion_file = *motion_files_.getMotionFile(motion_name);
   return true;
 }
 
@@ -317,10 +328,10 @@ void ActionModule::saveAllMotions(const std::string& directory)
       YAML::Node section_node;
       section_node["section_name"] = section.section_name;
 
-      // Add next_sections if available
-      if (!section.next_sections.empty())
+      // Add stop_section if available
+      if (!section.stop_section.empty())
       {
-        section_node["next_sections"] = section.next_sections;
+        section_node["stop_section"] = section.stop_section;
       }
 
       YAML::Node joint_trajectory_node;
@@ -397,10 +408,10 @@ void ActionModule::loadMotionYAML(const std::string& file_name, const std::strin
       motion_control::MotionSection motion_section;
       motion_section.section_name = section["section_name"].as<std::string>();
 
-      // Load next_sections
-      if (section["next_sections"])
+      // Load stop_section
+      if (section["stop_section"])
       {
-        motion_section.next_sections = section["next_sections"].as<std::vector<std::string>>();
+        motion_section.stop_section = section["stop_section"].as<std::string>();
       }
 
       // Load joint trajectory
@@ -478,9 +489,20 @@ void ActionModule::processMotionStep()
                                                                    << " not found");
       return;
     }
+    MotionFile* motion_file = motion_files_.getMotionFile(motion_status_.current_motion_name);
+    if (motion_file == nullptr)
+    {
+      ROS_ERROR_STREAM("[ActionModule] processMotionStep: motion file not found");
+      return;
+    }
+    std::vector<MotionSection> motion_sections = motion_file->motion_sections;
+    if (motion_sections.empty())
+    {
+      ROS_ERROR_STREAM("[ActionModule] processMotionStep: motion sections not found");
+      return;
+    }
 
-    motion_status_.current_section_name =
-        motion_files_.getMotionFile(motion_status_.current_motion_name).motion_sections[0].section_name;
+    motion_status_.current_section_name = motion_sections[0].section_name;
     motion_status_.current_frame_in_section = 0;
     motion_status_.is_running = true;
     motion_status_.start_requested = false;
@@ -495,9 +517,14 @@ void ActionModule::processMotionStep()
   }
 
   // Get the current section's joint trajectory points
-  const auto& points = motion_files_.getMotionFile(motion_status_.current_motion_name)
-                           .getMotionSection(motion_status_.current_section_name)
-                           .joint_trajectory.points;
+  MotionSection* current_section = motion_files_.getMotionFile(motion_status_.current_motion_name)
+                                       ->getMotionSection(motion_status_.current_section_name);
+  if (current_section == nullptr)
+  {
+    ROS_ERROR_STREAM("[ActionModule] processMotionStep: current section not found");
+    return;
+  }
+  const auto& points = current_section->joint_trajectory.points;
 
   // Skip interpolation for the first frame, directly move to the next frame
   if (motion_status_.current_frame_in_section == 0)

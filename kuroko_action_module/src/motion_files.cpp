@@ -1,76 +1,77 @@
 #include "kuroko_action_module/motion_files.h"
+#include <algorithm>
+#include <ros/console.h>
 
 namespace motion_control
 {
-trajectory_msgs::JointTrajectory MotionSection::getSortedJointTrajectory(const std::vector<std::string> joint_names_in)
+trajectory_msgs::JointTrajectory MotionSection::getSortedJointTrajectory(const std::vector<std::string>& joint_names_in)
 {
-  trajectory_msgs::JointTrajectory joint_trajectory_out;
-  // Set the joint names and initialize output trajectory
-  joint_trajectory_out.joint_names = joint_names_in;
-  joint_trajectory_out.header.stamp = ros::Time::now();
-  joint_trajectory_out.points.clear();
+  trajectory_msgs::JointTrajectory sorted_trajectory = joint_trajectory;
 
-  // Iterate over each point in the original joint_trajectory
-  for (const auto& point : joint_trajectory.points)
+  for (auto& point : sorted_trajectory.points)
   {
-    // Create a new trajectory point for output, named sorted_point
-    trajectory_msgs::JointTrajectoryPoint sorted_point;
-    sorted_point.time_from_start = point.time_from_start;
-
-    // Resize the sorted_point's arrays to match the input joints
-    sorted_point.positions.resize(joint_names_in.size(), 0.0);
-    sorted_point.velocities.resize(joint_names_in.size(), 0.0);
-    sorted_point.effort.resize(joint_names_in.size(), 0.0);
-
-    // Iterate over each joint name in joint_names_in
+    std::vector<double> sorted_positions(joint_names_in.size(), 0.0);
+    std::vector<double> sorted_velocities(joint_names_in.size(), 0.0);
     for (size_t i = 0; i < joint_names_in.size(); ++i)
     {
-      // Find the matching joint in the original trajectory
-      for (size_t j = 0; j < joint_trajectory.joint_names.size(); ++j)
+      auto it = std::find(joint_trajectory.joint_names.begin(), joint_trajectory.joint_names.end(), joint_names_in[i]);
+      if (it != joint_trajectory.joint_names.end())
       {
-        if (joint_names_in[i] == joint_trajectory.joint_names[j])
+        size_t index = std::distance(joint_trajectory.joint_names.begin(), it);
+        sorted_positions[i] = point.positions[index];
+        if (index < point.velocities.size())
         {
-          // Copy the corresponding joint values to sorted_point
-          sorted_point.positions[i] = point.positions[j];
-          if (!point.velocities.empty())
-            sorted_point.velocities[i] = point.velocities[j];
-          if (!point.effort.empty())
-            sorted_point.effort[i] = point.effort[j];
-          break;
+          sorted_velocities[i] = point.velocities[index];
         }
       }
     }
-
-    // Add the sorted point to the output trajectory
-    joint_trajectory_out.points.push_back(sorted_point);
+    point.positions = sorted_positions;
+    point.velocities = sorted_velocities;
   }
-  return joint_trajectory_out;
+  sorted_trajectory.joint_names = joint_names_in;
+
+  return sorted_trajectory;
 }
 
-MotionSection MotionFile::getMotionSection(const std::string& section_name)
+MotionSection* MotionFile::getMotionSection(const std::string& section_name)
+{
+  for (auto& section : motion_sections)
+  {
+    if (section.section_name == section_name)
+    {
+      return &section;
+    }
+  }
+
+  ROS_ERROR_STREAM("[MotionFile] Section '" << section_name << "' not found in motion '" << motion_name
+                                            << "'. Skipping.");
+  return nullptr;
+}
+
+bool MotionFile::hasSection(const std::string& section_name)
 {
   for (const auto& section : motion_sections)
   {
     if (section.section_name == section_name)
     {
-      return section;
+      return true;
     }
   }
-  // If the section is not found, return an empty MotionSection
-  return MotionSection();
+  return false;
 }
 
-MotionFile MotionFiles::getMotionFile(const std::string& motion_name)
+MotionFile* MotionFiles::getMotionFile(const std::string& motion_name)
 {
-  for (const auto& file : motion_files)
+  for (auto& file : motion_files)
   {
     if (file.motion_name == motion_name)
     {
-      return file;
+      return &file;
     }
   }
-  // If the file is not found, return an empty MotionFile
-  return MotionFile();
+
+  ROS_ERROR_STREAM("[MotionFiles] Motion '" << motion_name << "' not found. Skipping.");
+  return nullptr;
 }
 
 bool MotionFiles::hasMotion(const std::string& motion_name)
@@ -88,9 +89,9 @@ bool MotionFiles::hasMotion(const std::string& motion_name)
 std::vector<std::string> MotionFiles::getMotionNames()
 {
   std::vector<std::string> motion_names;
-  for (const auto& motion : motion_files)
+  for (const auto& file : motion_files)
   {
-    motion_names.push_back(motion.motion_name);
+    motion_names.push_back(file.motion_name);
   }
   return motion_names;
 }

@@ -24,7 +24,7 @@
   <depend>robotis_math</depend>
   <depend>kuroko_kinematics</depend>
   <depend>kuroko_balance_control</depend>
-  <depend>open_cr_module</depend>
+  <depend>kuroko_imu_receiver</depend>
   <depend>kuroko_initial_pose_module</depend>
   <depend>kuroko_head_control_module</depend>
   <depend>kuroko_walking_module</depend>

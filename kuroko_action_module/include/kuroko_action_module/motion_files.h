@@ -4,7 +4,6 @@
 #include <trajectory_msgs/JointTrajectory.h>
 #include <string>
 #include <vector>
-#include <map>
 
 namespace motion_control
 {
@@ -28,7 +27,7 @@ public:
   std::vector<MotionSection> motion_sections;  // List of motion sections
 
   // Get a motion section by name
-  MotionSection getMotionSection(const std::string& section_name);
+  MotionSection* getMotionSection(const std::string& section_name);
 
   // Check if a motion section exists
   bool hasSection(const std::string& section_name);
@@ -40,7 +39,7 @@ public:
   std::vector<MotionFile> motion_files;  // List of all motion files
 
   // Get a motion file by name
-  MotionFile getMotionFile(const std::string& motion_name);
+  MotionFile* getMotionFile(const std::string& motion_name);
 
   // Check if a motion exists
   bool hasMotion(const std::string& motion_name);

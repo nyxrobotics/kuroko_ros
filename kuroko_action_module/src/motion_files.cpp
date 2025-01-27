@@ -1,6 +1,6 @@
 #include "kuroko_action_module/motion_files.h"
 #include <algorithm>
-#include <stdexcept>
+#include <ros/console.h>
 
 namespace motion_control
 {
@@ -8,7 +8,6 @@ trajectory_msgs::JointTrajectory MotionSection::getSortedJointTrajectory(const s
 {
   trajectory_msgs::JointTrajectory sorted_trajectory = joint_trajectory;
 
-  // Sort the trajectory points based on the given joint order
   for (auto& point : sorted_trajectory.points)
   {
     std::vector<double> sorted_positions(joint_names_in.size(), 0.0);
@@ -34,16 +33,19 @@ trajectory_msgs::JointTrajectory MotionSection::getSortedJointTrajectory(const s
   return sorted_trajectory;
 }
 
-MotionSection MotionFile::getMotionSection(const std::string& section_name)
+MotionSection* MotionFile::getMotionSection(const std::string& section_name)
 {
-  for (const auto& section : motion_sections)
+  for (auto& section : motion_sections)
   {
     if (section.section_name == section_name)
     {
-      return section;
+      return &section;
     }
   }
-  throw std::runtime_error("MotionSection '" + section_name + "' not found in motion file '" + motion_name + "'");
+
+  ROS_ERROR_STREAM("[MotionFile] Section '" << section_name << "' not found in motion '" << motion_name
+                                            << "'. Skipping.");
+  return nullptr;
 }
 
 bool MotionFile::hasSection(const std::string& section_name)
@@ -58,16 +60,18 @@ bool MotionFile::hasSection(const std::string& section_name)
   return false;
 }
 
-MotionFile MotionFiles::getMotionFile(const std::string& motion_name)
+MotionFile* MotionFiles::getMotionFile(const std::string& motion_name)
 {
-  for (const auto& file : motion_files)
+  for (auto& file : motion_files)
   {
     if (file.motion_name == motion_name)
     {
-      return file;
+      return &file;
     }
   }
-  throw std::runtime_error("MotionFile '" + motion_name + "' not found");
+
+  ROS_ERROR_STREAM("[MotionFiles] Motion '" << motion_name << "' not found. Skipping.");
+  return nullptr;
 }
 
 bool MotionFiles::hasMotion(const std::string& motion_name)

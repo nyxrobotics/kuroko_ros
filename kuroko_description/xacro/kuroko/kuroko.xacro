@@ -61,11 +61,11 @@
     <xacro:leg_r_gazebo gazebo_hw_interface="${gazebo_hw_interface}"/>
     <xacro:leg_l_xacro gazebo="$(arg gazebo)"/>
     <xacro:leg_l_gazebo gazebo_hw_interface="${gazebo_hw_interface}"/>
-    <xacro:imu_n100mini parent="chest_link" name="imu">
-      <origin xyz="0 0 0.008" rpy="0 0 0"/>
+    <xacro:imu_n100mini parent="waist_link" name="imu">
+      <origin xyz="-0.04 0 -0.01" rpy="0 0 0"/>
     </xacro:imu_n100mini>
     <xacro:usb_camera parent="waist_link" name="camera">
-      <origin xyz="0.075230 0 -0.032085" rpy="0 0.1745329 0"/>
+      <origin xyz="0.07 0 -0.026" rpy="0 0 0"/>
     </xacro:usb_camera>
   </xacro:macro>
 

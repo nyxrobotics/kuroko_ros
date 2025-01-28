@@ -163,13 +163,17 @@ void KurokoModuleLoader::setupController()
     {
       int err_status = packet_handler->write1ByteTxRx(port_handler_, dxl_broadcast_id_, power_ctrl_table_, 1);
       if (err_status != 0)
-        ROS_ERROR("Torque on DXLs! [%s]", packet_handler->getRxPacketError(err_status));
+        ROS_WARN("Torque on DXLs Failed [%s], Retry", packet_handler->getRxPacketError(err_status));
       else
-        ROS_INFO("Torque on DXLs!");
+        ROS_INFO("Torque on DXLs Succeed");
       if (err_status == 0)
         break;
       else
+      {
         torque_on_count++;
+        if (torque_on_count == 5)
+          ROS_ERROR("Fail to turn on the torque of DXLs");
+      }
     }
 
     usleep(100 * 1000);

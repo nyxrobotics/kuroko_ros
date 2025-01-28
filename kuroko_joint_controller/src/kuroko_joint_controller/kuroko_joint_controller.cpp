@@ -45,7 +45,7 @@ void KurokoJointController::initializeSyncWrite()
     {
       if (++error_count > 10)
       {
-        ROS_ERROR("[KurokoJointController::initializeSyncWrite] First bulk read failed!!");
+        ROS_ERROR("[KurokoJointController::initializeSyncWrite] First bulk-read Failed!!");
         exit(-1);
       }
       usleep(8 * 1000);
@@ -53,7 +53,7 @@ void KurokoJointController::initializeSyncWrite()
     } while (result != COMM_SUCCESS);
   }
   init_pose_loaded_ = true;
-  ROS_INFO("[KurokoJointController::initializeSyncWrite] FIRST BULKREAD END");
+  ROS_INFO("[KurokoJointController::initializeSyncWrite] First bulk-read succeed");
 
   // clear syncwrite param setting
   for (auto& it : port_to_sync_write_position_)

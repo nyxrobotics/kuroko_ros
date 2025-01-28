@@ -23,6 +23,7 @@ find_package(
              kuroko_joint_controller
              robotis_math
              kuroko_kinematics
+             kuroko_imu_receiver
              kuroko_initial_pose_module
              kuroko_walking_module
              kuroko_action_module
@@ -61,7 +62,7 @@ catkin_package(
     robotis_math
     kuroko_kinematics
     kuroko_balance_control
-    open_cr_module
+    kuroko_imu_receiver
     kuroko_initial_pose_module
     kuroko_head_control_module
     kuroko_walking_module

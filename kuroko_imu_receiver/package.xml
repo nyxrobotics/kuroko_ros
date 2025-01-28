@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>kuroko_imu_receiver</name>
+  <version>0.0.0</version>
+  <description>
+    The kuroko_imu_receiver package
+  </description>
+  <license>Apache 2.0</license>
+  <author>nyxrobotics</author>
+  <author email="nyxroboticss@gmail.com">nyxrobotics</author>
+  <maintainer email="nyxroboticss@gmail.com">nyxrobotics</maintainer>
+  <license>Apache 2.0</license>
+  <url type="website">https://github.com/nyxrobotics</url>
+  <url type="repository">https://github.com/nyxrobotics/kuroko_ros</url>
+  <url type="bugtracker">https://github.com/nyxrobotics/kuroko_ros/issues</url>
+  <buildtool_depend>catkin</buildtool_depend>  
+  <depend>roscpp</depend>
+  <depend>std_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>robotis_controller_msgs</depend>
+  <depend>cmake_modules</depend>
+  <depend>robotis_framework_common</depend>
+  <depend>robotis_device</depend>
+  <depend>robotis_math</depend>
+  <depend>boost</depend>
+  <depend>eigen</depend>
+</package>

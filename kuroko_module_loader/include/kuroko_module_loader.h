@@ -3,6 +3,7 @@
 
 #include "kuroko_initial_pose_module/initial_pose_module.h"
 #include "kuroko_joint_controller/kuroko_joint_controller.h"
+#include "kuroko_imu_receiver/kuroko_imu_receiver.h"
 #include "kuroko_online_walking_module/online_walking_module.h"
 #include "kuroko_tuning_module/tuning_module.h"
 #include "kuroko_walking_module/kuroko_walking_module.h"

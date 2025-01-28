@@ -120,7 +120,7 @@ void QNodeKuroko::initGyro()
 {
   robotis_controller_msgs::SyncWriteItem init_gyro_msg;
   init_gyro_msg.item_name = "imu_control";
-  init_gyro_msg.joint_name.push_back("open-cr");
+  init_gyro_msg.joint_name.push_back("kuroko_imu");
   init_gyro_msg.value.push_back(0x08);
 
   init_gyro_pub_.publish(init_gyro_msg);

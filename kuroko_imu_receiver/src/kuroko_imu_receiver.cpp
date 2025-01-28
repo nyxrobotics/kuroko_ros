@@ -57,15 +57,14 @@ void KurokoImuReceiver::queueThread()
 void KurokoImuReceiver::process(std::map<std::string, robotis_framework::Dynamixel*> dxls,
                                 std::map<std::string, robotis_framework::Sensor*> sensors)
 {
-  if (sensors["kuroko_imu"] == NULL)
-    return;
-
-  int16_t gyro_x = sensors["kuroko_imu"]->sensor_state_->bulk_read_table_["gyro_x"];
-  int16_t gyro_y = sensors["kuroko_imu"]->sensor_state_->bulk_read_table_["gyro_y"];
-  int16_t gyro_z = sensors["kuroko_imu"]->sensor_state_->bulk_read_table_["gyro_z"];
-  int16_t acc_x = sensors["kuroko_imu"]->sensor_state_->bulk_read_table_["acc_x"];
-  int16_t acc_y = sensors["kuroko_imu"]->sensor_state_->bulk_read_table_["acc_y"];
-  int16_t acc_z = sensors["kuroko_imu"]->sensor_state_->bulk_read_table_["acc_z"];
+  // if (sensors.count("kuroko_imu_receiver") == 0)
+  // {
+  //   ROS_ERROR("[KurokoImuReceiver]: 'kuroko_imu_receiver' not found in the sensor list");
+  //   ROS_INFO("Sensor list: ");
+  //   for (auto& sensor : sensors)
+  //     ROS_INFO("%s", sensor.first.c_str());
+  //   return;
+  // }
 
   result_["gyro_x"] = imu_msg_.angular_velocity.x;
   result_["gyro_y"] = imu_msg_.angular_velocity.y;

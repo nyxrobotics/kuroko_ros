@@ -1641,6 +1641,7 @@ void KurokoJointController::addSensorModule(SensorModule* module)
   module->initialize(robot_->getControlCycle(), robot_);
   sensor_modules_.push_back(module);
   sensor_modules_.unique();
+  ROS_INFO("[KurokoJointController] Sensor Module Name [%s] successfully added", module->getModuleName().c_str());
 }
 
 void KurokoJointController::removeSensorModule(SensorModule* module)

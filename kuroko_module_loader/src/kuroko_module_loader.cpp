@@ -212,12 +212,10 @@ void KurokoModuleLoader::setupController()
 
   usleep(300 * 1000);
 
-  if (!controller_->gazebo_mode_)
-  {
-    // controller_->addSensorModule((SensorModule*)KurokoImuReceiver::getInstance());
-  }
+  /* Add Sensor Module */
   controller_->addSensorModule((SensorModule*)KurokoImuReceiver::getInstance());
 
+  /* Add Motion Module */
   controller_->addMotionModule((MotionModule*)InitialPoseModule::getInstance());
   controller_->addMotionModule((MotionModule*)WalkingModule::getInstance());
   controller_->addMotionModule((MotionModule*)ActionModule::getInstance());

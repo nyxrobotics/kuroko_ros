@@ -42,4 +42,21 @@ find . -type f -not -path "*/.git/*" -not -path "*/.vscode/*" \
     sed -i "s/${OLD_NAME}/${NEW_NAME}/g" "$file"
 done
 
+# Convert to different naming conventions
+UPPER_OLD_NAME=$(echo "$OLD_NAME" | tr 'a-z' 'A-Z')
+UPPER_NEW_NAME=$(echo "$NEW_NAME" | tr 'a-z' 'A-Z')
+CAMEL_OLD_NAME=$(echo "$OLD_NAME" | sed -E 's/(^|_)([a-z])/\U\2/g')
+CAMEL_NEW_NAME=$(echo "$NEW_NAME" | sed -E 's/(^|_)([a-z])/\U\2/g')
+PASCAL_OLD_NAME=$(echo "$CAMEL_OLD_NAME" | sed -E 's/^([a-z])/\U\1/')
+PASCAL_NEW_NAME=$(echo "$CAMEL_NEW_NAME" | sed -E 's/^([a-z])/\U\1/')
+
+# 4. Replace additional naming conventions in file contents
+find . -type f -not -path "*/.git/*" -not -path "*/.vscode/*" \
+    | while IFS= read -r file; do
+    echo "Updating file content for different naming conventions: $file"
+    sed -i "s/${UPPER_OLD_NAME}/${UPPER_NEW_NAME}/g" "$file"
+    sed -i "s/${CAMEL_OLD_NAME}/${CAMEL_NEW_NAME}/g" "$file"
+    sed -i "s/${PASCAL_OLD_NAME}/${PASCAL_NEW_NAME}/g" "$file"
+done
+
 echo "Replacement complete: ${OLD_NAME} -> ${NEW_NAME}"

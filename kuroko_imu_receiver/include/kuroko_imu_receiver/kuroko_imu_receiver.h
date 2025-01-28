@@ -13,6 +13,7 @@
 #include "robotis_framework_common/sensor_module.h"
 #include "robotis_math/robotis_math_base.h"
 #include "robotis_math/robotis_linear_algebra.h"
+#include "ros/subscriber.h"
 
 namespace motion_control
 {
@@ -28,41 +29,17 @@ public:
                std::map<std::string, robotis_framework::Sensor*> sensors);
 
 private:
-  const double G_ACC = 9.80665;
-  const double GYRO_FACTOR = 2000.0 / 32800.0;
-  const double ACCEL_FACTOR = 2.0 / 32768.0;
-  const bool DEBUG_PRINT;
-
   void queueThread();
-
-  double getGyroValue(int raw_value);
-  double getAccValue(int raw_value);
-  void publishIMU();
-
-  void handleButton(const std::string& button_name);
-  void publishButtonMsg(const std::string& button_name);
-  void handleVoltage(double present_volt);
-  void publishStatusMsg(unsigned int type, std::string msg);
-  void publishDXLPowerMsg(unsigned int value);
-  double lowPassFilter(double alpha, double x_new, double& x_old);
-
   int control_cycle_msec_;
   boost::thread queue_thread_;
-  std::map<std::string, bool> buttons_;
-  std::map<std::string, ros::Time> buttons_press_time_;
-  ros::Time button_press_time_;
   ros::Time last_msg_time_;
   std::map<std::string, double> previous_result_;
-  double previous_volt_;
-  double present_volt_;
-
   sensor_msgs::Imu imu_msg_;
+  std::string robot_name_;
 
   /* subscriber & publisher */
-  ros::Publisher imu_pub_;
-  ros::Publisher button_pub_;
-  ros::Publisher status_msg_pub_;
-  ros::Publisher dxl_power_msg_pub_;
+  ros::Subscriber imu_sub_;
+  void imuDataCallback(const sensor_msgs::Imu::ConstPtr& msg);
 };
 
 }  // namespace motion_control

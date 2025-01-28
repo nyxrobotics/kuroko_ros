@@ -1,5 +1,5 @@
-#ifndef KUROKO_DEVICE_MANAGER_H
-#define KUROKO_DEVICE_MANAGER_H
+#ifndef KUROKO_MODULE_LOADER_H
+#define KUROKO_MODULE_LOADER_H
 
 #include "kuroko_initial_pose_module/initial_pose_module.h"
 #include "kuroko_joint_controller/kuroko_joint_controller.h"
@@ -14,11 +14,11 @@ using namespace robotis_framework;
 using namespace dynamixel;
 using namespace motion_control;
 
-class KurokoDeviceManager
+class KurokoModuleLoader
 {
 public:
-  KurokoDeviceManager(ros::NodeHandle& nh);
-  ~KurokoDeviceManager();
+  KurokoModuleLoader(ros::NodeHandle& nh);
+  ~KurokoModuleLoader();
 
   void initialize();
   void start();
@@ -54,4 +54,4 @@ private:
   ros::Subscriber dxl_torque_sub_;
 };
 
-#endif  // KUROKO_DEVICE_MANAGER_H
+#endif  // KUROKO_MODULE_LOADER_H

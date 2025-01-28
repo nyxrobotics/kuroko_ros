@@ -2,7 +2,7 @@
 # Set minimum required version of cmake, project name and compile options
 ################################################################################
 cmake_minimum_required(VERSION 3.0.2)
-project(kuroko_device_manager)
+project(kuroko_module_loader)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 add_compile_options(-std=c++11)
@@ -76,7 +76,7 @@ catkin_package(
 # Build
 ################################################################################
 include_directories(include ${catkin_INCLUDE_DIRS})
-add_executable(${PROJECT_NAME} src/kuroko_device_manager.cpp src/main.cpp)
+add_executable(${PROJECT_NAME} src/kuroko_module_loader.cpp src/main.cpp)
 add_dependencies(
   ${PROJECT_NAME}
   ${${PROJECT_NAME}_EXPORTED_TARGETS}

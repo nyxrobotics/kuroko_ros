@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>kuroko_device_manager</name>
+  <name>kuroko_module_loader</name>
   <version>0.0.0</version>
   <description> The kuroko_balance_control package </description>
   <author>nyxrobotics</author>

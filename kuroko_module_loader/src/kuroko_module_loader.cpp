@@ -1,7 +1,7 @@
-#include "kuroko_device_manager.h"
+#include "kuroko_module_loader.h"
 #include <unistd.h>
 
-KurokoDeviceManager::KurokoDeviceManager(ros::NodeHandle& nh)
+KurokoModuleLoader::KurokoModuleLoader(ros::NodeHandle& nh)
   : nh_(nh), controller_(KurokoJointController::getInstance()), port_handler_(nullptr)
 {
   loadParameters(nh_);
@@ -9,7 +9,7 @@ KurokoDeviceManager::KurokoDeviceManager(ros::NodeHandle& nh)
   setupController();
 }
 
-KurokoDeviceManager::~KurokoDeviceManager()
+KurokoModuleLoader::~KurokoModuleLoader()
 {
   if (port_handler_)
   {
@@ -18,7 +18,7 @@ KurokoDeviceManager::~KurokoDeviceManager()
   }
 }
 
-void KurokoDeviceManager::initialize()
+void KurokoModuleLoader::initialize()
 {
   if (!controller_->gazebo_mode_)
   {
@@ -53,12 +53,12 @@ void KurokoDeviceManager::initialize()
   ROS_INFO("Go to init pose");
 }
 
-void KurokoDeviceManager::start()
+void KurokoModuleLoader::start()
 {
   ros::spin();
 }
 
-void KurokoDeviceManager::buttonHandlerCallback(const std_msgs::String::ConstPtr& msg)
+void KurokoModuleLoader::buttonHandlerCallback(const std_msgs::String::ConstPtr& msg)
 {
   if (msg->data == "user_long")
   {
@@ -97,7 +97,7 @@ void KurokoDeviceManager::buttonHandlerCallback(const std_msgs::String::ConstPtr
   }
 }
 
-void KurokoDeviceManager::dxlTorqueCheckCallback(const std_msgs::String::ConstPtr& /*msg*/)
+void KurokoModuleLoader::dxlTorqueCheckCallback(const std_msgs::String::ConstPtr& /*msg*/)
 {
   if (controller_->gazebo_mode_)
     return;
@@ -122,7 +122,7 @@ void KurokoDeviceManager::dxlTorqueCheckCallback(const std_msgs::String::ConstPt
   }
 }
 
-void KurokoDeviceManager::loadParameters(ros::NodeHandle& nh)
+void KurokoModuleLoader::loadParameters(ros::NodeHandle& nh)
 {
   protocol_version_ = 2.0;
   dxl_broadcast_id_ = 254;
@@ -139,15 +139,15 @@ void KurokoDeviceManager::loadParameters(ros::NodeHandle& nh)
   nh.param<bool>("is_gazebo", controller_->gazebo_mode_, false);
 }
 
-void KurokoDeviceManager::setupROS(ros::NodeHandle& nh)
+void KurokoModuleLoader::setupROS(ros::NodeHandle& nh)
 {
-  button_sub_ = nh.subscribe("/motion_control/open_cr/button", 1, &KurokoDeviceManager::buttonHandlerCallback, this);
-  dxl_torque_sub_ = nh.subscribe("/motion_control/dxl_torque", 1, &KurokoDeviceManager::dxlTorqueCheckCallback, this);
+  button_sub_ = nh.subscribe("/motion_control/open_cr/button", 1, &KurokoModuleLoader::buttonHandlerCallback, this);
+  dxl_torque_sub_ = nh.subscribe("/motion_control/dxl_torque", 1, &KurokoModuleLoader::dxlTorqueCheckCallback, this);
   init_pose_pub_ = nh.advertise<std_msgs::String>("/motion_control/base/ini_pose", 0);
   demo_command_pub_ = nh.advertise<std_msgs::String>("/ball_tracker/command", 0);
 }
 
-void KurokoDeviceManager::setupController()
+void KurokoModuleLoader::setupController()
 {
   if (!controller_->gazebo_mode_)
   {

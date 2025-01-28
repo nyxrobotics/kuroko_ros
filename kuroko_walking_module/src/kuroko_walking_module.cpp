@@ -759,7 +759,7 @@ void WalkingModule::sensoryFeedback(const double& rlGyroErr, const double& fbGyr
   if (!static_cast<bool>(walking_param_.balance_enable))
     return;
 
-  std::cout << "rlGyroErr : " << rlGyroErr << ", fbGyroErr : " << fbGyroErr << std::endl;
+  // std::cout << "rlGyroErr : " << rlGyroErr << ", fbGyroErr : " << fbGyroErr << std::endl;
 
   double internal_gain = 0.05;
   // Roll joints

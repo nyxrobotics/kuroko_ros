@@ -170,7 +170,7 @@ void InitialPoseModule::initPoseTrajGenerateProc()
 
   initial_pose_module_state_->is_moving_ = true;
   initial_pose_module_state_->cnt_ = 0;
-  ROS_INFO("[start] send trajectory");
+  ROS_INFO("[InitialPoseModule] start init trajectory");
 }
 
 void InitialPoseModule::poseGenerateProc(Eigen::MatrixXd joint_angle_pose)
@@ -205,7 +205,7 @@ void InitialPoseModule::poseGenerateProc(Eigen::MatrixXd joint_angle_pose)
   initial_pose_module_state_->is_moving_ = true;
   initial_pose_module_state_->cnt_ = 0;
   ini_pose_only_ = true;
-  ROS_INFO("[start] send trajectory");
+  ROS_INFO("[InitialPoseModule] Start trajectory");
 }
 
 void InitialPoseModule::poseGenerateProc(std::map<std::string, double>& joint_angle_pose)
@@ -254,7 +254,7 @@ void InitialPoseModule::poseGenerateProc(std::map<std::string, double>& joint_an
   initial_pose_module_state_->is_moving_ = true;
   initial_pose_module_state_->cnt_ = 0;
   ini_pose_only_ = true;
-  ROS_INFO("[start] send trajectory");
+  ROS_INFO("[InitialPoseModule] Start trajectory");
 }
 
 bool InitialPoseModule::isRunning()
@@ -315,7 +315,7 @@ void InitialPoseModule::process(std::map<std::string, robotis_framework::Dynamix
   if ((initial_pose_module_state_->cnt_ >= initial_pose_module_state_->all_time_steps_) &&
       (initial_pose_module_state_->is_moving_))
   {
-    ROS_INFO("[end] send trajectory");
+    ROS_INFO("[InitialPoseModule] End trajectory");
 
     publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_INFO, "Finish Init Pose");
 
@@ -362,7 +362,7 @@ void InitialPoseModule::callServiceSettingModule(const std::string& module_name)
 
   if (!set_module_client_.call(set_module_srv))
   {
-    ROS_ERROR("Failed to set module");
+    ROS_ERROR("[InitialPoseModule] Failed to set module");
     return;
   }
 

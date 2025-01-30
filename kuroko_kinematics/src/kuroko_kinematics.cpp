@@ -89,6 +89,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_tree_[4]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, -0.016, -0.02575);
     joint_link_tree_[4]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
+    // Gripper
     joint_link_tree_[5]->name_ = "elbow_r_front";
     joint_link_tree_[5]->parent_ = 4;
     joint_link_tree_[5]->sibling_ = 6;
@@ -142,6 +143,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_tree_[8]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0.0, 0.016, -0.02575);
     joint_link_tree_[8]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
+    // Gripper
     joint_link_tree_[9]->name_ = "elbow_l_front";
     joint_link_tree_[9]->parent_ = 8;
     joint_link_tree_[9]->sibling_ = 10;
@@ -570,10 +572,11 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
     joint_link_tree_[38]->link_center_of_mass_ = robotis_framework::getTransitionXYZ(0, 0, -0.05);
     joint_link_tree_[38]->link_inertia_ = robotis_framework::getInertiaXYZ(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
   }
-
+  // Horizontal length from sole center to waist center when standing upright
   leg_side_offset_ = 2.0 * (std::fabs(joint_link_tree_[getLinkIndex("hip_r_roll")]->joint_position_.coeff(1, 0) +
                                       joint_link_tree_[getLinkIndex("hip_r_pitch")]->joint_position_.coeff(1, 0) +
                                       joint_link_tree_[getLinkIndex("thigh_r_active")]->joint_position_.coeff(1, 0)));
+  // Vertical length from sole center to waist center when standing upright
   leg_max_height_ = std::fabs(joint_link_tree_[getLinkIndex("thigh_r_active")]->joint_position_.coeff(2, 0) +
                               joint_link_tree_[getLinkIndex("knee_r_passive")]->joint_position_.coeff(2, 0) +
                               joint_link_tree_[getLinkIndex("shin_r_front_passive")]->joint_position_.coeff(2, 0) +
@@ -581,6 +584,7 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
                               joint_link_tree_[getLinkIndex("ankle_r_roll")]->joint_position_.coeff(2, 0) +
                               joint_link_tree_[getLinkIndex("ankle_r_yaw")]->joint_position_.coeff(2, 0) +
                               joint_link_tree_[getLinkIndex("leg_r_end")]->joint_position_.coeff(2, 0));
+  // Gripper length
   gripper_length_ = 0.208;
 }
 

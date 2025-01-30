@@ -47,9 +47,6 @@ public:
   void initialize();
   void pelvisPoseCallback(const geometry_msgs::PoseStamped::ConstPtr& msg);
   void pelvisPoseResetCallback(const std_msgs::String::ConstPtr& msg);
-  Eigen::MatrixXd calcVWerr(Eigen::MatrixXd tar_position, Eigen::MatrixXd curr_position,
-                            Eigen::MatrixXd tar_orientation, Eigen::MatrixXd curr_orientation);
-
   void update();
   void process();
 };

@@ -24,15 +24,15 @@ public:
   KurokoKinematics(TreeSelect tree);
 
   double calcTotalMass(int joint_id);
-  Eigen::MatrixXd calcMC(int joint_id);
-  Eigen::MatrixXd calcCOM(const Eigen::MatrixXd& mc);
+  Eigen::MatrixXd calcMomentOfInertia(int joint_id);
+  Eigen::MatrixXd calcCenterOfMass(const Eigen::MatrixXd& mc);
 
   void calcForwardKinematics(int joint_ID);
 
   Eigen::MatrixXd calcJacobian(std::vector<int> idx);
   Eigen::MatrixXd calcJacobianCOM(std::vector<int> idx);
-  Eigen::MatrixXd calcVWerr(const Eigen::MatrixXd& tar_position, const Eigen::MatrixXd& curr_position,
-                            const Eigen::MatrixXd& tar_orientation, Eigen::MatrixXd curr_orientation);
+  Eigen::MatrixXd computeStateError(const Eigen::MatrixXd& target_position, const Eigen::MatrixXd& current_position,
+                                    const Eigen::MatrixXd& target_orientation, Eigen::MatrixXd current_orientation);
 
   bool calcInverseKinematicsForRightLeg(double* out, double x, double y, double z, double roll, double pitch,
                                         double yaw);

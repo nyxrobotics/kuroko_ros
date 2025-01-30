@@ -599,7 +599,7 @@ double KurokoKinematics::calcTotalMass(int joint_id)
 }
 
 // Moment of inertia created by all links around the origin of the world coordinate system
-Eigen::MatrixXd KurokoKinematics::calcMC(int joint_id)
+Eigen::MatrixXd KurokoKinematics::calcMomentOfInertia(int joint_id)
 {
   Eigen::MatrixXd mc(3, 1);
 
@@ -610,14 +610,15 @@ Eigen::MatrixXd KurokoKinematics::calcMC(int joint_id)
     mc = joint_link_tree_[joint_id]->link_mass_ *
          (joint_link_tree_[joint_id]->internal_orientation_ * joint_link_tree_[joint_id]->link_center_of_mass_ +
           joint_link_tree_[joint_id]->internal_position_);
-    mc = mc + calcMC(joint_link_tree_[joint_id]->sibling_) + calcMC(joint_link_tree_[joint_id]->child_);
+    mc = mc + calcMomentOfInertia(joint_link_tree_[joint_id]->sibling_) +
+         calcMomentOfInertia(joint_link_tree_[joint_id]->child_);
   }
 
   return mc;
 }
 
 // Calculate the robot's center of gravity
-Eigen::MatrixXd KurokoKinematics::calcCOM(const Eigen::MatrixXd& mc)
+Eigen::MatrixXd KurokoKinematics::calcCenterOfMass(const Eigen::MatrixXd& mc)
 {
   double mass;
   Eigen::MatrixXd com(3, 1);
@@ -708,7 +709,7 @@ Eigen::MatrixXd KurokoKinematics::calcJacobianCOM(std::vector<int> idx)
     int curr_id = idx[id];
     double mass = calcTotalMass(curr_id);
 
-    Eigen::MatrixXd og = calcMC(curr_id) / mass - joint_link_tree_[curr_id]->internal_position_;
+    Eigen::MatrixXd og = calcMomentOfInertia(curr_id) / mass - joint_link_tree_[curr_id]->internal_position_;
     Eigen::MatrixXd tar_orientation =
         joint_link_tree_[curr_id]->internal_orientation_ * joint_link_tree_[curr_id]->joint_axis_;
 
@@ -719,18 +720,20 @@ Eigen::MatrixXd KurokoKinematics::calcJacobianCOM(std::vector<int> idx)
   return jacobian_com;
 }
 
-Eigen::MatrixXd KurokoKinematics::calcVWerr(const Eigen::MatrixXd& tar_position, const Eigen::MatrixXd& curr_position,
-                                            const Eigen::MatrixXd& tar_orientation, Eigen::MatrixXd curr_orientation)
+Eigen::MatrixXd KurokoKinematics::computeStateError(const Eigen::MatrixXd& target_position,
+                                                    const Eigen::MatrixXd& current_position,
+                                                    const Eigen::MatrixXd& target_orientation,
+                                                    Eigen::MatrixXd current_orientation)
 {
-  Eigen::MatrixXd pos_err = tar_position - curr_position;
-  Eigen::MatrixXd ori_err = curr_orientation.transpose() * tar_orientation;
-  Eigen::MatrixXd ori_err_dash = curr_orientation * robotis_framework::convertRotToOmega(ori_err);
+  Eigen::MatrixXd position_error = target_position - current_position;
+  Eigen::MatrixXd orientation_error_matrix = current_orientation.transpose() * target_orientation;
+  Eigen::Vector3d orientation_error_vector = robotis_framework::convertRotToOmega(orientation_error_matrix);
 
-  Eigen::MatrixXd err = Eigen::MatrixXd::Zero(6, 1);
-  err.block<3, 1>(0, 0) = pos_err;
-  err.block<3, 1>(3, 0) = ori_err_dash;
+  Eigen::MatrixXd state_error = Eigen::MatrixXd::Zero(6, 1);
+  state_error.block<3, 1>(0, 0) = position_error;
+  state_error.block<3, 1>(3, 0) = orientation_error_vector;
 
-  return err;
+  return state_error;
 }
 
 bool KurokoKinematics::calcInverseKinematicsForRightLeg(double* out, double x, double y, double z, double roll,

@@ -24,6 +24,7 @@
   <depend>robotis_device</depend>
   <depend>robotis_math</depend>
   <depend>kuroko_balance_control</depend>
+  <depend>kuroko_kinematics</depend>
   <depend>boost</depend>
   <depend>eigen</depend>
   <depend>yaml-cpp</depend>

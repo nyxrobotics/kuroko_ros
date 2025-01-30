@@ -21,6 +21,7 @@ find_package(
              robotis_device
              robotis_math
              kuroko_balance_control
+             kuroko_kinematics
 )
 
 find_package(Boost REQUIRED)

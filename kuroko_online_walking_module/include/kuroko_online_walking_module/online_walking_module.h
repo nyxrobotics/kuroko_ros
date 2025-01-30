@@ -28,6 +28,7 @@
 #include "robotis_math/robotis_math.h"
 
 #include "kuroko_balance_control/kuroko_balance_control.h"
+#include "kuroko_kinematics/kuroko_kinematics.h"
 
 #include "op3_online_walking_module_msgs/FootStepCommand.h"
 #include "op3_online_walking_module_msgs/JointPose.h"

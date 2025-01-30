@@ -2415,6 +2415,7 @@ int KurokoJointController::ping(const std::string& joint_name, uint8_t* error)
 {
   return ping(joint_name, nullptr, error);
 }
+
 int KurokoJointController::ping(const std::string& joint_name, uint16_t* model_number, uint8_t* error)
 {
   if (!isTimerStopped())
@@ -2444,6 +2445,7 @@ int KurokoJointController::action(const std::string& joint_name)
 
   return pkt_handler->action(port_handler, dxl->id_);
 }
+
 int KurokoJointController::reboot(const std::string& joint_name, uint8_t* error)
 {
   if (!isTimerStopped())
@@ -2458,6 +2460,7 @@ int KurokoJointController::reboot(const std::string& joint_name, uint8_t* error)
 
   return pkt_handler->reboot(port_handler, dxl->id_, error);
 }
+
 int KurokoJointController::factoryReset(const std::string& joint_name, uint8_t option, uint8_t* error)
 {
   if (!isTimerStopped())

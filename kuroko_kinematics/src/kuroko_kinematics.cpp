@@ -584,46 +584,6 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
   gripper_length_ = 0.208;
 }
 
-std::vector<int> KurokoKinematics::findRoute(int to)
-{
-  int id = joint_link_tree_[to]->parent_;
-
-  std::vector<int> idx;
-
-  if (id == 0)
-  {
-    idx.push_back(0);
-    idx.push_back(to);
-  }
-  else
-  {
-    idx = findRoute(id);
-    idx.push_back(to);
-  }
-
-  return idx;
-}
-
-std::vector<int> KurokoKinematics::findRoute(int from, int to)
-{
-  int id = joint_link_tree_[to]->parent_;
-
-  std::vector<int> idx;
-
-  if (id == from)
-  {
-    idx.push_back(from);
-    idx.push_back(to);
-  }
-  else if (id != 0)
-  {
-    idx = findRoute(from, id);
-    idx.push_back(to);
-  }
-
-  return idx;
-}
-
 // Calculate the mass of the robot
 double KurokoKinematics::calcTotalMass(int joint_id)
 {

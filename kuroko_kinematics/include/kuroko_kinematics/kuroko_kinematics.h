@@ -23,9 +23,6 @@ public:
   ~KurokoKinematics();
   KurokoKinematics(TreeSelect tree);
 
-  std::vector<int> findRoute(int to);
-  std::vector<int> findRoute(int from, int to);
-
   double calcTotalMass(int joint_id);
   Eigen::MatrixXd calcMC(int joint_id);
   Eigen::MatrixXd calcCOM(const Eigen::MatrixXd& mc);

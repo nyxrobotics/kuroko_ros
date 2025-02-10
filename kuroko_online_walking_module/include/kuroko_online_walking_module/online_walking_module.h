@@ -17,7 +17,6 @@
 #include <std_msgs/String.h>
 #include <yaml-cpp/yaml.h>
 
-#include "kuroko_kdl.h"
 #include "joint_control.h"
 #include "walking_control.h"
 #include "wholebody_control.h"
@@ -112,7 +111,7 @@ public:
   WholebodyControl* wholebody_control_;
   WalkingControl* walking_control_;
 
-  KurokoKinematics* kuroko_kdl_;
+  KurokoKinematics* kuroko_kinematics_;
 
 private:
   void queueThread();

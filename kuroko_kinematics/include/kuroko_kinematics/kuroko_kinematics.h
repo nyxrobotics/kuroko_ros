@@ -23,25 +23,26 @@ public:
   ~KurokoKinematics();
   KurokoKinematics(TreeSelect tree);
 
-  double calcTotalMass(int joint_id);
-  Eigen::MatrixXd calcMomentOfInertia(int joint_id);
-  Eigen::MatrixXd calcCenterOfMass(const Eigen::MatrixXd& mc);
+  double getTotalMass(int joint_id);
+  Eigen::MatrixXd getMomentOfInertia(int joint_id);
+  Eigen::MatrixXd getCenterOfMass(const Eigen::MatrixXd& mc);
 
-  void calcForwardKinematics(int joint_ID);
+  void solveForwardKinematics(int joint_ID);
 
-  Eigen::MatrixXd calcJacobian(std::vector<int> idx);
-  Eigen::MatrixXd calcJacobianCOM(std::vector<int> idx);
+  Eigen::MatrixXd getJacobian(std::vector<int> idx);
+  Eigen::MatrixXd getJacobianCenterOfMass(std::vector<int> idx);
   Eigen::MatrixXd computeStateError(const Eigen::MatrixXd& target_position, const Eigen::MatrixXd& current_position,
                                     const Eigen::MatrixXd& target_orientation, Eigen::MatrixXd current_orientation);
 
-  bool calcInverseKinematicsForRightLeg(double* out, double x, double y, double z, double roll, double pitch,
+  bool solveInverseKinematicsForRightLeg(double* out, double x, double y, double z, double roll, double pitch,
+                                         double yaw);
+  bool solveInverseKinematicsForLeftLeg(double* out, double x, double y, double z, double roll, double pitch,
                                         double yaw);
-  bool calcInverseKinematicsForLeftLeg(double* out, double x, double y, double z, double roll, double pitch, double yaw);
 
-  bool calcInverseKinematicsForRightArm(double* out, double x, double y, double z, double shoulder_pitch,
+  bool solveInverseKinematicsForRightArm(double* out, double x, double y, double z, double shoulder_pitch,
+                                         double gripoper_open_angle);
+  bool solveInverseKinematicsForLeftArm(double* out, double x, double y, double z, double shoulder_pitch,
                                         double gripoper_open_angle);
-  bool calcInverseKinematicsForLeftArm(double* out, double x, double y, double z, double shoulder_pitch,
-                                       double gripoper_open_angle);
 
   LinkData* joint_link_tree_[ALL_JOINT_ID + 1];
 

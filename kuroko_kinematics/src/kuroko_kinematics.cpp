@@ -589,21 +589,21 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
 }
 
 // Calculate the mass of the robot
-double KurokoKinematics::calcTotalMass(int joint_id)
+double KurokoKinematics::getTotalMass(int joint_id)
 {
   double mass;
 
   if (joint_id == -1)
     mass = 0.0;
   else
-    mass = joint_link_tree_[joint_id]->link_mass_ + calcTotalMass(joint_link_tree_[joint_id]->sibling_) +
-           calcTotalMass(joint_link_tree_[joint_id]->child_);
+    mass = joint_link_tree_[joint_id]->link_mass_ + getTotalMass(joint_link_tree_[joint_id]->sibling_) +
+           getTotalMass(joint_link_tree_[joint_id]->child_);
 
   return mass;
 }
 
 // Moment of inertia created by all links around the origin of the world coordinate system
-Eigen::MatrixXd KurokoKinematics::calcMomentOfInertia(int joint_id)
+Eigen::MatrixXd KurokoKinematics::getMomentOfInertia(int joint_id)
 {
   Eigen::MatrixXd mc(3, 1);
 
@@ -614,26 +614,26 @@ Eigen::MatrixXd KurokoKinematics::calcMomentOfInertia(int joint_id)
     mc = joint_link_tree_[joint_id]->link_mass_ *
          (joint_link_tree_[joint_id]->internal_orientation_ * joint_link_tree_[joint_id]->link_center_of_mass_ +
           joint_link_tree_[joint_id]->internal_position_);
-    mc = mc + calcMomentOfInertia(joint_link_tree_[joint_id]->sibling_) +
-         calcMomentOfInertia(joint_link_tree_[joint_id]->child_);
+    mc = mc + getMomentOfInertia(joint_link_tree_[joint_id]->sibling_) +
+         getMomentOfInertia(joint_link_tree_[joint_id]->child_);
   }
 
   return mc;
 }
 
 // Calculate the robot's center of gravity
-Eigen::MatrixXd KurokoKinematics::calcCenterOfMass(const Eigen::MatrixXd& mc)
+Eigen::MatrixXd KurokoKinematics::getCenterOfMass(const Eigen::MatrixXd& mc)
 {
   double mass;
   Eigen::MatrixXd com(3, 1);
 
-  mass = calcTotalMass(0);
+  mass = getTotalMass(0);
   com = mc / mass;
 
   return com;
 }
 
-void KurokoKinematics::calcForwardKinematics(int joint_id)
+void KurokoKinematics::solveForwardKinematics(int joint_id)
 {
   if (joint_id == -1)
     return;
@@ -673,11 +673,11 @@ void KurokoKinematics::calcForwardKinematics(int joint_id)
     joint_link_tree_[joint_id]->internal_transformation_.block<3, 3>(0, 0) =
         joint_link_tree_[joint_id]->internal_orientation_;
   }
-  calcForwardKinematics(joint_link_tree_[joint_id]->sibling_);
-  calcForwardKinematics(joint_link_tree_[joint_id]->child_);
+  solveForwardKinematics(joint_link_tree_[joint_id]->sibling_);
+  solveForwardKinematics(joint_link_tree_[joint_id]->child_);
 }
 
-Eigen::MatrixXd KurokoKinematics::calcJacobian(std::vector<int> idx)
+Eigen::MatrixXd KurokoKinematics::getJacobian(std::vector<int> idx)
 {
   int idx_size = idx.size();
   int end = idx_size - 1;
@@ -700,7 +700,7 @@ Eigen::MatrixXd KurokoKinematics::calcJacobian(std::vector<int> idx)
   return jacobian;
 }
 
-Eigen::MatrixXd KurokoKinematics::calcJacobianCOM(std::vector<int> idx)
+Eigen::MatrixXd KurokoKinematics::getJacobianCenterOfMass(std::vector<int> idx)
 {
   int idx_size = idx.size();
   int end = idx_size - 1;
@@ -711,9 +711,9 @@ Eigen::MatrixXd KurokoKinematics::calcJacobianCOM(std::vector<int> idx)
   for (int id = 0; id < idx_size; id++)
   {
     int curr_id = idx[id];
-    double mass = calcTotalMass(curr_id);
+    double mass = getTotalMass(curr_id);
 
-    Eigen::MatrixXd og = calcMomentOfInertia(curr_id) / mass - joint_link_tree_[curr_id]->internal_position_;
+    Eigen::MatrixXd og = getMomentOfInertia(curr_id) / mass - joint_link_tree_[curr_id]->internal_position_;
     Eigen::MatrixXd tar_orientation =
         joint_link_tree_[curr_id]->internal_orientation_ * joint_link_tree_[curr_id]->joint_axis_;
 
@@ -740,8 +740,8 @@ Eigen::MatrixXd KurokoKinematics::computeStateError(const Eigen::MatrixXd& targe
   return state_error;
 }
 
-bool KurokoKinematics::calcInverseKinematicsForRightLeg(double* out, double x, double y, double z, double roll,
-                                                        double pitch, double yaw)
+bool KurokoKinematics::solveInverseKinematicsForRightLeg(double* out, double x, double y, double z, double roll,
+                                                         double pitch, double yaw)
 {
   // Calculating Inverse Kinematics for Right Leg
 
@@ -879,8 +879,8 @@ bool KurokoKinematics::calcInverseKinematicsForRightLeg(double* out, double x, d
   return true;
 }
 
-bool KurokoKinematics::calcInverseKinematicsForLeftLeg(double* out, double x, double y, double z, double roll,
-                                                       double pitch, double yaw)
+bool KurokoKinematics::solveInverseKinematicsForLeftLeg(double* out, double x, double y, double z, double roll,
+                                                        double pitch, double yaw)
 {
   // Calculating Inverse Kinematics for Left Leg
 
@@ -1017,8 +1017,8 @@ bool KurokoKinematics::calcInverseKinematicsForLeftLeg(double* out, double x, do
   return true;
 }
 
-bool KurokoKinematics::calcInverseKinematicsForRightArm(double* out, double x, double y, double z,
-                                                        double shoulder_pitch, double gripoper_open_angle)
+bool KurokoKinematics::solveInverseKinematicsForRightArm(double* out, double x, double y, double z,
+                                                         double shoulder_pitch, double gripoper_open_angle)
 {
   // The punch is made with the right arm, but the left arm is also moved to counteract inertia
   // The front and rear of the elbow are each part of a pair of scissors
@@ -1030,8 +1030,8 @@ bool KurokoKinematics::calcInverseKinematicsForRightArm(double* out, double x, d
 
   return true;
 }
-bool KurokoKinematics::calcInverseKinematicsForLeftArm(double* out, double x, double y, double z, double shoulder_pitch,
-                                                       double gripoper_open_angle)
+bool KurokoKinematics::solveInverseKinematicsForLeftArm(double* out, double x, double y, double z,
+                                                        double shoulder_pitch, double gripoper_open_angle)
 {
   // The punch is made with the left arm, but the right arm is also moved to counteract inertia
   // The front and rear of the elbow are each part of a pair of scissors

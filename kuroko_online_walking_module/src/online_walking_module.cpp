@@ -24,7 +24,7 @@ OnlineWalkingModule::OnlineWalkingModule()
   control_type_ = NONE;
   balance_type_ = OFF;
 
-  kuroko_kdl_ = new KurokoKinematics();
+  kuroko_kinematics_ = new KurokoKinematics();
 
   /* leg */
   result_["ankle_r_yaw"] = new robotis_framework::DynamixelState();
@@ -1118,7 +1118,7 @@ void OnlineWalkingModule::calcRobotPose()
   Eigen::MatrixXd des_body_rot = robotis_framework::convertQuaternionToRotation(des_body_q);
 
   // Forward Kinematics
-  kuroko_kdl_->initialize(des_body_pos, des_body_rot);
+  kuroko_kinematics_->initialize(des_body_pos, des_body_rot);
 
   Eigen::VectorXd r_leg_joint_pos, l_leg_joint_pos;
 
@@ -1138,7 +1138,7 @@ void OnlineWalkingModule::calcRobotPose()
   l_leg_joint_pos(4) = des_joint_pos_[joint_name_to_dxl_id_["shin_l_active"] - 1];
   l_leg_joint_pos(5) = des_joint_pos_[joint_name_to_dxl_id_["ankle_l_roll"] - 1];
 
-  kuroko_kdl_->setJointPosition(r_leg_joint_pos, l_leg_joint_pos);
+  kuroko_kinematics_->setJointPosition(r_leg_joint_pos, l_leg_joint_pos);
 
   std::vector<double_t> r_leg_pos, r_leg_q;
   r_leg_pos.resize(3, 0.0);
@@ -1148,7 +1148,7 @@ void OnlineWalkingModule::calcRobotPose()
   l_leg_pos.resize(3, 0.0);
   l_leg_q.resize(4, 0.0);
 
-  kuroko_kdl_->solveForwardKinematics(r_leg_pos, r_leg_q, l_leg_pos, l_leg_q);
+  kuroko_kinematics_->solveForwardKinematics(r_leg_pos, r_leg_q, l_leg_pos, l_leg_q);
 
   Eigen::Quaterniond curr_r_leg_q(r_leg_q[3], r_leg_q[0], r_leg_q[1], r_leg_q[2]);
   Eigen::MatrixXd curr_r_leg_rot = robotis_framework::convertQuaternionToRotation(curr_r_leg_q);
@@ -1168,7 +1168,7 @@ void OnlineWalkingModule::calcRobotPose()
   g_to_l_leg.coeffRef(1, 3) = l_leg_pos[1];
   g_to_l_leg.coeffRef(2, 3) = l_leg_pos[2];
 
-  kuroko_kdl_->finalize();
+  kuroko_kinematics_->finalize();
 }
 
 void OnlineWalkingModule::setTargetForceTorque()
@@ -1398,7 +1398,7 @@ bool OnlineWalkingModule::setBalanceControl()
   Eigen::MatrixXd des_l_foot_pos_mod = l_foot_pose_mod.block<3, 1>(0, 3);
 
   // ======= ======= //
-  kuroko_kdl_->initialize(des_body_pos_mod, des_body_rot_mod);
+  kuroko_kinematics_->initialize(des_body_pos_mod, des_body_rot_mod);
 
   Eigen::VectorXd r_leg_joint_pos, l_leg_joint_pos;
 
@@ -1418,17 +1418,17 @@ bool OnlineWalkingModule::setBalanceControl()
   l_leg_joint_pos(4) = des_joint_pos_[joint_name_to_dxl_id_["shin_l_active"] - 1];
   l_leg_joint_pos(5) = des_joint_pos_[joint_name_to_dxl_id_["ankle_l_roll"] - 1];
 
-  kuroko_kdl_->setJointPosition(r_leg_joint_pos, l_leg_joint_pos);
+  kuroko_kinematics_->setJointPosition(r_leg_joint_pos, l_leg_joint_pos);
 
   std::vector<double_t> r_leg_output, l_leg_output;
 
   Eigen::Quaterniond des_r_foot_q_mod = robotis_framework::convertRotationToQuaternion(des_r_foot_rot_mod);
   Eigen::Quaterniond des_l_foot_q_mod = robotis_framework::convertRotationToQuaternion(des_l_foot_rot_mod);
 
-  ik_success = kuroko_kdl_->solveInverseKinematics(r_leg_output, des_r_foot_pos_mod, des_r_foot_q_mod, l_leg_output,
-                                                   des_l_foot_pos_mod, des_l_foot_q_mod);
+  ik_success = kuroko_kinematics_->solveInverseKinematics(r_leg_output, des_r_foot_pos_mod, des_r_foot_q_mod,
+                                                          l_leg_output, des_l_foot_pos_mod, des_l_foot_q_mod);
 
-  kuroko_kdl_->finalize();
+  kuroko_kinematics_->finalize();
 
   if (ik_success)
   {

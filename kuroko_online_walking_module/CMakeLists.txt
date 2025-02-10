@@ -114,7 +114,6 @@ add_library(
   src/joint_control.cpp
   src/walking_control.cpp
   src/wholebody_control.cpp
-  src/kuroko_kdl.cpp
 )
 add_dependencies(
   ${PROJECT_NAME}

@@ -1018,6 +1018,102 @@ bool KurokoKinematics::solveInverseKinematicsForLeftLeg(std::vector<double>& joi
   return true;
 }
 
+bool KurokoKinematics::solveForwardKinematicsForRightLeg(const std::vector<double>& joints_in, double& x, double& y,
+                                                         double& z, double& roll, double& pitch, double& yaw)
+{
+  // Define link lengths for the right leg
+  double hip_roll_to_pitch_offset_y = -leg_side_offset_ / 2.0;
+  double hip_pitch_to_thigh_upper_z = joint_link_tree_[getLinkIndex("thigh_r_active")]->joint_position_.coeff(2, 0);
+  double thigh_length = fabs(joint_link_tree_[getLinkIndex("knee_r_passive")]->joint_position_.coeff(2, 0));
+  double shin_length = fabs(joint_link_tree_[getLinkIndex("ankle_r_pitch_passive")]->joint_position_.coeff(2, 0));
+  double shin_lower_to_ankle_roll_offset_z =
+      joint_link_tree_[getLinkIndex("ankle_r_roll")]->joint_position_.coeff(2, 0);
+  double ankle_roll_to_yaw_offset_z = joint_link_tree_[getLinkIndex("ankle_r_yaw")]->joint_position_.coeff(2, 0) +
+                                      joint_link_tree_[getLinkIndex("leg_r_end")]->joint_position_.coeff(2, 0);
+
+  // Extract joint angles from input vector
+  double hip_roll_joint = joints_in[0];
+  double hip_pitch_joint = joints_in[1];
+  double thigh_pitch_joint = joints_in[2];
+  double shin_active_joint = joints_in[3];
+  double ankle_roll_joint = joints_in[4];
+  double ankle_yaw_joint = joints_in[5];
+
+  // Convert active shin joint to passive shin pitch
+  double shin_pitch_joint =
+      shin_active_joint * joint_link_tree_[getLinkIndex("shin_r_front_passive")]->joint_mimic_multiplier_;
+
+  // Compute knee angle
+  double knee_angle = M_PI - (thigh_pitch_joint + shin_pitch_joint);
+
+  // Compute foot position relative to hip
+  double thigh_end_x = thigh_length * sin(thigh_pitch_joint);
+  double thigh_end_z = -thigh_length * cos(thigh_pitch_joint);
+  double knee_end_x = thigh_end_x + shin_length * sin(knee_angle);
+  double knee_end_z = thigh_end_z - shin_length * cos(knee_angle);
+
+  // Account for other offsets
+  x = knee_end_x;
+  z = knee_end_z + hip_pitch_to_thigh_upper_z + shin_lower_to_ankle_roll_offset_z +
+      ankle_roll_to_yaw_offset_z * cos(ankle_roll_joint);
+  y = hip_roll_to_pitch_offset_y;
+
+  // Compute orientation
+  roll = hip_roll_joint + ankle_roll_joint;
+  pitch = hip_pitch_joint;
+  yaw = ankle_yaw_joint;
+
+  return true;
+}
+
+bool KurokoKinematics::solveForwardKinematicsForLeftLeg(const std::vector<double>& joints_in, double& x, double& y,
+                                                        double& z, double& roll, double& pitch, double& yaw)
+{
+  // Define link lengths for the left leg
+  double hip_roll_to_pitch_offset_y = leg_side_offset_ / 2.0;
+  double hip_pitch_to_thigh_upper_z = joint_link_tree_[getLinkIndex("thigh_l_active")]->joint_position_.coeff(2, 0);
+  double thigh_length = fabs(joint_link_tree_[getLinkIndex("knee_l_passive")]->joint_position_.coeff(2, 0));
+  double shin_length = fabs(joint_link_tree_[getLinkIndex("ankle_l_pitch_passive")]->joint_position_.coeff(2, 0));
+  double shin_lower_to_ankle_roll_offset_z =
+      joint_link_tree_[getLinkIndex("ankle_l_roll")]->joint_position_.coeff(2, 0);
+  double ankle_roll_to_yaw_offset_z = joint_link_tree_[getLinkIndex("ankle_l_yaw")]->joint_position_.coeff(2, 0) +
+                                      joint_link_tree_[getLinkIndex("leg_l_end")]->joint_position_.coeff(2, 0);
+
+  // Extract joint angles from input vector
+  double hip_roll_joint = joints_in[0];
+  double hip_pitch_joint = joints_in[1];
+  double thigh_pitch_joint = joints_in[2];
+  double shin_active_joint = joints_in[3];
+  double ankle_roll_joint = joints_in[4];
+  double ankle_yaw_joint = joints_in[5];
+
+  // Convert active shin joint to passive shin pitch
+  double shin_pitch_joint =
+      shin_active_joint * joint_link_tree_[getLinkIndex("shin_l_front_passive")]->joint_mimic_multiplier_;
+
+  // Compute knee angle
+  double knee_angle = M_PI - (thigh_pitch_joint + shin_pitch_joint);
+
+  // Compute foot position relative to hip
+  double thigh_end_x = thigh_length * sin(thigh_pitch_joint);
+  double thigh_end_z = -thigh_length * cos(thigh_pitch_joint);
+  double knee_end_x = thigh_end_x + shin_length * sin(knee_angle);
+  double knee_end_z = thigh_end_z - shin_length * cos(knee_angle);
+
+  // Account for other offsets
+  x = knee_end_x;
+  z = knee_end_z + hip_pitch_to_thigh_upper_z + shin_lower_to_ankle_roll_offset_z +
+      ankle_roll_to_yaw_offset_z * cos(ankle_roll_joint);
+  y = hip_roll_to_pitch_offset_y;
+
+  // Compute orientation
+  roll = hip_roll_joint + ankle_roll_joint;
+  pitch = hip_pitch_joint;
+  yaw = ankle_yaw_joint;
+
+  return true;
+}
+
 bool KurokoKinematics::solveInverseKinematicsForRightArm(std::vector<double>& joints_out, double x, double y, double z,
                                                          double shoulder_pitch, double gripoper_open_angle)
 {

@@ -39,6 +39,11 @@ public:
   bool solveInverseKinematicsForLeftLeg(std::vector<double>& joints_out, double x, double y, double z, double roll,
                                         double pitch, double yaw);
 
+  bool solveForwardKinematicsForRightLeg(const std::vector<double>& joints_in, double& x, double& y, double& z,
+                                         double& roll, double& pitch, double& yaw);
+  bool solveForwardKinematicsForLeftLeg(const std::vector<double>& joints_in, double& x, double& y, double& z,
+                                        double& roll, double& pitch, double& yaw);
+
   bool solveInverseKinematicsForRightArm(std::vector<double>& joints_out, double x, double y, double z,
                                          double shoulder_pitch, double gripoper_open_angle);
   bool solveInverseKinematicsForLeftArm(std::vector<double>& joints_out, double x, double y, double z,

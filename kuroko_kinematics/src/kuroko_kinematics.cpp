@@ -740,7 +740,7 @@ Eigen::MatrixXd KurokoKinematics::computeStateError(const Eigen::MatrixXd& targe
   return state_error;
 }
 
-bool KurokoKinematics::solveInverseKinematicsForRightLeg(double* out, double x, double y, double z, double roll,
+bool KurokoKinematics::solveInverseKinematicsForRightLeg(double* joints_out, double x, double y, double z, double roll,
                                                          double pitch, double yaw)
 {
   // Calculating Inverse Kinematics for Right Leg
@@ -870,16 +870,16 @@ bool KurokoKinematics::solveInverseKinematicsForRightLeg(double* out, double x, 
       std::max(std::min(shin_active_joint, joint_link_tree_[getLinkIndex("shin_r_active")]->joint_limit_upper_),
                joint_link_tree_[getLinkIndex("shin_r_active")]->joint_limit_lower_);
 
-  out[0] = hip_roll_joint;
-  out[1] = hip_pitch_joint;
-  out[2] = thigh_pitch_joint;
-  out[3] = shin_active_joint;
-  out[4] = ankle_roll_joint;
-  out[5] = ankle_yaw_joint;
+  joints_out[0] = hip_roll_joint;
+  joints_out[1] = hip_pitch_joint;
+  joints_out[2] = thigh_pitch_joint;
+  joints_out[3] = shin_active_joint;
+  joints_out[4] = ankle_roll_joint;
+  joints_out[5] = ankle_yaw_joint;
   return true;
 }
 
-bool KurokoKinematics::solveInverseKinematicsForLeftLeg(double* out, double x, double y, double z, double roll,
+bool KurokoKinematics::solveInverseKinematicsForLeftLeg(double* joints_out, double x, double y, double z, double roll,
                                                         double pitch, double yaw)
 {
   // Calculating Inverse Kinematics for Left Leg
@@ -1008,16 +1008,16 @@ bool KurokoKinematics::solveInverseKinematicsForLeftLeg(double* out, double x, d
   shin_active_joint =
       std::max(std::min(shin_active_joint, joint_link_tree_[getLinkIndex("shin_l_active")]->joint_limit_upper_),
                joint_link_tree_[getLinkIndex("shin_l_active")]->joint_limit_lower_);
-  out[0] = hip_roll_joint;
-  out[1] = hip_pitch_joint;
-  out[2] = thigh_pitch_joint;
-  out[3] = shin_active_joint;
-  out[4] = ankle_roll_joint;
-  out[5] = ankle_yaw_joint;
+  joints_out[0] = hip_roll_joint;
+  joints_out[1] = hip_pitch_joint;
+  joints_out[2] = thigh_pitch_joint;
+  joints_out[3] = shin_active_joint;
+  joints_out[4] = ankle_roll_joint;
+  joints_out[5] = ankle_yaw_joint;
   return true;
 }
 
-bool KurokoKinematics::solveInverseKinematicsForRightArm(double* out, double x, double y, double z,
+bool KurokoKinematics::solveInverseKinematicsForRightArm(double* joints_out, double x, double y, double z,
                                                          double shoulder_pitch, double gripoper_open_angle)
 {
   // The punch is made with the right arm, but the left arm is also moved to counteract inertia
@@ -1026,11 +1026,10 @@ bool KurokoKinematics::solveInverseKinematicsForRightArm(double* out, double x, 
   // dimensions are aligned.
 
   // out: chest, shoulder_r_pitch, shoulder_r_roll, elbow_r_front, elbow_r_rear,
-  // shoulder_l_pitch, shoulder_l_roll, elbow_l_front, elbow_l_rear
 
   return true;
 }
-bool KurokoKinematics::solveInverseKinematicsForLeftArm(double* out, double x, double y, double z,
+bool KurokoKinematics::solveInverseKinematicsForLeftArm(double* joints_out, double x, double y, double z,
                                                         double shoulder_pitch, double gripoper_open_angle)
 {
   // The punch is made with the left arm, but the right arm is also moved to counteract inertia
@@ -1038,8 +1037,7 @@ bool KurokoKinematics::solveInverseKinematicsForLeftArm(double* out, double x, d
   // The joints of the chest and right hand together have a total of 4 DOFs, so by fixing the shoulder_pitch, the
   // dimensions are aligned.
 
-  // out: chest, shoulder_r_pitch, shoulder_r_roll, elbow_r_front, elbow_r_rear,
-  // shoulder_l_pitch, shoulder_l_roll, elbow_l_front, elbow_l_rear
+  // out: chest, shoulder_l_pitch, shoulder_l_roll, elbow_l_front, elbow_l_rear
 
   return true;
 }
@@ -1119,70 +1117,6 @@ double KurokoKinematics::getJointDirection(const int link_id)
   }
 
   return joint_direction;
-}
-
-Eigen::MatrixXd KurokoKinematics::calcPreviewParam(double preview_time, double control_cycle, double lipm_height,
-                                                   const Eigen::MatrixXd& K, const Eigen::MatrixXd& P)
-{
-  double t = control_cycle;
-  double preview_size = round(preview_time / control_cycle) + 1;
-
-  Eigen::MatrixXd a;
-  a.resize(3, 3);
-  a << 1, t, t * t / 2.0, 0, 1, t, 0, 0, 1;
-
-  Eigen::MatrixXd b;
-  b.resize(3, 1);
-  b << t * t * t / 6.0, t * t / 2.0, t;
-
-  Eigen::MatrixXd c;
-  c.resize(1, 3);
-  c << 1, 0, -lipm_height / 9.81;
-
-  Eigen::MatrixXd temp_a = Eigen::MatrixXd::Zero(4, 4);
-  Eigen::MatrixXd tempb = Eigen::MatrixXd::Zero(4, 1);
-  Eigen::MatrixXd tempc = Eigen::MatrixXd::Zero(1, 4);
-
-  temp_a.coeffRef(0, 0) = 1;
-  temp_a.block<1, 3>(0, 1) = c * a;
-  temp_a.block<3, 3>(1, 1) = a;
-
-  tempb.coeffRef(0, 0) = (c * b).coeff(0, 0);
-  tempb.block<3, 1>(1, 0) = b;
-
-  tempc.coeffRef(0, 0) = 1;
-
-  double r = 1e-6;
-  double q_e = 1;
-  double q_x = 0;
-
-  Eigen::MatrixXd q = Eigen::MatrixXd::Zero(4, 4);
-  q.coeffRef(0, 0) = q_e;
-  q.coeffRef(1, 1) = q_e;
-  q.coeffRef(2, 2) = q_e;
-  q.coeffRef(3, 3) = q_x;
-
-  Eigen::MatrixXd f;
-  f.resize(1, preview_size);
-
-  Eigen::MatrixXd mat_r = Eigen::MatrixXd::Zero(1, 1);
-  mat_r.coeffRef(0, 0) = r;
-
-  Eigen::MatrixXd temp_coeff1 = mat_r + ((tempb.transpose() * P) * tempb);
-  Eigen::MatrixXd temp_coeff1_inv = temp_coeff1.inverse();
-  Eigen::MatrixXd temp_coeff2 = tempb.transpose();
-  Eigen::MatrixXd temp_coeff3 = Eigen::MatrixXd::Identity(4, 4);
-  Eigen::MatrixXd temp_coeff4 = P * tempc.transpose();
-
-  f.block<1, 1>(0, 0) = ((temp_coeff1_inv * temp_coeff2) * temp_coeff3) * temp_coeff4;
-
-  for (int i = 1; i < preview_size; i++)
-  {
-    temp_coeff3 = temp_coeff3 * ((temp_a - tempb * K).transpose());
-    f.block<1, 1>(0, i) = ((temp_coeff1_inv * temp_coeff2) * temp_coeff3) * temp_coeff4;
-  }
-
-  return f;
 }
 
 }  // namespace motion_control

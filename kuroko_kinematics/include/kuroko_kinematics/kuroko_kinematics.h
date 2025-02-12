@@ -53,9 +53,6 @@ public:
   double getJointDirection(const std::string& link_name);
   double getJointDirection(const int link_id);
 
-  Eigen::MatrixXd calcPreviewParam(double preview_time, double control_cycle, double lipm_height,
-                                   const Eigen::MatrixXd& K, const Eigen::MatrixXd& P);
-
   double leg_max_height_;
   double leg_side_offset_;
   double gripper_length_;

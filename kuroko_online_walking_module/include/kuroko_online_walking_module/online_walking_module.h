@@ -130,7 +130,7 @@ private:
   void initFeedforwardControl();
   void setFeedforwardControl();
 
-  void sensoryFeedback(const double& rlGyroErr, const double& fbGyroErr, double* balance_angle);
+  void balanceFeedback(const double& roll_gyro_err, const double& pitch_gyro_err, std::vector<double>& balance_angle);
 
   void calcRobotPose();
 

@@ -1512,23 +1512,28 @@ void OnlineWalkingModule::setFeedforwardControl()
     des_joint_feedforward_[i] = joint_feedforward_gain_[i] * feed_forward_value[0] * support_leg_gain[i];
 }
 
-void OnlineWalkingModule::sensoryFeedback(const double& rlGyroErr, const double& fbGyroErr, double* balance_angle)
+void OnlineWalkingModule::balanceFeedback(const double& roll_gyro_err, const double& pitch_gyro_err,
+                                          double* balance_angle)
 {
   // adjust balance offset
   double internal_gain = 0.05;
 
-  balance_angle[joint_name_to_dxl_id_["hip_r_roll"] - 1] = -1.0 * internal_gain * rlGyroErr * balance_hip_roll_gain_;
-  balance_angle[joint_name_to_dxl_id_["thigh_r_active"] - 1] = 1.0 * internal_gain * fbGyroErr * balance_knee_gain_;
+  balance_angle[joint_name_to_dxl_id_["hip_r_roll"] - 1] =
+      -1.0 * internal_gain * roll_gyro_err * balance_hip_roll_gain_;
+  balance_angle[joint_name_to_dxl_id_["thigh_r_active"] - 1] =
+      1.0 * internal_gain * pitch_gyro_err * balance_knee_gain_;
   balance_angle[joint_name_to_dxl_id_["shin_r_active"] - 1] =
-      -1.0 * internal_gain * fbGyroErr * balance_ankle_pitch_gain_;
+      -1.0 * internal_gain * pitch_gyro_err * balance_ankle_pitch_gain_;
   balance_angle[joint_name_to_dxl_id_["ankle_r_roll"] - 1] =
-      -1.0 * internal_gain * rlGyroErr * balance_ankle_roll_gain_;
-  balance_angle[joint_name_to_dxl_id_["hip_l_roll"] - 1] = -1.0 * internal_gain * rlGyroErr * balance_hip_roll_gain_;
-  balance_angle[joint_name_to_dxl_id_["thigh_l_active"] - 1] = -1.0 * internal_gain * fbGyroErr * balance_knee_gain_;
+      -1.0 * internal_gain * roll_gyro_err * balance_ankle_roll_gain_;
+  balance_angle[joint_name_to_dxl_id_["hip_l_roll"] - 1] =
+      -1.0 * internal_gain * roll_gyro_err * balance_hip_roll_gain_;
+  balance_angle[joint_name_to_dxl_id_["thigh_l_active"] - 1] =
+      -1.0 * internal_gain * pitch_gyro_err * balance_knee_gain_;
   balance_angle[joint_name_to_dxl_id_["shin_l_active"] - 1] =
-      1.0 * internal_gain * fbGyroErr * balance_ankle_pitch_gain_;
+      1.0 * internal_gain * pitch_gyro_err * balance_ankle_pitch_gain_;
   balance_angle[joint_name_to_dxl_id_["ankle_l_roll"] - 1] =
-      -1.0 * internal_gain * rlGyroErr * balance_ankle_roll_gain_;
+      -1.0 * internal_gain * roll_gyro_err * balance_ankle_roll_gain_;
 }
 
 void OnlineWalkingModule::process(std::map<std::string, robotis_framework::Dynamixel*> dxls,
@@ -1545,7 +1550,7 @@ void OnlineWalkingModule::process(std::map<std::string, robotis_framework::Dynam
   double rl_gyro_err = 0.0 - sensors["gyro_x"];
   double fb_gyro_err = 0.0 - sensors["gyro_y"];
 
-  sensoryFeedback(rl_gyro_err, fb_gyro_err, balance_angle);
+  balanceFeedback(rl_gyro_err, fb_gyro_err, balance_angle);
 
   /*----- write curr position -----*/
   for (auto& state_iter : result_)

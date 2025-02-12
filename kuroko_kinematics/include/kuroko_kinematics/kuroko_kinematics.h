@@ -34,15 +34,15 @@ public:
   Eigen::MatrixXd computeStateError(const Eigen::MatrixXd& target_position, const Eigen::MatrixXd& current_position,
                                     const Eigen::MatrixXd& target_orientation, Eigen::MatrixXd current_orientation);
 
-  bool solveInverseKinematicsForRightLeg(double* out, double x, double y, double z, double roll, double pitch,
-                                         double yaw);
-  bool solveInverseKinematicsForLeftLeg(double* out, double x, double y, double z, double roll, double pitch,
-                                        double yaw);
+  bool solveInverseKinematicsForRightLeg(std::vector<double>& joints_out, double x, double y, double z, double roll,
+                                         double pitch, double yaw);
+  bool solveInverseKinematicsForLeftLeg(std::vector<double>& joints_out, double x, double y, double z, double roll,
+                                        double pitch, double yaw);
 
-  bool solveInverseKinematicsForRightArm(double* out, double x, double y, double z, double shoulder_pitch,
-                                         double gripoper_open_angle);
-  bool solveInverseKinematicsForLeftArm(double* out, double x, double y, double z, double shoulder_pitch,
-                                        double gripoper_open_angle);
+  bool solveInverseKinematicsForRightArm(std::vector<double>& joints_out, double x, double y, double z,
+                                         double shoulder_pitch, double gripoper_open_angle);
+  bool solveInverseKinematicsForLeftArm(std::vector<double>& joints_out, double x, double y, double z,
+                                        double shoulder_pitch, double gripoper_open_angle);
 
   LinkData* joint_link_tree_[ALL_JOINT_ID + 1];
 

@@ -95,8 +95,8 @@ private:
 
   /* ROS Service Callback Functions */
   void processPhase(const double& time_unit);
-  bool computeLegAngle(double* leg_angle);
-  void sensoryFeedback(const double& rlGyroErr, const double& fbGyroErr, double* balance_angle);
+  bool updateLegTargetAngles(std::vector<double>& leg_joints);
+  void balanceFeedback(const double& roll_gyro_err, const double& pitch_gyro_err, std::vector<double>& balance_angle);
 
   void publishStatusMsg(unsigned int type, std::string msg);
   double wSin(double time, double period, double period_shift, double mag, double mag_shift);
@@ -108,7 +108,7 @@ private:
   void saveWalkingParam(std::string& path);
   void iniPoseTraGene(double mov_time);
 
-  KurokoKinematics* kuroko_kd_;
+  KurokoKinematics* kuroko_kinematics_;
   int control_cycle_msec_;
   std::string param_path_;
   boost::thread queue_thread_;

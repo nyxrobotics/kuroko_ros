@@ -740,8 +740,8 @@ Eigen::MatrixXd KurokoKinematics::computeStateError(const Eigen::MatrixXd& targe
   return state_error;
 }
 
-bool KurokoKinematics::solveInverseKinematicsForRightLeg(double* joints_out, double x, double y, double z, double roll,
-                                                         double pitch, double yaw)
+bool KurokoKinematics::solveInverseKinematicsForRightLeg(std::vector<double>& joints_out, double x, double y, double z,
+                                                         double roll, double pitch, double yaw)
 {
   // Calculating Inverse Kinematics for Right Leg
 
@@ -869,7 +869,7 @@ bool KurokoKinematics::solveInverseKinematicsForRightLeg(double* joints_out, dou
   shin_active_joint =
       std::max(std::min(shin_active_joint, joint_link_tree_[getLinkIndex("shin_r_active")]->joint_limit_upper_),
                joint_link_tree_[getLinkIndex("shin_r_active")]->joint_limit_lower_);
-
+  joints_out.resize(6);
   joints_out[0] = hip_roll_joint;
   joints_out[1] = hip_pitch_joint;
   joints_out[2] = thigh_pitch_joint;
@@ -879,8 +879,8 @@ bool KurokoKinematics::solveInverseKinematicsForRightLeg(double* joints_out, dou
   return true;
 }
 
-bool KurokoKinematics::solveInverseKinematicsForLeftLeg(double* joints_out, double x, double y, double z, double roll,
-                                                        double pitch, double yaw)
+bool KurokoKinematics::solveInverseKinematicsForLeftLeg(std::vector<double>& joints_out, double x, double y, double z,
+                                                        double roll, double pitch, double yaw)
 {
   // Calculating Inverse Kinematics for Left Leg
 
@@ -1008,6 +1008,7 @@ bool KurokoKinematics::solveInverseKinematicsForLeftLeg(double* joints_out, doub
   shin_active_joint =
       std::max(std::min(shin_active_joint, joint_link_tree_[getLinkIndex("shin_l_active")]->joint_limit_upper_),
                joint_link_tree_[getLinkIndex("shin_l_active")]->joint_limit_lower_);
+  joints_out.resize(6);
   joints_out[0] = hip_roll_joint;
   joints_out[1] = hip_pitch_joint;
   joints_out[2] = thigh_pitch_joint;
@@ -1017,7 +1018,7 @@ bool KurokoKinematics::solveInverseKinematicsForLeftLeg(double* joints_out, doub
   return true;
 }
 
-bool KurokoKinematics::solveInverseKinematicsForRightArm(double* joints_out, double x, double y, double z,
+bool KurokoKinematics::solveInverseKinematicsForRightArm(std::vector<double>& joints_out, double x, double y, double z,
                                                          double shoulder_pitch, double gripoper_open_angle)
 {
   // The punch is made with the right arm, but the left arm is also moved to counteract inertia
@@ -1029,7 +1030,7 @@ bool KurokoKinematics::solveInverseKinematicsForRightArm(double* joints_out, dou
 
   return true;
 }
-bool KurokoKinematics::solveInverseKinematicsForLeftArm(double* joints_out, double x, double y, double z,
+bool KurokoKinematics::solveInverseKinematicsForLeftArm(std::vector<double>& joints_out, double x, double y, double z,
                                                         double shoulder_pitch, double gripoper_open_angle)
 {
   // The punch is made with the left arm, but the right arm is also moved to counteract inertia

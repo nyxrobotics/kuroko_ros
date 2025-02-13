@@ -724,18 +724,18 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
 
   // Check IK result with FK result
   double x, y, z, roll, pitch, yaw;
-  printf("Right IK : %.4f %.4f %.4f %.4f %.4f %.4f\n", right_joints[0], right_joints[1], right_joints[2],
+  printf("---Right IK--- : %.4f %.4f %.4f %.4f %.4f %.4f\n", right_joints[0], right_joints[1], right_joints[2],
          right_joints[3], right_joints[4], right_joints[5]);
   kuroko_kinematics_->solveForwardKinematicsForRightLeg(right_joints, x, y, z, roll, pitch, yaw);
   printf("Right  Forward Kinematics : %.4f %.4f %.4f %.4f %.4f %.4f\n", x, y, z, roll, pitch, yaw);
   printf("Right Target Point        : %.4f %.4f %.4f %.4f %.4f %.4f\n", right_target_point[0], right_target_point[1],
          right_target_point[2], right_target_point[3], right_target_point[4], right_target_point[5]);
-  // printf("Left IK : %.4f %.4f %.4f %.4f %.4f %.4f\n", left_joints[0], left_joints[1], left_joints[2], left_joints[3],
-  //        left_joints[4], left_joints[5]);
+  printf("---Left IK--- : %.4f %.4f %.4f %.4f %.4f %.4f\n", left_joints[0], left_joints[1], left_joints[2],
+         left_joints[3], left_joints[4], left_joints[5]);
   kuroko_kinematics_->solveForwardKinematicsForLeftLeg(left_joints, x, y, z, roll, pitch, yaw);
-  // printf("Left Forward Kinematics : %.4f %.4f %.4f %.4f %.4f %.4f\n", x, y, z, roll, pitch, yaw);
-  // printf("Left Target Point       : %.4f %.4f %.4f %.4f %.4f %.4f\n", left_target_point[0], left_target_point[1],
-  //        left_target_point[2], left_target_point[3], left_target_point[4], left_target_point[5]);
+  printf("Left Forward Kinematics : %.4f %.4f %.4f %.4f %.4f %.4f\n", x, y, z, roll, pitch, yaw);
+  printf("Left Target Point       : %.4f %.4f %.4f %.4f %.4f %.4f\n", left_target_point[0], left_target_point[1],
+         left_target_point[2], left_target_point[3], left_target_point[4], left_target_point[5]);
 
   // Add offset angles [rad]
   right_joints[0] += kuroko_kinematics_->getJointDirection("hip_r_roll") * pelvis_offset_r;

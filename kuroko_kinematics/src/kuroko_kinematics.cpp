@@ -1075,45 +1075,28 @@ bool KurokoKinematics::solveForwardKinematicsForRightLeg(const std::vector<doubl
       robotis_framework::convertRotationToRPY(joint_link_tree_[getLinkIndex("ankle_r_yaw")]->joint_orientation_)
           .coeff(2, 0);
 
-  std::cout << "[solveForwardKinematicsForRightLeg]:" << std::endl;
-  std::cout << "hip_roll: " << hip_roll << std::endl;
-  std::cout << "hip_pitch: " << hip_pitch << std::endl;
-  std::cout << "thigh_pitch: " << thigh_pitch << std::endl;
-  std::cout << "shin_pitch: " << shin_pitch << std::endl;
-  std::cout << "ankle_roll: " << ankle_roll << std::endl;
-  std::cout << "ankle_yaw: " << ankle_yaw << std::endl;
-
   // Compute toe orientation
   roll = hip_roll + ankle_roll;
   pitch = hip_pitch;
   yaw = ankle_yaw;
 
-  // Compute knee angle
-  double knee_angle = M_PI - (thigh_pitch + shin_pitch);
-
   // Compute foot position relative to hip pitch link
   double hip_end_x = 0;
   double hip_end_z = hip_pitch_to_thigh_upper_z;
-  std::cout << "hip_end_x: " << hip_end_x << std::endl;
-  std::cout << "hip_end_z: " << hip_end_z << std::endl;
+
   double thigh_end_x = hip_end_x - thigh_length * sin(thigh_pitch);
   double thigh_end_z = hip_end_z - thigh_length * cos(thigh_pitch);
-  std::cout << "thigh_end_x: " << thigh_end_x << std::endl;
-  std::cout << "thigh_end_z: " << thigh_end_z << std::endl;
+
   double shin_end_x = thigh_end_x - shin_length * sin(shin_pitch);
   double shin_end_z = thigh_end_z - shin_length * cos(shin_pitch);
-  std::cout << "shin_end_x: " << shin_end_x << std::endl;
-  std::cout << "shin_end_z: " << shin_end_z << std::endl;
+
   double toe_end_x = shin_end_x;
   double toe_end_z = shin_end_z + shin_lower_to_ankle_roll_offset_z + ankle_roll_to_yaw_offset_z * cos(ankle_roll);
-  std::cout << "toe_end_x: " << toe_end_x << std::endl;
-  std::cout << "toe_end_z: " << toe_end_z << std::endl;
+
   double toe_end_x_pitched = toe_end_x * cos(hip_pitch) - toe_end_z * sin(hip_pitch);
   double toe_end_y_pitched = hip_roll_to_pitch_offset_y - ankle_roll_to_yaw_offset_z * sin(ankle_roll);
   double toe_end_z_pitched = toe_end_x * sin(hip_pitch) + toe_end_z * cos(hip_pitch);
-  std::cout << "toe_end_x_pitched: " << toe_end_x_pitched << std::endl;
-  std::cout << "toe_end_y_pitched: " << toe_end_y_pitched << std::endl;
-  std::cout << "toe_end_z_pitched: " << toe_end_z_pitched << std::endl;
+
   double toe_end_y_rolled = toe_end_y_pitched * cos(hip_roll) - toe_end_z_pitched * sin(hip_roll);
   double toe_end_z_rolled = toe_end_y_pitched * sin(hip_roll) + toe_end_z_pitched * cos(hip_roll);
 
@@ -1174,25 +1157,35 @@ bool KurokoKinematics::solveForwardKinematicsForLeftLeg(const std::vector<double
       robotis_framework::convertRotationToRPY(joint_link_tree_[getLinkIndex("ankle_l_yaw")]->joint_orientation_)
           .coeff(2, 0);
 
-  // Compute knee angle
-  double knee_angle = M_PI - (thigh_pitch + shin_pitch);
-
-  // Compute foot position relative to hip
-  double thigh_end_x = thigh_length * sin(thigh_pitch);
-  double thigh_end_z = -thigh_length * cos(thigh_pitch);
-  double shin_end_x = thigh_end_x + shin_length * sin(knee_angle);
-  double shin_end_z = thigh_end_z - shin_length * cos(knee_angle);
-
-  // Account for other offsets
-  x = shin_end_x;
-  z = shin_end_z + hip_pitch_to_thigh_upper_z + shin_lower_to_ankle_roll_offset_z +
-      ankle_roll_to_yaw_offset_z * cos(ankle_roll_joint);
-  y = hip_roll_to_pitch_offset_y;
-
-  // Compute orientation
+  // Compute toe orientation
   roll = hip_roll + ankle_roll;
   pitch = hip_pitch;
   yaw = ankle_yaw;
+
+  // Compute foot position relative to hip pitch link
+  double hip_end_x = 0;
+  double hip_end_z = hip_pitch_to_thigh_upper_z;
+
+  double thigh_end_x = hip_end_x - thigh_length * sin(thigh_pitch);
+  double thigh_end_z = hip_end_z - thigh_length * cos(thigh_pitch);
+
+  double shin_end_x = thigh_end_x - shin_length * sin(shin_pitch);
+  double shin_end_z = thigh_end_z - shin_length * cos(shin_pitch);
+
+  double toe_end_x = shin_end_x;
+  double toe_end_z = shin_end_z + shin_lower_to_ankle_roll_offset_z + ankle_roll_to_yaw_offset_z * cos(ankle_roll);
+
+  double toe_end_x_pitched = toe_end_x * cos(hip_pitch) - toe_end_z * sin(hip_pitch);
+  double toe_end_y_pitched = hip_roll_to_pitch_offset_y - ankle_roll_to_yaw_offset_z * sin(ankle_roll);
+  double toe_end_z_pitched = toe_end_x * sin(hip_pitch) + toe_end_z * cos(hip_pitch);
+
+  double toe_end_y_rolled = toe_end_y_pitched * cos(hip_roll) - toe_end_z_pitched * sin(hip_roll);
+  double toe_end_z_rolled = toe_end_y_pitched * sin(hip_roll) + toe_end_z_pitched * cos(hip_roll);
+
+  // Account for other offsets
+  x = toe_end_x_pitched;
+  z = toe_end_z_rolled;
+  y = toe_end_y_rolled;
 
   return true;
 }

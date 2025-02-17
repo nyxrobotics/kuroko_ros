@@ -190,11 +190,11 @@ private:
   std::vector<double_t> des_joint_feedforward_;
   std::vector<double_t> des_joint_pos_to_robot_;
 
-  std::vector<double_t> des_l_arm_pos_, des_l_arm_vel_, des_l_arm_accel_, des_l_arm_q_;
-  std::vector<double_t> des_r_arm_pos_, des_r_arm_vel_, des_r_arm_accel_, des_r_arm_q_;
-  std::vector<double_t> des_l_leg_pos_, des_l_leg_vel_, des_l_leg_accel_, des_l_leg_q_;
-  std::vector<double_t> des_r_leg_pos_, des_r_leg_vel_, des_r_leg_accel_, des_r_leg_q_;
-  std::vector<double_t> des_body_pos_, des_body_vel_, des_body_accel_, des_body_q_;
+  std::vector<double_t> des_l_arm_pos_, des_l_arm_vel_, des_l_arm_accel_, des_l_arm_rpy_;
+  std::vector<double_t> des_r_arm_pos_, des_r_arm_vel_, des_r_arm_accel_, des_r_arm_rpy_;
+  std::vector<double_t> des_l_leg_position_, des_l_leg_vel_, des_l_leg_accel_, des_l_leg_rpy_;
+  std::vector<double_t> des_r_leg_position_, des_r_leg_vel_, des_r_leg_accel_, des_r_leg_rpy_;
+  std::vector<double_t> des_body_pos_, des_body_vel_, des_body_accel_, des_body_rpy_;
 
   // Walking Control
   std::vector<double_t> x_lipm_, y_lipm_;

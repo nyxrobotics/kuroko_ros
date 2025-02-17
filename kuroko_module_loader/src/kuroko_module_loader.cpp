@@ -217,11 +217,11 @@ void KurokoModuleLoader::setupController()
 
   /* Add Motion Module */
   controller_->addMotionModule((MotionModule*)InitialPoseModule::getInstance());
-  controller_->addMotionModule((MotionModule*)WalkingModule::getInstance());
   controller_->addMotionModule((MotionModule*)ActionModule::getInstance());
+  controller_->addMotionModule((MotionModule*)WalkingModule::getInstance());
+  controller_->addMotionModule((MotionModule*)OnlineWalkingModule::getInstance());
   // controller_->addMotionModule((MotionModule*)HeadControlModule::getInstance());
   // controller_->addMotionModule((MotionModule*)DirectControlModule::getInstance());
-  // controller_->addMotionModule((MotionModule*)OnlineWalkingModule::getInstance());
   // controller_->addMotionModule((MotionModule*)TuningModule::getInstance());
 
   controller_->startTimer();

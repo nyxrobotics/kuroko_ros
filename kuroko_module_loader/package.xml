@@ -30,7 +30,7 @@
   <depend>kuroko_walking_module</depend>
   <depend>kuroko_action_module</depend>
   <depend>kuroko_direct_control_module</depend>
-  <!-- <depend>kuroko_online_walking_module</depend> -->
+  <depend>kuroko_online_walking_module</depend>
   <depend>kuroko_tuning_module</depend>
   <depend>op3_tuning_module_msgs</depend>
   <exec_depend>kuroko_localization</exec_depend>

@@ -336,8 +336,6 @@ void OnlineWalkingModule::parseJointFeedbackGainData(const std::string& path)
     return;
   }
 
-  joint_feedback_[joint_name_to_dxl_id_["ankle_r_yaw"] - 1].p_gain_ = doc["ankle_r_yaw_p_gain"].as<double>();
-  joint_feedback_[joint_name_to_dxl_id_["ankle_r_yaw"] - 1].d_gain_ = doc["ankle_r_yaw_d_gain"].as<double>();
   joint_feedback_[joint_name_to_dxl_id_["hip_r_roll"] - 1].p_gain_ = doc["hip_r_roll_p_gain"].as<double>();
   joint_feedback_[joint_name_to_dxl_id_["hip_r_roll"] - 1].d_gain_ = doc["hip_r_roll_d_gain"].as<double>();
   joint_feedback_[joint_name_to_dxl_id_["hip_r_pitch"] - 1].p_gain_ = doc["hip_r_pitch_p_gain"].as<double>();
@@ -348,9 +346,9 @@ void OnlineWalkingModule::parseJointFeedbackGainData(const std::string& path)
   joint_feedback_[joint_name_to_dxl_id_["shin_r_active"] - 1].d_gain_ = doc["shin_r_active_d_gain"].as<double>();
   joint_feedback_[joint_name_to_dxl_id_["ankle_r_roll"] - 1].p_gain_ = doc["ankle_r_roll_p_gain"].as<double>();
   joint_feedback_[joint_name_to_dxl_id_["ankle_r_roll"] - 1].d_gain_ = doc["ankle_r_roll_d_gain"].as<double>();
+  joint_feedback_[joint_name_to_dxl_id_["ankle_r_yaw"] - 1].p_gain_ = doc["ankle_r_yaw_p_gain"].as<double>();
+  joint_feedback_[joint_name_to_dxl_id_["ankle_r_yaw"] - 1].d_gain_ = doc["ankle_r_yaw_d_gain"].as<double>();
 
-  joint_feedback_[joint_name_to_dxl_id_["ankle_l_yaw"] - 1].p_gain_ = doc["ankle_l_yaw_p_gain"].as<double>();
-  joint_feedback_[joint_name_to_dxl_id_["ankle_l_yaw"] - 1].d_gain_ = doc["ankle_l_yaw_d_gain"].as<double>();
   joint_feedback_[joint_name_to_dxl_id_["hip_l_roll"] - 1].p_gain_ = doc["hip_l_roll_p_gain"].as<double>();
   joint_feedback_[joint_name_to_dxl_id_["hip_l_roll"] - 1].d_gain_ = doc["hip_l_roll_d_gain"].as<double>();
   joint_feedback_[joint_name_to_dxl_id_["hip_l_pitch"] - 1].p_gain_ = doc["hip_l_pitch_p_gain"].as<double>();
@@ -361,6 +359,8 @@ void OnlineWalkingModule::parseJointFeedbackGainData(const std::string& path)
   joint_feedback_[joint_name_to_dxl_id_["shin_l_active"] - 1].d_gain_ = doc["shin_l_active_d_gain"].as<double>();
   joint_feedback_[joint_name_to_dxl_id_["ankle_l_roll"] - 1].p_gain_ = doc["ankle_l_roll_p_gain"].as<double>();
   joint_feedback_[joint_name_to_dxl_id_["ankle_l_roll"] - 1].d_gain_ = doc["ankle_l_roll_d_gain"].as<double>();
+  joint_feedback_[joint_name_to_dxl_id_["ankle_l_yaw"] - 1].p_gain_ = doc["ankle_l_yaw_p_gain"].as<double>();
+  joint_feedback_[joint_name_to_dxl_id_["ankle_l_yaw"] - 1].d_gain_ = doc["ankle_l_yaw_d_gain"].as<double>();
 }
 
 void OnlineWalkingModule::parseJointFeedforwardGainData(const std::string& path)
@@ -378,19 +378,19 @@ void OnlineWalkingModule::parseJointFeedforwardGainData(const std::string& path)
     return;
   }
 
-  joint_feedforward_gain_[joint_name_to_dxl_id_["ankle_r_yaw"] - 1] = doc["ankle_r_yaw_gain"].as<double>();
   joint_feedforward_gain_[joint_name_to_dxl_id_["hip_r_roll"] - 1] = doc["hip_r_roll_gain"].as<double>();
   joint_feedforward_gain_[joint_name_to_dxl_id_["hip_r_pitch"] - 1] = doc["hip_r_pitch_gain"].as<double>();
   joint_feedforward_gain_[joint_name_to_dxl_id_["thigh_r_active"] - 1] = doc["thigh_r_active_gain"].as<double>();
   joint_feedforward_gain_[joint_name_to_dxl_id_["shin_r_active"] - 1] = doc["shin_r_active_gain"].as<double>();
   joint_feedforward_gain_[joint_name_to_dxl_id_["ankle_r_roll"] - 1] = doc["ankle_r_roll_gain"].as<double>();
+  joint_feedforward_gain_[joint_name_to_dxl_id_["ankle_r_yaw"] - 1] = doc["ankle_r_yaw_gain"].as<double>();
 
-  joint_feedforward_gain_[joint_name_to_dxl_id_["ankle_l_yaw"] - 1] = doc["ankle_l_yaw_gain"].as<double>();
   joint_feedforward_gain_[joint_name_to_dxl_id_["hip_l_roll"] - 1] = doc["hip_l_roll_gain"].as<double>();
   joint_feedforward_gain_[joint_name_to_dxl_id_["hip_l_pitch"] - 1] = doc["hip_l_pitch_gain"].as<double>();
   joint_feedforward_gain_[joint_name_to_dxl_id_["thigh_l_active"] - 1] = doc["thigh_l_active_gain"].as<double>();
   joint_feedforward_gain_[joint_name_to_dxl_id_["shin_l_active"] - 1] = doc["shin_l_active_gain"].as<double>();
   joint_feedforward_gain_[joint_name_to_dxl_id_["ankle_l_roll"] - 1] = doc["ankle_l_roll_gain"].as<double>();
+  joint_feedforward_gain_[joint_name_to_dxl_id_["ankle_l_yaw"] - 1] = doc["ankle_l_yaw_gain"].as<double>();
 }
 
 void OnlineWalkingModule::setWholebodyBalanceMsgCallback(const std_msgs::String::ConstPtr& msg)

@@ -122,7 +122,7 @@ private:
   // offset tuner
   ros::Publisher sync_write_pub_;
   ros::Publisher enable_offset_pub_;
-  ros::Subscriber send_tra_sub_;
+  ros::Subscriber send_trajectory_sub_;
   ros::Subscriber joint_offset_data_sub_;
   ros::Subscriber joint_gain_data_sub_;
   ros::Subscriber joint_torque_enable_sub_;

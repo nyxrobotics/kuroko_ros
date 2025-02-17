@@ -89,7 +89,8 @@ void InitialPoseModule::parseInitPoseData(const std::string& path)
   // Calculate total number of time steps
   initial_pose_module_state_->all_time_steps_ =
       int(initial_pose_module_state_->mov_time_ / initial_pose_module_state_->smp_time_) + 1;
-  initial_pose_module_state_->calc_joint_tra_.resize(initial_pose_module_state_->all_time_steps_, MAX_JOINT_ID + 1);
+  initial_pose_module_state_->calc_joint_trajectory_.resize(initial_pose_module_state_->all_time_steps_,
+                                                            MAX_JOINT_ID + 1);
 }
 
 void InitialPoseModule::queueThread()
@@ -165,7 +166,8 @@ void InitialPoseModule::initPoseTrajGenerateProc()
                                                                initial_pose_module_state_->mov_time_);
     }
 
-    initial_pose_module_state_->calc_joint_tra_.block(0, id, initial_pose_module_state_->all_time_steps_, 1) = tra;
+    initial_pose_module_state_->calc_joint_trajectory_.block(0, id, initial_pose_module_state_->all_time_steps_, 1) =
+        tra;
   }
 
   initial_pose_module_state_->is_moving_ = true;
@@ -184,7 +186,8 @@ void InitialPoseModule::poseGenerateProc(Eigen::MatrixXd joint_angle_pose)
   initial_pose_module_state_->all_time_steps_ =
       int(initial_pose_module_state_->mov_time_ / initial_pose_module_state_->smp_time_) + 1;
 
-  initial_pose_module_state_->calc_joint_tra_.resize(initial_pose_module_state_->all_time_steps_, MAX_JOINT_ID + 1);
+  initial_pose_module_state_->calc_joint_trajectory_.resize(initial_pose_module_state_->all_time_steps_,
+                                                            MAX_JOINT_ID + 1);
 
   initial_pose_module_state_->joint_pose_ = std::move(joint_angle_pose);
 
@@ -199,7 +202,8 @@ void InitialPoseModule::poseGenerateProc(Eigen::MatrixXd joint_angle_pose)
                                                                 initial_pose_module_state_->smp_time_,
                                                                 initial_pose_module_state_->mov_time_);
 
-    initial_pose_module_state_->calc_joint_tra_.block(0, id, initial_pose_module_state_->all_time_steps_, 1) = tra;
+    initial_pose_module_state_->calc_joint_trajectory_.block(0, id, initial_pose_module_state_->all_time_steps_, 1) =
+        tra;
   }
 
   initial_pose_module_state_->is_moving_ = true;
@@ -235,7 +239,8 @@ void InitialPoseModule::poseGenerateProc(std::map<std::string, double>& joint_an
   initial_pose_module_state_->all_time_steps_ =
       int(initial_pose_module_state_->mov_time_ / initial_pose_module_state_->smp_time_) + 1;
 
-  initial_pose_module_state_->calc_joint_tra_.resize(initial_pose_module_state_->all_time_steps_, MAX_JOINT_ID + 1);
+  initial_pose_module_state_->calc_joint_trajectory_.resize(initial_pose_module_state_->all_time_steps_,
+                                                            MAX_JOINT_ID + 1);
 
   for (int id = 1; id <= MAX_JOINT_ID; id++)
   {
@@ -248,7 +253,8 @@ void InitialPoseModule::poseGenerateProc(std::map<std::string, double>& joint_an
                                                                 initial_pose_module_state_->smp_time_,
                                                                 initial_pose_module_state_->mov_time_);
 
-    initial_pose_module_state_->calc_joint_tra_.block(0, id, initial_pose_module_state_->all_time_steps_, 1) = tra;
+    initial_pose_module_state_->calc_joint_trajectory_.block(0, id, initial_pose_module_state_->all_time_steps_, 1) =
+        tra;
   }
 
   initial_pose_module_state_->is_moving_ = true;
@@ -297,7 +303,7 @@ void InitialPoseModule::process(std::map<std::string, robotis_framework::Dynamix
 
     for (int id = 1; id <= MAX_JOINT_ID; id++)
       joint_state_->goal_joint_state_[id].position_ =
-          initial_pose_module_state_->calc_joint_tra_(initial_pose_module_state_->cnt_, id);
+          initial_pose_module_state_->calc_joint_trajectory_(initial_pose_module_state_->cnt_, id);
 
     initial_pose_module_state_->cnt_++;
   }

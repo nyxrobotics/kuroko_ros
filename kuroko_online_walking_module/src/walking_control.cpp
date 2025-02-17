@@ -22,8 +22,8 @@ WalkingControl::WalkingControl(double control_cycle, double dsp_ratio, double li
   foot_origin_shift_y_ = foot_distance;  // 0.09; //0.07;
 
   // Foot Trajectory Parameter
-  dsp_ratio_ = dsp_ratio;             // default:
-  foot_tra_max_z_ = foot_height_max;  // default:
+  dsp_ratio_ = dsp_ratio;                    // default:
+  foot_trajectory_max_z_ = foot_height_max;  // default:
 
   // Preview Control Parameter
   preview_time_ = 1.6;
@@ -477,7 +477,7 @@ void WalkingControl::calcFootTrajectory(int step)
 
     via_l_foot_pos[0] = 0.5 * (init_l_foot_pos_[0] + goal_l_foot_pos_[0]);
     via_l_foot_pos[1] = 0.5 * (init_l_foot_pos_[1] + goal_l_foot_pos_[1]);
-    via_l_foot_pos[2] = foot_tra_max_z_;
+    via_l_foot_pos[2] = foot_trajectory_max_z_;
 
     if (step == 0 || step == 1)
       via_l_foot_pos[2] = 0.0;
@@ -486,10 +486,9 @@ void WalkingControl::calcFootTrajectory(int step)
       via_l_foot_pos[2] = 0.0;
 
     // Trajectory
-    l_foot_tra_ = new robotis_framework::MinimumJerkViaPoint(init_time_, fin_time_, via_time, dsp_ratio_,
-                                                             init_l_foot_pos_, init_l_foot_vel_, init_l_foot_accel_,
-                                                             goal_l_foot_pos_, goal_l_foot_vel_, goal_l_foot_accel_,
-                                                             via_l_foot_pos, via_l_foot_vel, via_l_foot_accel);
+    l_foot_trajectory_ = new robotis_framework::MinimumJerkViaPoint(
+        init_time_, fin_time_, via_time, dsp_ratio_, init_l_foot_pos_, init_l_foot_vel_, init_l_foot_accel_,
+        goal_l_foot_pos_, goal_l_foot_vel_, goal_l_foot_accel_, via_l_foot_pos, via_l_foot_vel, via_l_foot_accel);
 
     //    ROS_INFO("angle: %f", angle);
   }
@@ -518,7 +517,7 @@ void WalkingControl::calcFootTrajectory(int step)
 
     via_r_foot_pos[0] = 0.5 * (init_r_foot_pos_[0] + goal_r_foot_pos_[0]);
     via_r_foot_pos[1] = 0.5 * (init_r_foot_pos_[1] + goal_r_foot_pos_[1]);
-    via_r_foot_pos[2] = foot_tra_max_z_;
+    via_r_foot_pos[2] = foot_trajectory_max_z_;
 
     if (step == 0 || step == 1)
       via_r_foot_pos[2] = 0.0;
@@ -527,10 +526,9 @@ void WalkingControl::calcFootTrajectory(int step)
       via_r_foot_pos[2] = 0.0;
 
     // Trajectory
-    r_foot_tra_ = new robotis_framework::MinimumJerkViaPoint(init_time_, fin_time_, via_time, dsp_ratio_,
-                                                             init_r_foot_pos_, init_r_foot_vel_, init_r_foot_accel_,
-                                                             goal_r_foot_pos_, goal_r_foot_vel_, goal_r_foot_accel_,
-                                                             via_r_foot_pos, via_r_foot_vel, via_r_foot_accel);
+    r_foot_trajectory_ = new robotis_framework::MinimumJerkViaPoint(
+        init_time_, fin_time_, via_time, dsp_ratio_, init_r_foot_pos_, init_r_foot_vel_, init_r_foot_accel_,
+        goal_r_foot_pos_, goal_r_foot_vel_, goal_r_foot_accel_, via_r_foot_pos, via_r_foot_vel, via_r_foot_accel);
   }
 }
 
@@ -538,9 +536,9 @@ void WalkingControl::calcFootStepPose(double time, int step)
 {
   if (foot_step_param_.moving_foot[step] == LEFT_LEG)
   {
-    des_l_foot_pos_ = l_foot_tra_->getPosition(time);
-    des_l_foot_vel_ = l_foot_tra_->getVelocity(time);
-    des_l_foot_accel_ = l_foot_tra_->getAcceleration(time);
+    des_l_foot_pos_ = l_foot_trajectory_->getPosition(time);
+    des_l_foot_vel_ = l_foot_trajectory_->getVelocity(time);
+    des_l_foot_accel_ = l_foot_trajectory_->getAcceleration(time);
 
     des_r_foot_pos_ = goal_r_foot_pos_;
     des_r_foot_vel_.resize(3, 0.0);
@@ -550,9 +548,9 @@ void WalkingControl::calcFootStepPose(double time, int step)
   }
   else if (foot_step_param_.moving_foot[step] == RIGHT_LEG)
   {
-    des_r_foot_pos_ = r_foot_tra_->getPosition(time);
-    des_r_foot_vel_ = r_foot_tra_->getVelocity(time);
-    des_r_foot_accel_ = r_foot_tra_->getAcceleration(time);
+    des_r_foot_pos_ = r_foot_trajectory_->getPosition(time);
+    des_r_foot_vel_ = r_foot_trajectory_->getVelocity(time);
+    des_r_foot_accel_ = r_foot_trajectory_->getAcceleration(time);
 
     des_l_foot_pos_ = goal_l_foot_pos_;
     des_l_foot_vel_.resize(3, 0.0);

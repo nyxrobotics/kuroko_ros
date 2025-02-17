@@ -321,9 +321,9 @@ void WalkingModule::process(std::map<std::string, robotis_framework::Dynamixel*>
 
   if (walking_state_ == WALKING_INIT_POSE)
   {
-    int total_count = calc_joint_tra_.rows();
+    int total_count = calc_joint_trajectory_.rows();
     for (int id = 0; id < result_.size(); id++)
-      target_position_.coeffRef(0, id) = calc_joint_tra_(init_pose_count_, id + 1);
+      target_position_.coeffRef(0, id) = calc_joint_trajectory_(init_pose_count_, id + 1);
 
     init_pose_count_ += 1;
     if (init_pose_count_ >= total_count)
@@ -877,7 +877,7 @@ void WalkingModule::iniPoseTraGene(double mov_time)
 {
   double smp_time = control_cycle_msec_ * 0.001;
   int all_time_steps = int(mov_time / smp_time) + 1;
-  calc_joint_tra_.resize(all_time_steps, result_.size() + 1);
+  calc_joint_trajectory_.resize(all_time_steps, result_.size() + 1);
 
   for (int id = 0; id < result_.size(); id++)
   {
@@ -888,7 +888,7 @@ void WalkingModule::iniPoseTraGene(double mov_time)
 
     tra = robotis_framework::calcMinimumJerkTra(ini_value, 0.0, 0.0, tar_value, 0.0, 0.0, smp_time, mov_time);
 
-    calc_joint_tra_.block(0, id + 1, all_time_steps, 1) = tra;
+    calc_joint_trajectory_.block(0, id + 1, all_time_steps, 1) = tra;
   }
 
   if (debug_)

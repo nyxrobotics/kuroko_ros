@@ -118,7 +118,7 @@ private:
   ros::Publisher robot_pose_pub_;
   ros::Publisher status_msg_pub_;
 
-  Eigen::MatrixXd calc_joint_tra_;
+  Eigen::MatrixXd calc_joint_trajectory_;
 
   Eigen::MatrixXd target_position_;  // Target values for joint angles inside the gait program
   Eigen::MatrixXd goal_position_;    // Target angles currently set for Servo Motors

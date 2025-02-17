@@ -83,8 +83,8 @@ protected:
   //  thormang3::KinematicsDynamics *robot_;
 
   robotis_framework::MinimumJerk* body_trajectory_;
-  robotis_framework::MinimumJerkViaPoint* r_foot_tra_;
-  robotis_framework::MinimumJerkViaPoint* l_foot_tra_;
+  robotis_framework::MinimumJerkViaPoint* r_foot_trajectory_;
+  robotis_framework::MinimumJerkViaPoint* l_foot_trajectory_;
 
   robotis_framework::PreviewControl* preview_control_;
 
@@ -101,7 +101,7 @@ protected:
   double foot_origin_shift_y_;
 
   double dsp_ratio_;
-  double foot_tra_max_z_;
+  double foot_trajectory_max_z_;
 
   int foot_step_size_;
   op3_online_walking_module_msgs::FootStepCommand foot_step_command_;

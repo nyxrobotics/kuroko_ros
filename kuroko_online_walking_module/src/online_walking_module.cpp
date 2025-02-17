@@ -437,8 +437,9 @@ void OnlineWalkingModule::initBalanceControl()
   std::vector<double_t> balance_zero;
   balance_zero.resize(1, 0.0);
 
-  balance_tra_ = new robotis_framework::MinimumJerk(ini_time, mov_time, des_balance_gain_ratio_, balance_zero,
-                                                    balance_zero, goal_balance_gain_ratio_, balance_zero, balance_zero);
+  balance_trajectory_ =
+      new robotis_framework::MinimumJerk(ini_time, mov_time, des_balance_gain_ratio_, balance_zero, balance_zero,
+                                         goal_balance_gain_ratio_, balance_zero, balance_zero);
 
   if (is_balancing_)
     ROS_INFO("[UPDATE] Balance Gain");
@@ -454,13 +455,13 @@ void OnlineWalkingModule::calcBalanceControl()
   if (is_balancing_)
   {
     double cur_time = (double)balance_step_ * control_cycle_sec_;
-    des_balance_gain_ratio_ = balance_tra_->getPosition(cur_time);
+    des_balance_gain_ratio_ = balance_trajectory_->getPosition(cur_time);
 
     if (balance_step_ == balance_size_ - 1)
     {
       balance_step_ = 0;
       is_balancing_ = false;
-      delete balance_tra_;
+      delete balance_trajectory_;
 
       if (des_balance_gain_ratio_[0] == 0.0)
       {
@@ -621,8 +622,9 @@ void OnlineWalkingModule::initJointControl()
   mov_step_ = 0;
   mov_size_ = (int)(mov_time / control_cycle_sec_) + 1;
 
-  joint_tra_ = new robotis_framework::MinimumJerk(ini_time, mov_time, des_joint_pos_, des_joint_vel_, des_joint_accel_,
-                                                  goal_joint_pos_, goal_joint_vel_, goal_joint_accel_);
+  joint_trajectory_ =
+      new robotis_framework::MinimumJerk(ini_time, mov_time, des_joint_pos_, des_joint_vel_, des_joint_accel_,
+                                         goal_joint_pos_, goal_joint_vel_, goal_joint_accel_);
   if (is_moving_)
     ROS_INFO("[UPDATE] Joint Control");
   else
@@ -640,9 +642,9 @@ void OnlineWalkingModule::calcJointControl()
 
     queue_mutex_.lock();
 
-    des_joint_pos_ = joint_tra_->getPosition(cur_time);
-    des_joint_vel_ = joint_tra_->getVelocity(cur_time);
-    des_joint_accel_ = joint_tra_->getAcceleration(cur_time);
+    des_joint_pos_ = joint_trajectory_->getPosition(cur_time);
+    des_joint_vel_ = joint_trajectory_->getVelocity(cur_time);
+    des_joint_accel_ = joint_trajectory_->getAcceleration(cur_time);
 
     queue_mutex_.unlock();
 
@@ -650,7 +652,7 @@ void OnlineWalkingModule::calcJointControl()
     {
       mov_step_ = 0;
       is_moving_ = false;
-      delete joint_tra_;
+      delete joint_trajectory_;
 
       control_type_ = NONE;
 
@@ -711,8 +713,8 @@ void OnlineWalkingModule::initOffsetControl()
   std::vector<double_t> offset_zero;
   offset_zero.resize(3, 0.0);
 
-  body_offset_tra_ = new robotis_framework::MinimumJerk(ini_time, mov_time, des_body_offset_, offset_zero, offset_zero,
-                                                        goal_body_offset_, offset_zero, offset_zero);
+  body_offset_trajectory_ = new robotis_framework::MinimumJerk(
+      ini_time, mov_time, des_body_offset_, offset_zero, offset_zero, goal_body_offset_, offset_zero, offset_zero);
 
   if (is_moving_)
     ROS_INFO("[UPDATE] Body Offset");
@@ -731,7 +733,7 @@ void OnlineWalkingModule::calcOffsetControl()
 
     queue_mutex_.lock();
 
-    des_body_offset_ = body_offset_tra_->getPosition(cur_time);
+    des_body_offset_ = body_offset_trajectory_->getPosition(cur_time);
 
     queue_mutex_.unlock();
 
@@ -739,7 +741,7 @@ void OnlineWalkingModule::calcOffsetControl()
     {
       body_offset_step_ = 0;
       is_moving_ = false;
-      delete body_offset_tra_;
+      delete body_offset_trajectory_;
 
       control_type_ = NONE;
 
@@ -1097,9 +1099,10 @@ void OnlineWalkingModule::initFeedforwardControl()
   double via_time = 0.5 * (init_time + fin_time);
   double dsp_ratio = walking_param_.dsp_ratio;
 
-  feed_forward_tra_ = new robotis_framework::MinimumJerkViaPoint(init_time, fin_time, via_time, dsp_ratio, zero_vector,
-                                                                 zero_vector, zero_vector, zero_vector, zero_vector,
-                                                                 zero_vector, via_pos, zero_vector, zero_vector);
+  feed_forward_trajectory_ =
+      new robotis_framework::MinimumJerkViaPoint(init_time, fin_time, via_time, dsp_ratio, zero_vector, zero_vector,
+                                                 zero_vector, zero_vector, zero_vector, zero_vector, via_pos,
+                                                 zero_vector, zero_vector);
 }
 
 void OnlineWalkingModule::calcRobotPose()
@@ -1459,7 +1462,7 @@ void OnlineWalkingModule::setFeedforwardControl()
 {
   double cur_time = (double)mov_step_ * control_cycle_sec_;
 
-  std::vector<double_t> feed_forward_value = feed_forward_tra_->getPosition(cur_time);
+  std::vector<double_t> feed_forward_value = feed_forward_trajectory_->getPosition(cur_time);
 
   if (walking_phase_ == DSP)
     feed_forward_value[0] = 0.0;

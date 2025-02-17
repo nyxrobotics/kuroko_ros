@@ -172,10 +172,10 @@ private:
   int walking_leg_, walking_phase_;
   int walking_size_, walking_step_;
 
-  robotis_framework::MinimumJerk* joint_tra_;
-  robotis_framework::MinimumJerk* balance_tra_;
-  robotis_framework::MinimumJerk* body_offset_tra_;
-  robotis_framework::MinimumJerkViaPoint* feed_forward_tra_;
+  robotis_framework::MinimumJerk* joint_trajectory_;
+  robotis_framework::MinimumJerk* balance_trajectory_;
+  robotis_framework::MinimumJerk* body_offset_trajectory_;
+  robotis_framework::MinimumJerkViaPoint* feed_forward_trajectory_;
 
   size_t number_of_joints_;
   std::vector<std::string> joint_name_;

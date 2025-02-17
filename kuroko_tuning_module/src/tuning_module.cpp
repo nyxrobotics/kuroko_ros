@@ -180,7 +180,7 @@ bool TuningModule::parseInitPoseData(const std::string& path)
   }
 
   tuning_module_state_->all_time_steps_ = int(tuning_module_state_->mov_time_ / tuning_module_state_->smp_time_) + 1;
-  tuning_module_state_->calc_joint_tra_.resize(tuning_module_state_->all_time_steps_, MAX_JOINT_ID + 1);
+  tuning_module_state_->calc_joint_trajectory_.resize(tuning_module_state_->all_time_steps_, MAX_JOINT_ID + 1);
 
   return true;
 }
@@ -284,7 +284,7 @@ bool TuningModule::parseTunePoseData(const std::string& path, const std::string&
   }
 
   tuning_module_state_->all_time_steps_ = int(tuning_module_state_->mov_time_ / tuning_module_state_->smp_time_) + 1;
-  tuning_module_state_->calc_joint_tra_.resize(tuning_module_state_->all_time_steps_, MAX_JOINT_ID + 1);
+  tuning_module_state_->calc_joint_trajectory_.resize(tuning_module_state_->all_time_steps_, MAX_JOINT_ID + 1);
 
   ROS_INFO_STREAM("tune pose - via_num : " << via_num << ", move_time : " << total_move_time);
 
@@ -387,7 +387,7 @@ void TuningModule::targetPoseTrajGenerateProc()
           0.0, tuning_module_state_->smp_time_, tuning_module_state_->via_time_, tuning_module_state_->mov_time_);
     }
 
-    tuning_module_state_->calc_joint_tra_.block(0, id, tuning_module_state_->all_time_steps_, 1) = tra;
+    tuning_module_state_->calc_joint_trajectory_.block(0, id, tuning_module_state_->all_time_steps_, 1) = tra;
   }
 
   tuning_module_state_->is_moving_ = true;
@@ -405,7 +405,7 @@ void TuningModule::poseGenerateProc(Eigen::MatrixXd joint_angle_pose)
   tuning_module_state_->mov_time_ = 5.0;
   tuning_module_state_->all_time_steps_ = int(tuning_module_state_->mov_time_ / tuning_module_state_->smp_time_) + 1;
 
-  tuning_module_state_->calc_joint_tra_.resize(tuning_module_state_->all_time_steps_, MAX_JOINT_ID + 1);
+  tuning_module_state_->calc_joint_trajectory_.resize(tuning_module_state_->all_time_steps_, MAX_JOINT_ID + 1);
 
   tuning_module_state_->joint_pose_ = std::move(joint_angle_pose);
 
@@ -419,7 +419,7 @@ void TuningModule::poseGenerateProc(Eigen::MatrixXd joint_angle_pose)
     Eigen::MatrixXd tra = robotis_framework::calcMinimumJerkTra(
         ini_value, 0.0, 0.0, tar_value, 0.0, 0.0, tuning_module_state_->smp_time_, tuning_module_state_->mov_time_);
 
-    tuning_module_state_->calc_joint_tra_.block(0, id, tuning_module_state_->all_time_steps_, 1) = tra;
+    tuning_module_state_->calc_joint_trajectory_.block(0, id, tuning_module_state_->all_time_steps_, 1) = tra;
   }
 
   tuning_module_state_->is_moving_ = true;
@@ -454,7 +454,7 @@ void TuningModule::poseGenerateProc(std::map<std::string, double>& joint_angle_p
   tuning_module_state_->mov_time_ = 5.0;
   tuning_module_state_->all_time_steps_ = int(tuning_module_state_->mov_time_ / tuning_module_state_->smp_time_) + 1;
 
-  tuning_module_state_->calc_joint_tra_.resize(tuning_module_state_->all_time_steps_, MAX_JOINT_ID + 1);
+  tuning_module_state_->calc_joint_trajectory_.resize(tuning_module_state_->all_time_steps_, MAX_JOINT_ID + 1);
 
   for (int id = 1; id <= MAX_JOINT_ID; id++)
   {
@@ -466,7 +466,7 @@ void TuningModule::poseGenerateProc(std::map<std::string, double>& joint_angle_p
     Eigen::MatrixXd tra = robotis_framework::calcMinimumJerkTra(
         ini_value, 0.0, 0.0, tar_value, 0.0, 0.0, tuning_module_state_->smp_time_, tuning_module_state_->mov_time_);
 
-    tuning_module_state_->calc_joint_tra_.block(0, id, tuning_module_state_->all_time_steps_, 1) = tra;
+    tuning_module_state_->calc_joint_trajectory_.block(0, id, tuning_module_state_->all_time_steps_, 1) = tra;
   }
 
   tuning_module_state_->is_moving_ = true;
@@ -531,7 +531,7 @@ void TuningModule::process(std::map<std::string, robotis_framework::Dynamixel*> 
 
     for (int id = 1; id <= MAX_JOINT_ID; id++)
       joint_state_->goal_joint_state_[id].position_ =
-          tuning_module_state_->calc_joint_tra_(tuning_module_state_->cnt_, id);
+          tuning_module_state_->calc_joint_trajectory_(tuning_module_state_->cnt_, id);
 
     tuning_module_state_->cnt_++;
   }

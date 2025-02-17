@@ -111,7 +111,6 @@ include_directories(
 add_library(
   ${PROJECT_NAME}
   src/online_walking_module.cpp
-  src/joint_control.cpp
   src/walking_control.cpp
   src/wholebody_control.cpp
 )

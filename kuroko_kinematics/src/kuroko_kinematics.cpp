@@ -588,10 +588,16 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
   gripper_length_ = 0.208;
 }
 
-bool KurokoKinematics::solveInverseKinematicsForRightLeg(std::vector<double>& joints_out, double x, double y, double z,
-                                                         double roll, double pitch, double yaw)
+bool KurokoKinematics::solveInverseKinematicsForRightLeg(std::vector<double>& joints_out,
+                                                         std::vector<double> target_pose_in)
 {
   // Calculating Inverse Kinematics for Right Leg
+  double x = target_pose_in[0];
+  double y = target_pose_in[1];
+  double z = target_pose_in[2];
+  double roll = target_pose_in[3];
+  double pitch = target_pose_in[4];
+  double yaw = target_pose_in[5];
 
   // Define link lengths based on the robot's dimensions
   double hip_roll_to_pitch_offset_y = -leg_side_offset_ / 2.0;
@@ -735,10 +741,16 @@ bool KurokoKinematics::solveInverseKinematicsForRightLeg(std::vector<double>& jo
   return true;
 }
 
-bool KurokoKinematics::solveInverseKinematicsForLeftLeg(std::vector<double>& joints_out, double x, double y, double z,
-                                                        double roll, double pitch, double yaw)
+bool KurokoKinematics::solveInverseKinematicsForLeftLeg(std::vector<double>& joints_out,
+                                                        std::vector<double> target_pose_in)
 {
   // Calculating Inverse Kinematics for Left Leg
+  double x = target_pose_in[0];
+  double y = target_pose_in[1];
+  double z = target_pose_in[2];
+  double roll = target_pose_in[3];
+  double pitch = target_pose_in[4];
+  double yaw = target_pose_in[5];
 
   // Define link lengths based on the robot's dimensions
   double hip_roll_to_pitch_offset_y = leg_side_offset_ / 2.0;
@@ -874,9 +886,10 @@ bool KurokoKinematics::solveInverseKinematicsForLeftLeg(std::vector<double>& joi
   return true;
 }
 
-bool KurokoKinematics::solveForwardKinematicsForRightLeg(const std::vector<double>& joints_in, double& x, double& y,
-                                                         double& z, double& roll, double& pitch, double& yaw)
+bool KurokoKinematics::solveForwardKinematicsForRightLeg(const std::vector<double> joints_in,
+                                                         std::vector<double>& target_pose_out)
 {
+  double x, y, z, roll, pitch, yaw;
   // Define link lengths for the right leg
   double hip_roll_to_pitch_offset_y = -leg_side_offset_ / 2.0;
   double hip_pitch_to_thigh_upper_z = joint_link_tree_[getLinkIndex("thigh_r_active")]->joint_position_.coeff(2, 0);
@@ -953,12 +966,21 @@ bool KurokoKinematics::solveForwardKinematicsForRightLeg(const std::vector<doubl
   z = toe_end_z_rolled;
   y = toe_end_y_rolled;
 
+  target_pose_out.resize(6);
+  target_pose_out[0] = x;
+  target_pose_out[1] = y;
+  target_pose_out[2] = z;
+  target_pose_out[3] = roll;
+  target_pose_out[4] = pitch;
+  target_pose_out[5] = yaw;
+
   return true;
 }
 
-bool KurokoKinematics::solveForwardKinematicsForLeftLeg(const std::vector<double>& joints_in, double& x, double& y,
-                                                        double& z, double& roll, double& pitch, double& yaw)
+bool KurokoKinematics::solveForwardKinematicsForLeftLeg(const std::vector<double> joints_in,
+                                                        std::vector<double>& target_pose_out)
 {
+  double x, y, z, roll, pitch, yaw;
   // Define link lengths for the left leg
   double hip_roll_to_pitch_offset_y = leg_side_offset_ / 2.0;
   double hip_pitch_to_thigh_upper_z = joint_link_tree_[getLinkIndex("thigh_l_active")]->joint_position_.coeff(2, 0);
@@ -1035,6 +1057,13 @@ bool KurokoKinematics::solveForwardKinematicsForLeftLeg(const std::vector<double
   z = toe_end_z_rolled;
   y = toe_end_y_rolled;
 
+  target_pose_out.resize(6);
+  target_pose_out[0] = x;
+  target_pose_out[1] = y;
+  target_pose_out[2] = z;
+  target_pose_out[3] = roll;
+  target_pose_out[4] = pitch;
+  target_pose_out[5] = yaw;
   return true;
 }
 

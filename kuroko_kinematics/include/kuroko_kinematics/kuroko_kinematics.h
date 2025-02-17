@@ -23,15 +23,11 @@ public:
   ~KurokoKinematics();
   KurokoKinematics(TreeSelect tree);
 
-  bool solveInverseKinematicsForRightLeg(std::vector<double>& joints_out, double x, double y, double z, double roll,
-                                         double pitch, double yaw);
-  bool solveInverseKinematicsForLeftLeg(std::vector<double>& joints_out, double x, double y, double z, double roll,
-                                        double pitch, double yaw);
+  bool solveInverseKinematicsForRightLeg(std::vector<double>& joints_out, std::vector<double> target_pose_in);
+  bool solveInverseKinematicsForLeftLeg(std::vector<double>& joints_out, std::vector<double> target_pose_in);
 
-  bool solveForwardKinematicsForRightLeg(const std::vector<double>& joints_in, double& x, double& y, double& z,
-                                         double& roll, double& pitch, double& yaw);
-  bool solveForwardKinematicsForLeftLeg(const std::vector<double>& joints_in, double& x, double& y, double& z,
-                                        double& roll, double& pitch, double& yaw);
+  bool solveForwardKinematicsForRightLeg(const std::vector<double> joints_in, std::vector<double>& target_pose_out);
+  bool solveForwardKinematicsForLeftLeg(const std::vector<double> joints_in, std::vector<double>& target_pose_out);
 
   Eigen::MatrixXd getJointAxis(const std::string& link_name);
   double getJointDirection(const std::string& link_name);

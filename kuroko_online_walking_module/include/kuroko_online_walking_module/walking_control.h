@@ -40,11 +40,11 @@ public:
   virtual ~WalkingControl();
 
   void initialize(op3_online_walking_module_msgs::FootStepCommand foot_step_command,
-                  const std::vector<double_t>& init_body_pos, std::vector<double_t> init_body_Q,
+                  const std::vector<double_t>& init_body_pos, std::vector<double_t> init_body_rpy,
                   std::vector<double_t> init_r_foot_pos, std::vector<double_t> init_r_foot_rpy,
                   std::vector<double_t> init_l_foot_pos, std::vector<double_t> init_l_foot_rpy);
   void initialize(op3_online_walking_module_msgs::Step2DArray foot_step_2d, const std::vector<double_t>& init_body_pos,
-                  std::vector<double_t> init_body_Q, std::vector<double_t> init_r_foot_pos,
+                  std::vector<double_t> init_body_rpy, std::vector<double_t> init_r_foot_pos,
                   std::vector<double_t> init_r_foot_rpy, std::vector<double_t> init_l_foot_pos,
                   std::vector<double_t> init_l_foot_rpy);
   void next();
@@ -74,8 +74,8 @@ public:
                           std::vector<double_t>& body_vel);
   void getWalkingAccleration(std::vector<double_t>& l_foot_accel, std::vector<double_t>& r_foot_accel,
                              std::vector<double_t>& body_accel);
-  void getWalkingOrientation(std::vector<double_t>& l_foot_Q, std::vector<double_t>& r_foot_Q,
-                             std::vector<double_t>& body_Q);
+  void getWalkingOrientation(std::vector<double_t>& l_foot_rpy, std::vector<double_t>& r_foot_rpy,
+                             std::vector<double_t>& body_rpy);
   void getLIPM(std::vector<double_t>& x_lipm, std::vector<double_t>& y_lipm);
   void getWalkingState(int& walking_leg, int& walking_phase);
 
@@ -129,26 +129,26 @@ protected:
   double preview_sum_zmp_x_, preview_sum_zmp_y_;
   double zmp_offset_x_, zmp_offset_y_;
 
-  Eigen::MatrixXd goal_r_foot_pos_buffer_, goal_l_foot_pos_buffer_;
+  Eigen::MatrixXd goal_r_foot_position_buffer_, goal_l_foot_position_buffer_;
   Eigen::MatrixXd ref_zmp_buffer_;
 
   // Pose Information
   double init_body_yaw_angle_;
 
-  std::vector<double_t> init_body_position_, init_body_vel_, init_body_accel_;
+  std::vector<double_t> init_body_position_, init_body_velocity_, init_body_accel_;
   std::vector<double_t> des_body_position_, des_body_velocity_, des_body_accel_;
-  std::vector<double_t> goal_body_pos_, goal_body_vel_, goal_body_accel_;
-  Eigen::Quaterniond init_body_q_, des_body_q_, goal_body_q_;
+  std::vector<double_t> goal_body_position_, goal_body_velocity_, goal_body_accel_;
+  Eigen::Quaterniond init_body_quaternion_, des_body_quaternion_, goal_body_quaternion_;
 
-  std::vector<double_t> init_l_foot_pos_, init_l_foot_vel_, init_l_foot_accel_;
-  std::vector<double_t> des_l_foot_pos_, des_l_foot_vel_, des_l_foot_accel_;
-  std::vector<double_t> goal_l_foot_pos_, goal_l_foot_vel_, goal_l_foot_accel_;
-  Eigen::Quaterniond init_l_foot_q_, des_l_foot_q_, goal_l_foot_q_;
+  std::vector<double_t> init_l_foot_position_, init_l_foot_velocity_, init_l_foot_accel_;
+  std::vector<double_t> des_l_foot_position_, des_l_foot_velocity_, des_l_foot_accel_;
+  std::vector<double_t> goal_l_foot_position_, goal_l_foot_velocity_, goal_l_foot_accel_;
+  Eigen::Quaterniond init_l_foot_quaternion_, des_l_foot_quaternion_, goal_l_foot_quaternion_;
 
-  std::vector<double_t> init_r_foot_pos_, init_r_foot_vel_, init_r_foot_accel_;
-  std::vector<double_t> des_r_foot_pos_, des_r_foot_vel_, des_r_foot_accel_;
-  std::vector<double_t> goal_r_foot_pos_, goal_r_foot_vel_, goal_r_foot_accel_;
-  Eigen::Quaterniond init_r_foot_q_, des_r_foot_q_, goal_r_foot_q_;
+  std::vector<double_t> init_r_foot_position_, init_r_foot_velocity_, init_r_foot_accel_;
+  std::vector<double_t> des_r_foot_position_, des_r_foot_velocity_, des_r_foot_accel_;
+  std::vector<double_t> goal_r_foot_position_, goal_r_foot_velocity_, goal_r_foot_accel_;
+  Eigen::Quaterniond init_r_foot_quaternion_, des_r_foot_quaternion_, goal_r_foot_quaternion_;
 };
 
 #endif

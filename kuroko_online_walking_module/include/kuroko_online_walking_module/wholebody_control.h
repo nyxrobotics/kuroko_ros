@@ -47,23 +47,23 @@ private:
   double init_time_, fin_time_;
   geometry_msgs::Pose goal_msg_;
 
-  std::vector<double_t> init_body_position_, init_body_vel_, init_body_accel_;
+  std::vector<double_t> init_body_position_, init_body_velocity_, init_body_accel_;
   std::vector<double_t> des_body_position_, des_body_velocity_, des_body_accel_;
-  std::vector<double_t> goal_body_pos_, goal_body_vel_, goal_body_accel_;
-  Eigen::Quaterniond init_body_q_, des_body_q_, goal_body_q_;
+  std::vector<double_t> goal_body_position_, goal_body_velocity_, goal_body_accel_;
+  Eigen::Quaterniond init_body_quaternion_, des_body_quaternion_, goal_body_quaternion_;
 
-  std::vector<double_t> init_l_foot_pos_, init_l_foot_vel_, init_l_foot_accel_;
-  std::vector<double_t> des_l_foot_pos_, des_l_foot_vel_, des_l_foot_accel_;
-  std::vector<double_t> goal_l_foot_pos_, goal_l_foot_vel_, goal_l_foot_accel_;
-  Eigen::Quaterniond init_l_foot_q_, des_l_foot_q_, goal_l_foot_q_;
+  std::vector<double_t> init_l_foot_position_, init_l_foot_velocity_, init_l_foot_accel_;
+  std::vector<double_t> des_l_foot_position_, des_l_foot_velocity_, des_l_foot_accel_;
+  std::vector<double_t> goal_l_foot_position_, goal_l_foot_velocity_, goal_l_foot_accel_;
+  Eigen::Quaterniond init_l_foot_quaternion_, des_l_foot_quaternion_, goal_l_foot_quaternion_;
 
-  std::vector<double_t> init_r_foot_pos_, init_r_foot_vel_, init_r_foot_accel_;
-  std::vector<double_t> des_r_foot_pos_, des_r_foot_vel_, des_r_foot_accel_;
-  std::vector<double_t> goal_r_foot_pos_, goal_r_foot_vel_, goal_r_foot_accel_;
-  Eigen::Quaterniond init_r_foot_q_, des_r_foot_q_, goal_r_foot_q_;
+  std::vector<double_t> init_r_foot_position_, init_r_foot_velocity_, init_r_foot_accel_;
+  std::vector<double_t> des_r_foot_position_, des_r_foot_velocity_, des_r_foot_accel_;
+  std::vector<double_t> goal_r_foot_position_, goal_r_foot_velocity_, goal_r_foot_accel_;
+  Eigen::Quaterniond init_r_foot_quaternion_, des_r_foot_quaternion_, goal_r_foot_quaternion_;
 
-  std::vector<double_t> goal_task_pos_, goal_task_vel_, goal_task_accel_;
-  Eigen::Quaterniond init_task_q_, des_task_q_, goal_task_q_;
+  std::vector<double_t> goal_task_position_, goal_task_velocity_, goal_task_accel_;
+  Eigen::Quaterniond init_task_quaternion_, des_task_quaternion_, goal_task_quaternion_;
 };
 
 #endif

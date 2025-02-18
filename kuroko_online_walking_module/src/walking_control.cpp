@@ -461,8 +461,8 @@ void WalkingControl::calcFootTrajectory(int step)
     // Goal
     goal_l_foot_pos_[0] = goal_l_foot_pos_buffer_.coeff(step, 0);
     goal_l_foot_pos_[1] = goal_l_foot_pos_buffer_.coeff(step, 1);
-    goal_l_foot_pos_[2] = init_r_foot_pos_[2];
 
+    goal_l_foot_pos_[2] = init_r_foot_pos_[2];
     goal_l_foot_q_ = robotis_framework::convertRPYToQuaternion(0.0, 0.0, angle);
 
     goal_r_foot_pos_ = init_r_foot_pos_;
@@ -502,7 +502,6 @@ void WalkingControl::calcFootTrajectory(int step)
     // Goal
     goal_r_foot_pos_[0] = goal_r_foot_pos_buffer_.coeff(step, 0);
     goal_r_foot_pos_[1] = goal_r_foot_pos_buffer_.coeff(step, 1);
-
     goal_r_foot_q_ = robotis_framework::convertRPYToQuaternion(0.0, 0.0, angle);
 
     goal_l_foot_pos_ = init_l_foot_pos_;

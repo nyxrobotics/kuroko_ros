@@ -320,6 +320,16 @@ void OnlineWalkingModule::parseBalanceGainData(const std::string& path)
   balance_knee_gain_ = doc["balance_knee_gain"].as<double>();
   balance_ankle_roll_gain_ = doc["balance_ankle_roll_gain"].as<double>();
   balance_ankle_pitch_gain_ = doc["balance_ankle_pitch_gain"].as<double>();
+
+  if (!doc["foot_roll_gyro_p_gain"])
+  {
+    ROS_ERROR("[ERROR] foot_roll_gyro_p_gain not found in YAML!");
+  }
+  if (!doc["foot_roll_gyro_d_gain"])
+  {
+    ROS_ERROR("[ERROR] foot_roll_gyro_d_gain not found in YAML!");
+  }
+  ROS_INFO("[DEBUG] foot_roll_gyro_p_gain_: %f", doc["foot_roll_gyro_p_gain"].as<double>());
 }
 
 void OnlineWalkingModule::parseJointFeedbackGainData(const std::string& path)
@@ -426,19 +436,56 @@ void OnlineWalkingModule::initBalanceControl()
 {
   if (balance_control_initialize_)
     return;
-
   double ini_time = 0.0;
   double mov_time = 1.0;
 
   balance_step_ = 0;
   balance_size_ = (int)(mov_time / control_cycle_sec_) + 1;
 
+  ROS_INFO("[DEBUG] control_cycle_sec_: %f", control_cycle_sec_);
+  ROS_INFO("[DEBUG] balance_size_: %d", balance_size_);
+  ROS_INFO("[DEBUG] des_balance_gain_ratio_ size: %lu", des_balance_gain_ratio_.size());
+  ROS_INFO("[DEBUG] goal_balance_gain_ratio_ size: %lu", goal_balance_gain_ratio_.size());
   std::vector<double_t> balance_zero;
   balance_zero.resize(1, 0.0);
+  ROS_INFO("[DEBUG] des_balance_gain_ratio_[0]: %f", des_balance_gain_ratio_[0]);
+  ROS_INFO("[DEBUG] goal_balance_gain_ratio_[0]: %f", goal_balance_gain_ratio_[0]);
+  ROS_INFO("[DEBUG] balance_zero size: %lu", balance_zero.size());
 
+  ROS_INFO("[DEBUG] Checking des_balance_gain_ratio_:");
+  for (size_t i = 0; i < des_balance_gain_ratio_.size(); i++)
+  {
+    ROS_INFO("[DEBUG] des_balance_gain_ratio_[%lu] = %f", i, des_balance_gain_ratio_[i]);
+  }
+  ROS_INFO("[DEBUG] Checking goal_balance_gain_ratio_:");
+  for (size_t i = 0; i < goal_balance_gain_ratio_.size(); i++)
+  {
+    ROS_INFO("[DEBUG] goal_balance_gain_ratio_[%lu] = %f", i, goal_balance_gain_ratio_[i]);
+  }
+  ROS_INFO("[DEBUG] Checking balance_zero:");
+  for (size_t i = 0; i < balance_zero.size(); i++)
+  {
+    ROS_INFO("[DEBUG] balance_zero[%lu] = %f", i, balance_zero[i]);
+  }
+
+  if (balance_trajectory_ != nullptr)
+  {
+    delete balance_trajectory_;
+    balance_trajectory_ = nullptr;
+  }
   balance_trajectory_ =
       new robotis_framework::MinimumJerk(ini_time, mov_time, des_balance_gain_ratio_, balance_zero, balance_zero,
                                          goal_balance_gain_ratio_, balance_zero, balance_zero);
+
+  if (balance_trajectory_ == nullptr)
+  {
+    ROS_ERROR("[ERROR] Failed to allocate memory for balance_trajectory_");
+    return;
+  }
+  else
+  {
+    ROS_INFO("[DEBUG] balance_trajectory_ allocated successfully.");
+  }
 
   if (is_balancing_)
     ROS_INFO("[UPDATE] Balance Gain");
@@ -454,6 +501,11 @@ void OnlineWalkingModule::calcBalanceControl()
 {
   if (is_balancing_)
   {
+    if (balance_trajectory_ == nullptr)
+    {
+      ROS_ERROR("[ERROR] balance_trajectory_ is NULL!");
+      return;
+    }
     double cur_time = (double)balance_step_ * control_cycle_sec_;
     des_balance_gain_ratio_ = balance_trajectory_->getPosition(cur_time);
 

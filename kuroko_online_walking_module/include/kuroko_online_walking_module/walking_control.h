@@ -41,12 +41,12 @@ public:
 
   void initialize(op3_online_walking_module_msgs::FootStepCommand foot_step_command,
                   const std::vector<double_t>& init_body_pos, std::vector<double_t> init_body_Q,
-                  std::vector<double_t> init_r_foot_pos, std::vector<double_t> init_r_foot_Q,
-                  std::vector<double_t> init_l_foot_pos, std::vector<double_t> init_l_foot_Q);
+                  std::vector<double_t> init_r_foot_pos, std::vector<double_t> init_r_foot_rpy,
+                  std::vector<double_t> init_l_foot_pos, std::vector<double_t> init_l_foot_rpy);
   void initialize(op3_online_walking_module_msgs::Step2DArray foot_step_2d, const std::vector<double_t>& init_body_pos,
                   std::vector<double_t> init_body_Q, std::vector<double_t> init_r_foot_pos,
-                  std::vector<double_t> init_r_foot_Q, std::vector<double_t> init_l_foot_pos,
-                  std::vector<double_t> init_l_foot_Q);
+                  std::vector<double_t> init_r_foot_rpy, std::vector<double_t> init_l_foot_pos,
+                  std::vector<double_t> init_l_foot_rpy);
   void next();
   void finalize();
   void set(double time, int step, bool foot_step_2d);
@@ -135,8 +135,8 @@ protected:
   // Pose Information
   double init_body_yaw_angle_;
 
-  std::vector<double_t> init_body_pos_, init_body_vel_, init_body_accel_;
-  std::vector<double_t> des_body_pos_, des_body_vel_, des_body_accel_;
+  std::vector<double_t> init_body_position_, init_body_vel_, init_body_accel_;
+  std::vector<double_t> des_body_position_, des_body_velocity_, des_body_accel_;
   std::vector<double_t> goal_body_pos_, goal_body_vel_, goal_body_accel_;
   Eigen::Quaterniond init_body_q_, des_body_q_, goal_body_q_;
 

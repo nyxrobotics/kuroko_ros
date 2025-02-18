@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "kuroko_online_walking_module/wholebody_control.h"
 #include <utility>
+#include "robotis_math/robotis_linear_algebra.h"
 
 WholebodyControl::WholebodyControl(std::string control_group, double init_time, double fin_time,
                                    geometry_msgs::Pose goal_msg)
@@ -13,11 +14,11 @@ WholebodyControl::WholebodyControl(std::string control_group, double init_time, 
   goal_msg_ = goal_msg;
 
   // Initialization
-  init_body_pos_.resize(3, 0.0);
+  init_body_position_.resize(3, 0.0);
   init_body_vel_.resize(3, 0.0);
   init_body_accel_.resize(3, 0.0);
-  des_body_pos_.resize(3, 0.0);
-  des_body_vel_.resize(3, 0.0);
+  des_body_position_.resize(3, 0.0);
+  des_body_velocity_.resize(3, 0.0);
   des_body_accel_.resize(3, 0.0);
   goal_body_pos_.resize(3, 0.0);
   goal_body_vel_.resize(3, 0.0);
@@ -60,14 +61,15 @@ WholebodyControl::~WholebodyControl()
 {
 }
 
-void WholebodyControl::initialize(const std::vector<double_t>& init_body_pos, std::vector<double_t> init_body_rot,
-                                  std::vector<double_t> init_r_foot_pos, std::vector<double_t> init_r_foot_Q,
-                                  std::vector<double_t> init_l_foot_pos, std::vector<double_t> init_l_foot_Q)
+void WholebodyControl::initialize(const std::vector<double_t>& init_body_pos, std::vector<double_t> init_body_rpy,
+                                  std::vector<double_t> init_r_foot_pos, std::vector<double_t> init_r_foot_rpy,
+                                  std::vector<double_t> init_l_foot_pos, std::vector<double_t> init_l_foot_rpy)
 {
-  init_body_pos_ = init_body_pos;
-  des_body_pos_ = init_body_pos;
+  init_body_position_ = init_body_pos;
+  des_body_position_ = init_body_pos;
 
-  Eigen::Quaterniond body_q(init_body_rot[3], init_body_rot[0], init_body_rot[1], init_body_rot[2]);
+  Eigen::Quaterniond body_q =
+      robotis_framework::convertRPYToQuaternion(init_body_rpy[0], init_body_rpy[1], init_body_rpy[2]);
   init_body_q_ = body_q;
   des_body_q_ = body_q;
 
@@ -77,18 +79,20 @@ void WholebodyControl::initialize(const std::vector<double_t>& init_body_pos, st
   des_l_foot_pos_ = init_l_foot_pos_;
   des_r_foot_pos_ = init_r_foot_pos_;
 
-  Eigen::Quaterniond l_foot_q(init_l_foot_Q[3], init_l_foot_Q[0], init_l_foot_Q[1], init_l_foot_Q[2]);
+  Eigen::Quaterniond l_foot_q =
+      robotis_framework::convertRPYToQuaternion(init_l_foot_rpy[0], init_l_foot_rpy[1], init_l_foot_rpy[2]);
   init_l_foot_q_ = l_foot_q;
   des_l_foot_q_ = l_foot_q;
 
-  Eigen::Quaterniond r_foot_q(init_r_foot_Q[3], init_r_foot_Q[0], init_r_foot_Q[1], init_r_foot_Q[2]);
+  Eigen::Quaterniond r_foot_q =
+      robotis_framework::convertRPYToQuaternion(init_r_foot_rpy[0], init_r_foot_rpy[1], init_r_foot_rpy[2]);
   init_r_foot_q_ = r_foot_q;
   des_r_foot_q_ = r_foot_q;
 
   if (control_group_ == "body")
   {
     task_trajectory_ =
-        new robotis_framework::MinimumJerk(init_time_, fin_time_, init_body_pos_, init_body_vel_, init_body_accel_,
+        new robotis_framework::MinimumJerk(init_time_, fin_time_, init_body_position_, init_body_vel_, init_body_accel_,
                                            goal_task_pos_, goal_task_vel_, goal_task_accel_);
     init_task_q_ = body_q;
   }
@@ -126,7 +130,7 @@ void WholebodyControl::set(double time)
 
   if (control_group_ == "left_leg")
   {
-    des_body_pos_ = init_body_pos_;
+    des_body_position_ = init_body_position_;
     des_body_q_ = init_body_q_;
 
     des_l_foot_pos_ = des_task_pos;
@@ -137,7 +141,7 @@ void WholebodyControl::set(double time)
   }
   else if (control_group_ == "right_leg")
   {
-    des_body_pos_ = init_body_pos_;
+    des_body_position_ = init_body_position_;
     des_body_q_ = init_body_q_;
 
     des_l_foot_pos_ = init_l_foot_pos_;
@@ -148,7 +152,7 @@ void WholebodyControl::set(double time)
   }
   else if (control_group_ == "body")
   {
-    des_body_pos_ = des_task_pos;
+    des_body_position_ = des_task_pos;
     des_body_q_ = des_task_q_;
 
     des_l_foot_pos_ = init_l_foot_pos_;
@@ -179,7 +183,7 @@ void WholebodyControl::getTaskPosition(std::vector<double_t>& l_foot_pos, std::v
 {
   l_foot_pos = des_l_foot_pos_;
   r_foot_pos = des_r_foot_pos_;
-  body_pos = des_body_pos_;
+  body_pos = des_body_position_;
 }
 
 std::vector<double_t> WholebodyControl::getTaskVelocity(double /*time*/)
@@ -192,23 +196,23 @@ std::vector<double_t> WholebodyControl::getTaskAcceleration(double /*time*/)
   return std::vector<double_t>();
 }
 
-void WholebodyControl::getTaskOrientation(std::vector<double_t>& l_foot_Q, std::vector<double_t>& r_foot_Q,
-                                          std::vector<double_t>& body_Q)
+void WholebodyControl::getTaskOrientation(std::vector<double_t>& l_foot_rpy, std::vector<double_t>& r_foot_rpy,
+                                          std::vector<double_t>& body_rpy)
 {
-  l_foot_Q[0] = des_l_foot_q_.x();
-  l_foot_Q[1] = des_l_foot_q_.y();
-  l_foot_Q[2] = des_l_foot_q_.z();
-  l_foot_Q[3] = des_l_foot_q_.w();
+  Eigen::Vector3d l_foot_rpy_euler = robotis_framework::convertQuaternionToRPY(des_l_foot_q_);
+  l_foot_rpy[0] = l_foot_rpy_euler.x();
+  l_foot_rpy[1] = l_foot_rpy_euler.y();
+  l_foot_rpy[2] = l_foot_rpy_euler.z();
 
-  r_foot_Q[0] = des_r_foot_q_.x();
-  r_foot_Q[1] = des_r_foot_q_.y();
-  r_foot_Q[2] = des_r_foot_q_.z();
-  r_foot_Q[3] = des_r_foot_q_.w();
+  Eigen::Vector3d r_foot_rpy_euler = robotis_framework::convertQuaternionToRPY(des_r_foot_q_);
+  r_foot_rpy[0] = r_foot_rpy_euler.x();
+  r_foot_rpy[1] = r_foot_rpy_euler.y();
+  r_foot_rpy[2] = r_foot_rpy_euler.z();
 
-  body_Q[0] = des_body_q_.x();
-  body_Q[1] = des_body_q_.y();
-  body_Q[2] = des_body_q_.z();
-  body_Q[3] = des_body_q_.w();
+  Eigen::Vector3d body_rpy_euler = robotis_framework::convertQuaternionToRPY(des_body_q_);
+  body_rpy[0] = body_rpy_euler.x();
+  body_rpy[1] = body_rpy_euler.y();
+  body_rpy[2] = body_rpy_euler.z();
 }
 void WholebodyControl::getGroupPose(const std::string& /*name*/, geometry_msgs::Pose* /*msg*/)
 {

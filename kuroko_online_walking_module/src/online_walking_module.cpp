@@ -28,6 +28,55 @@ OnlineWalkingModule::OnlineWalkingModule()
 
   kuroko_kinematics_ = new KurokoKinematics();
 
+  // Buffer size
+  number_of_joints_ = 12;
+
+  curr_joint_accel_.resize(number_of_joints_, 0.0);
+  curr_joint_vel_.resize(number_of_joints_, 0.0);
+  curr_joint_pos_.resize(number_of_joints_, 0.0);
+
+  des_joint_accel_.resize(number_of_joints_, 0.0);
+  des_joint_vel_.resize(number_of_joints_, 0.0);
+  des_joint_pos_.resize(number_of_joints_, 0.0);
+
+  goal_joint_accel_.resize(number_of_joints_, 0.0);
+  goal_joint_vel_.resize(number_of_joints_, 0.0);
+  goal_joint_pos_.resize(number_of_joints_, 0.0);
+
+  des_joint_feedback_.resize(number_of_joints_, 0.0);
+  des_joint_feedforward_.resize(number_of_joints_, 0.0);
+  des_joint_pos_to_robot_.resize(number_of_joints_, 0.0);
+
+  joint_feedforward_gain_.resize(number_of_joints_, 0.0);
+
+  // body position default
+  des_body_position_.resize(3, 0.0);
+  des_body_velocity_.resize(3, 0.0);
+  des_body_accel_.resize(3, 0.0);
+  des_body_rpy_.resize(3, 0.0);
+
+  // left foot position default
+  des_l_leg_position_.resize(3, 0.0);
+  des_l_leg_velocity_.resize(3, 0.0);
+  des_l_leg_accel_.resize(3, 0.0);
+  des_l_leg_rpy_.resize(3, 0.0);
+
+  // right foot position default
+  des_r_leg_position_.resize(3, 0.0);
+  des_r_leg_velocity_.resize(3, 0.0);
+  des_r_leg_accel_.resize(3, 0.0);
+  des_r_leg_rpy_.resize(3, 0.0);
+
+  x_lipm_.resize(3, 0.0);
+  y_lipm_.resize(3, 0.0);
+
+  des_balance_gain_ratio_.resize(1, 0.0);
+  goal_balance_gain_ratio_.resize(1, 0.0);
+
+  // Body Offset
+  des_body_offset_.resize(3, 0.0);
+  goal_body_offset_.resize(3, 0.0);
+
   /* leg */
   result_["ankle_r_yaw"] = new robotis_framework::DynamixelState();
   result_["hip_r_roll"] = new robotis_framework::DynamixelState();
@@ -57,48 +106,6 @@ OnlineWalkingModule::OnlineWalkingModule()
   joint_name_to_dxl_id_["ankle_r_roll"] = 11;
   joint_name_to_dxl_id_["ankle_l_roll"] = 12;
 
-  /* parameter */
-  number_of_joints_ = 12;
-
-  curr_joint_accel_.resize(number_of_joints_, 0.0);
-  curr_joint_vel_.resize(number_of_joints_, 0.0);
-  curr_joint_pos_.resize(number_of_joints_, 0.0);
-
-  des_joint_accel_.resize(number_of_joints_, 0.0);
-  des_joint_vel_.resize(number_of_joints_, 0.0);
-  des_joint_pos_.resize(number_of_joints_, 0.0);
-
-  goal_joint_accel_.resize(number_of_joints_, 0.0);
-  goal_joint_vel_.resize(number_of_joints_, 0.0);
-  goal_joint_pos_.resize(number_of_joints_, 0.0);
-
-  des_joint_feedback_.resize(number_of_joints_, 0.0);
-  des_joint_feedforward_.resize(number_of_joints_, 0.0);
-  des_joint_pos_to_robot_.resize(number_of_joints_, 0.0);
-
-  joint_feedforward_gain_.resize(number_of_joints_, 0.0);
-
-  // body position default
-  des_body_pos_.resize(3, 0.0);
-  des_body_vel_.resize(3, 0.0);
-  des_body_accel_.resize(3, 0.0);
-  des_body_rpy_.resize(3, 0.0);
-
-  // left foot position default
-  des_l_leg_position_.resize(3, 0.0);
-  des_l_leg_vel_.resize(3, 0.0);
-  des_l_leg_accel_.resize(3, 0.0);
-  des_l_leg_rpy_.resize(3, 0.0);
-
-  // right foot position default
-  des_r_leg_position_.resize(3, 0.0);
-  des_r_leg_vel_.resize(3, 0.0);
-  des_r_leg_accel_.resize(3, 0.0);
-  des_r_leg_rpy_.resize(3, 0.0);
-
-  x_lipm_.resize(3, 0.0);
-  y_lipm_.resize(3, 0.0);
-
   resetBodyPose();
 
   // walking parameter default
@@ -107,9 +114,6 @@ OnlineWalkingModule::OnlineWalkingModule()
   walking_param_.foot_height_max = 0.05;
   walking_param_.zmp_offset_x = 0.0;  // not applied
   walking_param_.zmp_offset_y = 0.0;
-
-  des_balance_gain_ratio_.resize(1, 0.0);
-  goal_balance_gain_ratio_.resize(1, 0.0);
 
   balance_control_.initialize(control_cycle_sec_ * 1000.0);
   balance_control_.setGyroBalanceEnable(false);         // Gyro
@@ -130,10 +134,6 @@ OnlineWalkingModule::OnlineWalkingModule()
   balance_r_foot_torque_y_ = 0.0;
   balance_r_foot_torque_z_ = 0.0;
 
-  // Body Offset
-  des_body_offset_.resize(3, 0.0);
-  goal_body_offset_.resize(3, 0.0);
-
   std::string balance_gain_path = ros::package::getPath("kuroko_online_walking_module") + "/config/balance_gain.yaml";
   parseBalanceGainData(balance_gain_path);
 
@@ -150,7 +150,8 @@ OnlineWalkingModule::OnlineWalkingModule()
 
 OnlineWalkingModule::~OnlineWalkingModule()
 {
-  queue_thread_.join();
+  if (queue_thread_.joinable())
+    queue_thread_.join();
 }
 
 void OnlineWalkingModule::initialize(const int control_cycle_msec, robotis_framework::Robot* /*robot*/)
@@ -228,9 +229,9 @@ void OnlineWalkingModule::queueThread()
 
 void OnlineWalkingModule::resetBodyPose()
 {
-  des_body_pos_[0] = 0.0;
-  des_body_pos_[1] = 0.0;
-  des_body_pos_[2] = 0.3402256;
+  des_body_position_[0] = 0.0;
+  des_body_position_[1] = 0.0;
+  des_body_position_[2] = 0.3402256;
 
   des_body_rpy_[0] = 0.0;
   des_body_rpy_[1] = 0.0;
@@ -252,15 +253,15 @@ void OnlineWalkingModule::resetBodyPose()
   des_l_leg_rpy_[1] = 0.0;
   des_l_leg_rpy_[2] = 0.0;
 
-  x_lipm_[0] = des_body_pos_[0];
+  x_lipm_[0] = des_body_position_[0];
   x_lipm_[1] = 0.0;
   x_lipm_[2] = 0.0;
 
-  y_lipm_[0] = des_body_pos_[1];
+  y_lipm_[0] = des_body_position_[1];
   y_lipm_[1] = 0.0;
   y_lipm_[2] = 0.0;
 
-  walking_param_.zmp_offset_x = des_body_pos_[0];
+  walking_param_.zmp_offset_x = des_body_position_[0];
 }
 
 void OnlineWalkingModule::parseBalanceGainData(const std::string& path)
@@ -426,8 +427,6 @@ void OnlineWalkingModule::initBalanceControl()
   if (balance_control_initialize_)
     return;
 
-  balance_control_initialize_ = true;
-
   double ini_time = 0.0;
   double mov_time = 1.0;
 
@@ -448,6 +447,7 @@ void OnlineWalkingModule::initBalanceControl()
     is_balancing_ = true;
     ROS_INFO("[START] Balance Gain");
   }
+  balance_control_initialize_ = true;
 }
 
 void OnlineWalkingModule::calcBalanceControl()
@@ -807,7 +807,7 @@ void OnlineWalkingModule::initWholebodyControl()
   {
     ROS_INFO("[START] Wholebody Control");
 
-    wholebody_control_->initialize(des_body_pos_, des_body_rpy_, des_r_leg_position_, des_r_leg_rpy_,
+    wholebody_control_->initialize(des_body_position_, des_body_rpy_, des_r_leg_position_, des_r_leg_rpy_,
                                    des_l_leg_position_, des_l_leg_rpy_);
     is_moving_ = true;
   }
@@ -821,7 +821,7 @@ void OnlineWalkingModule::calcWholebodyControl()
 
     wholebody_control_->set(cur_time);
 
-    wholebody_control_->getTaskPosition(des_l_leg_position_, des_r_leg_position_, des_body_pos_);
+    wholebody_control_->getTaskPosition(des_l_leg_position_, des_r_leg_position_, des_body_position_);
     wholebody_control_->getTaskOrientation(des_l_leg_rpy_, des_r_leg_rpy_, des_body_rpy_);
 
     if (mov_step_ == mov_size_ - 1)
@@ -849,14 +849,12 @@ void OnlineWalkingModule::footStep2DCallback(const op3_online_walking_module_msg
     ROS_WARN("[WARN] Balance is off!");
     return;
   }
-
-  Eigen::Quaterniond body_q(des_body_rpy_[3], des_body_rpy_[0], des_body_rpy_[1], des_body_rpy_[2]);
-  Eigen::MatrixXd body_r = robotis_framework::convertQuaternionToRotation(body_q);
-  Eigen::MatrixXd body_rpy = robotis_framework::convertQuaternionToRPY(body_q);
+  Eigen::MatrixXd body_r =
+      robotis_framework::convertRPYToRotation(des_body_rpy_[0], des_body_rpy_[1], des_body_rpy_[2]);
   Eigen::MatrixXd body_t = Eigen::MatrixXd::Identity(4, 4);
   body_t.block(0, 0, 3, 3) = body_r;
-  body_t.coeffRef(0, 3) = des_body_pos_[0];
-  body_t.coeffRef(1, 3) = des_body_pos_[1];
+  body_t.coeffRef(0, 3) = des_body_position_[0];
+  body_t.coeffRef(1, 3) = des_body_position_[1];
 
   op3_online_walking_module_msgs::Step2DArray foot_step_msg;
 
@@ -873,21 +871,21 @@ void OnlineWalkingModule::footStep2DCallback(const op3_online_walking_module_msg
   {
     first_msg.step2d.x = des_l_leg_position_[0];
     first_msg.step2d.y = des_l_leg_position_[1];
-    first_msg.step2d.theta = body_rpy.coeff(2, 0);  // 0.0;
+    first_msg.step2d.theta = des_body_rpy_[2];
 
     second_msg.step2d.x = des_r_leg_position_[0];
     second_msg.step2d.y = des_r_leg_position_[1];
-    second_msg.step2d.theta = body_rpy.coeff(2, 0);  // 0.0;
+    second_msg.step2d.theta = des_body_rpy_[2];
   }
   else if (first_msg.moving_foot == RIGHT_LEG)
   {
     first_msg.step2d.x = des_r_leg_position_[0];
     first_msg.step2d.y = des_r_leg_position_[1];
-    first_msg.step2d.theta = body_rpy.coeff(2, 0);  // 0.0;
+    first_msg.step2d.theta = des_body_rpy_[2];
 
     second_msg.step2d.x = des_l_leg_position_[0];
     second_msg.step2d.y = des_l_leg_position_[1];
-    second_msg.step2d.theta = body_rpy.coeff(2, 0);  // 0.0;
+    second_msg.step2d.theta = des_body_rpy_[2];
   }
 
   foot_step_msg.footsteps_2d.push_back(first_msg);
@@ -1018,12 +1016,12 @@ void OnlineWalkingModule::initWalkingControl()
     {
       if (is_foot_step_2d_)
       {
-        walking_control_->initialize(foot_step_2d_, des_body_pos_, des_body_rpy_, des_r_leg_position_, des_r_leg_rpy_,
-                                     des_l_leg_position_, des_l_leg_rpy_);
+        walking_control_->initialize(foot_step_2d_, des_body_position_, des_body_rpy_, des_r_leg_position_,
+                                     des_r_leg_rpy_, des_l_leg_position_, des_l_leg_rpy_);
       }
       else
       {
-        walking_control_->initialize(foot_step_command_, des_body_pos_, des_body_rpy_, des_r_leg_position_,
+        walking_control_->initialize(foot_step_command_, des_body_position_, des_body_rpy_, des_r_leg_position_,
                                      des_r_leg_rpy_, des_l_leg_position_, des_l_leg_rpy_);
       }
 
@@ -1050,7 +1048,7 @@ void OnlineWalkingModule::calcWalkingControl()
     double cur_time = (double)mov_step_ * control_cycle_sec_;
     walking_control_->set(cur_time, walking_step_, is_foot_step_2d_);
 
-    walking_control_->getWalkingPosition(des_l_leg_position_, des_r_leg_position_, des_body_pos_);
+    walking_control_->getWalkingPosition(des_l_leg_position_, des_r_leg_position_, des_body_position_);
     walking_control_->getWalkingOrientation(des_l_leg_rpy_, des_r_leg_rpy_, des_body_rpy_);
 
     walking_control_->getLIPM(x_lipm_, y_lipm_);
@@ -1108,13 +1106,12 @@ void OnlineWalkingModule::initFeedforwardControl()
 void OnlineWalkingModule::calcRobotPose()
 {
   Eigen::MatrixXd des_body_pos = Eigen::MatrixXd::Zero(3, 1);
-  des_body_pos.coeffRef(0, 0) = des_body_pos_[0];
-  des_body_pos.coeffRef(1, 0) = des_body_pos_[1];
-  des_body_pos.coeffRef(2, 0) = des_body_pos_[2];
+  des_body_pos.coeffRef(0, 0) = des_body_position_[0];
+  des_body_pos.coeffRef(1, 0) = des_body_position_[1];
+  des_body_pos.coeffRef(2, 0) = des_body_position_[2];
 
-  Eigen::Quaterniond des_body_q =
-      robotis_framework::convertRPYToQuaternion(des_body_rpy_[0], des_body_rpy_[1], des_body_rpy_[2]);
-  Eigen::MatrixXd des_body_rot = robotis_framework::convertQuaternionToRotation(des_body_q);
+  Eigen::MatrixXd des_body_rot =
+      robotis_framework::convertRPYToRotation(des_body_rpy_[0], des_body_rpy_[1], des_body_rpy_[2]);
 
   // Forward Kinematics
 
@@ -1146,21 +1143,15 @@ void OnlineWalkingModule::calcRobotPose()
   std::vector<double_t> r_leg_rpy(r_leg_current_pose.begin() + 3, r_leg_current_pose.end());
   std::vector<double_t> l_leg_position(l_leg_current_pose.begin(), l_leg_current_pose.begin() + 3);
   std::vector<double_t> l_leg_rpy(l_leg_current_pose.begin() + 3, l_leg_current_pose.end());
-  Eigen::Quaterniond r_leg_quaternion =
-      robotis_framework::convertRPYToQuaternion(r_leg_rpy[0], r_leg_rpy[1], r_leg_rpy[2]);
-  Eigen::Quaterniond l_leg_quaternion =
-      robotis_framework::convertRPYToQuaternion(l_leg_rpy[0], l_leg_rpy[1], l_leg_rpy[2]);
 
-  Eigen::MatrixXd curr_r_leg_rot = robotis_framework::convertQuaternionToRotation(r_leg_quaternion);
-
+  Eigen::MatrixXd curr_r_leg_rot = robotis_framework::convertRPYToRotation(r_leg_rpy[0], r_leg_rpy[1], r_leg_rpy[2]);
   Eigen::MatrixXd g_to_r_leg = Eigen::MatrixXd::Identity(4, 4);
   g_to_r_leg.block(0, 0, 3, 3) = curr_r_leg_rot;
   g_to_r_leg.coeffRef(0, 3) = r_leg_position[0];
   g_to_r_leg.coeffRef(1, 3) = r_leg_position[1];
   g_to_r_leg.coeffRef(2, 3) = r_leg_position[2];
 
-  Eigen::MatrixXd curr_l_leg_rot = robotis_framework::convertQuaternionToRotation(l_leg_quaternion);
-
+  Eigen::MatrixXd curr_l_leg_rot = robotis_framework::convertRPYToRotation(l_leg_rpy[0], l_leg_rpy[1], l_leg_rpy[2]);
   Eigen::MatrixXd g_to_l_leg = Eigen::MatrixXd::Identity(4, 4);
   g_to_l_leg.block(0, 0, 3, 3) = curr_l_leg_rot;
   g_to_l_leg.coeffRef(0, 3) = l_leg_position[0];
@@ -1277,51 +1268,44 @@ bool OnlineWalkingModule::setBalanceControl()
   bool ik_success = true;
 
   // Body Pose
-  Eigen::MatrixXd des_body_pos = Eigen::MatrixXd::Zero(3, 1);
-  des_body_pos.coeffRef(0, 0) = des_body_pos_[0];
-  des_body_pos.coeffRef(1, 0) = des_body_pos_[1];
-  des_body_pos.coeffRef(2, 0) = des_body_pos_[2];
+  Eigen::Vector3d des_body_pos = Eigen::Vector3d::Zero();
+  des_body_pos.coeffRef(0, 0) = des_body_position_[0];
+  des_body_pos.coeffRef(1, 0) = des_body_position_[1];
+  des_body_pos.coeffRef(2, 0) = des_body_position_[2];
 
-  Eigen::Quaterniond des_body_q =
-      robotis_framework::convertRPYToQuaternion(des_body_rpy_[0], des_body_rpy_[1], des_body_rpy_[2]);
-  Eigen::MatrixXd des_body_rot = robotis_framework::convertQuaternionToRotation(des_body_q);
-  Eigen::MatrixXd des_body_rpy = robotis_framework::convertQuaternionToRPY(des_body_q);
+  Eigen::MatrixXd des_body_rot =
+      robotis_framework::convertRPYToRotation(des_body_rpy_[0], des_body_rpy_[1], des_body_rpy_[2]);
 
   // Right Leg Pose
-  Eigen::MatrixXd des_r_foot_pos = Eigen::MatrixXd::Zero(3, 1);
+  Eigen::Vector3d des_r_foot_pos = Eigen::Vector3d::Zero();
   des_r_foot_pos.coeffRef(0, 0) = des_r_leg_position_[0];
   des_r_foot_pos.coeffRef(1, 0) = des_r_leg_position_[1];
   des_r_foot_pos.coeffRef(2, 0) = des_r_leg_position_[2];
+  Eigen::MatrixXd des_r_foot_rot =
+      robotis_framework::convertRPYToRotation(des_r_leg_rpy_[0], des_r_leg_rpy_[1], des_r_leg_rpy_[2]);
 
-  Eigen::Quaterniond des_r_foot_q =
-      robotis_framework::convertRPYToQuaternion(des_r_leg_rpy_[0], des_r_leg_rpy_[1], des_r_leg_rpy_[2]);
-  Eigen::MatrixXd des_r_foot_rot = robotis_framework::convertQuaternionToRotation(des_r_foot_q);
-
-  // Left Leg Pose
-  Eigen::MatrixXd des_l_foot_pos = Eigen::MatrixXd::Zero(3, 1);
+  Eigen::Vector3d des_l_foot_pos = Eigen::Vector3d::Zero();
   des_l_foot_pos.coeffRef(0, 0) = des_l_leg_position_[0];
   des_l_foot_pos.coeffRef(1, 0) = des_l_leg_position_[1];
   des_l_foot_pos.coeffRef(2, 0) = des_l_leg_position_[2];
-
-  Eigen::Quaterniond des_l_foot_q =
-      robotis_framework::convertRPYToQuaternion(des_l_leg_rpy_[0], des_l_leg_rpy_[1], des_l_leg_rpy_[2]);
-  Eigen::MatrixXd des_l_foot_rot = robotis_framework::convertQuaternionToRotation(des_l_foot_q);
+  Eigen::MatrixXd des_l_foot_rot =
+      robotis_framework::convertRPYToRotation(des_l_leg_rpy_[0], des_l_leg_rpy_[1], des_l_leg_rpy_[2]);
 
   // Set Desired Value for Balance Control
-  Eigen::MatrixXd body_pose = Eigen::MatrixXd::Identity(4, 4);
+  Eigen::Matrix4d body_pose = Eigen::Matrix4d::Identity();
   body_pose.block<3, 3>(0, 0) = des_body_rot;
   body_pose.block<3, 1>(0, 3) = des_body_pos;
 
-  Eigen::MatrixXd l_foot_pose = Eigen::MatrixXd::Identity(4, 4);
+  Eigen::Matrix4d l_foot_pose = Eigen::Matrix4d::Identity();
   l_foot_pose.block<3, 3>(0, 0) = des_l_foot_rot;
   l_foot_pose.block<3, 1>(0, 3) = des_l_foot_pos;
 
-  Eigen::MatrixXd r_foot_pose = Eigen::MatrixXd::Identity(4, 4);
+  Eigen::Matrix4d r_foot_pose = Eigen::Matrix4d::Identity();
   r_foot_pose.block<3, 3>(0, 0) = des_r_foot_rot;
   r_foot_pose.block<3, 1>(0, 3) = des_r_foot_pos;
 
   // ===== Transformation =====
-  Eigen::MatrixXd robot_to_body = Eigen::MatrixXd::Identity(4, 4);
+  Eigen::Matrix4d robot_to_body = Eigen::Matrix4d::Identity();
   Eigen::MatrixXd robot_to_l_foot = body_pose.inverse() * l_foot_pose;
   Eigen::MatrixXd robot_to_r_foot = body_pose.inverse() * r_foot_pose;
   // =====
@@ -1333,7 +1317,7 @@ bool OnlineWalkingModule::setBalanceControl()
 
   Eigen::Quaterniond imu_quaternion(imu_data_msg_.orientation.w, imu_data_msg_.orientation.x,
                                     imu_data_msg_.orientation.y, imu_data_msg_.orientation.z);
-  Eigen::MatrixXd imu_rpy = robotis_framework::convertRotationToRPY(robotis_framework::getRotationX(M_PI) *
+  Eigen::Vector3d imu_rpy = robotis_framework::convertRotationToRPY(robotis_framework::getRotationX(M_PI) *
                                                                     imu_quaternion.toRotationMatrix() *
                                                                     robotis_framework::getRotationZ(M_PI));
 
@@ -1370,7 +1354,7 @@ bool OnlineWalkingModule::setBalanceControl()
 
   balance_control_.setDesiredCOBGyro(0.0, 0.0);
 
-  balance_control_.setDesiredCOBOrientation(des_body_rpy.coeff(0, 0), des_body_rpy.coeff(1, 0));
+  balance_control_.setDesiredCOBOrientation(des_body_rpy_[0], des_body_rpy_[1]);
 
   balance_control_.setDesiredFootForceTorque(balance_r_foot_force_x_, balance_r_foot_force_y_, balance_r_foot_force_z_,
                                              balance_r_foot_torque_x_, balance_r_foot_torque_y_,
@@ -1385,13 +1369,13 @@ bool OnlineWalkingModule::setBalanceControl()
   balance_control_.process(&error, &robot_to_body_mod, &robot_to_r_foot_mod, &robot_to_l_foot_mod);
 
   // ===== Transformation =====
-  Eigen::MatrixXd body_pose_mod = body_pose * robot_to_body_mod;
-  Eigen::MatrixXd r_foot_pose_mod = body_pose * robot_to_r_foot_mod;
-  Eigen::MatrixXd l_foot_pose_mod = body_pose * robot_to_l_foot_mod;
+  Eigen::Matrix4d body_pose_mod = body_pose * robot_to_body_mod;
+  Eigen::Matrix4d r_foot_pose_mod = body_pose * robot_to_r_foot_mod;
+  Eigen::Matrix4d l_foot_pose_mod = body_pose * robot_to_l_foot_mod;
   // =====
 
   Eigen::MatrixXd des_body_rot_mod = body_pose_mod.block<3, 3>(0, 0);
-  Eigen::MatrixXd des_body_pos_mod = body_pose_mod.block<3, 1>(0, 3);
+  Eigen::MatrixXd des_body_position_mod = body_pose_mod.block<3, 1>(0, 3);
 
   Eigen::MatrixXd des_r_foot_rot_mod = r_foot_pose_mod.block<3, 3>(0, 0);
   Eigen::MatrixXd des_r_foot_pos_mod = r_foot_pose_mod.block<3, 1>(0, 3);
@@ -1411,16 +1395,16 @@ bool OnlineWalkingModule::setBalanceControl()
   r_leg_pose[0] = des_r_foot_pos_mod.x();
   r_leg_pose[1] = des_r_foot_pos_mod.y();
   r_leg_pose[2] = des_r_foot_pos_mod.z();
-  r_leg_pose[3] = des_r_foot_rpy_mod.x();
-  r_leg_pose[4] = des_r_foot_rpy_mod.y();
-  r_leg_pose[5] = des_r_foot_rpy_mod.z();
+  r_leg_pose[3] = des_r_foot_rpy_mod(0);
+  r_leg_pose[4] = des_r_foot_rpy_mod(1);
+  r_leg_pose[5] = des_r_foot_rpy_mod(2);
 
   l_leg_pose[0] = des_l_foot_pos_mod.x();
   l_leg_pose[1] = des_l_foot_pos_mod.y();
   l_leg_pose[2] = des_l_foot_pos_mod.z();
-  l_leg_pose[3] = des_l_foot_rpy_mod.x();
-  l_leg_pose[4] = des_l_foot_rpy_mod.y();
-  l_leg_pose[5] = des_l_foot_rpy_mod.z();
+  l_leg_pose[3] = des_l_foot_rpy_mod(0);
+  l_leg_pose[4] = des_l_foot_rpy_mod(1);
+  l_leg_pose[5] = des_l_foot_rpy_mod(2);
 
   ik_success = (kuroko_kinematics_->solveInverseKinematicsForRightLeg(r_leg_pose, r_leg_joint_pos) &&
                 kuroko_kinematics_->solveInverseKinematicsForLeftLeg(l_leg_pose, l_leg_joint_pos));
@@ -1627,9 +1611,9 @@ void OnlineWalkingModule::process(std::map<std::string, robotis_framework::Dynam
   goal_joint_msg.header.stamp = ros::Time::now();
   pelvis_pose_msg.header.stamp = ros::Time::now();
 
-  pelvis_pose_msg.pose.position.x = des_body_pos_[0];
-  pelvis_pose_msg.pose.position.y = des_body_pos_[1];
-  pelvis_pose_msg.pose.position.z = des_body_pos_[2] - 0.0907;
+  pelvis_pose_msg.pose.position.x = des_body_position_[0];
+  pelvis_pose_msg.pose.position.y = des_body_position_[1];
+  pelvis_pose_msg.pose.position.z = des_body_position_[2] - 0.0907;
 
   pelvis_pose_msg.pose.orientation.x = des_body_rpy_[0];
   pelvis_pose_msg.pose.orientation.y = des_body_rpy_[1];
@@ -1710,9 +1694,9 @@ bool OnlineWalkingModule::getKinematicsPoseCallback(op3_online_walking_module_ms
 
   if (group_name == "body")
   {
-    msg.position.x = des_body_pos_[0];
-    msg.position.y = des_body_pos_[1];
-    msg.position.z = des_body_pos_[2];
+    msg.position.x = des_body_position_[0];
+    msg.position.y = des_body_position_[1];
+    msg.position.z = des_body_position_[2];
 
     msg.orientation.x = des_body_rpy_[0];
     msg.orientation.y = des_body_rpy_[1];

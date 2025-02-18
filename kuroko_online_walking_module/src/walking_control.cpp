@@ -35,11 +35,11 @@ WalkingControl::WalkingControl(double control_cycle, double dsp_ratio, double li
   zmp_offset_y_ = zmp_offset_y;  // default :
 
   // Initialization
-  init_body_pos_.resize(3, 0.0);
+  init_body_position_.resize(3, 0.0);
   init_body_vel_.resize(3, 0.0);
   init_body_accel_.resize(3, 0.0);
-  des_body_pos_.resize(3, 0.0);
-  des_body_vel_.resize(3, 0.0);
+  des_body_position_.resize(3, 0.0);
+  des_body_velocity_.resize(3, 0.0);
   des_body_accel_.resize(3, 0.0);
   goal_body_pos_.resize(3, 0.0);
   goal_body_vel_.resize(3, 0.0);
@@ -89,11 +89,11 @@ WalkingControl::~WalkingControl()
 
 void WalkingControl::initialize(op3_online_walking_module_msgs::FootStepCommand foot_step_command,
                                 const std::vector<double_t>& init_body_pos, std::vector<double_t> init_body_Q,
-                                std::vector<double_t> init_r_foot_pos, std::vector<double_t> init_r_foot_Q,
-                                std::vector<double_t> init_l_foot_pos, std::vector<double_t> init_l_foot_Q)
+                                std::vector<double_t> init_r_foot_pos, std::vector<double_t> init_r_foot_rpy,
+                                std::vector<double_t> init_l_foot_pos, std::vector<double_t> init_l_foot_rpy)
 {
-  init_body_pos_ = init_body_pos;
-  des_body_pos_ = init_body_pos;
+  init_body_position_ = init_body_pos;
+  des_body_position_ = init_body_pos;
 
   Eigen::Quaterniond body_q(init_body_Q[3], init_body_Q[0], init_body_Q[1], init_body_Q[2]);
   init_body_q_ = body_q;
@@ -108,11 +108,13 @@ void WalkingControl::initialize(op3_online_walking_module_msgs::FootStepCommand 
   des_l_foot_pos_ = init_l_foot_pos_;
   des_r_foot_pos_ = init_r_foot_pos_;
 
-  Eigen::Quaterniond l_foot_q(init_l_foot_Q[3], init_l_foot_Q[0], init_l_foot_Q[1], init_l_foot_Q[2]);
+  Eigen::Quaterniond l_foot_q =
+      robotis_framework::convertRPYToQuaternion(init_l_foot_rpy[0], init_l_foot_rpy[1], init_l_foot_rpy[2]);
   init_l_foot_q_ = l_foot_q;
   des_l_foot_q_ = l_foot_q;
 
-  Eigen::Quaterniond r_foot_q(init_r_foot_Q[3], init_r_foot_Q[0], init_r_foot_Q[1], init_r_foot_Q[2]);
+  Eigen::Quaterniond r_foot_q =
+      robotis_framework::convertRPYToQuaternion(init_r_foot_rpy[0], init_r_foot_rpy[1], init_r_foot_rpy[2]);
   init_r_foot_q_ = r_foot_q;
   des_r_foot_q_ = r_foot_q;
 
@@ -132,19 +134,18 @@ void WalkingControl::initialize(op3_online_walking_module_msgs::FootStepCommand 
 }
 
 void WalkingControl::initialize(op3_online_walking_module_msgs::Step2DArray foot_step_2d,
-                                const std::vector<double_t>& init_body_pos, std::vector<double_t> init_body_Q,
-                                std::vector<double_t> init_r_foot_pos, std::vector<double_t> init_r_foot_Q,
-                                std::vector<double_t> init_l_foot_pos, std::vector<double_t> init_l_foot_Q)
+                                const std::vector<double_t>& init_body_pos, std::vector<double_t> init_body_rpy,
+                                std::vector<double_t> init_r_foot_pos, std::vector<double_t> init_r_foot_rpy,
+                                std::vector<double_t> init_l_foot_pos, std::vector<double_t> init_l_foot_rpy)
 {
-  init_body_pos_ = init_body_pos;
-  des_body_pos_ = init_body_pos;
+  init_body_position_ = init_body_pos;
+  des_body_position_ = init_body_pos;
 
-  Eigen::Quaterniond body_q(init_body_Q[3], init_body_Q[0], init_body_Q[1], init_body_Q[2]);
+  Eigen::Quaterniond body_q =
+      robotis_framework::convertRPYToQuaternion(init_body_rpy[0], init_body_rpy[1], init_body_rpy[2]);
   init_body_q_ = body_q;
   des_body_q_ = body_q;
-
-  Eigen::MatrixXd init_body_rpy = robotis_framework::convertQuaternionToRPY(init_body_q_);
-  init_body_yaw_angle_ = init_body_rpy.coeff(2, 0);
+  init_body_yaw_angle_ = init_body_rpy[2];
 
   init_r_foot_pos_ = std::move(init_r_foot_pos);
   init_l_foot_pos_ = std::move(init_l_foot_pos);
@@ -152,11 +153,13 @@ void WalkingControl::initialize(op3_online_walking_module_msgs::Step2DArray foot
   des_l_foot_pos_ = init_l_foot_pos_;
   des_r_foot_pos_ = init_r_foot_pos_;
 
-  Eigen::Quaterniond l_foot_q(init_l_foot_Q[3], init_l_foot_Q[0], init_l_foot_Q[1], init_l_foot_Q[2]);
+  Eigen::Quaterniond l_foot_q =
+      robotis_framework::convertRPYToQuaternion(init_l_foot_rpy[0], init_l_foot_rpy[1], init_l_foot_rpy[2]);
   init_l_foot_q_ = l_foot_q;
   des_l_foot_q_ = l_foot_q;
 
-  Eigen::Quaterniond r_foot_q(init_r_foot_Q[3], init_r_foot_Q[0], init_r_foot_Q[1], init_r_foot_Q[2]);
+  Eigen::Quaterniond r_foot_q =
+      robotis_framework::convertRPYToQuaternion(init_r_foot_rpy[0], init_r_foot_rpy[1], init_r_foot_rpy[2]);
   init_r_foot_q_ = r_foot_q;
   des_r_foot_q_ = r_foot_q;
 
@@ -788,8 +791,8 @@ void WalkingControl::calcPreviewControl(double time, int step)
   sum_of_zmp_x_ += ref_zmp_x_;
   sum_of_zmp_y_ += ref_zmp_y_;
 
-  des_body_pos_[0] = x_lipm_.coeff(0, 0);
-  des_body_pos_[1] = y_lipm_.coeff(0, 0);
+  des_body_position_[0] = x_lipm_.coeff(0, 0);
+  des_body_position_[1] = y_lipm_.coeff(0, 0);
 }
 
 void WalkingControl::getWalkingPosition(std::vector<double_t>& l_foot_pos, std::vector<double_t>& r_foot_pos,
@@ -797,7 +800,7 @@ void WalkingControl::getWalkingPosition(std::vector<double_t>& l_foot_pos, std::
 {
   l_foot_pos = des_l_foot_pos_;
   r_foot_pos = des_r_foot_pos_;
-  body_pos = des_body_pos_;
+  body_pos = des_body_position_;
 }
 
 void WalkingControl::getWalkingVelocity(std::vector<double_t>& l_foot_vel, std::vector<double_t>& r_foot_vel,

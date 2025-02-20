@@ -591,6 +591,20 @@ KurokoKinematics::KurokoKinematics(TreeSelect tree)
 bool KurokoKinematics::solveInverseKinematicsForRightLeg(std::vector<double>& joints_out,
                                                          std::vector<double> target_pose_in)
 {
+  // Check inputs are valid values
+  if (target_pose_in.size() < 6)
+  {
+    std::cout << "Invalid target pose size: " << target_pose_in.size() << std::endl;
+    return false;
+  }
+  for (int i = 0; i < 6; i++)
+  {
+    if (std::isfinite(target_pose_in[i]) == false)
+    {
+      std::cout << "Invalid target pose[" << i << "] :" << target_pose_in[i] << std::endl;
+      return false;
+    }
+  }
   // Calculating Inverse Kinematics for Right Leg
   double x = target_pose_in[0];
   double y = target_pose_in[1];
@@ -674,15 +688,21 @@ bool KurokoKinematics::solveInverseKinematicsForRightLeg(std::vector<double>& jo
   double shin_pitch = triangle_knee_line_angle + triangle_shin_angle;
   double thigh_pitch = -((M_PI - triangle_knee_angle) - shin_pitch);
 
-  std::cout << "[solveInverseKinematicsForRightLeg]:" << std::endl;
-  std::cout << "hip_roll: " << hip_roll << std::endl;
-  std::cout << "hip_pitch: " << hip_pitch << std::endl;
-  std::cout << "thigh_pitch: " << thigh_pitch << std::endl;
-  std::cout << "shin_pitch: " << shin_pitch << std::endl;
-  std::cout << "ankle_roll: " << ankle_roll << std::endl;
-  std::cout << "ankle_yaw: " << ankle_yaw << std::endl;
+  // std::cout << "[solveInverseKinematicsForRightLeg]:" << std::endl;
+  // std::cout << "hip_roll: " << hip_roll << std::endl;
+  // std::cout << "hip_pitch: " << hip_pitch << std::endl;
+  // std::cout << "thigh_pitch: " << thigh_pitch << std::endl;
+  // std::cout << "shin_pitch: " << shin_pitch << std::endl;
+  // std::cout << "ankle_roll: " << ankle_roll << std::endl;
+  // std::cout << "ankle_yaw: " << ankle_yaw << std::endl;
 
   // Set the output joint angles
+  hip_roll = (std::isfinite(hip_roll)) ? hip_roll : 0.0;
+  hip_pitch = (std::isfinite(hip_pitch)) ? hip_pitch : 0.0;
+  thigh_pitch = (std::isfinite(thigh_pitch)) ? thigh_pitch : 0.0;
+  shin_pitch = (std::isfinite(shin_pitch)) ? shin_pitch : 0.0;
+  ankle_roll = (std::isfinite(ankle_roll)) ? ankle_roll : 0.0;
+  ankle_yaw = (std::isfinite(ankle_yaw)) ? ankle_yaw : 0.0;
   double ankle_yaw_joint = joint_link_tree_[getLinkIndex("ankle_r_yaw")]->joint_axis_.coeff(2, 0) *
                            (ankle_yaw - robotis_framework::convertRotationToRPY(
                                             joint_link_tree_[getLinkIndex("ankle_r_yaw")]->joint_orientation_)
@@ -826,8 +846,13 @@ bool KurokoKinematics::solveInverseKinematicsForLeftLeg(std::vector<double>& joi
   double triangle_knee_line_angle = atan2(-thigh_upper_to_shin_lower_x, -thigh_upper_to_shin_lower_z);
   double shin_pitch = triangle_knee_line_angle + triangle_shin_angle;
   double thigh_pitch = -((M_PI - triangle_knee_angle) - shin_pitch);
-
   // Set the output joint angles
+  hip_roll = (std::isfinite(hip_roll)) ? hip_roll : 0.0;
+  hip_pitch = (std::isfinite(hip_pitch)) ? hip_pitch : 0.0;
+  thigh_pitch = (std::isfinite(thigh_pitch)) ? thigh_pitch : 0.0;
+  shin_pitch = (std::isfinite(shin_pitch)) ? shin_pitch : 0.0;
+  ankle_roll = (std::isfinite(ankle_roll)) ? ankle_roll : 0.0;
+  ankle_yaw = (std::isfinite(ankle_yaw)) ? ankle_yaw : 0.0;
   double ankle_yaw_joint = joint_link_tree_[getLinkIndex("ankle_l_yaw")]->joint_axis_.coeff(2, 0) *
                            (ankle_yaw - robotis_framework::convertRotationToRPY(
                                             joint_link_tree_[getLinkIndex("ankle_l_yaw")]->joint_orientation_)

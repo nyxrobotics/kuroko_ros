@@ -96,6 +96,8 @@ public:
 
   /* ROS Framework Functions */
   void initialize(const int control_cycle_msec, robotis_framework::Robot* robot) override;
+  void onModuleEnable() override;
+  void onModuleDisable() override;
   void process(std::map<std::string, robotis_framework::Dynamixel*> dxls,
                std::map<std::string, double> sensors) override;
   void stop() override;
@@ -119,13 +121,13 @@ private:
   void queueThread();
 
   void initJointControl();
-  void calcJointControl();
+  void runJointControl();
   void initWholebodyControl();
-  void calcWholebodyControl();
+  void runWholebodyControl();
   void initOffsetControl();
-  void calcOffsetControl();
+  void runOffsetControl();
   void initWalkingControl();
-  void calcWalkingControl();
+  void runWalkingControl();
   void initBalanceControl();
   void calcBalanceControl();
 
@@ -134,7 +136,7 @@ private:
 
   void balanceFeedback(const double& roll_gyro_err, const double& pitch_gyro_err, std::vector<double>& balance_angle);
 
-  void calcRobotPose();
+  void updateRobotPose();
 
   void setTargetForceTorque();
   void setBalanceControlGain();

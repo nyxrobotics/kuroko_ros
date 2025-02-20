@@ -20,13 +20,14 @@ OnlineWalkingModule::OnlineWalkingModule()
   , total_mass_(3.5)
   , foot_distance_(0.07)
 {
+  ROS_INFO("[OnlineWalkingModule::OnlineWalkingModule()]");
   enable_ = false;
   module_name_ = "online_walking_module";
   control_mode_ = robotis_framework::PositionControl;
   control_type_ = NONE;
   balance_type_ = OFF;
 
-  kuroko_kinematics_ = new KurokoKinematics();
+  kuroko_kinematics_ = new KurokoKinematics(WHOLE_BODY);
 
   // Buffer size
   number_of_joints_ = 12;
@@ -77,34 +78,33 @@ OnlineWalkingModule::OnlineWalkingModule()
   des_body_offset_.resize(3, 0.0);
   goal_body_offset_.resize(3, 0.0);
 
-  /* leg */
-  result_["ankle_r_yaw"] = new robotis_framework::DynamixelState();
+  // Joint target angle
   result_["hip_r_roll"] = new robotis_framework::DynamixelState();
   result_["hip_r_pitch"] = new robotis_framework::DynamixelState();
   result_["thigh_r_active"] = new robotis_framework::DynamixelState();
   result_["shin_r_active"] = new robotis_framework::DynamixelState();
   result_["ankle_r_roll"] = new robotis_framework::DynamixelState();
-
-  result_["ankle_l_yaw"] = new robotis_framework::DynamixelState();
+  result_["ankle_r_yaw"] = new robotis_framework::DynamixelState();
   result_["hip_l_roll"] = new robotis_framework::DynamixelState();
   result_["hip_l_pitch"] = new robotis_framework::DynamixelState();
   result_["thigh_l_active"] = new robotis_framework::DynamixelState();
   result_["shin_l_active"] = new robotis_framework::DynamixelState();
   result_["ankle_l_roll"] = new robotis_framework::DynamixelState();
+  result_["ankle_l_yaw"] = new robotis_framework::DynamixelState();
 
-  /* leg */
-  joint_name_to_dxl_id_["ankle_r_yaw"] = 1;
-  joint_name_to_dxl_id_["ankle_l_yaw"] = 2;
-  joint_name_to_dxl_id_["hip_r_roll"] = 3;
-  joint_name_to_dxl_id_["hip_l_roll"] = 4;
-  joint_name_to_dxl_id_["hip_r_pitch"] = 5;
-  joint_name_to_dxl_id_["hip_l_pitch"] = 6;
-  joint_name_to_dxl_id_["thigh_r_active"] = 7;
-  joint_name_to_dxl_id_["thigh_l_active"] = 8;
-  joint_name_to_dxl_id_["shin_r_active"] = 9;
+  // Joint index map
+  joint_name_to_dxl_id_["hip_r_roll"] = 1;
+  joint_name_to_dxl_id_["hip_r_pitch"] = 2;
+  joint_name_to_dxl_id_["thigh_r_active"] = 3;
+  joint_name_to_dxl_id_["shin_r_active"] = 4;
+  joint_name_to_dxl_id_["ankle_r_roll"] = 5;
+  joint_name_to_dxl_id_["ankle_r_yaw"] = 6;
+  joint_name_to_dxl_id_["hip_l_roll"] = 7;
+  joint_name_to_dxl_id_["hip_l_pitch"] = 8;
+  joint_name_to_dxl_id_["thigh_l_active"] = 9;
   joint_name_to_dxl_id_["shin_l_active"] = 10;
-  joint_name_to_dxl_id_["ankle_r_roll"] = 11;
-  joint_name_to_dxl_id_["ankle_l_roll"] = 12;
+  joint_name_to_dxl_id_["ankle_l_roll"] = 11;
+  joint_name_to_dxl_id_["ankle_l_yaw"] = 12;
 
   resetBodyPose();
 
@@ -150,12 +150,14 @@ OnlineWalkingModule::OnlineWalkingModule()
 
 OnlineWalkingModule::~OnlineWalkingModule()
 {
+  ROS_INFO("[OnlineWalkingModule::~OnlineWalkingModule()]");
   if (queue_thread_.joinable())
     queue_thread_.join();
 }
 
 void OnlineWalkingModule::initialize(const int control_cycle_msec, robotis_framework::Robot* /*robot*/)
 {
+  ROS_INFO("[OnlineWalkingModule::initialize]");
   control_cycle_sec_ = control_cycle_msec * 0.001;
   queue_thread_ = boost::thread(boost::bind(&OnlineWalkingModule::queueThread, this));
 
@@ -172,6 +174,33 @@ void OnlineWalkingModule::initialize(const int control_cycle_msec, robotis_frame
   //  get_preview_matrix_client_ =
   //  ros_node.serviceClient<KUROKO_ONLINE_WALKING_MODULE_msgs::GetPreviewMatrix>("/motion_control/online_walking/get_preview_matrix",
   //  0);
+}
+
+void OnlineWalkingModule::onModuleEnable()
+{
+  ROS_INFO("[OnlineWalkingModule] Module Enabled");
+  is_moving_ = false;
+  is_balancing_ = false;
+  is_foot_step_2d_ = false;
+  balance_type_ = OFF;
+  control_type_ = NONE;
+  resetBodyPose();
+  updateRobotPose();
+  // Initial pose
+  initJointControl();
+  runJointControl();
+}
+
+void OnlineWalkingModule::onModuleDisable()
+{
+  ROS_INFO("[OnlineWalkingModule] Module Disabled");
+  enable_ = false;
+  is_moving_ = false;
+  is_balancing_ = false;
+  is_foot_step_2d_ = false;
+  balance_type_ = OFF;
+  control_type_ = NONE;
+  resetBodyPose();
 }
 
 void OnlineWalkingModule::queueThread()
@@ -199,7 +228,6 @@ void OnlineWalkingModule::queueThread()
                                                            &OnlineWalkingModule::setBodyOffsetCallback, this);
   ros::Subscriber foot_distance_msg_sub = ros_node.subscribe("/motion_control/online_walking/foot_distance", 5,
                                                              &OnlineWalkingModule::setFootDistanceCallback, this);
-
   ros::Subscriber footsteps_sub = ros_node.subscribe("/motion_control/online_walking/footsteps_2d", 5,
                                                      &OnlineWalkingModule::footStep2DCallback, this);
 
@@ -229,35 +257,36 @@ void OnlineWalkingModule::queueThread()
 
 void OnlineWalkingModule::resetBodyPose()
 {
+  ROS_INFO("OnlineWalkingModule::resetBodyPose");
   des_body_position_[0] = 0.0;
   des_body_position_[1] = 0.0;
-  des_body_position_[2] = 0.3402256;
+  des_body_position_[2] = 0.0;
 
   des_body_rpy_[0] = 0.0;
   des_body_rpy_[1] = 0.0;
   des_body_rpy_[2] = 0.0;
 
-  des_r_leg_position_[0] = 0.0;
-  des_r_leg_position_[1] = -0.5 * foot_distance_;  //-0.045; //-0.035;
-  des_r_leg_position_[2] = 0.0;
+  des_r_leg_position_[0] = goal_body_offset_[0];
+  des_r_leg_position_[1] = -0.5 * foot_distance_;
+  des_r_leg_position_[2] = goal_body_offset_[2];
 
   des_r_leg_rpy_[0] = 0.0;
   des_r_leg_rpy_[1] = 0.0;
   des_r_leg_rpy_[2] = 0.0;
 
-  des_l_leg_position_[0] = 0.0;
-  des_l_leg_position_[1] = 0.5 * foot_distance_;  // 0.045; //0.035;
-  des_l_leg_position_[2] = 0.0;
+  des_l_leg_position_[0] = goal_body_offset_[0];
+  des_l_leg_position_[1] = 0.5 * foot_distance_;
+  des_l_leg_position_[2] = goal_body_offset_[2];
 
   des_l_leg_rpy_[0] = 0.0;
   des_l_leg_rpy_[1] = 0.0;
   des_l_leg_rpy_[2] = 0.0;
 
-  x_lipm_[0] = des_body_position_[0];
+  x_lipm_[0] = 0.0;
   x_lipm_[1] = 0.0;
   x_lipm_[2] = 0.0;
 
-  y_lipm_[0] = des_body_position_[1];
+  y_lipm_[0] = 0.0;
   y_lipm_[1] = 0.0;
   y_lipm_[2] = 0.0;
 
@@ -442,50 +471,12 @@ void OnlineWalkingModule::initBalanceControl()
   balance_step_ = 0;
   balance_size_ = (int)(mov_time / control_cycle_sec_) + 1;
 
-  ROS_INFO("[DEBUG] control_cycle_sec_: %f", control_cycle_sec_);
-  ROS_INFO("[DEBUG] balance_size_: %d", balance_size_);
-  ROS_INFO("[DEBUG] des_balance_gain_ratio_ size: %lu", des_balance_gain_ratio_.size());
-  ROS_INFO("[DEBUG] goal_balance_gain_ratio_ size: %lu", goal_balance_gain_ratio_.size());
   std::vector<double_t> balance_zero;
   balance_zero.resize(1, 0.0);
-  ROS_INFO("[DEBUG] des_balance_gain_ratio_[0]: %f", des_balance_gain_ratio_[0]);
-  ROS_INFO("[DEBUG] goal_balance_gain_ratio_[0]: %f", goal_balance_gain_ratio_[0]);
-  ROS_INFO("[DEBUG] balance_zero size: %lu", balance_zero.size());
 
-  ROS_INFO("[DEBUG] Checking des_balance_gain_ratio_:");
-  for (size_t i = 0; i < des_balance_gain_ratio_.size(); i++)
-  {
-    ROS_INFO("[DEBUG] des_balance_gain_ratio_[%lu] = %f", i, des_balance_gain_ratio_[i]);
-  }
-  ROS_INFO("[DEBUG] Checking goal_balance_gain_ratio_:");
-  for (size_t i = 0; i < goal_balance_gain_ratio_.size(); i++)
-  {
-    ROS_INFO("[DEBUG] goal_balance_gain_ratio_[%lu] = %f", i, goal_balance_gain_ratio_[i]);
-  }
-  ROS_INFO("[DEBUG] Checking balance_zero:");
-  for (size_t i = 0; i < balance_zero.size(); i++)
-  {
-    ROS_INFO("[DEBUG] balance_zero[%lu] = %f", i, balance_zero[i]);
-  }
-
-  if (balance_trajectory_ != nullptr)
-  {
-    delete balance_trajectory_;
-    balance_trajectory_ = nullptr;
-  }
   balance_trajectory_ =
       new robotis_framework::MinimumJerk(ini_time, mov_time, des_balance_gain_ratio_, balance_zero, balance_zero,
                                          goal_balance_gain_ratio_, balance_zero, balance_zero);
-
-  if (balance_trajectory_ == nullptr)
-  {
-    ROS_ERROR("[ERROR] Failed to allocate memory for balance_trajectory_");
-    return;
-  }
-  else
-  {
-    ROS_INFO("[DEBUG] balance_trajectory_ allocated successfully.");
-  }
 
   if (is_balancing_)
     ROS_INFO("[UPDATE] Balance Gain");
@@ -504,6 +495,7 @@ void OnlineWalkingModule::calcBalanceControl()
     if (balance_trajectory_ == nullptr)
     {
       ROS_ERROR("[ERROR] balance_trajectory_ is NULL!");
+      delete balance_trajectory_;
       return;
     }
     double cur_time = (double)balance_step_ * control_cycle_sec_;
@@ -622,10 +614,6 @@ void OnlineWalkingModule::setResetBodyCallback(const std_msgs::Bool::ConstPtr& m
 {
   if (static_cast<bool>(msg->data))
   {
-    des_body_offset_[0] = 0.0;
-    des_body_offset_[1] = 0.0;
-    des_body_offset_[2] = 0.0;
-
     resetBodyPose();
   }
 }
@@ -639,34 +627,43 @@ void OnlineWalkingModule::goalJointPoseCallback(const op3_online_walking_module_
 {
   if (!enable_)
     return;
+  if (control_type_ == NONE)
+    control_type_ = JOINT_CONTROL;
+  if (control_type_ != JOINT_CONTROL)
+  {
+    ROS_WARN("[OnlineWalkingModule::goalJointPoseCallback] Control type is different!");
+    return;
+  }
 
   size_t joint_size = msg.pose.name.size();
-
-  if (control_type_ == NONE || control_type_ == JOINT_CONTROL)
+  mov_time_ = msg.mov_time;
+  for (size_t i = 0; i < msg.pose.name.size(); i++)
   {
-    mov_time_ = msg.mov_time;
-
-    for (size_t i = 0; i < msg.pose.name.size(); i++)
-    {
-      std::string joint_name = msg.pose.name[i];
-      goal_joint_position_[joint_name_to_dxl_id_[joint_name] - 1] = msg.pose.position[i];
-    }
-
-    joint_control_initialize_ = false;
-    control_type_ = JOINT_CONTROL;
-    balance_type_ = OFF;
-    des_balance_gain_ratio_[0] = 0.0;
+    std::string joint_name = msg.pose.name[i];
+    goal_joint_position_[joint_name_to_dxl_id_[joint_name] - 1] = msg.pose.position[i];
   }
-  else
-    ROS_WARN("[WARN] Control type is different!");
+  joint_control_initialize_ = false;
+  control_type_ = JOINT_CONTROL;
+  balance_type_ = OFF;
+  des_balance_gain_ratio_[0] = 0.0;
 }
 
 void OnlineWalkingModule::initJointControl()
 {
-  if (joint_control_initialize_)
+  if (!enable_)
     return;
-
-  joint_control_initialize_ = true;
+  if (control_type_ == NONE)
+    control_type_ = JOINT_CONTROL;
+  if (control_type_ != JOINT_CONTROL)
+  {
+    ROS_WARN("[OnlineWalkingModule::initJointControl]: Control type is different!");
+    return;
+  }
+  if (joint_control_initialize_)
+  {
+    // ROS_WARN("[OnlineWalkingModule::initJointControl]: Already initialized!");
+    return;
+  }
 
   double ini_time = 0.0;
   double mov_time = mov_time_;
@@ -678,16 +675,19 @@ void OnlineWalkingModule::initJointControl()
       new robotis_framework::MinimumJerk(ini_time, mov_time, des_joint_position_, des_joint_velocity_, des_joint_accel_,
                                          goal_joint_position_, goal_joint_velocity_, goal_joint_accel_);
   if (is_moving_)
-    ROS_INFO("[UPDATE] Joint Control");
+    ROS_INFO("[OnlineWalkingModule::initJointControl]: UPDATE Joint Trajectory Goal");
   else
   {
     is_moving_ = true;
-    ROS_INFO("[START] Joint Control");
+    ROS_INFO("[OnlineWalkingModule::initJointControl]: SET Joint Trajectory Goal");
   }
+  joint_control_initialize_ = true;
 }
 
-void OnlineWalkingModule::calcJointControl()
+void OnlineWalkingModule::runJointControl()
 {
+  if (!enable_ || !joint_control_initialize_ || control_type_ != JOINT_CONTROL)
+    return;
   if (is_moving_)
   {
     double cur_time = (double)mov_step_ * control_cycle_sec_;
@@ -708,7 +708,7 @@ void OnlineWalkingModule::calcJointControl()
 
       control_type_ = NONE;
 
-      ROS_INFO("[END] Joint Control");
+      ROS_INFO("[OnlineWalkingModule::runJointControl]: END Joint Control");
     }
     else
       mov_step_++;
@@ -717,44 +717,56 @@ void OnlineWalkingModule::calcJointControl()
 
 void OnlineWalkingModule::setBodyOffsetCallback(const geometry_msgs::Pose::ConstPtr& msg)
 {
+  ROS_INFO("OnlineWalkingModule::setBodyOffsetCallback");
   if (!enable_)
     return;
-
-  if (balance_type_ == OFF)
+  if (control_type_ == NONE)
+    control_type_ = OFFSET_CONTROL;
+  if (control_type_ != OFFSET_CONTROL)
   {
-    ROS_WARN("[WARN] Balance is off!");
+    ROS_WARN("[OnlineWalkingModule::setBodyOffsetCallback]: Control type is different!");
     return;
   }
 
-  if (control_type_ == NONE || control_type_ == OFFSET_CONTROL)
-  {
-    goal_body_offset_[0] = msg->position.x;
-    goal_body_offset_[1] = msg->position.y;
-    goal_body_offset_[2] = msg->position.z;
+  // if (balance_type_ == OFF)
+  // {
+  //   ROS_WARN("[WARN] Balance is off!");
+  //   return;
+  // }
 
-    body_offset_initialize_ = false;
-    control_type_ = OFFSET_CONTROL;
-  }
-  else
-    ROS_WARN("[WARN] Control type is different!");
+  goal_body_offset_[0] = msg->position.x;
+  goal_body_offset_[1] = msg->position.y;
+  goal_body_offset_[2] = msg->position.z;
+  ROS_INFO("goal_body_offset: %f, %f, %f", goal_body_offset_[0], goal_body_offset_[1], goal_body_offset_[2]);
+  body_offset_initialize_ = false;
 }
 
 void OnlineWalkingModule::setFootDistanceCallback(const std_msgs::Float64::ConstPtr& msg)
 {
+  ROS_INFO("OnlineWalkingModule::setFootDistanceCallback");
   if (!enable_)
     return;
 
   foot_distance_ = msg->data;
-
   resetBodyPose();
 }
 
 void OnlineWalkingModule::initOffsetControl()
 {
-  if (body_offset_initialize_)
+  if (!enable_)
     return;
-
-  body_offset_initialize_ = true;
+  if (control_type_ == NONE)
+    control_type_ = OFFSET_CONTROL;
+  if (control_type_ != OFFSET_CONTROL)
+  {
+    ROS_WARN("[OnlineWalkingModule::initOffsetControl] Control type is different!");
+    return;
+  }
+  if (body_offset_initialize_)
+  {
+    // ROS_WARN("[OnlineWalkingModule::initOffsetControl] Already initialized!");
+    return;
+  }
 
   double ini_time = 0.0;
   double mov_time = 1.0;
@@ -775,10 +787,13 @@ void OnlineWalkingModule::initOffsetControl()
     is_moving_ = true;
     ROS_INFO("[START] Body Offset");
   }
+  body_offset_initialize_ = true;
 }
 
-void OnlineWalkingModule::calcOffsetControl()
+void OnlineWalkingModule::runOffsetControl()
 {
+  if (!enable_ || control_type_ != OFFSET_CONTROL)
+    return;
   if (is_moving_)
   {
     double cur_time = (double)body_offset_step_ * control_cycle_sec_;
@@ -794,9 +809,7 @@ void OnlineWalkingModule::calcOffsetControl()
       body_offset_step_ = 0;
       is_moving_ = false;
       delete body_offset_trajectory_;
-
       control_type_ = NONE;
-
       ROS_INFO("[END] Body Offset");
     }
     else
@@ -809,73 +822,79 @@ void OnlineWalkingModule::goalKinematicsPoseCallback(const op3_online_walking_mo
   if (!enable_)
     return;
 
-  if (balance_type_ == OFF)
+  // if (balance_type_ == OFF)
+  // {
+  //   ROS_WARN("[WARN] Balance is off!");
+  //   return;
+  // }
+
+  if (control_type_ == NONE)
+    control_type_ = WHOLEBODY_CONTROL;
+  if (control_type_ != WHOLEBODY_CONTROL)
   {
-    ROS_WARN("[WARN] Balance is off!");
+    ROS_WARN("[OnlineWalkingModule::goalKinematicsPoseCallback] Control type is different!");
     return;
   }
 
-  if (control_type_ == NONE || control_type_ == WHOLEBODY_CONTROL)
+  if (is_moving_)
   {
-    if (is_moving_)
+    if (wholegbody_control_group_ != msg.name)
     {
-      if (wholegbody_control_group_ != msg.name)
-      {
-        ROS_WARN("[WARN] Control group is different!");
-        return;
-      }
+      ROS_WARN("[OnlineWalkingModule::goalKinematicsPoseCallback] Control group is different!");
+      return;
     }
-    mov_time_ = msg.mov_time;
-    wholegbody_control_group_ = msg.name;
-    wholebody_goal_msg_ = msg.pose;
-
-    wholebody_initialize_ = false;
-    control_type_ = WHOLEBODY_CONTROL;
   }
-  else
-    ROS_WARN("[WARN] Control type is different!");
+  mov_time_ = msg.mov_time;
+  wholegbody_control_group_ = msg.name;
+  wholebody_goal_msg_ = msg.pose;
+  wholebody_initialize_ = false;
 }
 
 void OnlineWalkingModule::initWholebodyControl()
 {
-  if (wholebody_initialize_)
+  if (!enable_)
     return;
-
-  wholebody_initialize_ = true;
-
-  double ini_time = 0.0;
-  double mov_time = mov_time_;
-
-  mov_step_ = 0;
-  mov_size_ = (int)(mov_time / control_cycle_sec_) + 1;
-
-  wholebody_control_ = new WholebodyControl(wholegbody_control_group_, ini_time, mov_time, wholebody_goal_msg_);
-
+  if (control_type_ == NONE)
+    control_type_ = OFFSET_CONTROL;
+  if (control_type_ != WHOLEBODY_CONTROL)
+  {
+    ROS_WARN("[OnlineWalkingModule::initWholebodyControl] Control type is different!");
+    return;
+  }
+  if (wholebody_initialize_)
+  {
+    // ROS_WARN("[OnlineWalkingModule::initWholebodyControl] Already initialized!");
+    return;
+  }
   if (is_moving_)
   {
-    // TODO
+    ROS_WARN("[OnlineWalkingModule::initWholebodyControl] Previous task is alive!");
+    return;
   }
-  else
-  {
-    ROS_INFO("[START] Wholebody Control");
 
-    wholebody_control_->initialize(des_body_position_, des_body_rpy_, des_r_leg_position_, des_r_leg_rpy_,
-                                   des_l_leg_position_, des_l_leg_rpy_);
-    is_moving_ = true;
-  }
+  wholebody_initialize_ = true;
+  double ini_time = 0.0;
+  double mov_time = mov_time_;
+  mov_step_ = 0;
+  mov_size_ = (int)(mov_time / control_cycle_sec_) + 1;
+  wholebody_control_ = new WholebodyControl(wholegbody_control_group_, ini_time, mov_time, wholebody_goal_msg_);
+
+  ROS_INFO("[START] Wholebody Control");
+  wholebody_control_->initialize(des_body_position_, des_body_rpy_, des_r_leg_position_, des_r_leg_rpy_,
+                                 des_l_leg_position_, des_l_leg_rpy_);
+  is_moving_ = true;
 }
 
-void OnlineWalkingModule::calcWholebodyControl()
+void OnlineWalkingModule::runWholebodyControl()
 {
+  if (!enable_ || control_type_ != WHOLEBODY_CONTROL)
+    return;
   if (is_moving_)
   {
     double cur_time = (double)mov_step_ * control_cycle_sec_;
-
     wholebody_control_->set(cur_time);
-
     wholebody_control_->getTaskPosition(des_l_leg_position_, des_r_leg_position_, des_body_position_);
     wholebody_control_->getTaskOrientation(des_l_leg_rpy_, des_r_leg_rpy_, des_body_rpy_);
-
     if (mov_step_ == mov_size_ - 1)
     {
       mov_step_ = 0;
@@ -893,12 +912,24 @@ void OnlineWalkingModule::footStep2DCallback(const op3_online_walking_module_msg
 {
   if (!enable_)
     return;
-
-  if (balance_type_ == OFF)
+  if (control_type_ == NONE)
+    control_type_ = WALKING_CONTROL;
+  if (control_type_ != WALKING_CONTROL)
   {
-    ROS_WARN("[WARN] Balance is off!");
+    ROS_WARN("[OnlineWalkingModule::footStep2DCallback] Control type is different!");
     return;
   }
+  if (is_moving_)
+  {
+    ROS_WARN("[OnlineWalkingModule::footStep2DCallback] Previous task is alive!");
+    return;
+  }
+  // if (balance_type_ == OFF)
+  // {
+  //   ROS_WARN("[WARN] Balance is off!");
+  //   return;
+  // }
+
   Eigen::MatrixXd body_r =
       robotis_framework::convertRPYToRotation(des_body_rpy_[0], des_body_rpy_[1], des_body_rpy_[2]);
   Eigen::MatrixXd body_t = Eigen::MatrixXd::Identity(4, 4);
@@ -943,101 +974,98 @@ void OnlineWalkingModule::footStep2DCallback(const op3_online_walking_module_msg
 
   double step_final_theta = 0.0;
 
-  if (control_type_ == NONE || control_type_ == WALKING_CONTROL)
+  for (int i = 0; i < old_size; i++)
   {
-    for (int i = 0; i < old_size; i++)
-    {
-      op3_online_walking_module_msgs::Step2D step_msg = msg.footsteps_2d[i];
-      step_msg.moving_foot -= 1;
+    op3_online_walking_module_msgs::Step2D step_msg = msg.footsteps_2d[i];
+    step_msg.moving_foot -= 1;
 
-      Eigen::MatrixXd step_r = robotis_framework::convertRPYToRotation(0.0, 0.0, step_msg.step2d.theta);
-      Eigen::MatrixXd step_t = Eigen::MatrixXd::Identity(4, 4);
-      step_t.block(0, 0, 3, 3) = step_r;
-      step_t.coeffRef(0, 3) = step_msg.step2d.x;
-      step_t.coeffRef(1, 3) = step_msg.step2d.y;
+    Eigen::MatrixXd step_r = robotis_framework::convertRPYToRotation(0.0, 0.0, step_msg.step2d.theta);
+    Eigen::MatrixXd step_t = Eigen::MatrixXd::Identity(4, 4);
+    step_t.block(0, 0, 3, 3) = step_r;
+    step_t.coeffRef(0, 3) = step_msg.step2d.x;
+    step_t.coeffRef(1, 3) = step_msg.step2d.y;
 
-      Eigen::MatrixXd step_t_new = body_t * step_t;
-      Eigen::MatrixXd step_r_new = step_t_new.block(0, 0, 3, 3);
+    Eigen::MatrixXd step_t_new = body_t * step_t;
+    Eigen::MatrixXd step_r_new = step_t_new.block(0, 0, 3, 3);
 
-      double step_new_x = step_t_new.coeff(0, 3);
-      double step_new_y = step_t_new.coeff(1, 3);
-      Eigen::MatrixXd step_new_rpy = robotis_framework::convertRotationToRPY(step_r_new);
-      double step_new_theta = step_new_rpy.coeff(2, 0);
+    double step_new_x = step_t_new.coeff(0, 3);
+    double step_new_y = step_t_new.coeff(1, 3);
+    Eigen::MatrixXd step_new_rpy = robotis_framework::convertRotationToRPY(step_r_new);
+    double step_new_theta = step_new_rpy.coeff(2, 0);
 
-      step_msg.step2d.x = step_new_x;
-      step_msg.step2d.y = step_new_y;
-      step_msg.step2d.theta = step_new_theta;
+    step_msg.step2d.x = step_new_x;
+    step_msg.step2d.y = step_new_y;
+    step_msg.step2d.theta = step_new_theta;
 
-      if (i == old_size - 1)
-        step_final_theta = step_new_theta;
+    if (i == old_size - 1)
+      step_final_theta = step_new_theta;
 
-      foot_step_msg.footsteps_2d.push_back(step_msg);
-    }
-
-    op3_online_walking_module_msgs::Step2D step_msg = msg.footsteps_2d[old_size - 1];
-
-    if (step_msg.moving_foot - 1 == LEFT_LEG)
-      first_msg.moving_foot = RIGHT_LEG;
-    else
-      first_msg.moving_foot = LEFT_LEG;
-
-    first_msg.step2d.x = 0.0;
-    first_msg.step2d.y = 0.0;
-    first_msg.step2d.theta = step_final_theta;  // step_msg.step2d.theta;
-
-    foot_step_msg.footsteps_2d.push_back(first_msg);
-
-    foot_step_2d_ = foot_step_msg;
-    foot_step_2d_.step_time = msg.step_time;
-
-    walking_size_ = new_size;
-    mov_time_ = msg.step_time;  // 1.0;
-    is_foot_step_2d_ = true;
-    control_type_ = WALKING_CONTROL;
-
-    if (!is_moving_)
-      initWalkingControl();
-    else
-      ROS_WARN("[WARN] Previous task is alive!");
+    foot_step_msg.footsteps_2d.push_back(step_msg);
   }
+
+  op3_online_walking_module_msgs::Step2D step_msg = msg.footsteps_2d[old_size - 1];
+
+  if (step_msg.moving_foot - 1 == LEFT_LEG)
+    first_msg.moving_foot = RIGHT_LEG;
   else
-    ROS_WARN("[WARN] Control type is different!");
+    first_msg.moving_foot = LEFT_LEG;
+
+  first_msg.step2d.x = 0.0;
+  first_msg.step2d.y = 0.0;
+  first_msg.step2d.theta = step_final_theta;  // step_msg.step2d.theta;
+
+  foot_step_msg.footsteps_2d.push_back(first_msg);
+
+  foot_step_2d_ = foot_step_msg;
+  foot_step_2d_.step_time = msg.step_time;
+
+  walking_size_ = new_size;
+  mov_time_ = msg.step_time;  // 1.0;
+  is_foot_step_2d_ = true;
+  control_type_ = WALKING_CONTROL;
+
+  initWalkingControl();
 }
 
 void OnlineWalkingModule::footStepCommandCallback(const op3_online_walking_module_msgs::FootStepCommand& msg)
 {
   if (!enable_)
     return;
-
-  if (balance_type_ == OFF)
+  if (control_type_ == NONE)
+    control_type_ = WALKING_CONTROL;
+  if (control_type_ != WALKING_CONTROL)
   {
-    ROS_WARN("[WARN] Balance is off!");
+    ROS_WARN("[OnlineWalkingModule::footStepCommandCallback] Control type is different!");
     return;
   }
+  if (is_moving_)
+  {
+    ROS_WARN("[OnlineWalkingModule::footStepCommandCallback] Previous task is alive!");
+    return;
+  }
+  // if (balance_type_ == OFF)
+  // {
+  //   ROS_WARN("[WARN] Balance is off!");
+  //   return;
+  // }
 
   is_foot_step_2d_ = false;
 
-  if (control_type_ == NONE || control_type_ == WALKING_CONTROL)
-  {
-    walking_size_ = msg.step_num + 3;  // msg.step_num + 2;
-    mov_time_ = msg.step_time;
+  walking_size_ = msg.step_num + 3;  // msg.step_num + 2;
+  mov_time_ = msg.step_time;
+  foot_step_command_ = msg;
+  foot_step_command_.step_num = walking_size_;
 
-    foot_step_command_ = msg;
-    foot_step_command_.step_num = walking_size_;
-
-    control_type_ = WALKING_CONTROL;
-
-    if (!is_moving_)
-      initWalkingControl();
-    else
-      ROS_WARN("[WARN] Previous task is alive!");
-  }
-  else
-    ROS_WARN("[WARN] Control type is different!");
+  initWalkingControl();
 }
 
 void OnlineWalkingModule::initWalkingControl()
 {
+  if (is_moving_)
+  {
+    ROS_WARN("[OnlineWalkingModule::initWalkingControl] Previous task is alive!");
+    return;
+  }
   double mov_time = mov_time_;
 
   mov_step_ = 0;
@@ -1058,51 +1086,38 @@ void OnlineWalkingModule::initWalkingControl()
 
   if (get_preview_matrix)
   {
-    if (is_moving_)
+    ROS_INFO("[OnlineWalkingModule::initWalkingControl] Start Walking Control (%d/%d)", walking_step_ + 1,
+             walking_size_);
+    if (is_foot_step_2d_)
     {
-      // TODO
+      walking_control_->initialize(foot_step_2d_, des_body_position_, des_body_rpy_, des_r_leg_position_,
+                                   des_r_leg_rpy_, des_l_leg_position_, des_l_leg_rpy_);
     }
     else
     {
-      if (is_foot_step_2d_)
-      {
-        walking_control_->initialize(foot_step_2d_, des_body_position_, des_body_rpy_, des_r_leg_position_,
-                                     des_r_leg_rpy_, des_l_leg_position_, des_l_leg_rpy_);
-      }
-      else
-      {
-        walking_control_->initialize(foot_step_command_, des_body_position_, des_body_rpy_, des_r_leg_position_,
-                                     des_r_leg_rpy_, des_l_leg_position_, des_l_leg_rpy_);
-      }
-
-      walking_control_->calcPreviewParam(preview_response_k_, preview_response_k_row_, preview_response_k_col_,
-                                         preview_response_p_, preview_response_p_row_, preview_response_p_row_);
-
-      is_moving_ = true;
-
-      initFeedforwardControl();
-
-      ROS_INFO("[START] Walking Control (%d/%d)", walking_step_ + 1, walking_size_);
+      walking_control_->initialize(foot_step_command_, des_body_position_, des_body_rpy_, des_r_leg_position_,
+                                   des_r_leg_rpy_, des_l_leg_position_, des_l_leg_rpy_);
     }
 
+    walking_control_->calcPreviewParam(preview_response_k_, preview_response_k_row_, preview_response_k_col_,
+                                       preview_response_p_, preview_response_p_row_, preview_response_p_row_);
+    initFeedforwardControl();
+    is_moving_ = true;
     walking_initialize_ = true;
   }
   else
-    ROS_WARN("[FAIL] Cannot get preview matrix");
+    ROS_WARN("[OnlineWalkingModule::initWalkingControl] Cannot get preview matrix");
 }
 
-void OnlineWalkingModule::calcWalkingControl()
+void OnlineWalkingModule::runWalkingControl()
 {
   if (is_moving_)
   {
     double cur_time = (double)mov_step_ * control_cycle_sec_;
     walking_control_->set(cur_time, walking_step_, is_foot_step_2d_);
-
     walking_control_->getWalkingPosition(des_l_leg_position_, des_r_leg_position_, des_body_position_);
     walking_control_->getWalkingOrientation(des_l_leg_rpy_, des_r_leg_rpy_, des_body_rpy_);
-
     walking_control_->getLIPM(x_lipm_, y_lipm_);
-
     walking_control_->getWalkingState(walking_leg_, walking_phase_);
 
     if (mov_step_ == mov_size_ - 1)
@@ -1153,7 +1168,7 @@ void OnlineWalkingModule::initFeedforwardControl()
                                                  zero_vector, zero_vector);
 }
 
-void OnlineWalkingModule::calcRobotPose()
+void OnlineWalkingModule::updateRobotPose()
 {
   Eigen::MatrixXd des_body_pos = Eigen::MatrixXd::Zero(3, 1);
   des_body_pos.coeffRef(0, 0) = des_body_position_[0];
@@ -1186,9 +1201,16 @@ void OnlineWalkingModule::calcRobotPose()
   std::vector<double_t> l_leg_current_pose;
   r_leg_current_pose.resize(6, 0.0);
   l_leg_current_pose.resize(6, 0.0);
-
   kuroko_kinematics_->solveForwardKinematicsForRightLeg(r_leg_joint_pos, r_leg_current_pose);
   kuroko_kinematics_->solveForwardKinematicsForLeftLeg(l_leg_joint_pos, l_leg_current_pose);
+  ROS_INFO("r_leg_joint: %f, %f, %f, %f, %f, %f", r_leg_joint_pos[0], r_leg_joint_pos[1], r_leg_joint_pos[2],
+           r_leg_joint_pos[3], r_leg_joint_pos[4], r_leg_joint_pos[5]);
+  ROS_INFO("r_leg_pose: %f, %f, %f, %f, %f, %f", r_leg_current_pose[0], r_leg_current_pose[1], r_leg_current_pose[2],
+           r_leg_current_pose[3], r_leg_current_pose[4], r_leg_current_pose[5]);
+  ROS_INFO("l_leg_joint: %f, %f, %f, %f, %f, %f", l_leg_joint_pos[0], l_leg_joint_pos[1], l_leg_joint_pos[2],
+           l_leg_joint_pos[3], l_leg_joint_pos[4], l_leg_joint_pos[5]);
+  ROS_INFO("l_leg_pose: %f, %f, %f, %f, %f, %f", l_leg_current_pose[0], l_leg_current_pose[1], l_leg_current_pose[2],
+           l_leg_current_pose[3], l_leg_current_pose[4], l_leg_current_pose[5]);
   std::vector<double_t> r_leg_position(r_leg_current_pose.begin(), r_leg_current_pose.begin() + 2);
   std::vector<double_t> r_leg_rpy(r_leg_current_pose.begin() + 3, r_leg_current_pose.end());
   std::vector<double_t> l_leg_position(l_leg_current_pose.begin(), l_leg_current_pose.begin() + 2);
@@ -1309,68 +1331,64 @@ bool OnlineWalkingModule::setBalanceControl()
   balance_control_.setGyroBalanceEnable(true);
   balance_control_.setOrientationBalanceEnable(true);
   balance_control_.setForceTorqueBalanceEnable(true);
-
   balance_control_.setCOBManualAdjustment(des_body_offset_[0], des_body_offset_[1], des_body_offset_[2]);
-
   setBalanceControlGain();
   setTargetForceTorque();
 
   bool ik_success = true;
 
   // Body Pose
-  Eigen::Vector3d des_body_pos = Eigen::Vector3d::Zero();
+  Eigen::MatrixXd des_body_pos = Eigen::MatrixXd::Zero(3, 1);
   des_body_pos.coeffRef(0, 0) = des_body_position_[0];
   des_body_pos.coeffRef(1, 0) = des_body_position_[1];
   des_body_pos.coeffRef(2, 0) = des_body_position_[2];
 
-  Eigen::Matrix3d des_body_rot =
+  Eigen::MatrixXd des_body_rot =
       robotis_framework::convertRPYToRotation(des_body_rpy_[0], des_body_rpy_[1], des_body_rpy_[2]);
 
   // Right Leg Pose
-  Eigen::Vector3d des_r_foot_pos = Eigen::Vector3d::Zero();
+  Eigen::MatrixXd des_r_foot_pos = Eigen::MatrixXd::Zero(3, 1);
   des_r_foot_pos.coeffRef(0, 0) = des_r_leg_position_[0];
   des_r_foot_pos.coeffRef(1, 0) = des_r_leg_position_[1];
   des_r_foot_pos.coeffRef(2, 0) = des_r_leg_position_[2];
-  Eigen::Matrix3d des_r_foot_rot =
+  Eigen::MatrixXd des_r_foot_rot =
       robotis_framework::convertRPYToRotation(des_r_leg_rpy_[0], des_r_leg_rpy_[1], des_r_leg_rpy_[2]);
 
-  Eigen::Vector3d des_l_foot_pos = Eigen::Vector3d::Zero();
+  Eigen::MatrixXd des_l_foot_pos = Eigen::Vector3d::Zero();
   des_l_foot_pos.coeffRef(0, 0) = des_l_leg_position_[0];
   des_l_foot_pos.coeffRef(1, 0) = des_l_leg_position_[1];
   des_l_foot_pos.coeffRef(2, 0) = des_l_leg_position_[2];
-  Eigen::Matrix3d des_l_foot_rot =
+  Eigen::MatrixXd des_l_foot_rot =
       robotis_framework::convertRPYToRotation(des_l_leg_rpy_[0], des_l_leg_rpy_[1], des_l_leg_rpy_[2]);
 
   // Set Desired Value for Balance Control
-  Eigen::Matrix4d body_pose = Eigen::Matrix4d::Identity();
+  Eigen::MatrixXd body_pose = Eigen::MatrixXd::Identity(4, 4);
   body_pose.block<3, 3>(0, 0) = des_body_rot;
   body_pose.block<3, 1>(0, 3) = des_body_pos;
 
-  Eigen::Matrix4d l_foot_pose = Eigen::Matrix4d::Identity();
+  Eigen::MatrixXd l_foot_pose = Eigen::MatrixXd::Identity(4, 4);
   l_foot_pose.block<3, 3>(0, 0) = des_l_foot_rot;
   l_foot_pose.block<3, 1>(0, 3) = des_l_foot_pos;
 
-  Eigen::Matrix4d r_foot_pose = Eigen::Matrix4d::Identity();
+  Eigen::MatrixXd r_foot_pose = Eigen::MatrixXd::Identity(4, 4);
   r_foot_pose.block<3, 3>(0, 0) = des_r_foot_rot;
   r_foot_pose.block<3, 1>(0, 3) = des_r_foot_pos;
 
   // ===== Transformation =====
-  Eigen::Matrix4d robot_to_body = Eigen::Matrix4d::Identity();
-  Eigen::Matrix4d robot_to_l_foot = body_pose.inverse() * l_foot_pose;
-  Eigen::Matrix4d robot_to_r_foot = body_pose.inverse() * r_foot_pose;
+  Eigen::MatrixXd robot_to_body = Eigen::MatrixXd::Identity(4, 4);
+  Eigen::MatrixXd robot_to_l_foot = body_pose.inverse() * l_foot_pose;
+  Eigen::MatrixXd robot_to_r_foot = body_pose.inverse() * r_foot_pose;
   // =====
 
   // Set IMU
   imu_data_mutex_lock_.lock();
-
   balance_control_.setCurrentGyroSensorOutput(imu_data_msg_.angular_velocity.x, imu_data_msg_.angular_velocity.y);
 
   Eigen::Quaterniond imu_quaternion(imu_data_msg_.orientation.w, imu_data_msg_.orientation.x,
                                     imu_data_msg_.orientation.y, imu_data_msg_.orientation.z);
-  Eigen::Vector3d imu_rpy = robotis_framework::convertRotationToRPY(robotis_framework::getRotationX(M_PI) *
+  Eigen::MatrixXd imu_rpy = robotis_framework::convertRotationToRPY(robotis_framework::getRotationX(M_PI) *
                                                                     imu_quaternion.toRotationMatrix() *
                                                                     robotis_framework::getRotationZ(M_PI));
-
   imu_data_mutex_lock_.unlock();
 
   // Set FT
@@ -1395,7 +1413,6 @@ bool OnlineWalkingModule::setBalanceControl()
                                           l_foot_ft_data_msg_.torque.z);
 
   balance_control_.setCurrentOrientationSensorOutput(imu_rpy.coeff(0, 0), imu_rpy.coeff(1, 0));
-
   balance_control_.setCurrentFootForceTorqueSensorOutput(
       robot_to_r_foot_force.coeff(0, 0), robot_to_r_foot_force.coeff(1, 0), robot_to_r_foot_force.coeff(2, 0),
       robot_to_r_foot_torque.coeff(0, 0), robot_to_r_foot_torque.coeff(1, 0), robot_to_r_foot_torque.coeff(2, 0),
@@ -1403,15 +1420,12 @@ bool OnlineWalkingModule::setBalanceControl()
       robot_to_l_foot_torque.coeff(0, 0), robot_to_l_foot_torque.coeff(1, 0), robot_to_l_foot_torque.coeff(2, 0));
 
   balance_control_.setDesiredCOBGyro(0.0, 0.0);
-
   balance_control_.setDesiredCOBOrientation(des_body_rpy_[0], des_body_rpy_[1]);
-
   balance_control_.setDesiredFootForceTorque(balance_r_foot_force_x_, balance_r_foot_force_y_, balance_r_foot_force_z_,
                                              balance_r_foot_torque_x_, balance_r_foot_torque_y_,
                                              balance_r_foot_torque_z_, balance_l_foot_force_x_, balance_l_foot_force_y_,
                                              balance_l_foot_force_z_, balance_l_foot_torque_x_,
                                              balance_l_foot_torque_y_, balance_l_foot_torque_z_);
-
   balance_control_.setDesiredPose(robot_to_body, robot_to_r_foot, robot_to_l_foot);
 
   int error;
@@ -1419,9 +1433,9 @@ bool OnlineWalkingModule::setBalanceControl()
   balance_control_.process(&error, &robot_to_body_mod, &robot_to_r_foot_mod, &robot_to_l_foot_mod);
 
   // ===== Transformation =====
-  Eigen::Matrix4d body_pose_mod = body_pose * robot_to_body_mod;
-  Eigen::Matrix4d r_foot_pose_mod = body_pose * robot_to_r_foot_mod;
-  Eigen::Matrix4d l_foot_pose_mod = body_pose * robot_to_l_foot_mod;
+  Eigen::MatrixXd body_pose_mod = body_pose * robot_to_body_mod;
+  Eigen::MatrixXd r_foot_pose_mod = body_pose * robot_to_r_foot_mod;
+  Eigen::MatrixXd l_foot_pose_mod = body_pose * robot_to_l_foot_mod;
   // =====
 
   Eigen::MatrixXd des_body_rot_mod = body_pose_mod.block<3, 3>(0, 0);
@@ -1455,7 +1469,11 @@ bool OnlineWalkingModule::setBalanceControl()
   l_leg_pose[3] = des_l_foot_rpy_mod(0);
   l_leg_pose[4] = des_l_foot_rpy_mod(1);
   l_leg_pose[5] = des_l_foot_rpy_mod(2);
-
+  // ROS_INFO("[OnlineWalkingModule::setBalanceControl]: Start IK");
+  // ROS_INFO("r_leg_pose: %f, %f, %f, %f, %f, %f", r_leg_pose[0], r_leg_pose[1], r_leg_pose[2], r_leg_pose[3],
+  //          r_leg_pose[4], r_leg_pose[5]);
+  // ROS_INFO("l_leg_pose: %f, %f, %f, %f, %f, %f", l_leg_pose[0], l_leg_pose[1], l_leg_pose[2], l_leg_pose[3],
+  //          l_leg_pose[4], l_leg_pose[5]);
   ik_success = (kuroko_kinematics_->solveInverseKinematicsForRightLeg(r_leg_joint_pos, r_leg_pose) &&
                 kuroko_kinematics_->solveInverseKinematicsForLeftLeg(l_leg_joint_pos, l_leg_pose));
 
@@ -1565,8 +1583,6 @@ void OnlineWalkingModule::process(std::map<std::string, robotis_framework::Dynam
 
   std::vector<double> balance_angle;
   balance_angle.resize(number_of_joints_, 0.0);
-  for (int i = 0; i < number_of_joints_; i++)
-    balance_angle[i] = 0.0;
 
   double rl_gyro_err = 0.0 - sensors["gyro_x"];
   double fb_gyro_err = 0.0 - sensors["gyro_y"];
@@ -1602,45 +1618,41 @@ void OnlineWalkingModule::process(std::map<std::string, robotis_framework::Dynam
   if (control_type_ == JOINT_CONTROL)
   {
     initJointControl();
-    calcJointControl();
+    runJointControl();
   }
   else if (control_type_ == WHOLEBODY_CONTROL)
   {
     initWholebodyControl();
-    calcWholebodyControl();
+    runWholebodyControl();
   }
   else if (control_type_ == WALKING_CONTROL)
   {
     if (walking_initialize_)
     {
-      calcWalkingControl();
+      runWalkingControl();
       setFeedforwardControl();
     }
   }
   else if (control_type_ == OFFSET_CONTROL)
   {
     initOffsetControl();
-    calcOffsetControl();
+    runOffsetControl();
   }
 
-  //  calcRobotPose();
+  //  updateRobotPose();
 
   if (balance_type_ == ON)
   {
     initBalanceControl();
     calcBalanceControl();
-
     if (!setBalanceControl())
     {
       is_moving_ = false;
       is_balancing_ = false;
       is_foot_step_2d_ = false;
-
       balance_type_ = OFF;
       control_type_ = NONE;
-
       resetBodyPose();
-
       ROS_INFO("[FAIL] Task Space Control");
     }
   }

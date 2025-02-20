@@ -87,7 +87,7 @@ void PreviewWalkingForm::on_button_send_body_offset_clicked(bool /*check*/)
   qnode_kuroko_->sendBodyOffsetMsg(msg);
 }
 
-void PreviewWalkingForm::on_button_send_foot_distance_clicked(bool /*check*/)
+void PreviewWalkingForm::on_button_send_foot_separation_distance_clicked(bool /*check*/)
 {
   std_msgs::Float64 msg;
   msg.data = p_walking_ui_->dSpinBox_foot_distance->value();

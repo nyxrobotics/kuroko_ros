@@ -220,7 +220,7 @@ private:
   ros::Publisher set_walking_footsteps_pub_;
   ros::Publisher walking_param_pub_;
   ros::Publisher body_offset_pub_;
-  ros::Publisher foot_distance_pub_;
+  ros::Publisher foot_separation_distance_pub_;
   ros::Publisher wholebody_balance_pub_;
   ros::Publisher reset_body_msg_pub_;
   ros::Publisher joint_pose_msg_pub_;

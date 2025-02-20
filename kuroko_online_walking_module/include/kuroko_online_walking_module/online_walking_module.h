@@ -162,16 +162,16 @@ private:
 
   ControlType control_type_;
 
-  bool is_moving_;
+  bool is_robot_moving_;
   int mov_size_, mov_step_;
   double mov_time_;
 
-  bool goal_initialize_;
-  bool joint_control_initialize_;
-  bool wholebody_initialize_;
-  bool walking_initialize_;
-  bool balance_control_initialize_;
-  bool body_offset_initialize_;
+  bool is_goal_initialized_;
+  bool is_joint_control_initialized_;
+  bool is_wholebody_control_initialized_;
+  bool is_walking_control_initialized_;
+  bool is_balance_control_initialized_;
+  bool is_body_offset_initialized_;
 
   int walking_leg_, walking_phase_;
   int walking_size_, walking_step_;
@@ -209,7 +209,7 @@ private:
   op3_online_walking_module_msgs::WalkingParam walking_param_;
 
   op3_online_walking_module_msgs::Step2DArray foot_step_2d_;
-  bool is_foot_step_2d_;
+  bool is_footstep_2d_active_;
 
   std::vector<double_t> preview_response_k_;
   int preview_response_k_row_, preview_response_k_col_;
@@ -223,7 +223,7 @@ private:
   // Balance Control
   BalanceType balance_type_;
 
-  bool is_balancing_;
+  bool is_balance_active_;
   int balance_step_, balance_size_;
 
   BalanceControlUsingPDController balance_control_;
@@ -238,11 +238,11 @@ private:
   std::vector<double_t> des_body_offset_;
   std::vector<double_t> goal_body_offset_;
 
-  bool is_offset_updating_;
+  bool is_offset_adjusting_;
   int body_offset_step_, body_offset_size_;
 
   //
-  double foot_distance_;
+  double foot_separation_distance_;
 
   // Balance Gain
   double foot_roll_gyro_p_gain_;
@@ -307,7 +307,7 @@ private:
   geometry_msgs::Wrench l_foot_ft_data_msg_;
   geometry_msgs::Wrench r_foot_ft_data_msg_;
 
-  double total_mass_;
+  double robot_mass_;
 };
 
 }  // namespace motion_control

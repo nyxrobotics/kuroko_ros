@@ -38,7 +38,7 @@ public Q_SLOTS:
 
   void on_button_set_walking_param_clicked(bool check);
   void on_button_send_body_offset_clicked(bool check);
-  void on_button_send_foot_distance_clicked(bool check);
+  void on_button_send_foot_separation_distance_clicked(bool check);
 
   void on_button_p_walking_init_pose_clicked(bool check);
   void on_button_p_walking_balance_on_clicked(bool check);

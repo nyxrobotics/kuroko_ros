@@ -17,8 +17,7 @@ void QNodeKuroko::initPreviewWalking(ros::NodeHandle& ros_node)
       ros_node.advertise<op3_online_walking_module_msgs::Step2DArray>("/motion_control/online_walking/footsteps_2d", 0);
 
   body_offset_pub_ = ros_node.advertise<geometry_msgs::Pose>("/motion_control/online_walking/body_offset", 0);
-  foot_separation_distance_pub_ =
-      ros_node.advertise<std_msgs::Float64>("/motion_control/online_walking/foot_distance", 0);
+  foot_distance_pub_ = ros_node.advertise<std_msgs::Float64>("/motion_control/online_walking/foot_distance", 0);
   wholebody_balance_pub_ =
       ros_node.advertise<std_msgs::String>("/motion_control/online_walking/wholebody_balance_msg", 0);
   reset_body_msg_pub_ = ros_node.advertise<std_msgs::Bool>("/motion_control/online_walking/reset_body", 0);
@@ -653,7 +652,7 @@ void QNodeKuroko::sendBodyOffsetMsg(geometry_msgs::Pose msg)
 
 void QNodeKuroko::sendFootDistanceMsg(std_msgs::Float64 msg)
 {
-  foot_separation_distance_pub_.publish(msg);
+  foot_distance_pub_.publish(msg);
   log(INFO, "Send Foot Distance");
 }
 

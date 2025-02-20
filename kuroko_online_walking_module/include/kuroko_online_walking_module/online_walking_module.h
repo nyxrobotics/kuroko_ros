@@ -242,7 +242,7 @@ private:
   int body_offset_step_, body_offset_size_;
 
   //
-  double foot_separation_distance_;
+  double foot_distance_;
 
   // Balance Gain
   double foot_roll_gyro_p_gain_;

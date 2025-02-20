@@ -18,7 +18,7 @@ OnlineWalkingModule::OnlineWalkingModule()
   , is_footstep_2d_active_(false)
   , walking_phase_(DSP)
   , robot_mass_(3.5)
-  , foot_separation_distance_(0.07)
+  , foot_distance_(0.07)
   , number_of_joints_(12)
 {
   ROS_INFO("[OnlineWalkingModule::OnlineWalkingModule()]");
@@ -186,7 +186,6 @@ void OnlineWalkingModule::onModuleEnable()
   balance_type_ = OFF;
   control_type_ = NONE;
   resetBodyPose();
-  updateRobotPose();
   // Initial pose
   initJointControl();
   runJointControl();
@@ -227,8 +226,8 @@ void OnlineWalkingModule::queueThread()
                          &OnlineWalkingModule::setWholebodyBalanceMsgCallback, this);
   ros::Subscriber body_offset_msg_sub = ros_node.subscribe("/motion_control/online_walking/body_offset", 5,
                                                            &OnlineWalkingModule::setBodyOffsetCallback, this);
-  ros::Subscriber foot_separation_distance_msg_sub = ros_node.subscribe(
-      "/motion_control/online_walking/foot_distance", 5, &OnlineWalkingModule::setFootDistanceCallback, this);
+  ros::Subscriber foot_distance_msg_sub = ros_node.subscribe("/motion_control/online_walking/foot_distance", 5,
+                                                             &OnlineWalkingModule::setFootDistanceCallback, this);
   ros::Subscriber footsteps_sub = ros_node.subscribe("/motion_control/online_walking/footsteps_2d", 5,
                                                      &OnlineWalkingModule::footStep2DCallback, this);
 
@@ -267,17 +266,17 @@ void OnlineWalkingModule::resetBodyPose()
   des_body_rpy_[1] = 0.0;
   des_body_rpy_[2] = 0.0;
 
-  des_r_leg_position_[0] = goal_body_offset_[0];
-  des_r_leg_position_[1] = -0.5 * foot_separation_distance_;
-  des_r_leg_position_[2] = goal_body_offset_[2];
+  des_r_leg_position_[0] = 0.0;
+  des_r_leg_position_[1] = -0.5 * foot_distance_;
+  des_r_leg_position_[2] = 0.0;
 
   des_r_leg_rpy_[0] = 0.0;
   des_r_leg_rpy_[1] = 0.0;
   des_r_leg_rpy_[2] = 0.0;
 
-  des_l_leg_position_[0] = goal_body_offset_[0];
-  des_l_leg_position_[1] = 0.5 * foot_separation_distance_;
-  des_l_leg_position_[2] = goal_body_offset_[2];
+  des_l_leg_position_[0] = 0.0;
+  des_l_leg_position_[1] = 0.5 * foot_distance_;
+  des_l_leg_position_[2] = 0.0;
 
   des_l_leg_rpy_[0] = 0.0;
   des_l_leg_rpy_[1] = 0.0;
@@ -750,7 +749,7 @@ void OnlineWalkingModule::setFootDistanceCallback(const std_msgs::Float64::Const
   if (!enable_)
     return;
 
-  foot_separation_distance_ = msg->data;
+  foot_distance_ = msg->data;
   resetBodyPose();
 }
 
@@ -1078,7 +1077,7 @@ void OnlineWalkingModule::initWalkingControl()
 
   walking_control_ = new WalkingControl(control_cycle_sec_, walking_param_.dsp_ratio, walking_param_.lipm_height,
                                         walking_param_.foot_height_max, walking_param_.zmp_offset_x,
-                                        walking_param_.zmp_offset_y, x_lipm_, y_lipm_, foot_separation_distance_);
+                                        walking_param_.zmp_offset_y, x_lipm_, y_lipm_, foot_distance_);
 
   double lipm_height = walking_control_->getLipmHeight();
   preview_request_.lipm_height = lipm_height;
@@ -1667,8 +1666,11 @@ void OnlineWalkingModule::process(std::map<std::string, robotis_framework::Dynam
 
   setFeedbackControl();
 
-  for (int i = 0; i < number_of_joints_; i++)
-    des_joint_position_to_robot_[i] += balance_angle[i];
+  if (is_balance_active_)
+  {
+    for (int i = 0; i < number_of_joints_; i++)
+      des_joint_position_to_robot_[i] += balance_angle[i];
+  }
 
   sensor_msgs::JointState goal_joint_msg;
   geometry_msgs::PoseStamped pelvis_pose_msg;

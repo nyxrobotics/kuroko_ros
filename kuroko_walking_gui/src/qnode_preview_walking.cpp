@@ -665,7 +665,9 @@ void QNodeKuroko::sendResetBodyMsg(std_msgs::Bool msg)
 void QNodeKuroko::sendWholebodyBalanceMsg(const std_msgs::String& msg)
 {
   wholebody_balance_pub_.publish(msg);
-  log(INFO, "Wholebody Balance Msg");
+  bool is_balance_active = msg.data == "balance_on" ? true : false;
+  log(INFO, is_balance_active ? "[QNodeKuroko::sendWholebodyBalanceMsg] Balance On" :
+                                "[QNodeKuroko::sendWholebodyBalanceMsg] Balance Off");
 }
 
 void QNodeKuroko::parseIniPoseData(const std::string& path)

@@ -1666,10 +1666,15 @@ void OnlineWalkingModule::process(std::map<std::string, robotis_framework::Dynam
 
   setFeedbackControl();
 
-  if (is_balance_active_)
+  if (balance_type_ == ON)
   {
     for (int i = 0; i < number_of_joints_; i++)
       des_joint_position_to_robot_[i] += balance_angle[i];
+  }
+  else
+  {
+    for (int i = 0; i < number_of_joints_; i++)
+      balance_angle[i] = 0.0;
   }
 
   sensor_msgs::JointState goal_joint_msg;

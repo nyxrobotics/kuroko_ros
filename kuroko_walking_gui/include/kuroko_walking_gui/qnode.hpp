@@ -187,10 +187,10 @@ private:
   // ROS parameters
   double foot_size_x_, foot_size_y_, foot_size_z_;
   double foot_separation_;
+  std::string world_frame_id_, robot_frame_id_;
 
   // interactive marker
   ros::Subscriber rviz_clicked_point_sub_;
-  std::string frame_id_;
   std::string marker_name_;
   geometry_msgs::Pose pose_from_ui_;
   geometry_msgs::Pose current_pose_;

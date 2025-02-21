@@ -11,6 +11,8 @@ void QNodeKuroko::initPreviewWalking(ros::NodeHandle& ros_node)
   ros::param::param<double>("/footstep_planner/foot/size_x", foot_size_x_, 0.12);
   ros::param::param<double>("/footstep_planner/foot/size_y", foot_size_y_, 0.075);
   ros::param::param<double>("/footstep_planner/foot/size_z", foot_size_z_, 0.008);
+  ros::param::param<std::string>("world_frame_id", world_frame_id_, "world");
+  ros::param::param<std::string>("robot_frame_id", robot_frame_id_, "body_link");
 
   // Publisher
   foot_step_command_pub_ = ros_node.advertise<op3_online_walking_module_msgs::FootStepCommand>("/motion_control/"
@@ -40,8 +42,11 @@ void QNodeKuroko::initPreviewWalking(ros::NodeHandle& ros_node)
   marker_pub_ = ros_node.advertise<visualization_msgs::MarkerArray>("/motion_control/demo/foot_step_marker", 0);
 
   // interacrive marker
-  rviz_clicked_point_sub_ = ros_node.subscribe("clicked_point", 0, &QNodeKuroko::pointStampedCallback, this);
   interactive_marker_server_.reset(new interactive_markers::InteractiveMarkerServer("Feet_Pose", "", false));
+
+  // Rviz
+  rviz_clicked_point_sub_ = ros_node.subscribe("clicked_point", 0, &QNodeKuroko::pointStampedCallback, this);
+
   ROS_INFO("Initialized node handle for preview walking");
 }
 
@@ -106,12 +111,12 @@ void QNodeKuroko::pointStampedCallback(const geometry_msgs::PointStamped::ConstP
 {
   ROS_INFO("get position from rviz");
 
-  frame_id_ = msg->header.frame_id;
+  world_frame_id_ = msg->header.frame_id;
 
   // transform : world to local
   geometry_msgs::Pose local_pose, world_pose;
   world_pose.position = msg->point;
-  bool result = transformPose("/world", "/body_link", world_pose, local_pose);
+  bool result = transformPose(world_frame_id_, robot_frame_id_, world_pose, local_pose);
   if (!result)
   {
     log(WARN, "transformation is failed.");
@@ -139,7 +144,7 @@ void QNodeKuroko::interactiveMarkerFeedback(const visualization_msgs::Interactiv
     {
       // transform : world to local
       geometry_msgs::Pose local_pose;
-      bool result = transformPose("/world", "/body_link", feedback->pose, local_pose);
+      bool result = transformPose(world_frame_id_, robot_frame_id_, feedback->pose, local_pose);
       if (!result)
       {
         log(WARN, "transformation is failed.");
@@ -168,12 +173,10 @@ void QNodeKuroko::interactiveMarkerFeedback(const visualization_msgs::Interactiv
 
 void QNodeKuroko::makeInteractiveMarker(const geometry_msgs::Pose& marker_pose)
 {
-  if (frame_id_.empty())
+  if (world_frame_id_.empty())
   {
-    ROS_ERROR("No frame id!!!");
-    // return;
-
-    frame_id_ = "world";
+    ROS_ERROR("World frame id is empty");
+    ros::param::param<std::string>("world_frame_id", world_frame_id_, "world");
   }
 
   ROS_INFO_STREAM("Make Interactive Marker! - " << marker_pose.position.x << ", " << marker_pose.position.y << ", "
@@ -185,7 +188,7 @@ void QNodeKuroko::makeInteractiveMarker(const geometry_msgs::Pose& marker_pose)
 
   // transform : local to world
   geometry_msgs::Pose world_pose;
-  bool result = transformPose("/world", "/body_link", marker_pose, world_pose, true);
+  bool result = transformPose(world_frame_id_, robot_frame_id_, marker_pose, world_pose, true);
   if (!result)
     world_pose = marker_pose;
 
@@ -193,7 +196,7 @@ void QNodeKuroko::makeInteractiveMarker(const geometry_msgs::Pose& marker_pose)
   interactive_marker.pose = world_pose;  // set pose
 
   // Visualize Interactive Marker
-  interactive_marker.header.frame_id = frame_id_;
+  interactive_marker.header.frame_id = world_frame_id_;
   interactive_marker.scale = 0.3;
 
   interactive_marker.name = marker_name_;  //"pose_marker";
@@ -310,7 +313,7 @@ bool QNodeKuroko::updateInteractiveMarker(const geometry_msgs::Pose& pose)
 
   // transform : local to world
   geometry_msgs::Pose world_pose;
-  bool result = transformPose("/world", "/body_link", pose, world_pose, true);
+  bool result = transformPose(world_frame_id_, robot_frame_id_, pose, world_pose, true);
   if (!result)
     world_pose = pose;
 
@@ -333,7 +336,7 @@ void QNodeKuroko::getInteractiveMarkerPose()
 
   // transform : world to local
   geometry_msgs::Pose local_pose;
-  bool result = transformPose("/world", "/body_link", interactive_marker.pose, local_pose);
+  bool result = transformPose(world_frame_id_, robot_frame_id_, interactive_marker.pose, local_pose);
   if (!result)
     local_pose = interactive_marker.pose;
 
@@ -531,7 +534,7 @@ void QNodeKuroko::visualizePreviewFootsteps(bool clear)
   ros::Time now = ros::Time::now();
   visualization_msgs::Marker rviz_marker;
 
-  rviz_marker.header.frame_id = "body_link";
+  rviz_marker.header.frame_id = robot_frame_id_;
   rviz_marker.header.stamp = now;
   rviz_marker.ns = "foot_step_marker";
 
@@ -548,7 +551,7 @@ void QNodeKuroko::visualizePreviewFootsteps(bool clear)
   double height = 0.0;
 
   geometry_msgs::Pose local_pose, world_pose;
-  bool result = transformPose("/world", "/body_link", world_pose, local_pose);
+  bool result = transformPose(robot_frame_id_, robot_frame_id_, world_pose, local_pose);
   if (result)
     height = local_pose.position.z;
 

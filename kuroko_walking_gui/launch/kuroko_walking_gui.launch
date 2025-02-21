@@ -14,5 +14,5 @@
   </node>
 
   <!-- kuroko Footstep Planner -->
-  <include file="$(find op3_navigation)/launch/op3_footstep_planner.launch"/>
+  <include file="$(find kuroko_navigation)/launch/kuroko_footstep_planner.launch"/>
 </launch>

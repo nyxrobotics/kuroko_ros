@@ -197,96 +197,88 @@ void QNodeKuroko::makeInteractiveMarker(const geometry_msgs::Pose& marker_pose)
   interactive_marker.scale = 0.3;
 
   interactive_marker.name = marker_name_;  //"pose_marker";
-  interactive_marker.description = "3D Pose Control";
+  interactive_marker.description = "Online Walking Target";
 
-  // ----- center marker
+  // Center marker (Visualize boxes)
   visualization_msgs::InteractiveMarkerControl center_marker_control;
-
   center_marker_control.always_visible = true;
   center_marker_control.interaction_mode = visualization_msgs::InteractiveMarkerControl::NONE;
-
   visualization_msgs::Marker marker;
-
   marker.type = visualization_msgs::Marker::CUBE;
 
   // center cube
   marker.scale.x = 0.03;
   marker.scale.y = 0.03;
   marker.scale.z = 0.03;
-
   marker.color.r = 1.0;
   marker.color.g = 0.5;
   marker.color.b = 0.5;
   marker.color.a = 1.0;
-
   center_marker_control.markers.push_back(marker);
 
-  // axis x
+  // axis x box
   marker.pose.position.x = 0.05;
   marker.pose.position.y = 0.0;
   marker.pose.position.z = 0.0;
-
   marker.scale.x = 0.1;
   marker.scale.y = 0.01;
   marker.scale.z = 0.01;
-
   marker.color.r = 1.0;
   marker.color.g = 0.0;
   marker.color.b = 0.0;
   marker.color.a = 1.0;
-
   center_marker_control.markers.push_back(marker);
 
-  // axis y
+  // axis y box
   marker.pose.position.x = 0.0;
   marker.pose.position.y = 0.05;
   marker.pose.position.z = 0.0;
-
   marker.scale.x = 0.01;
   marker.scale.y = 0.1;
   marker.scale.z = 0.01;
-
   marker.color.r = 0.0;
   marker.color.g = 1.0;
   marker.color.b = 0.0;
   marker.color.a = 1.0;
-
   center_marker_control.markers.push_back(marker);
 
-  // axis z
+  // axis z box
   marker.pose.position.x = 0.0;
   marker.pose.position.y = 0.0;
   marker.pose.position.z = 0.05;
-
   marker.scale.x = 0.01;
   marker.scale.y = 0.01;
   marker.scale.z = 0.1;
-
   marker.color.r = 0.0;
   marker.color.g = 0.0;
   marker.color.b = 1.0;
   marker.color.a = 1.0;
-
   center_marker_control.markers.push_back(marker);
 
   interactive_marker.controls.push_back(center_marker_control);
 
-  // ----- controller
+  // Interactive Marker Move Control
   visualization_msgs::InteractiveMarkerControl interactive_control;
 
-  // move and rotate along axis x : default
+  // move along axis x
   interactive_control.orientation.x = 1;
   interactive_control.orientation.y = 0;
   interactive_control.orientation.z = 0;
   interactive_control.orientation.w = 1;
-  interactive_control.name = "rotate";
-  interactive_control.interaction_mode = visualization_msgs::InteractiveMarkerControl::ROTATE_AXIS;
-  interactive_marker.controls.push_back(interactive_control);
   interactive_control.name = "move";
   interactive_control.interaction_mode = visualization_msgs::InteractiveMarkerControl::MOVE_AXIS;
   interactive_marker.controls.push_back(interactive_control);
 
-  // move and rotate along axis y
+  // move along axis y
+  interactive_control.orientation.x = 0;
+  interactive_control.orientation.y = 0;
+  interactive_control.orientation.z = 1;
+  interactive_control.orientation.w = 1;
+  interactive_control.name = "move";
+  interactive_control.interaction_mode = visualization_msgs::InteractiveMarkerControl::MOVE_AXIS;
+  interactive_marker.controls.push_back(interactive_control);
+
+  // rotate along axis z
   interactive_control.orientation.x = 0;
   interactive_control.orientation.y = 1;
   interactive_control.orientation.z = 0;
@@ -294,26 +286,11 @@ void QNodeKuroko::makeInteractiveMarker(const geometry_msgs::Pose& marker_pose)
   interactive_control.name = "rotate";
   interactive_control.interaction_mode = visualization_msgs::InteractiveMarkerControl::ROTATE_AXIS;
   interactive_marker.controls.push_back(interactive_control);
-  interactive_control.name = "move";
-  interactive_control.interaction_mode = visualization_msgs::InteractiveMarkerControl::MOVE_AXIS;
-  interactive_marker.controls.push_back(interactive_control);
 
-  // move and rotate along axis z
-  interactive_control.orientation.x = 0;
-  interactive_control.orientation.y = 0;
-  interactive_control.orientation.z = 1;
-  interactive_control.orientation.w = 1;
-  interactive_control.name = "rotate";
-  interactive_control.interaction_mode = visualization_msgs::InteractiveMarkerControl::ROTATE_AXIS;
-  interactive_marker.controls.push_back(interactive_control);
-  interactive_control.name = "move";
-  interactive_control.interaction_mode = visualization_msgs::InteractiveMarkerControl::MOVE_AXIS;
-  interactive_marker.controls.push_back(interactive_control);
-
+  // Generate Interactive Marker
   interactive_marker_server_->insert(interactive_marker);
   interactive_marker_server_->setCallback(interactive_marker.name,
                                           boost::bind(&QNodeKuroko::interactiveMarkerFeedback, this, _1));
-
   interactive_marker_server_->applyChanges();
 }
 

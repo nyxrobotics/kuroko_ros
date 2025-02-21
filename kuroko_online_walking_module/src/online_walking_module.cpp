@@ -220,7 +220,7 @@ void OnlineWalkingModule::queueThread()
   ros::Subscriber foot_step_command_sub = ros_node.subscribe("/motion_control/online_walking/foot_step_command", 5,
                                                              &OnlineWalkingModule::footStepCommandCallback, this);
   ros::Subscriber walking_param_sub = ros_node.subscribe("/motion_control/online_walking/walking_param", 5,
-                                                         &OnlineWalkingModule::walkingParamCallback, this);
+                                                         &OnlineWalkingModule::onlineWalkingParamCallback, this);
   ros::Subscriber wholebody_balance_msg_sub =
       ros_node.subscribe("/motion_control/online_walking/wholebody_balance_msg", 5,
                          &OnlineWalkingModule::setWholebodyBalanceMsgCallback, this);
@@ -633,7 +633,7 @@ void OnlineWalkingModule::setResetBodyCallback(const std_msgs::Bool::ConstPtr& m
   }
 }
 
-void OnlineWalkingModule::walkingParamCallback(const op3_online_walking_module_msgs::WalkingParam& msg)
+void OnlineWalkingModule::onlineWalkingParamCallback(const op3_online_walking_module_msgs::WalkingParam& msg)
 {
   walking_param_ = msg;
 }

@@ -66,6 +66,7 @@ void PreviewWalkingForm::on_button_p_walking_right_clicked(bool /*check*/)
 
 void PreviewWalkingForm::on_button_set_walking_param_clicked(bool /*check*/)
 {
+  // Set walking params for online walking module
   op3_online_walking_module_msgs::WalkingParam msg;
 
   msg.dsp_ratio = p_walking_ui_->dSpinBox_dsp_ratio->value();

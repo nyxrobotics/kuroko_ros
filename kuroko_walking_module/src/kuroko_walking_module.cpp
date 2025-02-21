@@ -358,7 +358,7 @@ void WalkingModule::process(std::map<std::string, robotis_framework::Dynamixel*>
     double rl_gyro_err = 0.0 - sensors["gyro_x"];
     double fb_gyro_err = 0.0 - sensors["gyro_y"];
 
-    balanceFeedback(rl_gyro_err, fb_gyro_err, balance_angle);
+    gyroFeedback(rl_gyro_err, fb_gyro_err, balance_angle);
 
     double err_total = 0.0, err_max = 0.0;
     // set goal position
@@ -750,8 +750,8 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
   return true;
 }
 
-void WalkingModule::balanceFeedback(const double& roll_gyro_err, const double& pitch_gyro_err,
-                                    std::vector<double>& balance_angle)
+void WalkingModule::gyroFeedback(const double& roll_gyro_err, const double& pitch_gyro_err,
+                                 std::vector<double>& balance_angle)
 {
   // adjust balance offset
   if (!static_cast<bool>(walking_param_.balance_enable))

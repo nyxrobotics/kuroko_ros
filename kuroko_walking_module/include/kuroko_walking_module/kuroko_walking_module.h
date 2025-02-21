@@ -96,7 +96,7 @@ private:
   /* ROS Service Callback Functions */
   void processPhase(const double& time_unit);
   bool updateLegTargetAngles(std::vector<double>& leg_joints);
-  void balanceFeedback(const double& roll_gyro_err, const double& pitch_gyro_err, std::vector<double>& balance_angle);
+  void gyroFeedback(const double& roll_gyro_err, const double& pitch_gyro_err, std::vector<double>& balance_angle);
 
   void publishStatusMsg(unsigned int type, std::string msg);
   double wSin(double time, double period, double period_shift, double mag, double mag_shift);

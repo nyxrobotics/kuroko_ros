@@ -95,8 +95,6 @@ protected:
   int walking_phase_;
 
   // Foot Trajectory
-  double foot_size_x_;
-  double foot_size_y_;
   double foot_origin_shift_x_;
   double foot_origin_shift_y_;
 

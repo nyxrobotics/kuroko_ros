@@ -6,6 +6,10 @@ KurokoLocalization::KurokoLocalization(ros::NodeHandle& nh) : ros_node_(nh), err
 {
   initialize();
   ros_node_.param("initial_body_height", initial_body_height_, 0.3);
+  ros_node_.param("publish_tf", publish_tf_, true);
+  ros_node_.param("publish_odom", publish_odom_, true);
+  ros_node_.param<std::string>("world_frame_id", world_frame_id_, "world");
+  ros_node_.param<std::string>("robot_frame_id", robot_frame_id_, "body_link");
 
   pelvis_pose_base_walking_.pose.position.x = 0.0;
   pelvis_pose_base_walking_.pose.position.y = 0.0;
@@ -25,7 +29,7 @@ KurokoLocalization::KurokoLocalization(ros::NodeHandle& nh) : ros_node_(nh), err
 
   pelvis_pose_old_.pose.position.x = 0.0;
   pelvis_pose_old_.pose.position.y = 0.0;
-  pelvis_pose_old_.pose.position.z = 0.0;
+  pelvis_pose_old_.pose.position.z = initial_body_height_;
   pelvis_pose_old_.pose.orientation.x = 0.0;
   pelvis_pose_old_.pose.orientation.y = 0.0;
   pelvis_pose_old_.pose.orientation.z = 0.0;
@@ -44,15 +48,17 @@ void KurokoLocalization::initialize()
       ros_node_.subscribe("/motion_control/pelvis_pose", 5, &KurokoLocalization::pelvisPoseCallback, this);
   pelvis_reset_msg_sub_ =
       ros_node_.subscribe("/motion_control/pelvis_pose_reset", 5, &KurokoLocalization::pelvisPoseResetCallback, this);
+  if (publish_odom_)
+  {
+    odom_pub_ = ros_node_.advertise<geometry_msgs::PoseStamped>("/motion_control/odom", 1);
+  }
 }
 
 void KurokoLocalization::pelvisPoseCallback(const geometry_msgs::PoseStamped::ConstPtr& msg)
 {
   mutex_.lock();
-
   pelvis_pose_offset_ = *msg;
   pelvis_pose_.header.stamp = pelvis_pose_offset_.header.stamp;
-
   mutex_.unlock();
 }
 
@@ -82,9 +88,20 @@ void KurokoLocalization::process()
                    pelvis_pose_.pose.orientation.w);
 
   pelvis_trans_.setRotation(q);
-  tf::StampedTransform tmp_tf_stamped(pelvis_trans_, ros::Time::now(), "world", "body_link");
-
-  broadcaster_.sendTransform(tmp_tf_stamped);
+  if (publish_tf_)
+  {
+    tf::StampedTransform tmp_tf_stamped(pelvis_trans_, ros::Time::now(), world_frame_id_, robot_frame_id_);
+    tf_broadcaster_.sendTransform(tmp_tf_stamped);
+  }
+  if (publish_odom_)
+  {
+    nav_msgs::Odometry odom;
+    odom.header.stamp = ros::Time::now();
+    odom.header.frame_id = world_frame_id_;
+    odom.child_frame_id = robot_frame_id_;
+    odom.pose.pose = pelvis_pose_.pose;
+    odom_pub_.publish(odom);
+  }
 }
 
 void KurokoLocalization::update()

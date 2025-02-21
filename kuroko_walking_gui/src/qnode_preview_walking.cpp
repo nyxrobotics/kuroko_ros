@@ -1,11 +1,18 @@
 
 #include "../include/kuroko_walking_gui/qnode.hpp"
+#include "ros/subscriber.h"
 
 namespace walking_gui
 {
 void QNodeKuroko::initPreviewWalking(ros::NodeHandle& ros_node)
 {
-  // preview walking
+  // Parameter
+  ros::param::param<double>("/footstep_planner/foot/separation", foot_separation_, 0.1);
+  ros::param::param<double>("/footstep_planner/foot/size_x", foot_size_x_, 0.12);
+  ros::param::param<double>("/footstep_planner/foot/size_y", foot_size_y_, 0.075);
+  ros::param::param<double>("/footstep_planner/foot/size_z", foot_size_z_, 0.008);
+
+  // Publisher
   foot_step_command_pub_ = ros_node.advertise<op3_online_walking_module_msgs::FootStepCommand>("/motion_control/"
                                                                                                "online_walking/"
                                                                                                "foot_step_command",
@@ -24,14 +31,17 @@ void QNodeKuroko::initPreviewWalking(ros::NodeHandle& ros_node)
   joint_pose_msg_pub_ = ros_node.advertise<op3_online_walking_module_msgs::JointPose>("/motion_control/online_walking/"
                                                                                       "goal_joint_pose",
                                                                                       0);
+  // Subscriber
+  foot_distance_msg_sub_ = ros_node.subscribe("/motion_control/online_walking/foot_distance", 5,
+                                              &QNodeKuroko::setFootDistanceCallback, this);
 
+  // Footstep visualization
   humanoid_footstep_client_ = ros_node.serviceClient<humanoid_nav_msgs::PlanFootsteps>("plan_footsteps");
   marker_pub_ = ros_node.advertise<visualization_msgs::MarkerArray>("/motion_control/demo/foot_step_marker", 0);
 
   // interacrive marker
   rviz_clicked_point_sub_ = ros_node.subscribe("clicked_point", 0, &QNodeKuroko::pointStampedCallback, this);
   interactive_marker_server_.reset(new interactive_markers::InteractiveMarkerServer("Feet_Pose", "", false));
-
   ROS_INFO("Initialized node handle for preview walking");
 }
 
@@ -482,15 +492,13 @@ void QNodeKuroko::makeFootstepUsingPlanner(const geometry_msgs::Pose& target_foo
         preview_foot_types_.push_back(foot_type);
       }
 
-      double y_feet_offset = 0.186;
-      ros::param::get("/footstep_planner/foot/separation", y_feet_offset);
       geometry_msgs::Pose2D target_r_foot_pose, target_l_foot_pose;
-      target_r_foot_pose.x = goal.x - (-0.5 * y_feet_offset) * sin(theta);
-      target_r_foot_pose.y = goal.y + (-0.5 * y_feet_offset) * cos(theta);
+      target_r_foot_pose.x = goal.x - (-0.5 * foot_separation_) * sin(theta);
+      target_r_foot_pose.y = goal.y + (-0.5 * foot_separation_) * cos(theta);
       target_r_foot_pose.theta = theta;
 
-      target_l_foot_pose.x = goal.x - (0.5 * y_feet_offset) * sin(theta);
-      target_l_foot_pose.y = goal.y + (0.5 * y_feet_offset) * cos(theta);
+      target_l_foot_pose.x = goal.x - (0.5 * foot_separation_) * sin(theta);
+      target_l_foot_pose.y = goal.y + (0.5 * foot_separation_) * cos(theta);
       target_l_foot_pose.theta = theta;
 
       if (preview_foot_types_[preview_foot_types_.size() - 1] ==
@@ -554,12 +562,13 @@ void QNodeKuroko::visualizePreviewFootsteps(bool clear)
   rviz_marker.type = visualization_msgs::Marker::CUBE;
   rviz_marker.action = (!clear) ? visualization_msgs::Marker::ADD : visualization_msgs::Marker::DELETE;
 
-  rviz_marker.scale.x = 0.128;
-  rviz_marker.scale.y = 0.08;
-  rviz_marker.scale.z = 0.01;
+  // Foot size
+  rviz_marker.scale.x = foot_size_x_;
+  rviz_marker.scale.y = foot_size_y_;
+  rviz_marker.scale.z = foot_size_z_;
 
-  double alpha = 0.7;
-  double height = -0.229;
+  double alpha = 0.8;
+  double height = 0.0;
 
   geometry_msgs::Pose local_pose, world_pose;
   bool result = transformPose("/world", "/body_link", world_pose, local_pose);
@@ -587,7 +596,6 @@ void QNodeKuroko::visualizePreviewFootsteps(bool clear)
             << rviz_marker.pose.position.y << "]";
         log(INFO, msg.str());
       }
-      alpha *= 0.9;
 
       // set foot step color
       if (preview_foot_types_[ix] == op3_online_walking_module_msgs::Step2D::LEFT_FOOT_SWING)  // left
@@ -595,30 +603,18 @@ void QNodeKuroko::visualizePreviewFootsteps(bool clear)
         rviz_marker.color.r = 0.0;
         rviz_marker.color.g = 0.0;
         rviz_marker.color.b = 1.0;
-        rviz_marker.color.a = alpha + 0.3;
-
-        Eigen::Vector3d offset_y(0, 0.015, 0);
-        marker_position_offset = marker_orientation.toRotationMatrix() * offset_y;
+        rviz_marker.color.a = alpha;
       }
       else if (preview_foot_types_[ix] == op3_online_walking_module_msgs::Step2D::RIGHT_FOOT_SWING)  // right
       {
         rviz_marker.color.r = 1.0;
         rviz_marker.color.g = 0.0;
         rviz_marker.color.b = 0.0;
-        rviz_marker.color.a = alpha + 0.3;
-
-        Eigen::Vector3d offset_y(0, -0.015, 0);
-        marker_position_offset = marker_orientation.toRotationMatrix() * offset_y;
+        rviz_marker.color.a = alpha;
       }
-
-      marker_position = marker_position_offset + marker_position;
-
       tf::pointEigenToMsg(marker_position, rviz_marker.pose.position);
       tf::quaternionEigenToMsg(marker_orientation, rviz_marker.pose.orientation);
-
-      // apply foot x offset
     }
-
     marker_array.markers.push_back(rviz_marker);
   }
 
@@ -710,6 +706,12 @@ void QNodeKuroko::sendJointPoseMsg(const op3_online_walking_module_msgs::JointPo
   joint_pose_msg_pub_.publish(msg);
 
   log(INFO, "Send Joint Pose Msg");
+}
+
+void QNodeKuroko::setFootDistanceCallback(const std_msgs::Float64::ConstPtr& msg)
+{
+  ROS_INFO("[QNodeKuroko::setFootDistanceCallback] %f -> %f", foot_separation_, msg->data);
+  foot_separation_ = msg->data;
 }
 
 }  // namespace walking_gui

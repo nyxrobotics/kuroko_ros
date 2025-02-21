@@ -169,6 +169,7 @@ private:
   void refreshCurrentJointControlCallback(const robotis_controller_msgs::JointCtrlModule::ConstPtr& msg);
   void updateHeadJointStatesCallback(const sensor_msgs::JointState::ConstPtr& msg);
   void statusMsgCallback(const robotis_controller_msgs::StatusMsg::ConstPtr& msg);
+  void setFootDistanceCallback(const std_msgs::Float64::ConstPtr& msg);
 
   // interactive marker
   void pointStampedCallback(const geometry_msgs::PointStamped::ConstPtr& msg);
@@ -182,6 +183,10 @@ private:
   char** init_argv_;
   bool debug_;
   double body_height_;
+
+  // ROS parameters
+  double foot_size_x_, foot_size_y_, foot_size_z_;
+  double foot_separation_;
 
   // interactive marker
   ros::Subscriber rviz_clicked_point_sub_;
@@ -200,9 +205,8 @@ private:
   ros::Publisher module_control_preset_pub_;
   ros::Publisher init_gyro_pub_;
   ros::Subscriber status_msg_sub_;
-  ros::Subscriber init_ft_foot_sub_;
-  ros::Subscriber both_ft_foot_sub_;
   ros::Subscriber current_module_control_sub_;
+  ros::Subscriber foot_distance_msg_sub_;
   ros::ServiceClient get_module_control_client_;
 
   // Head

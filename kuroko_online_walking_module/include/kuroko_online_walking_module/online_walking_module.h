@@ -124,17 +124,17 @@ private:
   void runJointControl();
   void initWholebodyControl();
   void runWholebodyControl();
-  void initOffsetControl();
-  void runOffsetControl();
+  void initBodyOffset();
+  void applyBodyOffset();
   void initWalkingControl();
   void runWalkingControl();
-  void initBalanceControl();
-  void calcBalanceControl();
+  void initBalanceGain();
+  void applyBalanceGain();
 
   void initFeedforwardControl();
   void setFeedforwardControl();
 
-  void balanceFeedback(const double& roll_gyro_err, const double& pitch_gyro_err, std::vector<double>& balance_angle);
+  void gyroFeedback(const double& roll_gyro_err, const double& pitch_gyro_err, std::vector<double>& balance_angle);
 
   void updateRobotPose();
 
@@ -186,19 +186,19 @@ private:
   std::string wholegbody_control_group_;
 
   // Joint Command
-  std::vector<double_t> curr_joint_accel_, curr_joint_velocity_, curr_joint_position_;
-  std::vector<double_t> des_joint_accel_, des_joint_velocity_, des_joint_position_;
-  std::vector<double_t> goal_joint_accel_, goal_joint_velocity_, goal_joint_position_;
+  std::vector<double_t> curr_joint_accel_, curr_joint_velocity_, curr_joint_pos_;
+  std::vector<double_t> des_joint_accel_, des_joint_velocity_, des_joint_pos_;
+  std::vector<double_t> goal_joint_accel_, goal_joint_velocity_, goal_joint_pos_;
 
   std::vector<double_t> des_joint_feedback_;
   std::vector<double_t> des_joint_feedforward_;
-  std::vector<double_t> des_joint_position_to_robot_;
+  std::vector<double_t> des_joint_pos_to_robot_;
 
-  std::vector<double_t> des_l_arm_position_, des_l_arm_velocity_, des_l_arm_accel_, des_l_arm_rpy_;
-  std::vector<double_t> des_r_arm_position_, des_r_arm_velocity_, des_r_arm_accel_, des_r_arm_rpy_;
-  std::vector<double_t> des_l_leg_position_, des_l_leg_velocity_, des_l_leg_accel_, des_l_leg_rpy_;
-  std::vector<double_t> des_r_leg_position_, des_r_leg_velocity_, des_r_leg_accel_, des_r_leg_rpy_;
-  std::vector<double_t> des_body_position_, des_body_velocity_, des_body_accel_, des_body_rpy_;
+  std::vector<double_t> des_l_arm_pos_, des_l_arm_velocity_, des_l_arm_accel_, des_l_arm_rpy_;
+  std::vector<double_t> des_r_arm_pos_, des_r_arm_velocity_, des_r_arm_accel_, des_r_arm_rpy_;
+  std::vector<double_t> des_l_leg_pos_, des_l_leg_velocity_, des_l_leg_accel_, des_l_leg_rpy_;
+  std::vector<double_t> des_r_leg_pos_, des_r_leg_velocity_, des_r_leg_accel_, des_r_leg_rpy_;
+  std::vector<double_t> des_body_pos_, des_body_velocity_, des_body_accel_, des_body_rpy_;
 
   // Walking Control
   std::vector<double_t> x_lipm_, y_lipm_;

@@ -16,8 +16,6 @@ WalkingControl::WalkingControl(double control_cycle, double dsp_ratio, double li
   // Foot Paramater
   foot_step_size_ = 0;
 
-  foot_size_x_ = 0.127;
-  foot_size_y_ = 0.0125;
   foot_origin_shift_x_ = 0.0;
   foot_origin_shift_y_ = foot_distance;  // 0.09; //0.07;
 

@@ -6,5 +6,6 @@
     <rosparam file="$(find kuroko_navigation)/config/planning_params_kuroko.yaml" command="load"/>
     <rosparam file="$(find kuroko_navigation)/config/footsteps_kuroko.yaml" command="load"/>
     <remap from="map" to="projected_map"/>
+    <remap from="/goal" to="/move_base_simple/goal"/>
   </node>
 </launch>

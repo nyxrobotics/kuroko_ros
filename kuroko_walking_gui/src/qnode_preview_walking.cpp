@@ -19,9 +19,10 @@ void QNodeKuroko::initPreviewWalking(ros::NodeHandle& ros_node)
                                                                                                "online_walking/"
                                                                                                "foot_step_command",
                                                                                                0);
-  walking_param_pub_ = ros_node.advertise<op3_online_walking_module_msgs::WalkingParam>("/motion_control/"
-                                                                                        "online_walking/walking_param",
-                                                                                        0);
+  online_walking_param_pub_ =
+      ros_node.advertise<op3_online_walking_module_msgs::WalkingParam>("/motion_control/"
+                                                                       "online_walking/walking_param",
+                                                                       0);
   set_walking_footsteps_pub_ =
       ros_node.advertise<op3_online_walking_module_msgs::Step2DArray>("/motion_control/online_walking/footsteps_2d", 0);
 
@@ -614,9 +615,9 @@ void QNodeKuroko::sendFootStepCommandMsg(const op3_online_walking_module_msgs::F
   log(INFO, "Send Foot Step Command Msg");
 }
 
-void QNodeKuroko::sendWalkingParamMsg(op3_online_walking_module_msgs::WalkingParam msg)
+void QNodeKuroko::sendOnlineWalkingParamMsg(op3_online_walking_module_msgs::WalkingParam msg)
 {
-  walking_param_pub_.publish(msg);
+  online_walking_param_pub_.publish(msg);
   log(INFO, "Set Walking Parameter");
 }
 

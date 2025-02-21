@@ -114,7 +114,7 @@ public:
   // Preview Walking
   void initPreviewWalking(ros::NodeHandle& ros_node);
   void sendFootStepCommandMsg(const op3_online_walking_module_msgs::FootStepCommand& msg);
-  void sendWalkingParamMsg(op3_online_walking_module_msgs::WalkingParam msg);
+  void sendOnlineWalkingParamMsg(op3_online_walking_module_msgs::WalkingParam msg);
   void sendBodyOffsetMsg(geometry_msgs::Pose msg);
   void sendFootDistanceMsg(std_msgs::Float64 msg);
   void sendResetBodyMsg(std_msgs::Bool msg);
@@ -218,11 +218,11 @@ private:
   ros::Publisher set_walking_param_pub_;
   ros::ServiceClient get_walking_param_client_;
 
-  // preview walking
+  // Online Walking
   ros::ServiceClient humanoid_footstep_client_;
   ros::Publisher foot_step_command_pub_;
   ros::Publisher set_walking_footsteps_pub_;
-  ros::Publisher walking_param_pub_;
+  ros::Publisher online_walking_param_pub_;
   ros::Publisher body_offset_pub_;
   ros::Publisher foot_distance_pub_;
   ros::Publisher wholebody_balance_pub_;

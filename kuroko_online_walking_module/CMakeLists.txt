@@ -16,6 +16,7 @@ find_package(
              geometry_msgs
              robotis_controller_msgs
              op3_online_walking_module_msgs
+             op3_walking_module_msgs
              cmake_modules
              robotis_framework_common
              robotis_device
@@ -87,6 +88,7 @@ catkin_package(
     geometry_msgs
     robotis_controller_msgs
     op3_online_walking_module_msgs
+    op3_walking_module_msgs
     cmake_modules
     robotis_framework_common
     robotis_device

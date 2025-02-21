@@ -203,7 +203,7 @@ private:
   std::vector<double_t> des_r_leg_pos_, des_r_leg_velocity_, des_r_leg_accel_, des_r_leg_rpy_;
   std::vector<double_t> des_body_pos_, des_body_velocity_, des_body_accel_, des_body_rpy_;
 
-  // Walking Control
+  // lipm: Lineared Inverted Pendulum Model
   std::vector<double_t> x_lipm_, y_lipm_;
 
   op3_online_walking_module_msgs::FootStepCommand foot_step_command_;

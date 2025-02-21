@@ -115,18 +115,18 @@ void QNodeKuroko::pointStampedCallback(const geometry_msgs::PointStamped::ConstP
   world_frame_id_ = msg->header.frame_id;
 
   // transform : world to local
-  geometry_msgs::Pose local_pose, world_pose;
-  world_pose.position = msg->point;
-  bool result = transformPose(world_frame_id_, robot_frame_id_, world_pose, local_pose);
+  geometry_msgs::Pose target_pose_local, target_pose_global;
+  target_pose_global.position = msg->point;
+  bool result = transformPose(world_frame_id_, robot_frame_id_, target_pose_global, target_pose_local);
   if (!result)
   {
     log(WARN, "transformation is failed.");
-    local_pose = world_pose;
+    target_pose_local = target_pose_global;
   }
 
   // update point ui
-  // Q_EMIT updateDemoPoint(msg->point);
-  Q_EMIT updateDemoPoint(local_pose.position);
+  // Q_EMIT updateWalkingTarget(msg->point);
+  Q_EMIT updateDemoPoint(target_pose_local.position);
 }
 
 // interactive marker

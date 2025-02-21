@@ -58,6 +58,8 @@ public:
   void pelvisPoseResetCallback(const std_msgs::String::ConstPtr& msg);
   void update();
   void process();
+  std::string getWorldFrameId();
+  std::string getRobotFrameId();
 };
 
 }  // namespace kuroko_localization

@@ -1743,6 +1743,7 @@ void OnlineWalkingModule::process(std::map<std::string, robotis_framework::Dynam
 
   goal_joint_msg.header.stamp = current_time;
   pelvis_pose_msg.header.stamp = current_time;
+  pelvis_pose_msg.header.frame_id = "world";
 
   pelvis_pose_msg.pose.position.x = des_body_pos_[0];
   pelvis_pose_msg.pose.position.y = des_body_pos_[1];

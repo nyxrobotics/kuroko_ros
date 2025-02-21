@@ -50,7 +50,7 @@ void KurokoLocalization::initialize()
       ros_node_.subscribe("/motion_control/pelvis_pose_reset", 5, &KurokoLocalization::pelvisPoseResetCallback, this);
   if (publish_odom_)
   {
-    odom_pub_ = ros_node_.advertise<geometry_msgs::PoseStamped>("/motion_control/odom", 1);
+    odom_pub_ = ros_node_.advertise<nav_msgs::Odometry>("/motion_control/pelvis_odom", 5);
   }
 }
 
@@ -88,10 +88,10 @@ void KurokoLocalization::process()
                    pelvis_pose_.pose.orientation.w);
 
   pelvis_trans_.setRotation(q);
+  tf::StampedTransform pelvis_tf_stamped(pelvis_trans_, ros::Time::now(), world_frame_id_, robot_frame_id_);
   if (publish_tf_)
   {
-    tf::StampedTransform tmp_tf_stamped(pelvis_trans_, ros::Time::now(), world_frame_id_, robot_frame_id_);
-    tf_broadcaster_.sendTransform(tmp_tf_stamped);
+    tf_broadcaster_.sendTransform(pelvis_tf_stamped);
   }
   if (publish_odom_)
   {
@@ -99,7 +99,13 @@ void KurokoLocalization::process()
     odom.header.stamp = ros::Time::now();
     odom.header.frame_id = world_frame_id_;
     odom.child_frame_id = robot_frame_id_;
-    odom.pose.pose = pelvis_pose_.pose;
+    odom.pose.pose.position.x = pelvis_tf_stamped.getOrigin().x();
+    odom.pose.pose.position.y = pelvis_tf_stamped.getOrigin().y();
+    odom.pose.pose.position.z = pelvis_tf_stamped.getOrigin().z();
+    odom.pose.pose.orientation.x = pelvis_tf_stamped.getRotation().x();
+    odom.pose.pose.orientation.y = pelvis_tf_stamped.getRotation().y();
+    odom.pose.pose.orientation.z = pelvis_tf_stamped.getRotation().z();
+    odom.pose.pose.orientation.w = pelvis_tf_stamped.getRotation().w();
     odom_pub_.publish(odom);
   }
 }
@@ -135,6 +141,16 @@ void KurokoLocalization::update()
   tf::quaternionEigenToMsg(pose_quaternion, pelvis_pose_.pose.orientation);
 
   mutex_.unlock();
+}
+
+std::string KurokoLocalization::getWorldFrameId()
+{
+  return world_frame_id_;
+}
+
+std::string KurokoLocalization::getRobotFrameId()
+{
+  return robot_frame_id_;
 }
 
 }  // namespace kuroko_localization

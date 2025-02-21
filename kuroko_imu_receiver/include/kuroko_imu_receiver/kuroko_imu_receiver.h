@@ -1,5 +1,5 @@
-#ifndef OP3_KUROKO_IMU_RECEIVER_H_
-#define OP3_KUROKO_IMU_RECEIVER_H_
+#ifndef KUROKO_IMU_RECEIVER_H_
+#define KUROKO_IMU_RECEIVER_H_
 
 #include <ros/ros.h>
 #include <ros/callback_queue.h>
@@ -44,4 +44,4 @@ private:
 
 }  // namespace motion_control
 
-#endif /* OP3_KUROKO_IMU_RECEIVER_H_ */
+#endif /* KUROKO_IMU_RECEIVER_H_ */

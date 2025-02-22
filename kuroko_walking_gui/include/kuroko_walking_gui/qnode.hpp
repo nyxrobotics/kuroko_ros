@@ -160,8 +160,8 @@ Q_SIGNALS:
   void updateWalkingParameters(op3_walking_module_msgs::WalkingParam params);
 
   // Interactive marker
-  void updateDemoPoint(const geometry_msgs::Point point);
-  void updateDemoPose(const geometry_msgs::Pose pose);
+  void setWalkingTargetPoint(const geometry_msgs::Point point);
+  void setWalkingTargetPose(const geometry_msgs::Pose pose);
 
 private:
   void parseJointNameFromYaml(const std::string& path);

@@ -20,9 +20,9 @@ bool PreviewWalkingForm::init(walking_gui::QNodeKuroko* qnode)
   {
     qRegisterMetaType<geometry_msgs::Point>("geometry_msgs::Point");
     qRegisterMetaType<geometry_msgs::Pose>("geometry_msgs::Pose");
-    connect(qnode_kuroko_, SIGNAL(updateDemoPoint(geometry_msgs::Point)), this,
+    connect(qnode_kuroko_, SIGNAL(setWalkingTargetPoint(geometry_msgs::Point)), this,
             SLOT(updatePointPanel(geometry_msgs::Point)));
-    connect(qnode_kuroko_, SIGNAL(updateDemoPose(geometry_msgs::Pose)), this,
+    connect(qnode_kuroko_, SIGNAL(setWalkingTargetPose(geometry_msgs::Pose)), this,
             SLOT(updatePosePanel(geometry_msgs::Pose)));
   }
   // Set online walking params

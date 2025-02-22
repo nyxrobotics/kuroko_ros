@@ -110,9 +110,11 @@ bool QNodeKuroko::transformPose(const std::string& from_id, const std::string& t
 // demo
 void QNodeKuroko::pointStampedCallback(const geometry_msgs::PointStamped::ConstPtr& msg)
 {
-  ROS_INFO("get position from rviz");
-
+  ROS_INFO("get target pooint from rviz");
   world_frame_id_ = msg->header.frame_id;
+
+  // update point ui
+  // Q_EMIT setWalkingTargetPoint(msg->point);
 
   // transform : world to local
   geometry_msgs::Pose target_pose_local, target_pose_global;
@@ -124,9 +126,7 @@ void QNodeKuroko::pointStampedCallback(const geometry_msgs::PointStamped::ConstP
     target_pose_local = target_pose_global;
   }
 
-  // update point ui
-  // Q_EMIT updateWalkingTarget(msg->point);
-  Q_EMIT updateDemoPoint(target_pose_local.position);
+  Q_EMIT setWalkingTargetPoint(target_pose_local.position);
 }
 
 // interactive marker
@@ -144,18 +144,17 @@ void QNodeKuroko::interactiveMarkerFeedback(const visualization_msgs::Interactiv
     case visualization_msgs::InteractiveMarkerFeedback::POSE_UPDATE:
     {
       // transform : world to local
-      geometry_msgs::Pose local_pose;
-      bool result = transformPose(world_frame_id_, robot_frame_id_, feedback->pose, local_pose);
+      geometry_msgs::Pose target_pose_local, target_pose_global;
+      target_pose_global.position = feedback->pose.position;
+      bool result = transformPose(world_frame_id_, robot_frame_id_, target_pose_global, target_pose_local);
       if (!result)
       {
         log(WARN, "transformation is failed.");
-        local_pose = feedback->pose;
+        target_pose_local = target_pose_global;
       }
 
-      current_pose_ = local_pose;
-
       // update pose ui
-      Q_EMIT updateDemoPose(current_pose_);
+      Q_EMIT setWalkingTargetPose(target_pose_local);
 
       break;
     }
@@ -342,7 +341,7 @@ void QNodeKuroko::getInteractiveMarkerPose()
     local_pose = interactive_marker.pose;
 
   // update pose ui
-  Q_EMIT updateDemoPose(local_pose);
+  Q_EMIT setWalkingTargetPose(local_pose);
 
   clearInteractiveMarker();
 }

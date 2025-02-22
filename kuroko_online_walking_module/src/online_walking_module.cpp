@@ -187,8 +187,8 @@ void OnlineWalkingModule::onModuleEnable()
   control_type_ = NONE;
   resetBodyPose();
   // Initial pose
-  initJointControl();
-  runJointControl();
+  // initJointControl();
+  // runJointControl();
 }
 
 void OnlineWalkingModule::onModuleDisable()
@@ -721,53 +721,13 @@ void OnlineWalkingModule::runJointControl()
     des_joint_accel_ = joint_trajectory_->getAcceleration(cur_time);
     queue_mutex_.unlock();
 
-    // Update foot desired position
-    std::vector<double> r_leg_des_joint;
-    r_leg_des_joint.resize(6, 0.0);
-    r_leg_des_joint[0] = des_joint_pos_[joint_name_to_dxl_id_["hip_r_roll"]];
-    r_leg_des_joint[1] = des_joint_pos_[joint_name_to_dxl_id_["hip_r_pitch"]];
-    r_leg_des_joint[2] = des_joint_pos_[joint_name_to_dxl_id_["thigh_r_active"]];
-    r_leg_des_joint[3] = des_joint_pos_[joint_name_to_dxl_id_["shin_r_active"]];
-    r_leg_des_joint[4] = des_joint_pos_[joint_name_to_dxl_id_["ankle_r_roll"]];
-    r_leg_des_joint[5] = des_joint_pos_[joint_name_to_dxl_id_["ankle_r_yaw"]];
-    std::vector<double> r_leg_des_pose;
-    r_leg_des_pose.resize(6, 0.0);
-    kuroko_kinematics_->solveForwardKinematicsForRightLeg(r_leg_des_joint, r_leg_des_pose);
-
-    std::vector<double> l_leg_des_joint;
-    l_leg_des_joint.resize(6, 0.0);
-    l_leg_des_joint[0] = des_joint_pos_[joint_name_to_dxl_id_["hip_l_roll"]];
-    l_leg_des_joint[1] = des_joint_pos_[joint_name_to_dxl_id_["hip_l_pitch"]];
-    l_leg_des_joint[2] = des_joint_pos_[joint_name_to_dxl_id_["thigh_l_active"]];
-    l_leg_des_joint[3] = des_joint_pos_[joint_name_to_dxl_id_["shin_l_active"]];
-    l_leg_des_joint[4] = des_joint_pos_[joint_name_to_dxl_id_["ankle_l_roll"]];
-    l_leg_des_joint[5] = des_joint_pos_[joint_name_to_dxl_id_["ankle_l_yaw"]];
-    std::vector<double> l_leg_des_pose;
-    l_leg_des_pose.resize(6, 0.0);
-    kuroko_kinematics_->solveForwardKinematicsForLeftLeg(l_leg_des_joint, l_leg_des_pose);
-
-    // Update foot desired position
-    queue_mutex_.lock();
-    des_r_leg_pos_[0] = r_leg_des_pose[0];
-    des_r_leg_pos_[1] = r_leg_des_pose[1];
-    des_r_leg_pos_[2] = r_leg_des_pose[2];
-    des_r_leg_rpy_[0] = r_leg_des_pose[3];
-    des_r_leg_rpy_[1] = r_leg_des_pose[4];
-    des_r_leg_rpy_[2] = r_leg_des_pose[5];
-    des_l_leg_pos_[0] = l_leg_des_pose[0];
-    des_l_leg_pos_[1] = l_leg_des_pose[1];
-    des_l_leg_pos_[2] = l_leg_des_pose[2];
-    des_l_leg_rpy_[0] = l_leg_des_pose[3];
-    des_l_leg_rpy_[1] = l_leg_des_pose[4];
-    des_l_leg_rpy_[2] = l_leg_des_pose[5];
-    queue_mutex_.unlock();
-
     if (mov_step_ == mov_size_ - 1)
     {
       mov_step_ = 0;
       is_robot_moving_ = false;
       delete joint_trajectory_;
       control_type_ = NONE;
+      resetBodyPose();
       ROS_INFO("[OnlineWalkingModule::runJointControl]: END Joint Control");
     }
     else
@@ -1538,11 +1498,11 @@ bool OnlineWalkingModule::setBalanceControl()
   l_leg_pose[4] = body_to_l_foot_rpy(1);
   l_leg_pose[5] = body_to_l_foot_rpy(2);
 
-  ROS_INFO("[OnlineWalkingModule::setBalanceControl]: Start IK");
-  ROS_INFO("r_leg_pose: %f, %f, %f, %f, %f, %f", r_leg_pose[0], r_leg_pose[1], r_leg_pose[2], r_leg_pose[3],
-           r_leg_pose[4], r_leg_pose[5]);
-  ROS_INFO("l_leg_pose: %f, %f, %f, %f, %f, %f", l_leg_pose[0], l_leg_pose[1], l_leg_pose[2], l_leg_pose[3],
-           l_leg_pose[4], l_leg_pose[5]);
+  // ROS_INFO("[OnlineWalkingModule::setBalanceControl]: Start IK");
+  // ROS_INFO("r_leg_pose: %f, %f, %f, %f, %f, %f", r_leg_pose[0], r_leg_pose[1], r_leg_pose[2], r_leg_pose[3],
+  //          r_leg_pose[4], r_leg_pose[5]);
+  // ROS_INFO("l_leg_pose: %f, %f, %f, %f, %f, %f", l_leg_pose[0], l_leg_pose[1], l_leg_pose[2], l_leg_pose[3],
+  //          l_leg_pose[4], l_leg_pose[5]);
 
   std::vector<double_t> r_leg_joint_pos, l_leg_joint_pos;
   r_leg_joint_pos.resize(6);

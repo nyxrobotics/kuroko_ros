@@ -4,11 +4,10 @@
 # with 2^X (initially 2^16=65536)
 max_hash_size: 65536
 
-# the heuristic that should be used to estimate the step costs of a planning 
-# state possible choices: 
+# the heuristic that should be used to estimate the step costs of a planning
+# state possible choices:
 # EuclideanHeuristic, EuclStepCostHeuristic, PathCostHeuristic
 heuristic_type: PathCostHeuristic
-
 
 ### planner settings ###########################################################
 
@@ -23,7 +22,7 @@ search_until_first_solution: False
 #search_until_first_solution: True
 
 # the maximum search time if search_until_first_solution is set to False
-allocated_time: 4.0
+allocated_time: 10.0
 
 initial_epsilon: 8.0
 

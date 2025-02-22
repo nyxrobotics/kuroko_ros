@@ -4,8 +4,8 @@
 safe_execution: True
 
 # feedback rate of the action server
-feedback_frequency: 5.0
+feedback_frequency: 10.0
 
 accuracy:
   # the smaller the better a performed footstep has to fit into a planned one
-  footstep: {x: 0.01, y: 0.01, theta: 0.1}
+  footstep: { x: 0.01, y: 0.01, theta: 0.1 }

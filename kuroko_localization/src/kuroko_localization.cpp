@@ -106,6 +106,18 @@ void KurokoLocalization::process()
     odom.pose.pose.orientation.y = pelvis_tf_stamped.getRotation().y();
     odom.pose.pose.orientation.z = pelvis_tf_stamped.getRotation().z();
     odom.pose.pose.orientation.w = pelvis_tf_stamped.getRotation().w();
+    odom.pose.covariance[0] = 0.001;
+    odom.pose.covariance[7] = 0.001;
+    odom.pose.covariance[14] = 0.001;
+    odom.pose.covariance[21] = 0.001;
+    odom.pose.covariance[28] = 0.001;
+    odom.pose.covariance[35] = 0.001;
+    odom.twist.covariance[0] = 0.001;
+    odom.twist.covariance[7] = 0.001;
+    odom.twist.covariance[14] = 0.001;
+    odom.twist.covariance[21] = 0.001;
+    odom.twist.covariance[28] = 0.001;
+    odom.twist.covariance[35] = 0.001;
     odom_pub_.publish(odom);
   }
 }

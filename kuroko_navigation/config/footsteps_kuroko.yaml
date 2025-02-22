@@ -39,12 +39,12 @@ footsteps:
 ### foot settings #############################################################
 foot:
   size: { x: 0.12, y: 0.075, z: 0.008 }
-  separation: 0.07
+  separation: 0.2
   origin_shift: { x: 0.0, y: 0 }
   max:
     step: { x: 0.04, y: 0.04, theta: 0.3 }
     inverse:
-      step: { x: -0.04, y: 0.04, theta: -0.3 }
+      step: { x: -0.04, y: -0.04, theta: -0.3 }
 
 ### step range ################################################################
 

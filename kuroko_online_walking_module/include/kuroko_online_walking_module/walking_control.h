@@ -96,7 +96,7 @@ protected:
 
   // Foot Trajectory
   double foot_origin_shift_x_;
-  double foot_origin_shift_y_;
+  double foot_distance_;
 
   double dsp_ratio_;
   double foot_trajectory_max_z_;

@@ -17,7 +17,7 @@ WalkingControl::WalkingControl(double control_cycle, double dsp_ratio, double li
   foot_step_size_ = 0;
 
   foot_origin_shift_x_ = 0.0;
-  foot_origin_shift_y_ = foot_distance;  // 0.09; //0.07;
+  foot_distance_ = foot_distance;
 
   // Foot Trajectory Parameter
   dsp_ratio_ = dsp_ratio;                    // default:
@@ -335,7 +335,8 @@ void WalkingControl::calcFootStepParam()
     if (foot_step_command_.command == "stop")
       lr *= 0.0;
 
-    msg.y = foot_origin_shift_y_ + lr * foot_step_command_.side_length;
+    msg.y = lr * foot_step_command_.side_length;
+    msg.y += foot_distance_ * 0.5;
 
     // Theta
     double theta;
@@ -357,7 +358,7 @@ void WalkingControl::calcFootStepParam()
     if (i == 0 || i == 1 || i == foot_step_size_ - 2 || i == foot_step_size_ - 1)
     {
       msg.x = 0.0;
-      msg.y = foot_origin_shift_y_;
+      msg.y = foot_distance_ * 0.5;
       theta = 0.0;
     }
 
@@ -487,10 +488,11 @@ void WalkingControl::calcFootTrajectory(int step)
       via_l_foot_pos[2] = 0.0;
 
     // Trajectory
-    l_foot_trajectory_ = new robotis_framework::MinimumJerkViaPoint(
-        init_time_, fin_time_, via_time, dsp_ratio_, init_l_foot_position_, init_l_foot_velocity_, init_l_foot_accel_,
-        goal_l_foot_position_, goal_l_foot_velocity_, goal_l_foot_accel_, via_l_foot_pos, via_l_foot_vel,
-        via_l_foot_accel);
+    l_foot_trajectory_ =
+        new robotis_framework::MinimumJerkViaPoint(init_time_, fin_time_, via_time, dsp_ratio_, init_l_foot_position_,
+                                                   init_l_foot_velocity_, init_l_foot_accel_, goal_l_foot_position_,
+                                                   goal_l_foot_velocity_, goal_l_foot_accel_, via_l_foot_pos,
+                                                   via_l_foot_vel, via_l_foot_accel);
 
     //    ROS_INFO("angle: %f", angle);
   }
@@ -527,10 +529,11 @@ void WalkingControl::calcFootTrajectory(int step)
       via_r_foot_pos[2] = 0.0;
 
     // Trajectory
-    r_foot_trajectory_ = new robotis_framework::MinimumJerkViaPoint(
-        init_time_, fin_time_, via_time, dsp_ratio_, init_r_foot_position_, init_r_foot_velocity_, init_r_foot_accel_,
-        goal_r_foot_position_, goal_r_foot_velocity_, goal_r_foot_accel_, via_r_foot_pos, via_r_foot_vel,
-        via_r_foot_accel);
+    r_foot_trajectory_ =
+        new robotis_framework::MinimumJerkViaPoint(init_time_, fin_time_, via_time, dsp_ratio_, init_r_foot_position_,
+                                                   init_r_foot_velocity_, init_r_foot_accel_, goal_r_foot_position_,
+                                                   goal_r_foot_velocity_, goal_r_foot_accel_, via_r_foot_pos,
+                                                   via_r_foot_vel, via_r_foot_accel);
   }
 }
 

@@ -54,7 +54,8 @@ enum ControlType
   JOINT_CONTROL,
   WHOLEBODY_CONTROL,
   WALKING_CONTROL,
-  OFFSET_CONTROL,
+  APPLY_BODY_OFFSET,
+  APPLY_BALANCE_GAIN,
   NONE
 };
 
@@ -246,8 +247,6 @@ private:
   std::vector<double_t> goal_body_offset_;
 
   bool is_offset_adjusting_;
-  int body_offset_step_, body_offset_size_;
-
   //
   double foot_distance_;
 

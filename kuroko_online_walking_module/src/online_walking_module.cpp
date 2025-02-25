@@ -33,8 +33,8 @@ OnlineWalkingModule::OnlineWalkingModule()
   // Default walking parameter
   // TODO: Load from yaml
   online_walking_param_.dsp_ratio = 0.1;
-  online_walking_param_.lipm_height = 0.5;
-  online_walking_param_.foot_height_max = 0.14;
+  online_walking_param_.lipm_height = 0.2;
+  online_walking_param_.foot_height_max = 0.05;
   online_walking_param_.zmp_offset_x = 0.0;
   online_walking_param_.zmp_offset_y = 0.0;
   foot_distance_ = leg_default_separaion_ + 0.13;
@@ -44,9 +44,9 @@ OnlineWalkingModule::OnlineWalkingModule()
   // Body Offset
   des_body_offset_.resize(3, 0.0);
   goal_body_offset_.resize(3, 0.0);
-  des_body_offset_[0] = -0.02;
+  des_body_offset_[0] = 0.0;
   des_body_offset_[1] = 0.0;
-  des_body_offset_[2] = leg_default_length_ - 0.065;
+  des_body_offset_[2] = 0.0;
   goal_body_offset_[0] = des_body_offset_[0];
   goal_body_offset_[1] = des_body_offset_[1];
   goal_body_offset_[2] = des_body_offset_[2];
@@ -488,7 +488,11 @@ void OnlineWalkingModule::setWholebodyBalanceMsgCallback(const std_msgs::String:
 
 void OnlineWalkingModule::initBalanceGain()
 {
-  if (is_balance_control_initialized_)
+  if (!enable_ || is_balance_control_initialized_)
+    return;
+  if (control_type_ == NONE)
+    control_type_ = APPLY_BALANCE_GAIN;
+  if (control_type_ != APPLY_BALANCE_GAIN)
     return;
   double ini_time = 0.0;
   double mov_time = 1.0;
@@ -515,34 +519,35 @@ void OnlineWalkingModule::initBalanceGain()
 
 void OnlineWalkingModule::applyBalanceGain()
 {
-  if (is_balance_active_)
+  if (!enable_ || !is_balance_active_)
+    return;
+  if (control_type_ != APPLY_BALANCE_GAIN || !is_balance_control_initialized_)
+    return;
+
+  if (balance_trajectory_ == nullptr)
   {
-    if (balance_trajectory_ == nullptr)
-    {
-      ROS_ERROR("[ERROR] balance_trajectory_ is NULL!");
-      delete balance_trajectory_;
-      return;
-    }
-    double cur_time = (double)balance_step_ * control_cycle_sec_;
-    des_balance_gain_ratio_ = balance_trajectory_->getPosition(cur_time);
-
-    if (balance_step_ == balance_size_ - 1)
-    {
-      balance_step_ = 0;
-      is_balance_active_ = false;
-      delete balance_trajectory_;
-
-      if (des_balance_gain_ratio_[0] == 0.0)
-      {
-        control_type_ = NONE;
-        balance_type_ = OFF;
-      }
-
-      ROS_INFO("[END] Balance Gain");
-    }
-    else
-      balance_step_++;
+    ROS_ERROR("[ERROR] balance_trajectory_ is NULL!");
+    delete balance_trajectory_;
+    return;
   }
+  double cur_time = (double)balance_step_ * control_cycle_sec_;
+  des_balance_gain_ratio_ = balance_trajectory_->getPosition(cur_time);
+
+  if (balance_step_ == balance_size_ - 1)
+  {
+    balance_step_ = 0;
+    is_balance_active_ = false;
+    delete balance_trajectory_;
+
+    if (des_balance_gain_ratio_[0] == 0.0)
+    {
+      balance_type_ = OFF;
+    }
+    control_type_ = NONE;
+    ROS_INFO("[END] Balance Gain");
+  }
+  else
+    balance_step_++;
 }
 
 void OnlineWalkingModule::imuDataCallback(const sensor_msgs::Imu::ConstPtr& msg)
@@ -752,8 +757,8 @@ void OnlineWalkingModule::setBodyOffsetCallback(const geometry_msgs::Pose::Const
   if (!enable_)
     return;
   if (control_type_ == NONE)
-    control_type_ = OFFSET_CONTROL;
-  if (control_type_ != OFFSET_CONTROL)
+    control_type_ = APPLY_BODY_OFFSET;
+  if (control_type_ != APPLY_BODY_OFFSET)
   {
     ROS_WARN("[OnlineWalkingModule::setBodyOffsetCallback]: Control type is different!");
     return;
@@ -767,7 +772,7 @@ void OnlineWalkingModule::setBodyOffsetCallback(const geometry_msgs::Pose::Const
 
   goal_body_offset_[0] = msg->position.x;
   goal_body_offset_[1] = msg->position.y;
-  goal_body_offset_[2] = msg->position.z;
+  goal_body_offset_[2] = msg->position.z + leg_default_length_;
   ROS_INFO("goal_body_offset: %f, %f, %f", goal_body_offset_[0], goal_body_offset_[1], goal_body_offset_[2]);
   is_body_offset_initialized_ = false;
 }
@@ -784,26 +789,21 @@ void OnlineWalkingModule::setFootDistanceCallback(const std_msgs::Float64::Const
 
 void OnlineWalkingModule::initBodyOffset()
 {
-  if (!enable_)
+  if (!enable_ || is_body_offset_initialized_)
     return;
   if (control_type_ == NONE)
-    control_type_ = OFFSET_CONTROL;
-  if (control_type_ != OFFSET_CONTROL)
+    control_type_ = APPLY_BODY_OFFSET;
+  if (control_type_ != APPLY_BODY_OFFSET)
   {
     ROS_WARN("[OnlineWalkingModule::initBodyOffset] Control type is different!");
-    return;
-  }
-  if (is_body_offset_initialized_)
-  {
-    // ROS_WARN("[OnlineWalkingModule::initBodyOffset] Already initialized!");
     return;
   }
 
   double ini_time = 0.0;
   double mov_time = 1.0;
 
-  body_offset_step_ = 0;
-  body_offset_size_ = (int)(mov_time / control_cycle_sec_) + 1;
+  mov_step_ = 0;
+  mov_size_ = (int)(mov_time / control_cycle_sec_) + 1;
 
   std::vector<double_t> offset_zero;
   offset_zero.resize(3, 0.0);
@@ -823,29 +823,27 @@ void OnlineWalkingModule::initBodyOffset()
 
 void OnlineWalkingModule::applyBodyOffset()
 {
-  if (!enable_ || control_type_ != OFFSET_CONTROL)
+  if (!enable_ || control_type_ != APPLY_BODY_OFFSET || !is_body_offset_initialized_)
+  {
     return;
+  }
   if (is_robot_moving_)
   {
-    double cur_time = (double)body_offset_step_ * control_cycle_sec_;
-
+    double cur_time = (double)mov_step_ * control_cycle_sec_;
     queue_mutex_.lock();
-
     des_body_offset_ = body_offset_trajectory_->getPosition(cur_time);
-    des_body_offset_[2] += leg_default_length_;
-
     queue_mutex_.unlock();
 
-    if (body_offset_step_ == mov_size_ - 1)
+    if (mov_step_ == mov_size_ - 1)
     {
-      body_offset_step_ = 0;
+      mov_step_ = 0;
       is_robot_moving_ = false;
       delete body_offset_trajectory_;
       control_type_ = NONE;
       ROS_INFO("[END] Body Offset");
     }
     else
-      body_offset_step_++;
+      mov_step_++;
   }
 }
 
@@ -887,7 +885,7 @@ void OnlineWalkingModule::initWholebodyControl()
   if (!enable_)
     return;
   if (control_type_ == NONE)
-    control_type_ = OFFSET_CONTROL;
+    control_type_ = APPLY_BODY_OFFSET;
   if (control_type_ != WHOLEBODY_CONTROL)
   {
     ROS_WARN("[OnlineWalkingModule::initWholebodyControl] Control type is different!");
@@ -1673,7 +1671,7 @@ void OnlineWalkingModule::process(std::map<std::string, robotis_framework::Dynam
     initWholebodyControl();
     runWholebodyControl();
   }
-  else if (control_type_ == OFFSET_CONTROL)
+  else if (control_type_ == APPLY_BODY_OFFSET)
   {
     initBodyOffset();
     applyBodyOffset();

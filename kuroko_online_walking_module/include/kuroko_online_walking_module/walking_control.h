@@ -76,7 +76,7 @@ public:
                              std::vector<double_t>& body_accel);
   void getWalkingOrientation(std::vector<double_t>& l_foot_rpy, std::vector<double_t>& r_foot_rpy,
                              std::vector<double_t>& body_rpy);
-  void getLIPM(std::vector<double_t>& x_lipm, std::vector<double_t>& y_lipm);
+  void getLinearInvertedPendulumModel(std::vector<double_t>& x_lipm, std::vector<double_t>& y_lipm);
   void getWalkingState(int& walking_leg, int& walking_phase);
 
 protected:

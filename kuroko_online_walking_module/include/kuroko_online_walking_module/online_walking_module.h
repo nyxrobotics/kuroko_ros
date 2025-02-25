@@ -81,7 +81,7 @@ public:
   void goalKinematicsPoseCallback(const op3_online_walking_module_msgs::KinematicsPose& msg);
   void footStepCommandCallback(const op3_online_walking_module_msgs::FootStepCommand& msg);
   void onlineWalkingParamCallback(const op3_online_walking_module_msgs::WalkingParam& msg);
-  void walkingParamCallback(const op3_walking_module_msgs::WalkingParam::ConstPtr& msg);
+  // void walkingParamCallback(const op3_walking_module_msgs::WalkingParam::ConstPtr& msg);
 
   void footStep2DCallback(const op3_online_walking_module_msgs::Step2DArray& msg);
 
@@ -147,6 +147,10 @@ private:
   void setFeedbackControl();
   void resetBodyPose();
 
+  // Leg parameters
+  double leg_default_length_;
+  double leg_default_separaion_;
+
   std::map<std::string, int> joint_name_to_dxl_id_;
 
   double control_cycle_sec_;
@@ -162,7 +166,6 @@ private:
   ros::Publisher pelvis_pose_pub_;
 
   //  ros::ServiceClient get_preview_matrix_client_;
-
   ControlType control_type_;
 
   bool is_robot_moving_;
@@ -189,19 +192,19 @@ private:
   std::string wholegbody_control_group_;
 
   // Joint Command
-  std::vector<double_t> curr_joint_accel_, curr_joint_velocity_, curr_joint_pos_;
-  std::vector<double_t> des_joint_accel_, des_joint_velocity_, des_joint_pos_;
-  std::vector<double_t> goal_joint_accel_, goal_joint_velocity_, goal_joint_pos_;
+  std::vector<double_t> curr_joint_acc_, curr_joint_vel_, curr_joint_pos_;
+  std::vector<double_t> des_joint_acc_, des_joint_vel_, des_joint_pos_;
+  std::vector<double_t> goal_joint_acc_, goal_joint_vel_, goal_joint_pos_;
 
   std::vector<double_t> des_joint_feedback_;
   std::vector<double_t> des_joint_feedforward_;
   std::vector<double_t> des_joint_pos_to_robot_;
 
-  std::vector<double_t> des_l_arm_pos_, des_l_arm_velocity_, des_l_arm_accel_, des_l_arm_rpy_;
-  std::vector<double_t> des_r_arm_pos_, des_r_arm_velocity_, des_r_arm_accel_, des_r_arm_rpy_;
-  std::vector<double_t> des_l_leg_pos_, des_l_leg_velocity_, des_l_leg_accel_, des_l_leg_rpy_;
-  std::vector<double_t> des_r_leg_pos_, des_r_leg_velocity_, des_r_leg_accel_, des_r_leg_rpy_;
-  std::vector<double_t> des_body_pos_, des_body_velocity_, des_body_accel_, des_body_rpy_;
+  std::vector<double_t> des_l_arm_pos_, des_l_arm_vel_, des_l_arm_accel_, des_l_arm_rpy_;
+  std::vector<double_t> des_r_arm_pos_, des_r_arm_vel_, des_r_arm_accel_, des_r_arm_rpy_;
+  std::vector<double_t> des_l_leg_pos_, des_l_leg_vel_, des_l_leg_accel_, des_l_leg_rpy_;
+  std::vector<double_t> des_r_leg_pos_, des_r_leg_vel_, des_r_leg_accel_, des_r_leg_rpy_;
+  std::vector<double_t> des_body_pos_, des_body_vel_, des_body_accel_, des_body_rpy_;
 
   // lipm: Lineared Inverted Pendulum Model
   std::vector<double_t> x_lipm_, y_lipm_;
@@ -210,7 +213,7 @@ private:
   op3_online_walking_module_msgs::PreviewRequest preview_request_;
   op3_online_walking_module_msgs::PreviewResponse preview_response_;
   op3_online_walking_module_msgs::WalkingParam online_walking_param_;
-  op3_walking_module_msgs::WalkingParam walking_param_;
+  // op3_walking_module_msgs::WalkingParam walking_param_;
 
   op3_online_walking_module_msgs::Step2DArray foot_step_2d_;
   bool is_footstep_2d_active_;

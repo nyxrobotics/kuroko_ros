@@ -310,7 +310,7 @@
             <item row="1" column="0">
               <widget class="QLabel" name="label_44">
                 <property name="text">
-                  <string>LIPM Height [m]</string>
+                  <string>LinearInvertedPendulumModel Height [m]</string>
                 </property>
               </widget>
             </item>
@@ -448,17 +448,17 @@
             </item>
             <item row="1" column="1">
               <widget class="QDoubleSpinBox" name="dSpinBox_lipm_height">
-                <property name="enabled">
-                  <bool>false</bool>
+                <property name="minimum">
+                  <double>-10.000000000000000</double>
                 </property>
                 <property name="maximum">
-                  <double>100.000000000000000</double>
+                  <double>10.000000000000000</double>
                 </property>
                 <property name="singleStep">
                   <double>0.100000000000000</double>
                 </property>
                 <property name="value">
-                  <double>0.120000000000000</double>
+                  <double>0.50000000000000</double>
                 </property>
               </widget>
             </item>

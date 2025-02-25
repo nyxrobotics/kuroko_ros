@@ -130,6 +130,10 @@ private:
   op3_walking_module_msgs::WalkingParam walking_param_;
   double previous_x_move_amplitude_;
 
+  // Leg parameters
+  double leg_default_length_;
+  double leg_default_separaion_;
+
   // variable for walking
   double period_time_;
   double dsp_ratio_;

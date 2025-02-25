@@ -656,7 +656,7 @@ bool KurokoKinematics::solveInverseKinematicsForRightLeg(std::vector<double>& jo
 
   if (thigh_upper_to_shin_lower_z > -0.001)
   {
-    std::cout << "Target position is out of reach (too high)" << std::endl;
+    // std::cout << "Target position is out of reach (too high)" << std::endl;
     thigh_upper_to_shin_lower_z = -0.001;
   }
   double triangle_knee_angle, triangle_thigh_angle, triangle_shin_angle;
@@ -668,7 +668,7 @@ bool KurokoKinematics::solveInverseKinematicsForRightLeg(std::vector<double>& jo
       triangle_knee_line_length > triangle_knee_line_length + tiangle_thigh_line_length ||
       tiangle_thigh_line_length > triangle_knee_line_length + triangle_shin_line_length)
   {
-    std::cout << "Target position is out of reach (too low)" << std::endl;
+    // std::cout << "Target position is out of reach (too low)" << std::endl;
     triangle_knee_angle = M_PI;
     triangle_thigh_angle = 0;
     triangle_shin_angle = 0;
@@ -815,7 +815,7 @@ bool KurokoKinematics::solveInverseKinematicsForLeftLeg(std::vector<double>& joi
 
   if (thigh_upper_to_shin_lower_z > -0.001)
   {
-    std::cout << "Target position is out of reach (too high)" << std::endl;
+    // std::cout << "Target position is out of reach (too high)" << std::endl;
     thigh_upper_to_shin_lower_z = -0.001;
   }
   double triangle_knee_angle, triangle_thigh_angle, triangle_shin_angle;
@@ -827,7 +827,7 @@ bool KurokoKinematics::solveInverseKinematicsForLeftLeg(std::vector<double>& joi
       triangle_knee_line_length > triangle_knee_line_length + tiangle_thigh_line_length ||
       tiangle_thigh_line_length > triangle_knee_line_length + triangle_shin_line_length)
   {
-    std::cout << "Target position is out of reach (too low)" << std::endl;
+    // std::cout << "Target position is out of reach (too low)" << std::endl;
     triangle_knee_angle = M_PI;
     triangle_thigh_angle = 0;
     triangle_shin_angle = 0;
@@ -950,7 +950,8 @@ bool KurokoKinematics::solveForwardKinematicsForRightLeg(const std::vector<doubl
           .coeff(1, 0);
   double shin_pitch =
       (shin_pitch_joint / joint_link_tree_[getLinkIndex("shin_r_front_passive")]->joint_axis_.coeff(1, 0)) +
-      robotis_framework::convertRotationToRPY(joint_link_tree_[getLinkIndex("shin_r_front_passive")]->joint_orientation_)
+      robotis_framework::convertRotationToRPY(
+          joint_link_tree_[getLinkIndex("shin_r_front_passive")]->joint_orientation_)
           .coeff(1, 0);
   double ankle_roll =
       (ankle_roll_joint / joint_link_tree_[getLinkIndex("ankle_r_roll")]->joint_axis_.coeff(0, 0)) +
@@ -1041,7 +1042,8 @@ bool KurokoKinematics::solveForwardKinematicsForLeftLeg(const std::vector<double
           .coeff(1, 0);
   double shin_pitch =
       (shin_pitch_joint / joint_link_tree_[getLinkIndex("shin_l_front_passive")]->joint_axis_.coeff(1, 0)) +
-      robotis_framework::convertRotationToRPY(joint_link_tree_[getLinkIndex("shin_l_front_passive")]->joint_orientation_)
+      robotis_framework::convertRotationToRPY(
+          joint_link_tree_[getLinkIndex("shin_l_front_passive")]->joint_orientation_)
           .coeff(1, 0);
   double ankle_roll =
       (ankle_roll_joint / joint_link_tree_[getLinkIndex("ankle_l_roll")]->joint_axis_.coeff(0, 0)) +

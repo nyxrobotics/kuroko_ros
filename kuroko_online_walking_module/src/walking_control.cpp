@@ -487,11 +487,10 @@ void WalkingControl::calcFootTrajectory(int step)
       via_l_foot_pos[2] = 0.0;
 
     // Trajectory
-    l_foot_trajectory_ =
-        new robotis_framework::MinimumJerkViaPoint(init_time_, fin_time_, via_time, dsp_ratio_, init_l_foot_position_,
-                                                   init_l_foot_velocity_, init_l_foot_accel_, goal_l_foot_position_,
-                                                   goal_l_foot_velocity_, goal_l_foot_accel_, via_l_foot_pos,
-                                                   via_l_foot_vel, via_l_foot_accel);
+    l_foot_trajectory_ = new robotis_framework::MinimumJerkViaPoint(
+        init_time_, fin_time_, via_time, dsp_ratio_, init_l_foot_position_, init_l_foot_velocity_, init_l_foot_accel_,
+        goal_l_foot_position_, goal_l_foot_velocity_, goal_l_foot_accel_, via_l_foot_pos, via_l_foot_vel,
+        via_l_foot_accel);
 
     //    ROS_INFO("angle: %f", angle);
   }
@@ -528,11 +527,10 @@ void WalkingControl::calcFootTrajectory(int step)
       via_r_foot_pos[2] = 0.0;
 
     // Trajectory
-    r_foot_trajectory_ =
-        new robotis_framework::MinimumJerkViaPoint(init_time_, fin_time_, via_time, dsp_ratio_, init_r_foot_position_,
-                                                   init_r_foot_velocity_, init_r_foot_accel_, goal_r_foot_position_,
-                                                   goal_r_foot_velocity_, goal_r_foot_accel_, via_r_foot_pos,
-                                                   via_r_foot_vel, via_r_foot_accel);
+    r_foot_trajectory_ = new robotis_framework::MinimumJerkViaPoint(
+        init_time_, fin_time_, via_time, dsp_ratio_, init_r_foot_position_, init_r_foot_velocity_, init_r_foot_accel_,
+        goal_r_foot_position_, goal_r_foot_velocity_, goal_r_foot_accel_, via_r_foot_pos, via_r_foot_vel,
+        via_r_foot_accel);
   }
 }
 
@@ -844,7 +842,7 @@ void WalkingControl::getWalkingOrientation(std::vector<double_t>& l_foot_rpy, st
   body_rpy[2] = rpy.coeff(2, 0);
 }
 
-void WalkingControl::getLIPM(std::vector<double_t>& x_lipm, std::vector<double_t>& y_lipm)
+void WalkingControl::getLinearInvertedPendulumModel(std::vector<double_t>& x_lipm, std::vector<double_t>& y_lipm)
 {
   x_lipm.resize(3, 0.0);
   y_lipm.resize(3, 0.0);

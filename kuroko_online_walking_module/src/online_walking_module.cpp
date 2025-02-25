@@ -17,67 +17,45 @@ OnlineWalkingModule::OnlineWalkingModule()
   , is_walking_control_initialized_(false)
   , is_footstep_2d_active_(false)
   , walking_phase_(DSP)
-  , robot_mass_(3.5)
+  , robot_mass_(4.0)
   , foot_distance_(0.07)
   , number_of_joints_(12)
 {
   ROS_INFO("[OnlineWalkingModule::OnlineWalkingModule()]");
-  enable_ = false;
-  module_name_ = "online_walking_module";
-  control_mode_ = robotis_framework::PositionControl;
-  control_type_ = NONE;
-  balance_type_ = OFF;
 
+  // Robot is in initial posture with legs extended directly below
   kuroko_kinematics_ = new KurokoKinematics(WHOLE_BODY);
+  // Height of the hips when the legs are fully extended
+  leg_default_length_ = kuroko_kinematics_->leg_max_height_;
+  // Distance between left and right feet
+  leg_default_separaion_ = kuroko_kinematics_->leg_side_offset_;
 
-  // Buffer sizecontrol_cycle_sec_;control_cycle_sec_;
-  number_of_joints_ = 12;
+  // Default walking parameter
+  // TODO: Load from yaml
+  online_walking_param_.dsp_ratio = 0.1;
+  online_walking_param_.lipm_height = 0.5;
+  online_walking_param_.foot_height_max = 0.14;
+  online_walking_param_.zmp_offset_x = 0.0;
+  online_walking_param_.zmp_offset_y = 0.0;
+  foot_distance_ = leg_default_separaion_ + 0.13;
+  robot_mass_ = 4.0;
 
-  curr_joint_accel_.resize(number_of_joints_, 0.0);
-  curr_joint_velocity_.resize(number_of_joints_, 0.0);
-  curr_joint_pos_.resize(number_of_joints_, 0.0);
-
-  des_joint_accel_.resize(number_of_joints_, 0.0);
-  des_joint_velocity_.resize(number_of_joints_, 0.0);
-  des_joint_pos_.resize(number_of_joints_, 0.0);
-
-  goal_joint_accel_.resize(number_of_joints_, 0.0);
-  goal_joint_velocity_.resize(number_of_joints_, 0.0);
-  goal_joint_pos_.resize(number_of_joints_, 0.0);
-
-  des_joint_feedback_.resize(number_of_joints_, 0.0);
-  des_joint_feedforward_.resize(number_of_joints_, 0.0);
-  des_joint_pos_to_robot_.resize(number_of_joints_, 0.0);
-
-  joint_feedforward_gain_.resize(number_of_joints_, 0.0);
-
-  // body position default
-  des_body_pos_.resize(3, 0.0);
-  des_body_velocity_.resize(3, 0.0);
-  des_body_accel_.resize(3, 0.0);
-  des_body_rpy_.resize(3, 0.0);
-
-  // left foot position default
-  des_l_leg_pos_.resize(3, 0.0);
-  des_l_leg_velocity_.resize(3, 0.0);
-  des_l_leg_accel_.resize(3, 0.0);
-  des_l_leg_rpy_.resize(3, 0.0);
-
-  // right foot position default
-  des_r_leg_pos_.resize(3, 0.0);
-  des_r_leg_velocity_.resize(3, 0.0);
-  des_r_leg_accel_.resize(3, 0.0);
-  des_r_leg_rpy_.resize(3, 0.0);
-
-  x_lipm_.resize(3, 0.0);
-  y_lipm_.resize(3, 0.0);
-
-  des_balance_gain_ratio_.resize(1, 0.0);
-  goal_balance_gain_ratio_.resize(1, 0.0);
-
+  // TODO: Edit Initial pose
   // Body Offset
   des_body_offset_.resize(3, 0.0);
   goal_body_offset_.resize(3, 0.0);
+  des_body_offset_[0] = -0.02;
+  des_body_offset_[1] = 0.0;
+  des_body_offset_[2] = leg_default_length_ - 0.065;
+  goal_body_offset_[0] = des_body_offset_[0];
+  goal_body_offset_[1] = des_body_offset_[1];
+  goal_body_offset_[2] = des_body_offset_[2];
+
+  module_name_ = "online_walking_module";
+  enable_ = false;
+  control_mode_ = robotis_framework::PositionControl;
+  control_type_ = NONE;
+  balance_type_ = OFF;
 
   // Joint target angle
   result_["hip_r_roll"] = new robotis_framework::DynamixelState();
@@ -107,19 +85,43 @@ OnlineWalkingModule::OnlineWalkingModule()
   joint_name_to_dxl_id_["ankle_l_roll"] = 10;
   joint_name_to_dxl_id_["ankle_l_yaw"] = 11;
 
-  resetBodyPose();
+  // Buffer size
+  number_of_joints_ = result_.size();
+  curr_joint_acc_.resize(number_of_joints_, 0.0);
+  curr_joint_vel_.resize(number_of_joints_, 0.0);
+  curr_joint_pos_.resize(number_of_joints_, 0.0);
+  des_joint_acc_.resize(number_of_joints_, 0.0);
+  des_joint_vel_.resize(number_of_joints_, 0.0);
+  des_joint_pos_.resize(number_of_joints_, 0.0);
+  goal_joint_acc_.resize(number_of_joints_, 0.0);
+  goal_joint_vel_.resize(number_of_joints_, 0.0);
+  goal_joint_pos_.resize(number_of_joints_, 0.0);
+  des_joint_feedback_.resize(number_of_joints_, 0.0);
+  des_joint_feedforward_.resize(number_of_joints_, 0.0);
+  des_joint_pos_to_robot_.resize(number_of_joints_, 0.0);
+  joint_feedforward_gain_.resize(number_of_joints_, 0.0);
 
-  // walking parameter default
-  online_walking_param_.dsp_ratio = 0.2;
-  online_walking_param_.lipm_height = 0.12;
-  online_walking_param_.foot_height_max = 0.05;
-  online_walking_param_.zmp_offset_x = 0.0;  // not applied
-  online_walking_param_.zmp_offset_y = 0.0;
+  // body position default
+  des_body_pos_.resize(3, 0.0);
+  des_body_vel_.resize(3, 0.0);
+  des_body_accel_.resize(3, 0.0);
+  des_body_rpy_.resize(3, 0.0);
+  // left foot position default
+  des_l_leg_pos_.resize(3, 0.0);
+  des_l_leg_vel_.resize(3, 0.0);
+  des_l_leg_accel_.resize(3, 0.0);
+  des_l_leg_rpy_.resize(3, 0.0);
+  // right foot position default
+  des_r_leg_pos_.resize(3, 0.0);
+  des_r_leg_vel_.resize(3, 0.0);
+  des_r_leg_accel_.resize(3, 0.0);
+  des_r_leg_rpy_.resize(3, 0.0);
 
-  balance_control_.initialize(control_cycle_sec_ * 1000.0);
-  balance_control_.setGyroBalanceEnable(false);         // Gyro
-  balance_control_.setOrientationBalanceEnable(false);  // IMU
-  balance_control_.setForceTorqueBalanceEnable(false);  // FT
+  // Balance Control
+  x_lipm_.resize(3, 0.0);
+  y_lipm_.resize(3, 0.0);
+  des_balance_gain_ratio_.resize(1, 0.0);
+  goal_balance_gain_ratio_.resize(1, 0.0);
 
   balance_l_foot_force_x_ = 0.0;
   balance_l_foot_force_y_ = 0.0;
@@ -127,7 +129,6 @@ OnlineWalkingModule::OnlineWalkingModule()
   balance_l_foot_torque_x_ = 0.0;
   balance_l_foot_torque_y_ = 0.0;
   balance_l_foot_torque_z_ = 0.0;
-
   balance_r_foot_force_x_ = 0.0;
   balance_r_foot_force_y_ = 0.0;
   balance_r_foot_force_z_ = 0.0;
@@ -135,18 +136,24 @@ OnlineWalkingModule::OnlineWalkingModule()
   balance_r_foot_torque_y_ = 0.0;
   balance_r_foot_torque_z_ = 0.0;
 
+  // Get parameters from yaml
   std::string balance_gain_path = ros::package::getPath("kuroko_online_walking_module") + "/config/balance_gain.yaml";
   parseBalanceGainData(balance_gain_path);
-
   std::string joint_feedback_gain_path = ros::package::getPath("kuroko_online_walking_module") + "/config/"
                                                                                                  "joint_feedback_gain."
                                                                                                  "yaml";
   parseJointFeedbackGainData(joint_feedback_gain_path);
-
   std::string joint_feedforward_gain_path = ros::package::getPath("kuroko_online_walking_module") + "/config/"
                                                                                                     "joint_feedforward_"
                                                                                                     "gain.yaml";
   parseJointFeedforwardGainData(joint_feedforward_gain_path);
+
+  // Start Balance Control
+  balance_control_.initialize(control_cycle_sec_ * 1000.0);
+  balance_control_.setGyroBalanceEnable(false);         // Gyro
+  balance_control_.setOrientationBalanceEnable(false);  // IMU
+  balance_control_.setForceTorqueBalanceEnable(false);  // FT
+  resetBodyPose();
 }
 
 OnlineWalkingModule::~OnlineWalkingModule()
@@ -221,8 +228,8 @@ void OnlineWalkingModule::queueThread()
                                                              &OnlineWalkingModule::footStepCommandCallback, this);
   ros::Subscriber online_walking_param_sub = ros_node.subscribe("/motion_control/online_walking/walking_param", 5,
                                                                 &OnlineWalkingModule::onlineWalkingParamCallback, this);
-  ros::Subscriber walking_param_sub =
-      ros_node.subscribe("/motion_control/walking/set_params", 5, &OnlineWalkingModule::walkingParamCallback, this);
+  // ros::Subscriber walking_param_sub =
+  //     ros_node.subscribe("/motion_control/walking/set_params", 5, &OnlineWalkingModule::walkingParamCallback, this);
   ros::Subscriber wholebody_balance_msg_sub =
       ros_node.subscribe("/motion_control/online_walking/wholebody_balance_msg", 5,
                          &OnlineWalkingModule::setWholebodyBalanceMsgCallback, this);
@@ -260,9 +267,13 @@ void OnlineWalkingModule::queueThread()
 void OnlineWalkingModule::resetBodyPose()
 {
   ROS_INFO("OnlineWalkingModule::resetBodyPose");
+
+  // wholebody_control_->getTaskPosition(des_l_leg_pos_, des_r_leg_pos_, des_body_pos_);
+  // wholebody_control_->getTaskOrientation(des_l_leg_rpy_, des_r_leg_rpy_, des_body_rpy_);
+  // TODO: Set body height offset from lipm height
   des_body_pos_[0] = 0.0;
   des_body_pos_[1] = 0.0;
-  des_body_pos_[2] = kuroko_kinematics_->leg_max_height_ - 0.065;
+  des_body_pos_[2] = online_walking_param_.lipm_height;
 
   des_body_rpy_[0] = 0.0;
   des_body_rpy_[1] = 0.0;
@@ -627,10 +638,10 @@ void OnlineWalkingModule::rightFootForceTorqueOutputCallback(const geometry_msgs
 void OnlineWalkingModule::setResetBodyCallback(const std_msgs::Bool::ConstPtr& msg)
 {
   if (static_cast<bool>(msg->data))
-  {
-    des_body_offset_[0] = 0.0;
-    des_body_offset_[1] = 0.0;
-    des_body_offset_[2] = 0.0;
+  {  // TODO: Edit Initial pose
+    // des_body_offset_[0] = -0.02;
+    // des_body_offset_[1] = 0.0;
+    // des_body_offset_[2] = 0.02;
     resetBodyPose();
   }
 }
@@ -638,14 +649,14 @@ void OnlineWalkingModule::setResetBodyCallback(const std_msgs::Bool::ConstPtr& m
 void OnlineWalkingModule::onlineWalkingParamCallback(const op3_online_walking_module_msgs::WalkingParam& msg)
 {
   ROS_INFO("OnlineWalkingModule::onlineWalkingParamCallback");
-  online_walking_param_ = msg;
+  online_walking_param_ = msg;  // TODO: Edit params
 }
 
-void OnlineWalkingModule::walkingParamCallback(const op3_walking_module_msgs::WalkingParam::ConstPtr& msg)
-{
-  ROS_INFO("OnlineWalkingModule::walkingParamCallback");
-  walking_param_ = *msg;
-}
+// void OnlineWalkingModule::walkingParamCallback(const op3_walking_module_msgs::WalkingParam::ConstPtr& msg)
+// {
+//   ROS_INFO("OnlineWalkingModule::walkingParamCallback");
+//   walking_param_ = *msg;
+// }
 
 void OnlineWalkingModule::goalJointPoseCallback(const op3_online_walking_module_msgs::JointPose& msg)
 {
@@ -696,8 +707,8 @@ void OnlineWalkingModule::initJointControl()
   mov_size_ = (int)(mov_time / control_cycle_sec_) + 1;
 
   joint_trajectory_ =
-      new robotis_framework::MinimumJerk(ini_time, mov_time, des_joint_pos_, des_joint_velocity_, des_joint_accel_,
-                                         goal_joint_pos_, goal_joint_velocity_, goal_joint_accel_);
+      new robotis_framework::MinimumJerk(ini_time, mov_time, des_joint_pos_, des_joint_vel_, des_joint_acc_,
+                                         goal_joint_pos_, goal_joint_vel_, goal_joint_acc_);
   if (is_robot_moving_)
     ROS_INFO("[OnlineWalkingModule::initJointControl]: UPDATE Joint Trajectory Goal");
   else
@@ -717,8 +728,8 @@ void OnlineWalkingModule::runJointControl()
     double cur_time = (double)mov_step_ * control_cycle_sec_;
     // Set values
     des_joint_pos_ = joint_trajectory_->getPosition(cur_time);
-    des_joint_velocity_ = joint_trajectory_->getVelocity(cur_time);
-    des_joint_accel_ = joint_trajectory_->getAcceleration(cur_time);
+    des_joint_vel_ = joint_trajectory_->getVelocity(cur_time);
+    des_joint_acc_ = joint_trajectory_->getAcceleration(cur_time);
     queue_mutex_.unlock();
 
     if (mov_step_ == mov_size_ - 1)
@@ -767,7 +778,7 @@ void OnlineWalkingModule::setFootDistanceCallback(const std_msgs::Float64::Const
   if (!enable_)
     return;
 
-  foot_distance_ = msg->data;
+  foot_distance_ = msg->data + leg_default_separaion_;
   resetBodyPose();
 }
 
@@ -821,6 +832,7 @@ void OnlineWalkingModule::applyBodyOffset()
     queue_mutex_.lock();
 
     des_body_offset_ = body_offset_trajectory_->getPosition(cur_time);
+    des_body_offset_[2] += leg_default_length_;
 
     queue_mutex_.unlock();
 
@@ -1098,7 +1110,7 @@ void OnlineWalkingModule::initWalkingControl()
                          online_walking_param_.foot_height_max, online_walking_param_.zmp_offset_x,
                          online_walking_param_.zmp_offset_y, x_lipm_, y_lipm_, foot_distance_);
 
-  double lipm_height = walking_control_->getLipmHeight();
+  double lipm_height = online_walking_param_.lipm_height;
   preview_request_.lipm_height = lipm_height;
   preview_request_.control_cycle = control_cycle_sec_;
 
@@ -1137,7 +1149,7 @@ void OnlineWalkingModule::runWalkingControl()
     walking_control_->set(cur_time, walking_step_, is_footstep_2d_active_);
     walking_control_->getWalkingPosition(des_l_leg_pos_, des_r_leg_pos_, des_body_pos_);
     walking_control_->getWalkingOrientation(des_l_leg_rpy_, des_r_leg_rpy_, des_body_rpy_);
-    walking_control_->getLIPM(x_lipm_, y_lipm_);
+    walking_control_->getLinearInvertedPendulumModel(x_lipm_, y_lipm_);
     walking_control_->getWalkingState(walking_leg_, walking_phase_);
     ROS_INFO("Target position: Body(%f, %f, %f), LLeg(%f, %f, %f), RLeg(%f, %f, %f)", des_body_pos_[0],
              des_body_pos_[1], des_body_pos_[2], des_l_leg_pos_[0], des_l_leg_pos_[1], des_l_leg_pos_[2],
@@ -1747,8 +1759,8 @@ void OnlineWalkingModule::stop()
   for (int i = 0; i < number_of_joints_; i++)
   {
     des_joint_pos_[i] = 0.0;
-    des_joint_velocity_[i] = 0.0;
-    des_joint_accel_[i] = 0.0;
+    des_joint_vel_[i] = 0.0;
+    des_joint_acc_[i] = 0.0;
   }
 
   is_goal_initialized_ = false;

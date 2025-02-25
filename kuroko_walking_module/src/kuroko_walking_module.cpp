@@ -17,6 +17,12 @@ WalkingModule::WalkingModule() : control_cycle_msec_(8), debug_(false)
 
   kuroko_kinematics_ = new KurokoKinematics(WHOLE_BODY);
 
+  // Robot is in initial posture with legs extended directly below
+  // Height of the hips when the legs are fully extended
+  leg_default_length_ = kuroko_kinematics_->leg_max_height_;
+  // Distance between left and right feet
+  leg_default_separaion_ = kuroko_kinematics_->leg_side_offset_;
+
   // result
   result_["hip_r_roll"] = new robotis_framework::DynamixelState();
   result_["hip_r_pitch"] = new robotis_framework::DynamixelState();
@@ -668,27 +674,21 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
   right_leg_move.roll_ = 0;
   right_leg_move.pitch_ = 0;
 
-  // Robot is in initial posture with legs extended directly below
-  // Height of the hips when the legs are fully extended
-  double leg_length = kuroko_kinematics_->leg_max_height_;
-  // Distance between left and right feet
-  double leg_distance = kuroko_kinematics_->leg_side_offset_;
-
   // mm, rad
   // Right leg target point
   right_target_point[0] = swap.x_ + right_leg_move.x_ + x_offset_;
-  right_target_point[1] = swap.y_ + right_leg_move.y_ - (y_offset_ + leg_distance) / 2;
-  right_target_point[2] = swap.z_ + right_leg_move.z_ + z_offset_ - leg_length;
-  right_target_point[3] = swap.roll_ + right_leg_move.roll_ - r_offset_ / 2;
+  right_target_point[1] = swap.y_ + right_leg_move.y_ - (y_offset_ + leg_default_separaion_) / 2.0;
+  right_target_point[2] = swap.z_ + right_leg_move.z_ + z_offset_ - leg_default_length_;
+  right_target_point[3] = swap.roll_ + right_leg_move.roll_ - r_offset_ / 2.0;
   right_target_point[4] = swap.pitch_ + right_leg_move.pitch_ + p_offset_;
-  right_target_point[5] = swap.yaw_ + right_leg_move.yaw_ - a_offset_ / 2;
+  right_target_point[5] = swap.yaw_ + right_leg_move.yaw_ - a_offset_ / 2.0;
   // Left leg target point
   left_target_point[0] = swap.x_ + left_leg_move.x_ + x_offset_;
-  left_target_point[1] = swap.y_ + left_leg_move.y_ + (y_offset_ + leg_distance) / 2;
-  left_target_point[2] = swap.z_ + left_leg_move.z_ + z_offset_ - leg_length;
-  left_target_point[3] = swap.roll_ + left_leg_move.roll_ + r_offset_ / 2;
+  left_target_point[1] = swap.y_ + left_leg_move.y_ + (y_offset_ + leg_default_separaion_) / 2.0;
+  left_target_point[2] = swap.z_ + left_leg_move.z_ + z_offset_ - leg_default_length_;
+  left_target_point[3] = swap.roll_ + left_leg_move.roll_ + r_offset_ / 2.0;
   left_target_point[4] = swap.pitch_ + left_leg_move.pitch_ + p_offset_;
-  left_target_point[5] = swap.yaw_ + left_leg_move.yaw_ + a_offset_ / 2;
+  left_target_point[5] = swap.yaw_ + left_leg_move.yaw_ + a_offset_ / 2.0;
 
   // Compute body swing
   if (time_ <= l_ssp_end_time_)
@@ -701,7 +701,7 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
     body_swing_y_ = -right_target_point[1];
     body_swing_z_ = right_target_point[2];
   }
-  body_swing_z_ -= leg_length;
+  body_swing_z_ -= leg_default_length_;
 
   // Right leg IK
   if (!kuroko_kinematics_->solveInverseKinematicsForRightLeg(right_joints, right_target_point))

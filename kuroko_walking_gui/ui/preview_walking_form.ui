@@ -310,7 +310,7 @@
             <item row="1" column="0">
               <widget class="QLabel" name="label_44">
                 <property name="text">
-                  <string>LinearInvertedPendulumModel Height [m]</string>
+                  <string>LIPM Height [m]</string>
                 </property>
               </widget>
             </item>

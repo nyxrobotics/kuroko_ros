@@ -700,9 +700,6 @@ double WalkingControl::calcRefZMPy(int step)
 void WalkingControl::calcPreviewParam(std::vector<double_t> K, int K_row, int K_col, std::vector<double_t> P, int P_row,
                                       int P_col)
 {
-  //
-  //  ROS_INFO("lipm_height_ : %f", lipm_height_);
-
   double t = control_cycle_;
 
   a_.resize(3, 3);

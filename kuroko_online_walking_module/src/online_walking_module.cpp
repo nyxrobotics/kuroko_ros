@@ -72,12 +72,13 @@ void OnlineWalkingModule::initializeKinematics()
 
 void OnlineWalkingModule::initializeWalkingParameters()
 {
+  // TODO: Set initial pose
   online_walking_param_.dsp_ratio = 0.1;
   online_walking_param_.lipm_height = 0.25;
   online_walking_param_.foot_height_max = 0.05;
   online_walking_param_.zmp_offset_x = 0.0;
   online_walking_param_.zmp_offset_y = 0.0;
-  foot_distance_ = leg_default_separaion_ + 0.13;
+  foot_distance_ = leg_default_separaion_ + 0.1;
   robot_mass_ = 4.0;
 }
 

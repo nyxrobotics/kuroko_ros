@@ -17,7 +17,7 @@ void QNodeKuroko::initPreviewWalking(ros::NodeHandle& ros_node)
   // Publisher
   foot_step_command_pub_ = ros_node.advertise<op3_online_walking_module_msgs::FootStepCommand>("/motion_control/"
                                                                                                "online_walking/"
-                                                                                               "foot_step_command",
+                                                                                               "footstep_command",
                                                                                                0);
   online_walking_param_pub_ =
       ros_node.advertise<op3_online_walking_module_msgs::WalkingParam>("/motion_control/"

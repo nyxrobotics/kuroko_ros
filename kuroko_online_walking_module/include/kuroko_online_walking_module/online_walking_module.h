@@ -173,10 +173,11 @@ private:
   ros::Publisher movement_done_pub_;
   ros::Publisher goal_joint_state_pub_;
   ros::Publisher pelvis_pose_pub_;
+  ros::ServiceClient get_preview_matrix_client_;
+
   std::string world_frame_id_;
   std::string robot_frame_id_;
 
-  //  ros::ServiceClient get_preview_matrix_client_;
   ControlType control_type_;
 
   bool is_robot_moving_;

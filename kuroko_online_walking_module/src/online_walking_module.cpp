@@ -173,9 +173,8 @@ void OnlineWalkingModule::initialize(const int control_cycle_msec, robotis_frame
   robot_frame_id_ = "body_link";
 
   // Service
-  //  get_preview_matrix_client_ =
-  //  ros_node.serviceClient<KUROKO_ONLINE_WALKING_MODULE_msgs::GetPreviewMatrix>("/motion_control/online_walking/get_preview_matrix",
-  //  0);
+  get_preview_matrix_client_ = ros_node.serviceClient<op3_online_walking_module_msgs::GetPreviewMatrix>(
+      "/motion_control/online_walking/get_preview_matrix", 0);
 }
 
 void OnlineWalkingModule::onModuleEnable()
@@ -1070,15 +1069,9 @@ void OnlineWalkingModule::footStepCommandCallback(const op3_online_walking_modul
     ROS_WARN("[OnlineWalkingModule::footStepCommandCallback] Previous task is alive!");
     return;
   }
-  // if (balance_type_ == OFF)
-  // {
-  //   ROS_WARN("[WARN] Balance is off!");
-  //   return;
-  // }
 
   is_footstep_2d_active_ = false;
-
-  walking_size_ = msg.step_num + 3;  // msg.step_num + 2;
+  walking_size_ = msg.step_num + 3;
   mov_time_ = msg.step_time;
   footstep_command_ = msg;
   footstep_command_.step_num = walking_size_;
@@ -1111,6 +1104,7 @@ void OnlineWalkingModule::initWalkingControl()
 
   bool get_preview_matrix = false;
   get_preview_matrix = definePreviewMatrix();
+  // get_preview_matrix = getPreviewMatrix(preview_request_);
 
   if (get_preview_matrix)
   {
@@ -1820,4 +1814,47 @@ bool OnlineWalkingModule::definePreviewMatrix()
   preview_response_p_col_ = 4;
 
   return true;
+}
+
+bool OnlineWalkingModule::getPreviewMatrix(op3_online_walking_module_msgs::PreviewRequest preview_request)
+{
+  op3_online_walking_module_msgs::GetPreviewMatrix get_preview_matrix;
+
+  // request
+  get_preview_matrix.request.req.control_cycle = preview_request.control_cycle;
+  get_preview_matrix.request.req.lipm_height = preview_request.lipm_height;
+
+  // response
+  if (get_preview_matrix_client_.call(get_preview_matrix))
+  {
+    preview_response_.K = get_preview_matrix.response.res.K;
+    preview_response_.K_row = get_preview_matrix.response.res.K_row;
+    preview_response_.K_col = get_preview_matrix.response.res.K_col;
+
+    preview_response_.P = get_preview_matrix.response.res.P;
+    preview_response_.P_row = get_preview_matrix.response.res.P_row;
+    preview_response_.P_col = get_preview_matrix.response.res.P_col;
+
+    ROS_INFO("preview_response_.K");
+    for (int i = 0; i < preview_response_.K.size(); i++)
+    {
+      ROS_INFO("%f", get_preview_matrix.response.res.K[i]);
+    }
+
+    ROS_INFO("K_row : %d", get_preview_matrix.response.res.K_row);
+    ROS_INFO("K_col : %d", get_preview_matrix.response.res.K_col);
+
+    ROS_INFO("preview_response_.P");
+    for (int i = 0; i < preview_response_.P.size(); i++)
+    {
+      ROS_INFO("%f", get_preview_matrix.response.res.P[i]);
+    }
+
+    ROS_INFO("P_row : %d", get_preview_matrix.response.res.P_row);
+    ROS_INFO("P_col : %d", get_preview_matrix.response.res.P_col);
+
+    return true;
+  }
+  else
+    return false;
 }

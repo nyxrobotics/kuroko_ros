@@ -9,6 +9,7 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/WrenchStamped.h>
 #include <map>
+#include <string>
 #include <ros/callback_queue.h>
 #include <ros/package.h>
 #include <ros/ros.h>
@@ -75,13 +76,14 @@ public:
   /* ROS Topic Callback Functions */
   void setResetBodyCallback(const std_msgs::Bool::ConstPtr& msg);
   void setWholebodyBalanceMsgCallback(const std_msgs::String::ConstPtr& msg);
+
+  void onlineWalkingParamCallback(const op3_online_walking_module_msgs::WalkingParam& msg);
   void setBodyOffsetCallback(const geometry_msgs::Pose::ConstPtr& msg);
   void setFootDistanceCallback(const std_msgs::Float64::ConstPtr& msg);
 
   void goalJointPoseCallback(const op3_online_walking_module_msgs::JointPose& msg);
   void goalKinematicsPoseCallback(const op3_online_walking_module_msgs::KinematicsPose& msg);
   void footStepCommandCallback(const op3_online_walking_module_msgs::FootStepCommand& msg);
-  void onlineWalkingParamCallback(const op3_online_walking_module_msgs::WalkingParam& msg);
   // void walkingParamCallback(const op3_walking_module_msgs::WalkingParam::ConstPtr& msg);
 
   void footStep2DCallback(const op3_online_walking_module_msgs::Step2DArray& msg);
@@ -122,8 +124,17 @@ public:
   KurokoKinematics* kuroko_kinematics_;
 
 private:
-  void queueThread();
+  void initializeLegJointNames();
+  void initializeKinematics();
+  void initializeWalkingParameters();
+  void initializeBodyOffsets();
+  void initializeJointStates();
+  void initializeMotionControl();
+  void initializeBalanceControl();
+  void loadParametersFromYAML();
 
+  int getJointIndex(const std::string& joint_name);
+  void queueThread();
   void initJointControl();
   void runJointControl();
   void initWholebodyControl();
@@ -140,8 +151,6 @@ private:
 
   void gyroFeedback(const double& roll_gyro_err, const double& pitch_gyro_err, std::vector<double>& balance_angle);
 
-  void updateRobotPose();
-
   void setTargetForceTorque();
   void setBalanceControlGain();
   bool setBalanceControl();
@@ -149,10 +158,9 @@ private:
   void resetBodyPose();
 
   // Leg parameters
+  std::vector<std::string> joint_name_;
   double leg_default_length_;
   double leg_default_separaion_;
-
-  std::map<std::string, int> joint_name_to_dxl_id_;
 
   double control_cycle_sec_;
   boost::thread queue_thread_;
@@ -165,6 +173,8 @@ private:
   ros::Publisher movement_done_pub_;
   ros::Publisher goal_joint_state_pub_;
   ros::Publisher pelvis_pose_pub_;
+  std::string world_frame_id_;
+  std::string robot_frame_id_;
 
   //  ros::ServiceClient get_preview_matrix_client_;
   ControlType control_type_;
@@ -188,35 +198,31 @@ private:
   robotis_framework::MinimumJerk* body_offset_trajectory_;
   robotis_framework::MinimumJerkViaPoint* feed_forward_trajectory_;
 
-  size_t number_of_joints_;
-  std::vector<std::string> joint_name_;
   std::string wholegbody_control_group_;
 
   // Joint Command
-  std::vector<double_t> curr_joint_acc_, curr_joint_vel_, curr_joint_pos_;
-  std::vector<double_t> des_joint_acc_, des_joint_vel_, des_joint_pos_;
-  std::vector<double_t> goal_joint_acc_, goal_joint_vel_, goal_joint_pos_;
+  std::vector<double_t> motor_curr_acc_, motor_curr_vel_, motor_curr_pos_;
+  std::vector<double_t> motor_target_acc_, motor_target_vel_, motor_target_pos_;
+  std::vector<double_t> motor_goal_acc_, motor_goal_vel_, motor_goal_pos_;
 
-  std::vector<double_t> des_joint_feedback_;
-  std::vector<double_t> des_joint_feedforward_;
-  std::vector<double_t> des_joint_pos_to_robot_;
+  std::vector<double_t> command_joint_feedback_;
+  std::vector<double_t> command_joint_feedforward_;
+  std::vector<double_t> command_joint_pos_;
 
-  std::vector<double_t> des_l_arm_pos_, des_l_arm_vel_, des_l_arm_accel_, des_l_arm_rpy_;
-  std::vector<double_t> des_r_arm_pos_, des_r_arm_vel_, des_r_arm_accel_, des_r_arm_rpy_;
-  std::vector<double_t> des_l_leg_pos_, des_l_leg_vel_, des_l_leg_accel_, des_l_leg_rpy_;
-  std::vector<double_t> des_r_leg_pos_, des_r_leg_vel_, des_r_leg_accel_, des_r_leg_rpy_;
-  std::vector<double_t> des_body_pos_, des_body_vel_, des_body_accel_, des_body_rpy_;
+  std::vector<double_t> l_leg_target_pos_, l_leg_target_rpy_;
+  std::vector<double_t> r_leg_target_pos_, r_leg_target_rpy_;
+  std::vector<double_t> body_target_pos_, body_target_rpy_;
 
   // lipm: Lineared Inverted Pendulum Model
-  std::vector<double_t> x_lipm_, y_lipm_;
+  std::vector<double_t> lipm_x_, lipm_y_;
 
-  op3_online_walking_module_msgs::FootStepCommand foot_step_command_;
+  op3_online_walking_module_msgs::FootStepCommand footstep_command_;
   op3_online_walking_module_msgs::PreviewRequest preview_request_;
   op3_online_walking_module_msgs::PreviewResponse preview_response_;
   op3_online_walking_module_msgs::WalkingParam online_walking_param_;
   // op3_walking_module_msgs::WalkingParam walking_param_;
 
-  op3_online_walking_module_msgs::Step2DArray foot_step_2d_;
+  op3_online_walking_module_msgs::Step2DArray footstep_2d_;
   bool is_footstep_2d_active_;
 
   std::vector<double_t> preview_response_k_;
@@ -239,11 +245,11 @@ private:
 
   std::vector<double_t> joint_feedforward_gain_;
 
-  std::vector<double_t> des_balance_gain_ratio_;
+  std::vector<double_t> curr_balance_gain_ratio_;
   std::vector<double_t> goal_balance_gain_ratio_;
 
   // Body Offset
-  std::vector<double_t> des_body_offset_;
+  std::vector<double_t> curr_body_offset_;
   std::vector<double_t> goal_body_offset_;
 
   bool is_offset_adjusting_;

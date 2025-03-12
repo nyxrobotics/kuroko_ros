@@ -39,17 +39,17 @@ public:
                  double foot_distance);
   virtual ~WalkingControl();
 
-  void initialize(op3_online_walking_module_msgs::FootStepCommand foot_step_command,
+  void initialize(op3_online_walking_module_msgs::FootStepCommand footstep_command,
                   const std::vector<double_t>& init_body_pos, std::vector<double_t> init_body_rpy,
                   std::vector<double_t> init_r_foot_pos, std::vector<double_t> init_r_foot_rpy,
                   std::vector<double_t> init_l_foot_pos, std::vector<double_t> init_l_foot_rpy);
-  void initialize(op3_online_walking_module_msgs::Step2DArray foot_step_2d, const std::vector<double_t>& init_body_pos,
+  void initialize(op3_online_walking_module_msgs::Step2DArray footstep_2d, const std::vector<double_t>& init_body_pos,
                   std::vector<double_t> init_body_rpy, std::vector<double_t> init_r_foot_pos,
                   std::vector<double_t> init_r_foot_rpy, std::vector<double_t> init_l_foot_pos,
                   std::vector<double_t> init_l_foot_rpy);
   void next();
   void finalize();
-  void set(double time, int step, bool foot_step_2d);
+  void set(double time, int step, bool footstep_2d);
 
   double getLipmHeight();
 
@@ -101,12 +101,12 @@ protected:
   double dsp_ratio_;
   double foot_trajectory_max_z_;
 
-  int foot_step_size_;
-  op3_online_walking_module_msgs::FootStepCommand foot_step_command_;
-  op3_online_walking_module_msgs::FootStepArray foot_step_param_;
+  int footstep_size_;
+  op3_online_walking_module_msgs::FootStepCommand footstep_command_;
+  op3_online_walking_module_msgs::FootStepArray footstep_param_;
   op3_online_walking_module_msgs::PreviewResponse preview_response_;
 
-  op3_online_walking_module_msgs::Step2DArray foot_step_2d_;
+  op3_online_walking_module_msgs::Step2DArray footstep_2d_;
 
   // Preview Control
   int preview_size_;
@@ -119,7 +119,7 @@ protected:
   double k_s_;
   Eigen::MatrixXd f_;
   Eigen::MatrixXd u_x_, u_y_;
-  Eigen::MatrixXd x_lipm_, y_lipm_;
+  Eigen::MatrixXd lipm_x_, lipm_y_;
 
   Eigen::MatrixXd k_, p_;
 

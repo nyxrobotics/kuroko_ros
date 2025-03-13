@@ -13,6 +13,9 @@
     <param name="initial_body_height" value="0.33"/>
   </node>
 
+  <!-- preview matrix generator for online walking module -->
+  <node name="kuroko_optimization" pkg="kuroko_optimization" type="kuroko_optimization" output="screen"/>
+
   <!-- kuroko Footstep Planner -->
   <include file="$(find kuroko_navigation)/launch/kuroko_footstep_planner.launch"/>
 </launch>

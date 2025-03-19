@@ -38,6 +38,10 @@ done
 
 rosdep update
 rosdep install -r -y -i --from-paths .
+
+## Manually install some apt packages
+sudo apt install scilab
+
 catkin source
 catkin config --cmake-args -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=Release
 roscd yolov8 && pipenv install

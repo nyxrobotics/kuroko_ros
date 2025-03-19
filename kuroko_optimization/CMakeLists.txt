@@ -2,67 +2,41 @@ cmake_minimum_required(VERSION 2.8.3)
 project(kuroko_optimization)
 
 ################################################################################
-# Packages
+# Find packages
 ################################################################################
-find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  std_msgs
-  sensor_msgs
-  geometry_msgs
-  op3_online_walking_module_msgs
-  robotis_math
-  scilab_optimization
+find_package(
+  catkin REQUIRED
+  COMPONENTS roscpp
+             std_msgs
+             robotis_math
+             scilab_optimization
+             op3_online_walking_module_msgs
 )
 
-find_package(Eigen3 REQUIRED)
+################################################################################
+# Include paths
+################################################################################
+include_directories(include ${catkin_INCLUDE_DIRS})
 
 ################################################################################
-# Declare ROS messages, services and actions
-################################################################################
-
-################################################################################
-# Declare ROS dynamic reconfigure parameters
-################################################################################
-
-################################################################################
-# Catkin specific configuration
+# Declare catkin package
 ################################################################################
 catkin_package(
   CATKIN_DEPENDS
-  roscpp
-  std_msgs
-  sensor_msgs
-  geometry_msgs
-  DEPENDS EIGEN3
+    roscpp
+    std_msgs
+    robotis_math
+    scilab_optimization
+    op3_online_walking_module_msgs
 )
 
 ################################################################################
-# Build
+# Build node
 ################################################################################
-include_directories(
-  ${catkin_INCLUDE_DIRS}
-  ${EIGEN3_INCLUDE_DIR}
+add_executable(${PROJECT_NAME}_node src/kuroko_optimization.cpp)
+find_library(
+  SCILAB_OPTIMIZATION_LIB
+  NAMES scilab_optimization
+  PATHS ${CATKIN_DEVEL_PREFIX}/lib ${CATKIN_DEVEL_PREFIX}/.private/scilab_optimization/lib
 )
-
-add_executable(kuroko_optimization
-  src/kuroko_optimization.cpp
-)
-
-add_dependencies(kuroko_optimization ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-
-target_link_libraries(kuroko_optimization
-  ${catkin_LIBRARIES}
-)
-
-################################################################################
-# Install
-################################################################################
-install(TARGETS kuroko_optimization
-  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-)
-
-################################################################################
-# Test
-################################################################################
+target_link_libraries(${PROJECT_NAME}_node ${catkin_LIBRARIES})

@@ -1,19 +1,18 @@
 
-#include <ros/ros.h>
-
+#include <Eigen/Dense>
+#include "kuroko_optimization/kuroko_optimization.h"
 #include "robotis_math/robotis_math.h"
 #include "scilab_optimization/scilab_optimization.h"
 
-#include "op3_online_walking_module_msgs/PreviewRequest.h"
-#include "op3_online_walking_module_msgs/PreviewResponse.h"
-#include "op3_online_walking_module_msgs/GetPreviewMatrix.h"
+KurokoOptimization::KurokoOptimization()
+{
+}
 
-double P_row_, P_col_;
-std::vector<double_t> P_;
-double K_row_, K_col_;
-std::vector<double_t> K_;
+KurokoOptimization::~KurokoOptimization()
+{
+}
 
-bool calcPreviewParam(double control_cycle, double lipm_height)
+bool KurokoOptimization::calcPreviewParam(double control_cycle, double lipm_height)
 {
   double preview_time_ = 1.6;
   int preview_size_;
@@ -85,10 +84,10 @@ bool calcPreviewParam(double control_cycle, double lipm_height)
   double* matrix_E_imag = (double*)malloc(100 * sizeof(double));
   int row_E, col_E;
 
-  robotis_framework::ScilabOptimization::initialize();
-  bool success = robotis_framework::ScilabOptimization::solveRiccatiEquation(
-      matrix_K, &row_K, &col_K, matrix_P, &row_P, &col_P, matrix_E_real, matrix_E_imag, &row_E, &col_E, matrix_A, row_A,
-      col_A, matrix_B, row_B, col_B, matrix_Q, row_Q, col_Q, matrix_R, row_R, col_R);
+  bool success =
+      scilab_optimization_.solveRiccatiEquation(matrix_K, &row_K, &col_K, matrix_P, &row_P, &col_P, matrix_E_real,
+                                                matrix_E_imag, &row_E, &col_E, matrix_A, row_A, col_A, matrix_B, row_B,
+                                                col_B, matrix_Q, row_Q, col_Q, matrix_R, row_R, col_R);
 
   if (!success)
   {
@@ -97,7 +96,6 @@ bool calcPreviewParam(double control_cycle, double lipm_height)
     free(matrix_P);
     free(matrix_E_real);
     free(matrix_E_imag);
-    robotis_framework::ScilabOptimization::terminate();
     return false;
   }
 
@@ -120,13 +118,11 @@ bool calcPreviewParam(double control_cycle, double lipm_height)
   free(matrix_E_real);
   free(matrix_E_imag);
 
-  robotis_framework::ScilabOptimization::terminate();
-
   return true;
 }
 
-bool getPreviewMatrixCallback(op3_online_walking_module_msgs::GetPreviewMatrix::Request& req,
-                              op3_online_walking_module_msgs::GetPreviewMatrix::Response& res)
+bool KurokoOptimization::getPreviewMatrixCallback(op3_online_walking_module_msgs::GetPreviewMatrix::Request& req,
+                                                  op3_online_walking_module_msgs::GetPreviewMatrix::Response& res)
 {
   double control_cycle = req.req.control_cycle;
   double lipm_height = req.req.lipm_height;
@@ -154,17 +150,4 @@ bool getPreviewMatrixCallback(op3_online_walking_module_msgs::GetPreviewMatrix::
 
   ROS_WARN("Fail to get Preview Matrix");
   return false;
-}
-
-int main(int argc, char** argv)
-{
-  ros::init(argc, argv, "kuroko_optimization");
-  ros::NodeHandle nh("~");
-
-  ros::ServiceServer get_preview_matrix_server =
-      nh.advertiseService("/motion_control/online_walking/get_preview_matrix", getPreviewMatrixCallback);
-
-  ros::spin();
-
-  return 0;
 }

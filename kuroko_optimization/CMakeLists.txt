@@ -1,4 +1,11 @@
 cmake_minimum_required(VERSION 2.8.3)
+if(POLICY CMP0048)
+  cmake_policy(
+    SET
+    CMP0048
+    NEW
+  )
+endif(POLICY CMP0048)
 project(kuroko_optimization)
 
 ################################################################################
@@ -33,5 +40,5 @@ catkin_package(
 ################################################################################
 # Build node
 ################################################################################
-add_executable(${PROJECT_NAME}_node src/kuroko_optimization.cpp)
+add_executable(${PROJECT_NAME}_node src/kuroko_optimization.cpp src/main.cpp)
 target_link_libraries(${PROJECT_NAME}_node ${catkin_LIBRARIES})

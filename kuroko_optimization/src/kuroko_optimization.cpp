@@ -49,7 +49,7 @@ bool calcPreviewParam(double control_cycle, double lipm_height)
 
   tempc.coeffRef(0, 0) = 1;
 
-  double Q_e = 1, R = 1e-6;  // 1.0e-6;
+  double Q_e = 1, R = 1e-6;
   double Q_x = 0;
   Eigen::MatrixXd Q = Eigen::MatrixXd::Zero(4, 4);
 
@@ -86,10 +86,20 @@ bool calcPreviewParam(double control_cycle, double lipm_height)
   int row_E, col_E;
 
   robotis_framework::ScilabOptimization::initialize();
-  robotis_framework::ScilabOptimization::solveRiccatiEquation(matrix_K, &row_K, &col_K, matrix_P, &row_P, &col_P,
-                                                              matrix_E_real, matrix_E_imag, &row_E, &col_E, matrix_A,
-                                                              row_A, col_A, matrix_B, row_B, col_B, matrix_Q, row_Q,
-                                                              col_Q, matrix_R, row_R, col_R);
+  bool success = robotis_framework::ScilabOptimization::solveRiccatiEquation(
+      matrix_K, &row_K, &col_K, matrix_P, &row_P, &col_P, matrix_E_real, matrix_E_imag, &row_E, &col_E, matrix_A, row_A,
+      col_A, matrix_B, row_B, col_B, matrix_Q, row_Q, col_Q, matrix_R, row_R, col_R);
+
+  if (!success)
+  {
+    ROS_WARN("Fail to solve Riccati Equation");
+    free(matrix_K);
+    free(matrix_P);
+    free(matrix_E_real);
+    free(matrix_E_imag);
+    robotis_framework::ScilabOptimization::terminate();
+    return false;
+  }
 
   int K_size = row_K * col_K;
   for (int i = 0; i < K_size; i++)
@@ -141,8 +151,9 @@ bool getPreviewMatrixCallback(op3_online_walking_module_msgs::GetPreviewMatrix::
 
     return true;
   }
-  else
-    return false;
+
+  ROS_WARN("Fail to get Preview Matrix");
+  return false;
 }
 
 int main(int argc, char** argv)

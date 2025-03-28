@@ -1103,8 +1103,8 @@ void OnlineWalkingModule::initWalkingControl()
   preview_request_.control_cycle = control_cycle_sec_;
 
   bool get_preview_matrix = false;
-  get_preview_matrix = definePreviewMatrix();
-  // get_preview_matrix = getPreviewMatrix(preview_request_);
+  // get_preview_matrix = definePreviewMatrix();
+  get_preview_matrix = getPreviewMatrix(preview_request_);
 
   if (get_preview_matrix)
   {
@@ -1120,8 +1120,8 @@ void OnlineWalkingModule::initWalkingControl()
                                    r_leg_target_rpy_, l_leg_target_pos_, l_leg_target_rpy_);
     }
 
-    walking_control_->calcPreviewParam(preview_response_k_, preview_response_k_row_, preview_response_k_col_,
-                                       preview_response_p_, preview_response_p_row_, preview_response_p_row_);
+    walking_control_->calcPreviewParam(preview_response_.K, preview_response_.K_row, preview_response_.K_col,
+                                       preview_response_.P, preview_response_.P_row, preview_response_.P_col);
     initFeedforwardControl();
     is_robot_moving_ = true;
     is_walking_control_initialized_ = true;
@@ -1787,9 +1787,9 @@ bool OnlineWalkingModule::definePreviewMatrix()
   k.push_back(3340.410380);
   k.push_back(69.798325);
 
-  preview_response_k_ = k;
-  preview_response_k_row_ = 1;
-  preview_response_k_col_ = 4;
+  preview_response_.K = k;
+  preview_response_.K_row = 1;
+  preview_response_.K_col = 4;
 
   std::vector<double_t> p;
   p.push_back(33.130169);
@@ -1809,9 +1809,9 @@ bool OnlineWalkingModule::definePreviewMatrix()
   p.push_back(0.922502);
   p.push_back(0.012336);
 
-  preview_response_p_ = p;
-  preview_response_p_row_ = 4;
-  preview_response_p_col_ = 4;
+  preview_response_.P = p;
+  preview_response_.P_row = 4;
+  preview_response_.P_col = 4;
 
   return true;
 }

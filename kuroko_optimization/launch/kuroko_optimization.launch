@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<launch>
+  <env name="LD_LIBRARY_PATH" value="/usr/lib/scilab:$(env LD_LIBRARY_PATH)"/>
+  <node name="kuroko_optimization_node" pkg="kuroko_optimization" type="kuroko_optimization_node" output="screen"/>
+</launch>

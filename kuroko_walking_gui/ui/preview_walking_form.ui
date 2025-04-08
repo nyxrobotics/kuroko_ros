@@ -475,7 +475,7 @@
       <item row="3" column="0" colspan="4">
         <widget class="QGroupBox" name="groupBox_2">
           <property name="title">
-            <string>Footstep Planer</string>
+            <string>Footstep Planner</string>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_2">
             <item>

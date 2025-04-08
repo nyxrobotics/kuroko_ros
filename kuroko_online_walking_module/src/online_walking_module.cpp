@@ -1231,7 +1231,7 @@ void OnlineWalkingModule::setTargetForceTorque()
 
 void OnlineWalkingModule::setBalanceControlGain()
 {
-  //// set gain
+  // Set Gyro feedback gain
   // gyro
   balance_control_.foot_roll_gyro_ctrl_.p_gain_ = foot_roll_gyro_p_gain_ * curr_balance_gain_ratio_[0];
   balance_control_.foot_roll_gyro_ctrl_.d_gain_ = foot_roll_gyro_d_gain_ * curr_balance_gain_ratio_[0];
@@ -1473,10 +1473,8 @@ void OnlineWalkingModule::setFeedbackControl()
   for (int i = 0; i < joint_name_.size(); i++)
   {
     command_joint_pos_[i] = motor_target_pos_[i] + command_joint_feedforward_[i];
-
     joint_feedback_[i].desired_ = motor_target_pos_[i];
     command_joint_feedback_[i] = joint_feedback_[i].getFeedBack(motor_curr_pos_[i]);
-
     command_joint_pos_[i] += command_joint_feedback_[i];
   }
 }

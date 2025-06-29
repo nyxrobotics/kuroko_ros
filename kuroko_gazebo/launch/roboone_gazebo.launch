@@ -12,6 +12,9 @@
   <arg name="use_small_ring" default="false"/>
   <arg name="spawn_enemy" default="true"/>
   <arg name="enemy_name" default="enemy"/>
+  <arg name="expected_models"
+    default="$(eval '{}{}{}'.format(arg('robot_name'), ',enemy' if arg('spawn_enemy') == 'true' else '', ',ring_model'))"/>
+
   <rosparam file="$(find kuroko_gazebo)/config/gazebo_pid.yaml" ns="$(arg robot_name)"
     command="load"/>
   <rosparam file="$(find kuroko_gazebo)/config/gazebo_dc_motor.yaml" ns="$(arg robot_name)"
@@ -23,7 +26,7 @@
     <arg name="world_name" value="$(find kuroko_description)/worlds/default.world"/>
     <arg name="debug" value="$(arg debug)"/>
     <arg name="gui" value="$(arg gui)"/>
-    <arg name="paused" value="$(arg paused)"/>
+    <arg name="paused" value="true"/>
     <arg name="use_sim_time" value="$(arg use_sim_time)"/>
     <arg name="headless" value="$(arg headless)"/>
   </include>
@@ -149,4 +152,10 @@
       trajectory_controller"/>
     </group>
   </group>
+
+  <!-- Unpause script only if paused is false -->
+  <node pkg="kuroko_gazebo" type="unpause_physics.py" name="unpause_physics" output="screen">
+    <param name="expected_models" value="$(arg expected_models)"/>
+  </node>
+
 </launch>

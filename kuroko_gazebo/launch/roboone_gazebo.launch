@@ -12,8 +12,14 @@
   <arg name="use_small_ring" default="false"/>
   <arg name="spawn_enemy" default="true"/>
   <arg name="enemy_name" default="enemy"/>
+  <arg name="wait_after_spawn" default="1.0"/>
+
+  <!-- expected_models: robot_name ring_model [enemy_name] -->
+  <arg name="base_models" default="$(arg robot_name) ring_model"/>
+  <arg name="enemy_model"
+    default="$(eval arg('enemy_name') if arg('spawn_enemy') else '')"/>
   <arg name="expected_models"
-    default="$(eval '{}{}{}'.format(arg('robot_name'), ',enemy' if arg('spawn_enemy') == 'true' else '', ',ring_model'))"/>
+    default="$(eval '{} {}'.format(arg('base_models'), arg('enemy_model')).strip())"/>
 
   <rosparam file="$(find kuroko_gazebo)/config/gazebo_pid.yaml" ns="$(arg robot_name)"
     command="load"/>
@@ -55,7 +61,31 @@
   <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
   <node name="robot_urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false"
     output="screen"
-    args="-urdf -model $(arg robot_name) -param robot_description_gazebo -x -0.9 -y 0.0 -z 0.9"/>
+    args="
+    -urdf -model $(arg robot_name) -param robot_description_gazebo
+    -x -0.9 -y 0.0 -z 0.9
+    -J ankle_l_roll -0.17453292519943295
+    -J ankle_l_yaw 0.0
+    -J ankle_r_roll 0.17453292519943295
+    -J ankle_r_yaw 0.0
+    -J chest 0.0
+    -J elbow_l_front 2.007128639793479
+    -J elbow_l_rear -2.007128639793479
+    -J elbow_r_front -2.007128639793479
+    -J elbow_r_rear 2.007128639793479
+    -J hip_l_pitch 0.0
+    -J hip_l_roll -0.17453292519943295
+    -J hip_r_pitch 0.0
+    -J hip_r_roll -0.17453292519943295
+    -J shin_l_active 0.0
+    -J shin_r_active 0.0
+    -J shoulder_l_pitch -1.1344640137963142
+    -J shoulder_l_roll 1.4311699866353502
+    -J shoulder_r_pitch 1.1344640137963142
+    -J shoulder_r_roll -1.4311699866353502
+    -J thigh_l_active 0.0
+    -J thigh_r_active 0.0
+    "/>
 
   <group unless="$(arg use_trajectory_control)">
     <rosparam file="$(find kuroko_gazebo)/config/joint_control_position.yaml" ns="$(arg robot_name)"
@@ -111,7 +141,31 @@
     <param name="enemy_description"
       command="$(find xacro)/xacro '$(find kuroko_description)/xacro/kuroko/enemy.xacro' gazebo:=true"/>
     <node name="enemy_urdf_spawner" pkg="gazebo_ros" type="spawn_model" output="screen"
-      args="-urdf -param enemy_description -model enemy -x 0.9 -y 0.0 -z 0.9 -Y 3.1416"/>
+      args="
+      -urdf -param enemy_description -model $(arg enemy_name)
+      -x 0.9 -y 0.0 -z 0.9 -Y 3.1416
+      -J ankle_l_roll -0.17453292519943295
+      -J ankle_l_yaw 0.0
+      -J ankle_r_roll 0.17453292519943295
+      -J ankle_r_yaw 0.0
+      -J chest 0.0
+      -J elbow_l_front 2.007128639793479
+      -J elbow_l_rear -2.007128639793479
+      -J elbow_r_front -2.007128639793479
+      -J elbow_r_rear 2.007128639793479
+      -J hip_l_pitch 0.0
+      -J hip_l_roll -0.17453292519943295
+      -J hip_r_pitch 0.0
+      -J hip_r_roll -0.17453292519943295
+      -J shin_l_active 0.0
+      -J shin_r_active 0.0
+      -J shoulder_l_pitch -1.1344640137963142
+      -J shoulder_l_roll 1.4311699866353502
+      -J shoulder_r_pitch 1.1344640137963142
+      -J shoulder_r_roll -1.4311699866353502
+      -J thigh_l_active 0.0
+      -J thigh_r_active 0.0
+      "/>
     <group unless="$(arg use_trajectory_control)">
       <rosparam file="$(find kuroko_gazebo)/config/joint_control_position.yaml"
         ns="$(arg enemy_name)" command="load"/>
@@ -153,9 +207,11 @@
     </group>
   </group>
 
-  <!-- Unpause script only if paused is false -->
-  <node pkg="kuroko_gazebo" type="unpause_physics.py" name="unpause_physics" output="screen">
-    <param name="expected_models" value="$(arg expected_models)"/>
-  </node>
-
+  <!-- unpause script -->
+  <group unless="$(arg paused)">
+    <node pkg="kuroko_gazebo" type="unpause_physics.py" name="unpause_physics" output="screen">
+      <param name="expected_models" value="$(arg expected_models)"/>
+      <param name="wait_after_spawn" value="$(arg wait_after_spawn)"/>
+    </node>
+  </group>
 </launch>

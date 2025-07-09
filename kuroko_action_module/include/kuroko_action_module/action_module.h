@@ -85,7 +85,7 @@ private:
   void startActionCallback(const op3_action_module_msgs::StartAction::ConstPtr& msg);
   void processMotionStep();
 
-  void loadConfigJointNames(const std::string& file_name);
+  void getJointNames();
   void loadMotionYAML(const std::string& file_name, const std::string& motion_name);
 
   std::vector<std::string> config_joint_names_;

@@ -44,10 +44,11 @@ void ActionModule::initialize(const int control_cycle_msec, robotis_framework::R
   queue_thread_ = boost::thread(boost::bind(&ActionModule::queueThread, this));
   ROS_INFO_STREAM("[ActionModule] Start initialization");
   ros::NodeHandle ros_node;
-  std::string joint_names_path = ros::package::getPath("kuroko_action_module") + "/config/joint_names.yaml";
   std::string motion_path = ros::package::getPath("kuroko_action_module") + "/motion";
-  loadConfigJointNames(joint_names_path);
-  ROS_INFO_STREAM("[ActionModule] Loading modules for each joint (joint_names.yaml)");
+
+  loadAllMotions(motion_path);
+  getJointNames();
+
   for (auto& dxl : robot->dxls_)
   {
     std::string joint_name = dxl.first;
@@ -78,7 +79,6 @@ void ActionModule::initialize(const int control_cycle_msec, robotis_framework::R
                                 config_joint_names_.end());
     }
   }
-  loadAllMotions(motion_path);
   motion_status_.is_running = false;
   ROS_INFO_STREAM("[ActionModule] Finish initialization");
 }
@@ -300,12 +300,29 @@ bool ActionModule::playMotionByName(const std::string& motion_name)
   return true;
 }
 
-void ActionModule::loadConfigJointNames(const std::string& file_name)
+void ActionModule::getJointNames()
 {
-  YAML::Node config = YAML::LoadFile(file_name);
-  ROS_INFO_STREAM("[ActionModule] Loaded Joint YAML file: " << file_name);
-  config_joint_names_ = config["joint_names"].as<std::vector<std::string>>();
-  ROS_INFO_STREAM("[ActionModule] config_joint_names_:\n" << YAML::Dump(YAML::Node(config_joint_names_)));
+  std::set<std::string> unique_joint_names;
+  for (const auto& motion_file : motion_files_.motion_files)
+  {
+    for (const auto& section : motion_file.motion_sections)
+    {
+      for (const auto& joint_name : section.joint_trajectory.joint_names)
+      {
+        unique_joint_names.insert(joint_name);
+      }
+    }
+  }
+
+  if (unique_joint_names.empty())
+  {
+    ROS_WARN("[ActionModule] No joint names found in motion files.");
+    return;
+  }
+
+  config_joint_names_ = std::vector<std::string>(unique_joint_names.begin(), unique_joint_names.end());
+  ROS_INFO_STREAM(
+      "[ActionModule] Collected joint names from motion files: " << YAML::Dump(YAML::Node(config_joint_names_)));
 }
 
 void ActionModule::saveAllMotions(const std::string& directory)

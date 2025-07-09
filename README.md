@@ -35,6 +35,7 @@ roslaunch kuroko_bringup roboone_startup.launch
 ## Gazebo
 ```bash
 roslaunch kuroko_bringup kuroko_bringup_gazebo.launch
+roslaunch kuroko_bringup manager.launch
 ```
 
 - RonoOne
@@ -46,5 +47,3 @@ roslaunch kuroko_roboone roboone_auto.launch
 ```bash
 roslaunch kuroko_walking_gui kuroko_walking_gui.launch
 ```
-
-

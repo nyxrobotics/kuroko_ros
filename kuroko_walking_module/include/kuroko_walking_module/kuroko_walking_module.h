@@ -77,10 +77,10 @@ public:
 private:
   enum
   {
-    WALKING_DISABLE = 0,
-    WALKING_ENABLE = 1,
-    WALKING_INIT_POSE = 2,
-    WALKING_READY = 3
+    WALK_DISABLE = 0,
+    WALK_ENABLE = 1,
+    WALK_INITIAL_POSE = 2,
+    WALK_READY = 3
   };
 
   const bool debug_;

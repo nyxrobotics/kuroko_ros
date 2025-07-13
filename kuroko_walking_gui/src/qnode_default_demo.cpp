@@ -78,7 +78,7 @@ void QNodeKuroko::setWalkingCommand(const std::string& command)
   set_walking_command_pub_.publish(commnd_msg);
 
   std::stringstream ss_log;
-  ss_log << "Set Walking Command : " << commnd_msg.data << std::endl;
+  ss_log << "Set Walking Command: " << commnd_msg.data << std::endl;
 
   log(INFO, ss_log.str());
 }
@@ -150,7 +150,7 @@ void QNodeKuroko::playMotion(int motion_index)
 
     default:
       std::string motion_name = motion_table_[motion_index];
-      log_ss << "Play Motion : [" << motion_index << "] " << motion_name;
+      log_ss << "Play Motion: [" << motion_index << "] " << motion_name;
   }
 
   // publish motion index

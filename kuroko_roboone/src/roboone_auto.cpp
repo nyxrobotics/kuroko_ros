@@ -156,7 +156,7 @@ void RobooneAuto::manageState()
 {
   std::lock_guard<std::mutex> lock(state_mutex_);
 
-  if (current_state_ == "INIT_POSE" && last_joy_.buttons[2])
+  if (current_state_ == "INITIAL_POSE" && last_joy_.buttons[2])
   {
     transitionToAutoMoveState();
   }
@@ -164,7 +164,7 @@ void RobooneAuto::manageState()
   {
     transitionToIdleState();
   }
-  else if (current_state_ != "INIT_POSE" && last_joy_.buttons[0])
+  else if (current_state_ != "INITIAL_POSE" && last_joy_.buttons[0])
   {
     transitionToInitPose();
   }
@@ -219,11 +219,11 @@ void RobooneAuto::transitionToInitPose()
 {
   enableAllJoints();
   ros::Duration(0.1).sleep();
-  ROS_INFO("Transitioning to INIT_POSE state.");
+  ROS_INFO("Transitioning to INITIAL_POSE state.");
   setCtrlModule("initial_pose_module");
   setCtrlModule("action_module");
   setCtrlModule("walking_module");
-  current_state_ = "INIT_POSE";
+  current_state_ = "INITIAL_POSE";
 }
 
 // 自律移動への遷移

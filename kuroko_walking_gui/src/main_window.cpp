@@ -178,7 +178,7 @@ void MainWindow::on_button_getup_front_clicked(bool /*check*/)
 
   usleep(10 * 1000);
 
-  qnode_kuroko_.playMotion(GET_UP_FRONT);
+  qnode_kuroko_.playMotion(GETUP_FRONT);
 }
 
 void MainWindow::on_button_getup_back_clicked(bool /*check*/)
@@ -187,7 +187,7 @@ void MainWindow::on_button_getup_back_clicked(bool /*check*/)
 
   usleep(10 * 1000);
 
-  qnode_kuroko_.playMotion(GET_UP_BACK);
+  qnode_kuroko_.playMotion(GETUP_REAR);
 }
 
 /*****************************************************************************

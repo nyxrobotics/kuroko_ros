@@ -93,13 +93,21 @@ protected Q_SLOTS:
 private:
   enum MotionIndex
   {
-    INIT_POSE = 1,
-    WALKING_READY = 9,
-    GET_UP_FRONT = 122,
-    GET_UP_BACK = 123,
-    RIGHT_KICK = 121,
-    LEFT_KICK = 120,
-    CEREMONY = 85,
+    INITIAL_POSE = 1,
+    GETUP_FRONT = 2,
+    GETUP_REAR = 3,
+    L_GRIP_FRONT = 4,
+    L_HOOK_FRONT = 5,
+    L_PUNCH_HIGH = 6,
+    L_PUNCH_LOW = 7,
+    R_GRIP_FRONT = 8,
+    R_HOOK_FRONT = 9,
+    R_PUNCH_HIGH = 10,
+    R_PUNCH_LOW = 11,
+    WALK_READY = 12,
+    RIGHT_KICK = 13,
+    LEFT_KICK = 14,
+    CEREMONY = 15,
   };
 
   void setUserShortcut();

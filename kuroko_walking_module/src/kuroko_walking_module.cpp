@@ -12,7 +12,7 @@ WalkingModule::WalkingModule() : control_cycle_msec_(8), debug_(false)
   control_mode_ = robotis_framework::PositionControl;
 
   init_pose_count_ = 0;
-  walking_state_ = WALKING_READY;
+  walking_state_ = WALK_READY;
   previous_x_move_amplitude_ = 0.0;
 
   kuroko_kinematics_ = new KurokoKinematics(WHOLE_BODY);
@@ -310,7 +310,7 @@ void WalkingModule::stop()
 
 bool WalkingModule::isRunning()
 {
-  return real_running_ || (walking_state_ == WALKING_INIT_POSE);
+  return real_running_ || (walking_state_ == WALK_INITIAL_POSE);
 }
 
 // default [angle : radian, length : m]
@@ -325,7 +325,7 @@ void WalkingModule::process(std::map<std::string, robotis_framework::Dynamixel*>
   std::vector<double> current_angle(joint_size, 0.0);
   std::vector<double> balance_angle(joint_size, 0.0);
 
-  if (walking_state_ == WALKING_INIT_POSE)
+  if (walking_state_ == WALK_INITIAL_POSE)
   {
     int total_count = calc_joint_trajectory_.rows();
     for (int id = 0; id < result_.size(); id++)
@@ -334,12 +334,12 @@ void WalkingModule::process(std::map<std::string, robotis_framework::Dynamixel*>
     init_pose_count_ += 1;
     if (init_pose_count_ >= total_count)
     {
-      walking_state_ = WALKING_READY;
+      walking_state_ = WALK_READY;
       if (debug_)
         std::cout << "End moving to Init : " << init_pose_count_ << std::endl;
     }
   }
-  else if (walking_state_ == WALKING_READY || walking_state_ == WALKING_ENABLE)
+  else if (walking_state_ == WALK_READY || walking_state_ == WALK_ENABLE)
   {
     // current_angle
     for (auto& state_iter : result_)
@@ -382,14 +382,14 @@ void WalkingModule::process(std::map<std::string, robotis_framework::Dynamixel*>
     }
 
     // Check Enable
-    if (walking_state_ == WALKING_ENABLE && err_total > 5.0)
+    if (walking_state_ == WALK_ENABLE && err_total > 5.0)
     {
       if (debug_)
         std::cout << "Check Err : " << err_max << std::endl;
       int mov_time = err_max / 30;
       iniPoseTraGene(mov_time < 1 ? 1 : mov_time);
       target_position_ = goal_position_;
-      walking_state_ = WALKING_INIT_POSE;
+      walking_state_ = WALK_INITIAL_POSE;
       ROS_INFO_STREAM_COND(debug_, "x_offset: " << walking_param_.init_x_offset);
       ROS_INFO_STREAM_COND(debug_, "y_offset: " << walking_param_.init_y_offset);
       ROS_INFO_STREAM_COND(debug_, "z_offset: " << walking_param_.init_z_offset);
@@ -413,7 +413,7 @@ void WalkingModule::process(std::map<std::string, robotis_framework::Dynamixel*>
     }
     else
     {
-      walking_state_ = WALKING_READY;
+      walking_state_ = WALK_READY;
     }
   }
 
@@ -864,13 +864,13 @@ void WalkingModule::saveWalkingParam(std::string& path)
 void WalkingModule::onModuleEnable()
 {
   ROS_INFO("[WalkingModule] Module Enabled");
-  walking_state_ = WALKING_ENABLE;
+  walking_state_ = WALK_ENABLE;
 }
 
 void WalkingModule::onModuleDisable()
 {
   ROS_INFO("[WalkingModule] Module Disabled");
-  walking_state_ = WALKING_DISABLE;
+  walking_state_ = WALK_DISABLE;
 }
 
 void WalkingModule::iniPoseTraGene(double mov_time)

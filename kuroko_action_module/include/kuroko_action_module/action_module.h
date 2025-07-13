@@ -33,18 +33,18 @@ class ActionModule : public robotis_framework::MotionModule, public robotis_fram
 {
 public:
   ActionModule();
-  virtual ~ActionModule();
+  ~ActionModule() override;
 
+  // ROS Framework Functions
   void initialize(const int control_cycle_msec, robotis_framework::Robot* robot) override;
   void process(std::map<std::string, robotis_framework::Dynamixel*> dxls,
                std::map<std::string, double> sensors) override;
 
-  void onModuleEnable() override;
-  void onModuleDisable() override;
   void stop() override;
   bool isRunning() override;
-  void torqueOnAll();
-  void torqueOffAll();
+
+  void onModuleEnable() override;
+  void onModuleDisable() override;
 
 private:
   std::string current_animation_name_;
@@ -63,25 +63,27 @@ private:
 
   std::map<std::string, int> joint_name_to_dxl_id_;
   std::map<int, std::string> dxl_id_to_joint_name_;
-  std::map<std::string, robotis_framework::DynamixelState*> result_;
   std::map<std::string, robotis_framework::DynamixelState*> action_result_;
   std::map<std::string, bool> action_joints_enable_;
   std::vector<std::string> animation_joint_names_;
 
   animation_system::Workspace workspace_;
 
-  void queueThread();
-  void publishStatusMsg(unsigned int type, std::string msg);
-  void publishDoneMsg(std::string msg);
-
+  // ROS Topic Callback Functions
   bool isRunningServiceCallback(op3_action_module_msgs::IsRunning::Request& req,
                                 op3_action_module_msgs::IsRunning::Response& res);
   void motionNumberCallback(const std_msgs::Int32::ConstPtr& msg);
   void startActionCallback(const op3_action_module_msgs::StartAction::ConstPtr& msg);
 
+  // User functions
+  void queueThread();
+  void publishStatusMsg(unsigned int type, std::string msg);
+  void publishDoneMsg(std::string msg);
   void processAnimationStep();
   void executeFrame(const animation_system::FrameData& frame);
   void getJointNames();
+  void torqueOnAll();
+  void torqueOffAll();
 };
 
 }  // namespace motion_control

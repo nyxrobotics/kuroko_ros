@@ -65,12 +65,12 @@ public Q_SLOTS:
   void on_head_center_button_clicked(bool check);
 
   // Demo
-  void on_button_demo_start_clicked(bool check);
-  void on_button_demo_stop_clicked(bool check);
+  void on_button_start_tracking_clicked(bool check);
+  void on_button_stop_tracking_clicked(bool check);
   void on_button_r_kick_clicked(bool check);
   void on_button_l_kick_clicked(bool check);
   void on_button_getup_front_clicked(bool check);
-  void on_button_getup_back_clicked(bool check);
+  void on_button_getup_rear_clicked(bool check);
 
   /******************************************
    ** Manual connections

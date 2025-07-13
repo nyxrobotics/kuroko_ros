@@ -93,7 +93,7 @@ void ActionModule::queueThread()
   done_msg_pub_ = nh.advertise<std_msgs::String>("/motion_control/movement_done", 5);
   sync_write_pub_ = nh.advertise<robotis_controller_msgs::SyncWriteItem>("/motion_control/sync_write_item", 5);
 
-  nh.subscribe("/motion_control/action/page_num", 5, &ActionModule::motionNumberCallback, this);
+  nh.subscribe("/motion_control/action/animation_num", 5, &ActionModule::animationNumberCallback, this);
   nh.subscribe("/motion_control/action/start_action", 5, &ActionModule::startActionCallback, this);
   nh.advertiseService("/motion_control/action/is_running", &ActionModule::isRunningServiceCallback, this);
 
@@ -155,7 +155,7 @@ bool ActionModule::isRunningServiceCallback(op3_action_module_msgs::IsRunning::R
   return true;
 }
 
-void ActionModule::motionNumberCallback(const std_msgs::Int32::ConstPtr& msg)
+void ActionModule::animationNumberCallback(const std_msgs::Int32::ConstPtr& msg)
 {
   if (!enable_)
   {

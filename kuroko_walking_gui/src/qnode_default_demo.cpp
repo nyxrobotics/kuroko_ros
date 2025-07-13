@@ -19,7 +19,7 @@ void QNodeKuroko::initDefaultDemo(ros::NodeHandle& ros_node)
                                                                                                "walking/get_params");
 
   // Action
-  motion_index_pub_ = ros_node.advertise<std_msgs::Int32>("/motion_control/action/page_num", 0);
+  motion_index_pub_ = ros_node.advertise<std_msgs::Int32>("/motion_control/action/animation_num", 0);
 
   // Demo
   demo_command_pub_ = ros_node.advertise<std_msgs::String>("/motion_control/demo_command", 0);
@@ -137,26 +137,14 @@ void QNodeKuroko::playMotion(int motion_index)
     return;
   }
 
+  // Show Motion Name
   std::stringstream log_ss;
-  switch (motion_index)
-  {
-    case -2:
-      log_ss << "Brake Motion";
-      break;
+  std::string motion_name = motion_table_[motion_index];
+  log_ss << "Play Motion: [" << motion_index << "] " << motion_name;
 
-    case -1:
-      log_ss << "STOP Motion";
-      break;
-
-    default:
-      std::string motion_name = motion_table_[motion_index];
-      log_ss << "Play Motion: [" << motion_index << "] " << motion_name;
-  }
-
-  // publish motion index
+  // Publish motion index
   std_msgs::Int32 motion_msg;
   motion_msg.data = motion_index;
-
   motion_index_pub_.publish(motion_msg);
 
   log(INFO, log_ss.str());

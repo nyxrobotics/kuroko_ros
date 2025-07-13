@@ -72,7 +72,7 @@ private:
   // ROS Topic Callback Functions
   bool isRunningServiceCallback(op3_action_module_msgs::IsRunning::Request& req,
                                 op3_action_module_msgs::IsRunning::Response& res);
-  void motionNumberCallback(const std_msgs::Int32::ConstPtr& msg);
+  void animationNumberCallback(const std_msgs::Int32::ConstPtr& msg);
   void startActionCallback(const op3_action_module_msgs::StartAction::ConstPtr& msg);
 
   // User functions

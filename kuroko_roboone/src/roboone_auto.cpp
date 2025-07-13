@@ -18,7 +18,7 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
 
   walking_command_pub_ = nh.advertise<std_msgs::String>("/motion_control/walking/command", 1);
   walking_params_pub_ = nh.advertise<op3_walking_module_msgs::WalkingParam>("/motion_control/walking/set_params", 1);
-  action_page_pub_ = nh.advertise<std_msgs::Int32>("/motion_control/action/page_num", 1);
+  action_page_pub_ = nh.advertise<std_msgs::Int32>("/motion_control/action/animation_num", 1);
 
   current_state_ = "IDLE";
   running_ = true;

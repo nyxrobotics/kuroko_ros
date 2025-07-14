@@ -1,0 +1,33 @@
+layout:
+  arrow:
+    arrow_0:
+      info:
+        id: 0
+      waypoints: []
+  block:
+    frame_1_pose_01:
+      connection:
+        output:
+          out_0:
+            ch: 0
+      info:
+        filename: pose_01
+        id: 1
+        type: frame
+      place:
+        x: -926.0
+        y: 333.0
+    start_0:
+      connection:
+        output:
+          out_0:
+            arrow: arrow_0
+            ch: 0
+            target: frame_1_pose_01
+      info:
+        filename: ''
+        id: 0
+        type: start
+      place:
+        x: -875.0
+        y: 165.0

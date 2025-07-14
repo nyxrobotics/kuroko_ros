@@ -1,10 +1,10 @@
 motion:
   -2: BRAKE
   -1: STOP
-  0: GetupFront
-  1: GetupRear
-  2: CrouchDown
-  3: CrouchUp
+  0: CrouchDown
+  1: CrouchUp
+  2: GetupFront
+  3: GetupRear
   # Attack
   4: LGripFront
   5: LHookFront

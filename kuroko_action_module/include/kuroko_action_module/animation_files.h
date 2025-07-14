@@ -40,22 +40,23 @@ struct AnimationBlock
 {
   std::string type;
   std::string filename;
-  std::vector<std::string> output_ids;
+  int id;
+  std::vector<int> output_ids;
 };
 
 class AnimationData
 {
 public:
-  std::map<std::string, AnimationBlock> blocks;  // <block_id, AnimationBlock>
+  std::map<int, AnimationBlock> blocks;  // <block_id, AnimationBlock>
   FrameData initial_frame_data;
   std::map<std::string, FrameData> frames;              // <filename, FrameData>
   std::map<std::string, IfData> if_conditions;          // <filename, IfData>
   std::map<std::string, SwitchData> switch_conditions;  // <filename, SwitchData>
 
-  void setAnimationBlock(const std::string& block_id, const AnimationBlock& block);
-  void removeAnimationBlock(const std::string& block_id);
-  AnimationBlock getAnimationBlock(const std::string& block_id) const;
-  std::vector<std::string> getBlockIds() const;
+  void setAnimationBlock(const int block_id, const AnimationBlock& block);
+  void removeAnimationBlock(const int block_id);
+  AnimationBlock getAnimationBlock(const int block_id) const;
+  std::vector<int> getBlockIds() const;
 
   void setInitialFrameData(const FrameData& frame);
   FrameData getInitialFrameData() const;
@@ -74,6 +75,9 @@ public:
   void removeSwitchData(const std::string& filename);
   SwitchData getSwitchData(const std::string& filename);
   std::vector<std::string> getSwitchFilenames();
+
+  int getStartBlockId() const;
+  int getBlockIdByName(const std::string& block_name) const;
 };
 
 class Workspace

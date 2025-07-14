@@ -23,6 +23,7 @@ namespace fs = std::experimental::filesystem;
 #include "robotis_controller_msgs/SyncWriteItem.h"
 #include "std_msgs/String.h"
 #include "std_msgs/Int32.h"
+#include "trajectory_msgs/JointTrajectory.h"
 #include "op3_action_module_msgs/IsRunning.h"
 #include "op3_action_module_msgs/StartAction.h"
 #include "animation_files.h"
@@ -48,7 +49,7 @@ public:
 
 private:
   std::string current_animation_name_;
-  std::string current_block_id_;
+  int current_block_id_;
   double time_in_frame_ = 0.0;
   bool is_running_ = false;
 
@@ -58,12 +59,15 @@ private:
   ros::Publisher sync_write_pub_;
 
   int control_cycle_msec_;
-  bool enable_;
-  bool action_module_enabled_;
+  bool action_module_initialized_;
+  trajectory_msgs::JointTrajectory current_trajectory_;
+  size_t trajectory_index_ = 0;
+  ros::Time trajectory_start_time_;
+  bool start_playing_requested_ = false;
+  bool stop_playing_requested_ = false;
 
   std::map<std::string, int> joint_name_to_dxl_id_;
   std::map<int, std::string> dxl_id_to_joint_name_;
-  std::map<std::string, robotis_framework::DynamixelState*> action_result_;
   std::map<std::string, bool> action_joints_enable_;
   std::vector<std::string> animation_joint_names_;
 
@@ -79,11 +83,12 @@ private:
   void queueThread();
   void publishStatusMsg(unsigned int type, std::string msg);
   void publishDoneMsg(std::string msg);
-  void processAnimationStep();
-  void executeFrame(const animation_system::FrameData& frame);
   void getJointNames();
   void torqueOnAll();
   void torqueOffAll();
+  trajectory_msgs::JointTrajectory createJointTrajectory(const std::vector<animation_system::FrameData>& frames,
+                                                         const double control_cycle_msec);
+  std::vector<animation_system::FrameData> getFrameVector(const animation_system::AnimationData& animation_data);
 };
 
 }  // namespace motion_control

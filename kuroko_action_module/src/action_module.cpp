@@ -1,9 +1,10 @@
 #include "kuroko_action_module/action_module.h"
 #include <vector>
+#include "ros/console.h"
 
 namespace motion_control
 {
-ActionModule::ActionModule() : control_cycle_msec_(8), action_module_enabled_(false)
+ActionModule::ActionModule() : control_cycle_msec_(8), action_module_initialized_(false)
 {
   ROS_INFO_STREAM("[ActionModule] Constructor called");
   module_name_ = "action_module";
@@ -19,7 +20,7 @@ ActionModule::~ActionModule()
 void ActionModule::initialize(const int control_cycle_msec, robotis_framework::Robot* robot)
 {
   control_cycle_msec_ = control_cycle_msec;
-  queue_thread_ = boost::thread(boost::bind(&ActionModule::queueThread, this));
+  queue_thread_ = boost::thread([this] { queueThread(); });
   ROS_INFO_STREAM("[ActionModule] Initializing");
 
   ros::NodeHandle nh;
@@ -64,11 +65,9 @@ void ActionModule::initialize(const int control_cycle_msec, robotis_framework::R
     joint_name_to_dxl_id_[joint_name] = dxl_info->id_;
     dxl_id_to_joint_name_[dxl_info->id_] = joint_name;
 
-    action_result_[joint_name] = new robotis_framework::DynamixelState();
-    action_result_[joint_name]->goal_position_ = dxl_info->dxl_state_->goal_position_;
     result_[joint_name] = new robotis_framework::DynamixelState();
     result_[joint_name]->goal_position_ = dxl_info->dxl_state_->goal_position_;
-    action_joints_enable_[joint_name] = false;
+    action_joints_enable_[joint_name] = true;
   }
   // If there is any animation_joint_names_ that is not in the robot->dxls_, show a warning and remove it
   for (const auto& joint_name : animation_joint_names_)
@@ -93,9 +92,12 @@ void ActionModule::queueThread()
   done_msg_pub_ = nh.advertise<std_msgs::String>("/motion_control/movement_done", 5);
   sync_write_pub_ = nh.advertise<robotis_controller_msgs::SyncWriteItem>("/motion_control/sync_write_item", 5);
 
-  nh.subscribe("/motion_control/action/animation_num", 5, &ActionModule::animationNumberCallback, this);
-  nh.subscribe("/motion_control/action/start_action", 5, &ActionModule::startActionCallback, this);
-  nh.advertiseService("/motion_control/action/is_running", &ActionModule::isRunningServiceCallback, this);
+  ros::Subscriber action_page_sub =
+      nh.subscribe("/motion_control/action/animation_num", 5, &ActionModule::animationNumberCallback, this);
+  ros::Subscriber start_action_sub =
+      nh.subscribe("/motion_control/action/start_action", 5, &ActionModule::startActionCallback, this);
+  ros::ServiceServer is_running_server =
+      nh.advertiseService("/motion_control/action/is_running", &ActionModule::isRunningServiceCallback, this);
 
   ros::WallDuration duration(control_cycle_msec_ / 1000.0);
   while (nh.ok())
@@ -105,47 +107,90 @@ void ActionModule::queueThread()
 void ActionModule::process(std::map<std::string, robotis_framework::Dynamixel*> dxls,
                            std::map<std::string, double> sensors)
 {
-  if (!enable_)
-    return;
-
-  if (action_module_enabled_)
+  // Start trajectory playback if requested
+  if (start_playing_requested_)
   {
-    for (auto& dxl_pair : dxls)
-    {
-      const std::string& name = dxl_pair.first;
-      auto* dxl = dxl_pair.second;
-      if (result_.count(name))
-      {
-        result_[name]->goal_position_ = dxl->dxl_state_->goal_position_;
-        action_result_[name]->goal_position_ = dxl->dxl_state_->goal_position_;
-      }
-    }
-    action_module_enabled_ = false;
+    ROS_INFO("[ActionModule] Start playing triggered");
+    is_running_ = true;
+    trajectory_start_time_ = ros::Time::now();
+    trajectory_index_ = 0;
+    start_playing_requested_ = false;
   }
 
-  processAnimationStep();
+  if (!is_running_)
+    return;
+
+  // If finished
+  if (trajectory_index_ >= current_trajectory_.points.size())
+  {
+    ROS_INFO("[ActionModule] Animation playback finished: %s", current_animation_name_.c_str());
+    publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_INFO, "Finish animation");
+    publishDoneMsg(current_animation_name_);
+    is_running_ = false;
+    return;
+  }
+
+  const auto& traj = current_trajectory_;
+  const auto& point = traj.points[trajectory_index_];
+  ros::Duration elapsed = ros::Time::now() - trajectory_start_time_;
+
+  if (elapsed >= point.time_from_start)
+  {
+    for (size_t i = 0; i < traj.joint_names.size(); ++i)
+    {
+      const std::string& joint_name = traj.joint_names[i];
+      double goal_position = point.positions[i];
+      double goal_velocity = point.velocities.size() > i ? point.velocities[i] : 0.0;
+      if (dxls.count(joint_name) && dxls[joint_name] && dxls[joint_name]->dxl_state_)
+      {
+        result_[joint_name]->goal_position_ = goal_position;
+      }
+      else
+      {
+        ROS_WARN("[ActionModule] Joint skipped: %s - dxl missing or dxl_state_ null", joint_name.c_str());
+      }
+    }
+    ++trajectory_index_;
+  }
 }
 
 void ActionModule::stop()
 {
-  return;
 }
 
 void ActionModule::onModuleEnable()
 {
   ROS_INFO("[ActionModule] Module Enabled");
-  action_module_enabled_ = true;
+  action_module_initialized_ = true;
+  // Enable all joints
+  for (const auto& joint : action_joints_enable_)
+  {
+    action_joints_enable_[joint.first] = true;
+  }
+
+  // Move to initial pose
+  const auto& init_pose = workspace_.getInitialPoseData();
+  std::vector<animation_system::FrameData> frames;
+  frames.push_back(init_pose);
+  current_trajectory_ = createJointTrajectory(frames, control_cycle_msec_);
+  start_playing_requested_ = true;
+  publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_INFO, "Moved to initial pose");
 }
 
 void ActionModule::onModuleDisable()
 {
   ROS_INFO("[ActionModule] Module Disabled");
-  action_module_enabled_ = false;
+  action_module_initialized_ = false;
+  // Disable all joints
+  for (const auto& joint : action_joints_enable_)
+  {
+    action_joints_enable_[joint.first] = false;
+  }
 }
 
 bool ActionModule::isRunning()
 {
-  return false;
+  return is_running_;
 }
 
 bool ActionModule::isRunningServiceCallback(op3_action_module_msgs::IsRunning::Request& req,
@@ -157,55 +202,69 @@ bool ActionModule::isRunningServiceCallback(op3_action_module_msgs::IsRunning::R
 
 void ActionModule::animationNumberCallback(const std_msgs::Int32::ConstPtr& msg)
 {
+  ROS_INFO("[ActionModule] Animation number received: %d", msg->data);
   if (!enable_)
   {
+    ROS_INFO("[ActionModule] Action Module is not enabled");
     publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_ERROR, "Action Module is not enabled");
     return;
   }
+
   if (msg->data == -1)
   {
-    ROS_INFO("Stopping all joints");
+    ROS_INFO("[ActionModule] Stopping all joints");
     torqueOnAll();
+    return;
   }
   else if (msg->data == -2)
   {
-    ROS_INFO("Braking all joints");
+    ROS_INFO("[ActionModule] Braking all joints");
     torqueOffAll();
+    return;
   }
 
   std::vector<std::string> anim_names = workspace_.getAnimationNames();
   if (msg->data < 0 || msg->data >= anim_names.size())
   {
+    ROS_ERROR("[ActionModule] Invalid animation index: %d", msg->data);
     publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_ERROR, "Invalid animation index");
     return;
   }
 
-  std::string name = anim_names[msg->data];
-  const auto& anim = workspace_.getAnimationData(name);
-  const auto& blocks = anim.getBlockIds();
-  if (blocks.empty())
+  current_animation_name_ = anim_names[msg->data];
+  const auto& anim = workspace_.getAnimationData(current_animation_name_);
+
+  try
   {
-    publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_ERROR, "No blocks in animation");
+    current_block_id_ = anim.getStartBlockId();
+  }
+  catch (const std::exception& e)
+  {
+    ROS_ERROR("[ActionModule] Failed to get start block ID: %s", e.what());
+    publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_ERROR, e.what());
     return;
   }
 
-  const auto& start_block = anim.getAnimationBlock("start");
-  if (start_block.type != "frame")
-  {
-    publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_ERROR, "Start block is not a frame");
-    return;
-  }
+  const auto& initial_frame = anim.getInitialFrameData();
+  std::vector<animation_system::FrameData> frames;
+  frames.push_back(initial_frame);
 
-  const auto& frame = anim.getFrameData(start_block.filename);
-  executeFrame(frame);
+  auto rest_frames = getFrameVector(anim);
+  frames.insert(frames.end(), rest_frames.begin(), rest_frames.end());
 
-  publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_INFO, "Started animation: " + name);
+  current_trajectory_ = createJointTrajectory(frames, control_cycle_msec_);
+  start_playing_requested_ = true;
+
+  ROS_INFO("[ActionModule] Starting animation: %s", current_animation_name_.c_str());
+  publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_INFO, "Started animation: " + current_animation_name_);
 }
 
 void ActionModule::startActionCallback(const op3_action_module_msgs::StartAction::ConstPtr& msg)
 {
+  ROS_INFO("[ActionModule] Start action callback received");
   if (!enable_)
   {
+    ROS_INFO("[ActionModule] Action Module is not enabled");
     publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_ERROR, "Action Module is not enabled");
     return;
   }
@@ -220,15 +279,18 @@ void ActionModule::startActionCallback(const op3_action_module_msgs::StartAction
   current_animation_name_ = anim_names[msg->page_num];
   const auto& anim = workspace_.getAnimationData(current_animation_name_);
 
-  if (!anim.blocks.count("start"))
+  try
   {
-    publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_ERROR, "Start block not found");
+    current_block_id_ = anim.getStartBlockId();
+  }
+  catch (const std::exception& e)
+  {
+    ROS_ERROR("[ActionModule] Failed to get start block ID: %s", e.what());
+    publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_ERROR, e.what());
     return;
   }
 
-  current_block_id_ = "start";
-  time_in_frame_ = 0.0;
-  is_running_ = true;
+  start_playing_requested_ = true;
 
   for (const auto& jname : msg->joint_name_array)
   {
@@ -237,67 +299,6 @@ void ActionModule::startActionCallback(const op3_action_module_msgs::StartAction
   }
 
   publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_INFO, "Started animation: " + current_animation_name_);
-}
-
-void ActionModule::executeFrame(const animation_system::FrameData& frame)
-{
-  for (const auto& joint_pair : frame.joints)
-  {
-    const std::string& joint_name = joint_pair.first;
-    const auto& joint_data = joint_pair.second;
-    if (!action_joints_enable_[joint_name])
-      continue;
-
-    double position = joint_data.position;
-    result_[joint_name]->goal_position_ = position;
-  }
-}
-
-void ActionModule::processAnimationStep()
-{
-  if (!is_running_ || current_animation_name_.empty() || current_block_id_.empty())
-    return;
-
-  const animation_system::AnimationData& anim = workspace_.getAnimationData(current_animation_name_);
-
-  if (anim.blocks.find(current_block_id_) == anim.blocks.end())
-  {
-    is_running_ = false;
-    publishDoneMsg("animation_failed");
-    return;
-  }
-
-  const animation_system::AnimationBlock& block = anim.getAnimationBlock(current_block_id_);
-
-  if (block.type != "frame")
-  {
-    is_running_ = false;
-    publishDoneMsg("invalid_block_type");
-    return;
-  }
-
-  const animation_system::FrameData& frame = anim.getFrameData(block.filename);
-  const double total_duration = frame.move_duration + frame.wait_duration;
-
-  if (time_in_frame_ == 0.0)
-  {
-    executeFrame(frame);
-  }
-
-  time_in_frame_ += static_cast<double>(control_cycle_msec_) / 1000.0;
-
-  if (time_in_frame_ < total_duration)
-    return;
-
-  if (block.output_ids.empty())
-  {
-    is_running_ = false;
-    publishDoneMsg("animation_completed");
-    return;
-  }
-
-  current_block_id_ = block.output_ids.front();
-  time_in_frame_ = 0.0;
 }
 
 void ActionModule::publishStatusMsg(unsigned int type, std::string msg)
@@ -316,40 +317,202 @@ void ActionModule::publishDoneMsg(std::string msg)
   done.data = msg;
   done_msg_pub_.publish(done);
 }
+
 void ActionModule::torqueOnAll()
 {
-  robotis_controller_msgs::SyncWriteItem syncwrite_msg;
-  syncwrite_msg.item_name = "torque_enable";
-
-  // Iterate through all dxls to enable torque
+  robotis_controller_msgs::SyncWriteItem msg;
+  msg.item_name = "torque_enable";
   for (const auto& dxl : joint_name_to_dxl_id_)
   {
-    syncwrite_msg.joint_name.push_back(dxl.first);  // Add joint name
-    syncwrite_msg.value.push_back(1);               // Enable torque (1)
+    msg.joint_name.push_back(dxl.first);
+    msg.value.push_back(1);
   }
-
-  // Publish SyncWrite message to enable torque for all joints
-  sync_write_pub_.publish(syncwrite_msg);
-
+  sync_write_pub_.publish(msg);
   ROS_INFO("Torque enabled for all joints");
 }
 
 void ActionModule::torqueOffAll()
 {
-  robotis_controller_msgs::SyncWriteItem syncwrite_msg;
-  syncwrite_msg.item_name = "torque_enable";
-
-  // Iterate through all dxls to disable torque
+  robotis_controller_msgs::SyncWriteItem msg;
+  msg.item_name = "torque_enable";
   for (const auto& dxl : joint_name_to_dxl_id_)
   {
-    syncwrite_msg.joint_name.push_back(dxl.first);  // Add joint name
-    syncwrite_msg.value.push_back(0);               // Disable torque (0)
+    msg.joint_name.push_back(dxl.first);
+    msg.value.push_back(0);
+  }
+  sync_write_pub_.publish(msg);
+  ROS_INFO("Torque disabled for all joints");
+}
+trajectory_msgs::JointTrajectory
+ActionModule::createJointTrajectory(const std::vector<animation_system::FrameData>& frames,
+                                    const double control_cycle_msec)
+{
+  trajectory_msgs::JointTrajectory trajectory;
+  trajectory.joint_names = animation_joint_names_;
+
+  if (frames.empty())
+    return trajectory;
+
+  const auto& initial_frame = frames[0];
+  std::map<std::string, double> current_position;
+  for (const auto& name : animation_joint_names_)
+  {
+    auto it = initial_frame.joints.find(name);
+    current_position[name] = (it != initial_frame.joints.end()) ? it->second.position : 0.0;
   }
 
-  // Publish SyncWrite message to disable torque for all joints
-  sync_write_pub_.publish(syncwrite_msg);
+  if (frames.size() == 1)
+  {
+    // Only one frame — create a single point to go directly to that pose
+    trajectory_msgs::JointTrajectoryPoint point;
+    point.time_from_start = ros::Duration(0.0);  // apply immediately
 
-  ROS_INFO("Torque disabled for all joints");
+    for (const auto& name : animation_joint_names_)
+    {
+      double pos = current_position[name];
+      point.positions.push_back(pos);
+      point.velocities.push_back(0.0);
+    }
+
+    trajectory.points.push_back(point);
+    return trajectory;
+  }
+
+  for (const auto& name : animation_joint_names_)
+  {
+    auto it = initial_frame.joints.find(name);
+    current_position[name] = (it != initial_frame.joints.end()) ? it->second.position : 0.0;
+  }
+
+  double time_from_start = 0.0;
+
+  for (size_t i = 1; i < frames.size(); ++i)
+  {
+    const auto& frame = frames[i];
+    double total_frame_duration = frame.move_duration + frame.wait_duration;
+
+    double control_cycle_sec = control_cycle_msec / 1000.0;
+    int steps = static_cast<int>(total_frame_duration / control_cycle_sec);
+    if (steps < 1)
+      steps = 1;
+
+    // --- Precompute joint-wise durations ---
+    std::map<std::string, double> joint_move_duration;
+    std::map<std::string, double> joint_wait_duration;
+
+    for (const auto& name : animation_joint_names_)
+    {
+      const auto& joint = frame.joints.count(name) ? frame.joints.at(name) : animation_system::JointData();
+      double scale = (joint.speed_scale > 1e-3) ? joint.speed_scale : 1.0;
+
+      double move_dur = frame.move_duration / scale;
+      move_dur = std::min(move_dur, total_frame_duration);  // avoid overshooting
+
+      joint_move_duration[name] = move_dur;
+      joint_wait_duration[name] = std::max(0.0, total_frame_duration - move_dur);
+    }
+
+    // --- Interpolate points ---
+    for (int s = 0; s < steps; ++s)
+    {
+      double time_ratio = static_cast<double>(s + 1) / steps;
+      double global_time = time_from_start + time_ratio * total_frame_duration;
+
+      trajectory_msgs::JointTrajectoryPoint point;
+      point.time_from_start = ros::Duration(global_time);
+
+      for (const auto& name : animation_joint_names_)
+      {
+        double start_pos = current_position[name];
+        double goal_pos = frame.joints.count(name) ? frame.joints.at(name).position : start_pos;
+        double move_dur = joint_move_duration[name];
+        double wait_dur = joint_wait_duration[name];
+        double progress;
+
+        if (global_time - time_from_start <= move_dur)
+        {
+          // in move duration
+          double move_time = global_time - time_from_start;
+          progress = move_time / std::max(move_dur, 1e-6);
+        }
+        else
+        {
+          // in wait duration
+          progress = 1.0;
+        }
+
+        double position = start_pos + progress * (goal_pos - start_pos);
+        double velocity = std::abs(goal_pos - start_pos) / std::max(move_dur, 1e-6);
+
+        point.positions.push_back(position);
+        point.velocities.push_back(velocity);
+      }
+
+      trajectory.points.push_back(point);
+    }
+
+    for (const auto& name : animation_joint_names_)
+    {
+      if (frame.joints.count(name))
+        current_position[name] = frame.joints.at(name).position;
+    }
+
+    time_from_start += total_frame_duration;
+  }
+
+  ROS_INFO("[ActionModule] Trajectory has %lu points", trajectory.points.size());
+  ROS_INFO("[ActionModule] trajectory.joint_names size = %lu", trajectory.joint_names.size());
+  for (const auto& name : trajectory.joint_names)
+  {
+    ROS_INFO("- %s", name.c_str());
+  }
+
+  return trajectory;
+}
+
+std::vector<animation_system::FrameData>
+ActionModule::getFrameVector(const animation_system::AnimationData& animation_data)
+{
+  std::vector<animation_system::FrameData> result;
+  int current_id = animation_data.getStartBlockId();
+  std::set<int> visited_ids;
+
+  ROS_INFO("[ActionModule] Starting frame traversal from block_id %d", current_id);
+
+  while (animation_data.blocks.count(current_id))
+  {
+    ROS_INFO("[ActionModule] Processing block_id %d", current_id);
+    if (visited_ids.count(current_id))
+    {
+      ROS_WARN("[ActionModule] Detected loop at block_id %d, stopping traversal.", current_id);
+      break;
+    }
+
+    visited_ids.insert(current_id);
+    const auto& block = animation_data.getAnimationBlock(current_id);
+
+    if (block.type == "frame")
+    {
+      try
+      {
+        animation_system::FrameData frame = animation_data.getFrameData(block.filename);
+        result.push_back(frame);
+      }
+      catch (const std::exception& e)
+      {
+        ROS_WARN("[ActionModule] Failed to load frame '%s': %s", block.filename.c_str(), e.what());
+      }
+    }
+
+    if (block.output_ids.empty())
+    {
+      break;  // no next block
+    }
+
+    current_id = block.output_ids.front();  // follow first output only
+  }
+
+  return result;
 }
 
 }  // namespace motion_control

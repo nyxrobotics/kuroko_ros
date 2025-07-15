@@ -185,7 +185,7 @@ private:
 
   double pelvis_offset_;
   double pelvis_swing_;
-  double hit_pitch_offset_;
+  double hip_pitch_offset_;
   double arm_swing_gain_;
 
   bool ctrl_running_;

@@ -291,7 +291,7 @@ void WalkingModule::updatePoseParam()
   r_offset_ = walking_param_.init_roll_offset;
   p_offset_ = walking_param_.init_pitch_offset;
   a_offset_ = walking_param_.init_yaw_offset;
-  hit_pitch_offset_ = walking_param_.hip_pitch_offset;
+  hip_pitch_offset_ = walking_param_.hip_pitch_offset;
 }
 
 void WalkingModule::startWalking()
@@ -735,10 +735,12 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
   //        left_target_point[2], left_target_point[3], left_target_point[4], left_target_point[5]);
 
   // Add offset angles [rad]
+  // Hip Roll Offset
   right_joints[0] += kuroko_kinematics_->getJointDirection("hip_r_roll") * pelvis_offset_r;
-  right_joints[1] += kuroko_kinematics_->getJointDirection("hip_r_pitch") * pelvis_offset_r;
   left_joints[0] += kuroko_kinematics_->getJointDirection("hip_l_roll") * pelvis_offset_r;
-  left_joints[1] += kuroko_kinematics_->getJointDirection("hip_l_pitch") * pelvis_offset_r;
+  // Hip Pitch Offset
+  right_joints[1] -= kuroko_kinematics_->getJointDirection("hip_r_pitch") * hip_pitch_offset_;
+  left_joints[1] -= kuroko_kinematics_->getJointDirection("hip_l_pitch") * hip_pitch_offset_;
 
   leg_joints.resize(12);
   for (int i = 0; i < 6; i++)

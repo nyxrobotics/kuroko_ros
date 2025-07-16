@@ -40,10 +40,10 @@ joints:
     position: -0.17453292519943295
   shin_l_active:
     enable: true
-    position: 0.0
+    position: 0.08726646259971647
   shin_r_active:
     enable: true
-    position: 0.0
+    position: -0.08726646259971647
   shoulder_l_pitch:
     enable: true
     position: -1.1344640137963142
@@ -58,7 +58,7 @@ joints:
     position: -1.4311699866353502
   thigh_l_active:
     enable: true
-    position: 0.0
+    position: -0.08726646259971647
   thigh_r_active:
     enable: true
-    position: 0.0
+    position: 0.08726646259971647

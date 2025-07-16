@@ -155,8 +155,8 @@ layout:
         id: 15
         type: frame
       place:
-        x: -845.3749999999998
-        y: 1480.828125
+        x: -836.3749999999998
+        y: 1468.828125
     frame_16_pose_16:
       connection:
         output:
@@ -307,8 +307,8 @@ layout:
         id: 8
         type: frame
       place:
-        x: -1282.8750000000002
-        y: 885.125
+        x: -1277.875
+        y: 888.125
     frame_9_pose_09:
       connection:
         output:
@@ -335,5 +335,5 @@ layout:
         id: 0
         type: start
       place:
-        x: -1243.8281250000002
-        y: 691.15625
+        x: -1238.828125
+        y: 690.15625

@@ -220,9 +220,12 @@ void KurokoModuleLoader::setupController()
   controller_->addMotionModule((MotionModule*)ActionModule::getInstance());
   controller_->addMotionModule((MotionModule*)WalkingModule::getInstance());
   controller_->addMotionModule((MotionModule*)OnlineWalkingModule::getInstance());
+
+  // Add trim offset module
+  controller_->addMotionModule((MotionModule*)TuningModule::getInstance());
+
   // controller_->addMotionModule((MotionModule*)HeadControlModule::getInstance());
   // controller_->addMotionModule((MotionModule*)DirectControlModule::getInstance());
-  // controller_->addMotionModule((MotionModule*)TuningModule::getInstance());
 
   controller_->startTimer();
   usleep(100 * 1000);

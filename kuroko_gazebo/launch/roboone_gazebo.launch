@@ -80,9 +80,9 @@
     -J shin_l_active 0.0
     -J shin_r_active 0.0
     -J shoulder_l_pitch -1.1344640137963142
-    -J shoulder_l_roll 1.4311699866353502
+    -J shoulder_l_roll -1.4311699866353502
     -J shoulder_r_pitch 1.1344640137963142
-    -J shoulder_r_roll -1.4311699866353502
+    -J shoulder_r_roll 1.4311699866353502
     -J thigh_l_active 0.0
     -J thigh_r_active 0.0
     "/>
@@ -160,9 +160,9 @@
       -J shin_l_active 0.0
       -J shin_r_active 0.0
       -J shoulder_l_pitch -1.1344640137963142
-      -J shoulder_l_roll 1.4311699866353502
+      -J shoulder_l_roll -1.4311699866353502
       -J shoulder_r_pitch 1.1344640137963142
-      -J shoulder_r_roll -1.4311699866353502
+      -J shoulder_r_roll 1.4311699866353502
       -J thigh_l_active 0.0
       -J thigh_r_active 0.0
       "/>

@@ -134,7 +134,7 @@ joints:
     - 0.0
     - 0.0
     - 0.0
-    position: 1.4311699866353502
+    position: -1.4311699866353502
   shoulder_r_pitch:
     enable: true
     feedback: ''
@@ -150,7 +150,7 @@ joints:
     - 0.0
     - 0.0
     - 0.0
-    position: 0.8726646259971648
+    position: -0.8726646259971648
   thigh_l_active:
     enable: true
     feedback: ''

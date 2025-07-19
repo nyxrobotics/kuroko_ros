@@ -49,13 +49,13 @@ joints:
     position: -1.1344640137963142
   shoulder_l_roll:
     enable: true
-    position: 1.4311699866353502
+    position: -1.4311699866353502
   shoulder_r_pitch:
     enable: true
     position: 1.1344640137963142
   shoulder_r_roll:
     enable: true
-    position: -1.4311699866353502
+    position: 1.4311699866353502
   thigh_l_active:
     enable: true
     position: -0.08726646259971647

@@ -1,9 +1,0 @@
-<?xml version="1.0"?>
-<launch>
-  <arg name="gazebo_sim" default="false"/>
-  <node pkg="kuroko_kinematics" type="kuroko_joint_controller.py" name="kuroko_joint_controller" output="screen">
-    <rosparam file="$(find kuroko_kinematics)/config/init_pose.yaml" command="load"/>
-    <rosparam file="$(find kuroko_kinematics)/config/hiwonder_servo_controller.yaml" command="load"/>
-    <param name="gazebo_sim" value="$(arg gazebo_sim)"/>
-  </node>
-</launch>

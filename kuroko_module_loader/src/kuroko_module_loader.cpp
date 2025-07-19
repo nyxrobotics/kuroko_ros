@@ -222,7 +222,10 @@ void KurokoModuleLoader::setupController()
   controller_->addMotionModule((MotionModule*)OnlineWalkingModule::getInstance());
 
   // Add trim offset module
-  controller_->addMotionModule((MotionModule*)TuningModule::getInstance());
+  if (!controller_->gazebo_mode_)
+  {
+    controller_->addMotionModule((MotionModule*)TuningModule::getInstance());
+  }
 
   // controller_->addMotionModule((MotionModule*)HeadControlModule::getInstance());
   // controller_->addMotionModule((MotionModule*)DirectControlModule::getInstance());

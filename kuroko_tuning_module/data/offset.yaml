@@ -9,14 +9,14 @@ offset:
   elbow_l_front: 0
   elbow_l_rear: 0
   hip_r_roll: 0
-  hip_r_pitch: 0
-  thigh_r_active: 0
-  shin_r_active: 0
-  ankle_r_roll: 0
+  hip_r_pitch: 0.04
+  thigh_r_active: 0.03
+  shin_r_active: 0.01
+  ankle_r_roll: -0.06
   ankle_r_yaw: 0
   hip_l_roll: 0
-  hip_l_pitch: 0
+  hip_l_pitch: -0.04
   thigh_l_active: 0
   shin_l_active: 0
-  ankle_l_roll: 0.0
+  ankle_l_roll: 0.1
   ankle_l_yaw: 0

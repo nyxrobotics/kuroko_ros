@@ -33,9 +33,9 @@
 #include "robotis_controller_msgs/SyncWriteItem.h"
 
 // walking demo
-#include "op3_walking_module_msgs/GetWalkingParam.h"
-#include "op3_walking_module_msgs/SetWalkingParam.h"
-#include "op3_walking_module_msgs/WalkingParam.h"
+#include "kuroko_walking_module_msgs/GetWalkingParam.h"
+#include "kuroko_walking_module_msgs/SetWalkingParam.h"
+#include "kuroko_walking_module_msgs/WalkingParam.h"
 
 // Preview walking
 #include "humanoid_nav_msgs/PlanFootsteps.h"
@@ -108,7 +108,7 @@ public:
   void setWalkingCommand(const std::string& command);
   void refreshWalkingParam();
   void saveWalkingParam();
-  void applyWalkingParam(const op3_walking_module_msgs::WalkingParam& walking_param);
+  void applyWalkingParam(const kuroko_walking_module_msgs::WalkingParam& walking_param);
   void initGyro();
 
   // Preview Walking
@@ -157,7 +157,7 @@ Q_SIGNALS:
   void updateHeadAngles(double pan, double tilt);
 
   // Walking
-  void updateWalkingParameters(op3_walking_module_msgs::WalkingParam params);
+  void updateWalkingParameters(kuroko_walking_module_msgs::WalkingParam params);
 
   // Interactive marker
   void setWalkingTargetPoint(const geometry_msgs::Point point);
@@ -198,7 +198,7 @@ private:
   boost::shared_ptr<interactive_markers::InteractiveMarkerServer> interactive_marker_server_;
   boost::shared_ptr<tf::TransformListener> tf_listener_;
 
-  op3_walking_module_msgs::WalkingParam walking_param_;
+  kuroko_walking_module_msgs::WalkingParam walking_param_;
 
   ros::Publisher init_pose_pub_;
   ros::Publisher module_control_pub_;

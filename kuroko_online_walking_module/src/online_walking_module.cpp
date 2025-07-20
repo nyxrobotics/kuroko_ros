@@ -641,7 +641,7 @@ void OnlineWalkingModule::setResetBodyCallback(const std_msgs::Bool::ConstPtr& m
   }
 }
 
-// void OnlineWalkingModule::walkingParamCallback(const op3_walking_module_msgs::WalkingParam::ConstPtr& msg)
+// void OnlineWalkingModule::walkingParamCallback(const kuroko_walking_module_msgs::WalkingParam::ConstPtr& msg)
 // {
 //   ROS_INFO("OnlineWalkingModule::walkingParamCallback");
 //   walking_param_ = *msg;

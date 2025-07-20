@@ -14,7 +14,7 @@ find_package(
              std_msgs
              sensor_msgs
              robotis_controller_msgs
-             op3_walking_module_msgs
+             kuroko_walking_module_msgs
              cmake_modules
              eigen_conversions
              robotis_framework_common
@@ -83,7 +83,7 @@ catkin_package(
     std_msgs
     sensor_msgs
     robotis_controller_msgs
-    op3_walking_module_msgs
+    kuroko_walking_module_msgs
     cmake_modules
     eigen_conversions
     robotis_framework_common

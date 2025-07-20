@@ -40,9 +40,9 @@ MainWindow::MainWindow(int argc, char** argv, QWidget* parent)
   QObject::connect(ui_.head_pan_slider, SIGNAL(valueChanged(int)), this, SLOT(setHeadAngle()));
   QObject::connect(ui_.head_tilt_slider, SIGNAL(valueChanged(int)), this, SLOT(setHeadAngle()));
 
-  qRegisterMetaType<op3_walking_module_msgs::WalkingParam>("op_walking_params");
-  QObject::connect(&qnode_kuroko_, SIGNAL(updateWalkingParameters(op3_walking_module_msgs::WalkingParam)), this,
-                   SLOT(updateWalkingParams(op3_walking_module_msgs::WalkingParam)));
+  qRegisterMetaType<kuroko_walking_module_msgs::WalkingParam>("op_walking_params");
+  QObject::connect(&qnode_kuroko_, SIGNAL(updateWalkingParameters(kuroko_walking_module_msgs::WalkingParam)), this,
+                   SLOT(updateWalkingParams(kuroko_walking_module_msgs::WalkingParam)));
 
   /*********************
    ** Logging
@@ -378,7 +378,7 @@ void MainWindow::setHeadAngle(double pan, double tilt)
 }
 
 // walking
-void MainWindow::updateWalkingParams(op3_walking_module_msgs::WalkingParam params)
+void MainWindow::updateWalkingParams(kuroko_walking_module_msgs::WalkingParam params)
 {
   // init pose
   ui_.dSpinBox_init_offset_x->setValue(params.init_x_offset);
@@ -414,7 +414,7 @@ void MainWindow::updateWalkingParams(op3_walking_module_msgs::WalkingParam param
 
 void MainWindow::applyWalkingParams()
 {
-  op3_walking_module_msgs::WalkingParam walking_param;
+  kuroko_walking_module_msgs::WalkingParam walking_param;
 
   // init pose
   walking_param.init_x_offset = ui_.dSpinBox_init_offset_x->value();

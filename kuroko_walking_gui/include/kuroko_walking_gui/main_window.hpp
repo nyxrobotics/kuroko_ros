@@ -84,7 +84,7 @@ public Q_SLOTS:
   void updateHeadAngles(double pan, double tilt);
 
   // Walking
-  void updateWalkingParams(op3_walking_module_msgs::WalkingParam params);
+  void updateWalkingParams(kuroko_walking_module_msgs::WalkingParam params);
   void walkingCommandShortcut();
 
 protected Q_SLOTS:

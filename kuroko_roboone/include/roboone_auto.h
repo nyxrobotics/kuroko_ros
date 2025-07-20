@@ -7,7 +7,7 @@
 #include <sensor_msgs/CameraInfo.h>
 #include <std_msgs/String.h>
 #include <std_msgs/Int32.h>
-#include <op3_walking_module_msgs/WalkingParam.h>
+#include <kuroko_walking_module_msgs/WalkingParam.h>
 #include <jsk_recognition_msgs/ClassificationResult.h>
 #include <jsk_recognition_msgs/LabelArray.h>
 #include <jsk_recognition_msgs/RectArray.h>

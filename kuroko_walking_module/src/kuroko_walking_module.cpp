@@ -192,13 +192,13 @@ void WalkingModule::walkingCommandCallback(const std_msgs::String::ConstPtr& msg
     saveWalkingParam(param_path_);
 }
 
-void WalkingModule::walkingParameterCallback(const op3_walking_module_msgs::WalkingParam::ConstPtr& msg)
+void WalkingModule::walkingParameterCallback(const kuroko_walking_module_msgs::WalkingParam::ConstPtr& msg)
 {
   walking_param_ = *msg;
 }
 
-bool WalkingModule::getWalkigParameterCallback(op3_walking_module_msgs::GetWalkingParam::Request& /*req*/,
-                                               op3_walking_module_msgs::GetWalkingParam::Response& res)
+bool WalkingModule::getWalkigParameterCallback(kuroko_walking_module_msgs::GetWalkingParam::Request& /*req*/,
+                                               kuroko_walking_module_msgs::GetWalkingParam::Response& res)
 {
   res.parameters = walking_param_;
 

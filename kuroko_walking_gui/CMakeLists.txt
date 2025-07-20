@@ -25,7 +25,7 @@ find_package(
              eigen_conversions
              kuroko_action_module
              robotis_controller_msgs
-             op3_walking_module_msgs
+             kuroko_walking_module_msgs
              op3_online_walking_module_msgs
              humanoid_nav_msgs
              tf
@@ -95,7 +95,7 @@ catkin_package(
     eigen_conversions
     kuroko_action_module
     robotis_controller_msgs
-    op3_walking_module_msgs
+    kuroko_walking_module_msgs
     op3_online_walking_module_msgs
     humanoid_nav_msgs
 )

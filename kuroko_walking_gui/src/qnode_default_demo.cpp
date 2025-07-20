@@ -14,8 +14,8 @@ void QNodeKuroko::initDefaultDemo(ros::NodeHandle& ros_node)
   // Walking
   set_walking_command_pub_ = ros_node.advertise<std_msgs::String>("/motion_control/walking/command", 0);
   set_walking_param_pub_ =
-      ros_node.advertise<op3_walking_module_msgs::WalkingParam>("/motion_control/walking/set_params", 0);
-  get_walking_param_client_ = ros_node.serviceClient<op3_walking_module_msgs::GetWalkingParam>("/motion_control/"
+      ros_node.advertise<kuroko_walking_module_msgs::WalkingParam>("/motion_control/walking/set_params", 0);
+  get_walking_param_client_ = ros_node.serviceClient<kuroko_walking_module_msgs::GetWalkingParam>("/motion_control/"
                                                                                                "walking/get_params");
 
   // Action
@@ -85,7 +85,7 @@ void QNodeKuroko::setWalkingCommand(const std::string& command)
 
 void QNodeKuroko::refreshWalkingParam()
 {
-  op3_walking_module_msgs::GetWalkingParam walking_param_msg;
+  kuroko_walking_module_msgs::GetWalkingParam walking_param_msg;
 
   if (get_walking_param_client_.call(walking_param_msg))
   {
@@ -108,7 +108,7 @@ void QNodeKuroko::saveWalkingParam()
   log(INFO, "Save Walking Parameters");
 }
 
-void QNodeKuroko::applyWalkingParam(const op3_walking_module_msgs::WalkingParam& walking_param)
+void QNodeKuroko::applyWalkingParam(const kuroko_walking_module_msgs::WalkingParam& walking_param)
 {
   walking_param_ = walking_param;
 

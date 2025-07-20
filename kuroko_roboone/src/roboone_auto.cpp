@@ -17,7 +17,7 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   sync_.registerCallback(boost::bind(&RobooneAuto::yoloCallback, this, _1, _2, _3));
 
   walking_command_pub_ = nh.advertise<std_msgs::String>("/motion_control/walking/command", 1);
-  walking_params_pub_ = nh.advertise<op3_walking_module_msgs::WalkingParam>("/motion_control/walking/set_params", 1);
+  walking_params_pub_ = nh.advertise<kuroko_walking_module_msgs::WalkingParam>("/motion_control/walking/set_params", 1);
   action_page_pub_ = nh.advertise<std_msgs::Int32>("/motion_control/action/animation_num", 1);
 
   current_state_ = "IDLE";
@@ -82,7 +82,7 @@ void RobooneAuto::stopWalking()
 // Set walking parameters with specified initial values
 void RobooneAuto::setWalkingParams(double x_move, double y_move, double angle_move)
 {
-  op3_walking_module_msgs::WalkingParam params;
+  kuroko_walking_module_msgs::WalkingParam params;
   double normalization_factor = std::abs(angle_move / 0.26) + std::abs(x_move / 0.02) + std::abs(y_move / 0.015);
 
   if (normalization_factor > 1.0)

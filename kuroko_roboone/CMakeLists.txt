@@ -9,7 +9,7 @@ find_package(
              jsk_recognition_msgs
              robotis_controller_msgs
              message_filters
-             op3_walking_module_msgs
+             kuroko_walking_module_msgs
 )
 
 catkin_package(

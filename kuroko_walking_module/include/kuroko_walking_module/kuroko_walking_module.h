@@ -17,9 +17,9 @@
 #include <sensor_msgs/Imu.h>
 #include <std_msgs/String.h>
 
-#include "op3_walking_module_msgs/GetWalkingParam.h"
-#include "op3_walking_module_msgs/SetWalkingParam.h"
-#include "op3_walking_module_msgs/WalkingParam.h"
+#include "kuroko_walking_module_msgs/GetWalkingParam.h"
+#include "kuroko_walking_module_msgs/SetWalkingParam.h"
+#include "kuroko_walking_module_msgs/WalkingParam.h"
 #include "robotis_controller_msgs/StatusMsg.h"
 
 #include "kuroko_kinematics/kuroko_kinematics.h"
@@ -89,9 +89,9 @@ private:
 
   /* ROS Topic Callback Functions */
   void walkingCommandCallback(const std_msgs::String::ConstPtr& msg);
-  void walkingParameterCallback(const op3_walking_module_msgs::WalkingParam::ConstPtr& msg);
-  bool getWalkigParameterCallback(op3_walking_module_msgs::GetWalkingParam::Request& req,
-                                  op3_walking_module_msgs::GetWalkingParam::Response& res);
+  void walkingParameterCallback(const kuroko_walking_module_msgs::WalkingParam::ConstPtr& msg);
+  bool getWalkigParameterCallback(kuroko_walking_module_msgs::GetWalkingParam::Request& req,
+                                  kuroko_walking_module_msgs::GetWalkingParam::Response& res);
 
   /* ROS Service Callback Functions */
   void processPhase(const double& time_unit);
@@ -127,7 +127,7 @@ private:
   std::map<std::string, int> joint_table_;
   int walking_state_;
   int init_pose_count_;
-  op3_walking_module_msgs::WalkingParam walking_param_;
+  kuroko_walking_module_msgs::WalkingParam walking_param_;
   double previous_x_move_amplitude_;
 
   // Leg parameters

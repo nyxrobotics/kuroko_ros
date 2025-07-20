@@ -14,7 +14,7 @@ find_package(
   catkin REQUIRED
   COMPONENTS roscpp
              robotis_controller_msgs
-             op3_walking_module_msgs
+             kuroko_walking_module_msgs
              op3_online_walking_module_msgs
              cmake_modules
              dynamixel_sdk
@@ -51,8 +51,8 @@ catkin_package(
   CATKIN_DEPENDS
     roscpp
     robotis_controller_msgs
-    kuroko_action_module_msgs
     op3_walking_module_msgs
+    kuroko_walking_module_msgs
     op3_online_walking_module_msgs
     cmake_modules
     dynamixel_sdk

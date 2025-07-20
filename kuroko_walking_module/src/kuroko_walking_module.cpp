@@ -737,7 +737,7 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
   // Add offset angles [rad]
   // Hip Roll Offset
   right_joints[0] += kuroko_kinematics_->getJointDirection("hip_r_roll") * pelvis_offset_r;
-  left_joints[0] += kuroko_kinematics_->getJointDirection("hip_l_roll") * pelvis_offset_r;
+  left_joints[0] += kuroko_kinematics_->getJointDirection("hip_l_roll") * pelvis_offset_l;
   // Hip Pitch Offset
   right_joints[1] -= kuroko_kinematics_->getJointDirection("hip_r_pitch") * hip_pitch_offset_;
   left_joints[1] -= kuroko_kinematics_->getJointDirection("hip_l_pitch") * hip_pitch_offset_;

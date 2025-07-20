@@ -181,7 +181,7 @@
                                 </property>
                                 <layout class="QGridLayout" name="gridLayout_4">
                                   <item row="2" column="1" colspan="2">
-                                    <widget class="QDoubleSpinBox" name="dSpinBox_init_offset_z">
+                                    <widget class="QDoubleSpinBox" name="dSpinBox_init_z_offset">
                                       <property name="suffix">
                                         <string extracomment="m"> ｍ</string>
                                       </property>
@@ -210,7 +210,7 @@
                                     </widget>
                                   </item>
                                   <item row="0" column="1" colspan="2">
-                                    <widget class="QDoubleSpinBox" name="dSpinBox_init_offset_x">
+                                    <widget class="QDoubleSpinBox" name="dSpinBox_init_x_offset">
                                       <property name="suffix">
                                         <string extracomment="m"> ｍ</string>
                                       </property>
@@ -232,7 +232,7 @@
                                     </widget>
                                   </item>
                                   <item row="1" column="1" colspan="2">
-                                    <widget class="QDoubleSpinBox" name="dSpinBox_init_offset_y">
+                                    <widget class="QDoubleSpinBox" name="dSpinBox_init_y_offset">
                                       <property name="suffix">
                                         <string extracomment="m"> ｍ</string>
                                       </property>
@@ -287,7 +287,7 @@
                                 </property>
                                 <layout class="QGridLayout" name="gridLayout_8">
                                   <item row="0" column="1" colspan="2">
-                                    <widget class="QDoubleSpinBox" name="dSpinBox_init_offset_roll">
+                                    <widget class="QDoubleSpinBox" name="dSpinBox_init_roll_offset">
                                       <property name="suffix">
                                         <string> ﾟ</string>
                                       </property>
@@ -303,7 +303,7 @@
                                     </widget>
                                   </item>
                                   <item row="1" column="1" colspan="2">
-                                    <widget class="QDoubleSpinBox" name="dSpinBox_init_offset_pitch">
+                                    <widget class="QDoubleSpinBox" name="dSpinBox_init_pitch_offset">
                                       <property name="suffix">
                                         <string> ﾟ</string>
                                       </property>
@@ -340,7 +340,7 @@
                                     </widget>
                                   </item>
                                   <item row="2" column="1" colspan="2">
-                                    <widget class="QDoubleSpinBox" name="dSpinBox_init_offset_yaw">
+                                    <widget class="QDoubleSpinBox" name="dSpinBox_init_yaw_offset">
                                       <property name="suffix">
                                         <string> ﾟ</string>
                                       </property>
@@ -363,7 +363,7 @@
                                     </widget>
                                   </item>
                                   <item row="3" column="1" colspan="2">
-                                    <widget class="QDoubleSpinBox" name="dSpinBox_hip_pitch_offset">
+                                    <widget class="QDoubleSpinBox" name="dSpinBox_init_hip_pitch_offset">
                                       <property name="suffix">
                                         <string> ﾟ</string>
                                       </property>
@@ -813,7 +813,7 @@
                                     </widget>
                                   </item>
                                   <item row="4" column="1">
-                                    <widget class="QDoubleSpinBox" name="dSpinBox_arm_swing_gain">
+                                    <widget class="QDoubleSpinBox" name="dSpinBox_shoulder_swing_amplitude">
                                       <property name="maximum">
                                         <double>2.000000000000000</double>
                                       </property>
@@ -855,7 +855,7 @@
                                     </widget>
                                   </item>
                                   <item row="5" column="1">
-                                    <widget class="QDoubleSpinBox" name="dSpinBox_pelvis_offset">
+                                    <widget class="QDoubleSpinBox" name="dSpinBox_hip_swing_amplitude">
                                       <property name="suffix">
                                         <string> ﾟ</string>
                                       </property>
@@ -1352,13 +1352,13 @@
     <tabstop>tabWidget_control</tabstop>
     <tabstop>button_walking_start</tabstop>
     <tabstop>button_walking_stop</tabstop>
-    <tabstop>dSpinBox_init_offset_x</tabstop>
-    <tabstop>dSpinBox_init_offset_y</tabstop>
-    <tabstop>dSpinBox_init_offset_z</tabstop>
-    <tabstop>dSpinBox_init_offset_roll</tabstop>
-    <tabstop>dSpinBox_init_offset_pitch</tabstop>
-    <tabstop>dSpinBox_init_offset_yaw</tabstop>
-    <tabstop>dSpinBox_hip_pitch_offset</tabstop>
+    <tabstop>dSpinBox_init_x_offset</tabstop>
+    <tabstop>dSpinBox_init_y_offset</tabstop>
+    <tabstop>dSpinBox_init_z_offset</tabstop>
+    <tabstop>dSpinBox_init_roll_offset</tabstop>
+    <tabstop>dSpinBox_init_pitch_offset</tabstop>
+    <tabstop>dSpinBox_init_yaw_offset</tabstop>
+    <tabstop>dSpinBox_init_hip_pitch_offset</tabstop>
     <tabstop>dSpinBox_period_time</tabstop>
     <tabstop>dSpinBox_dsp_ratio</tabstop>
     <tabstop>dSpinBox_step_fb_ratio</tabstop>
@@ -1376,8 +1376,8 @@
     <tabstop>dSpinBox_ankle_pitch_gain</tabstop>
     <tabstop>dSpinBox_y_swing_amplitude</tabstop>
     <tabstop>dSpinBox_z_swing_amplitude</tabstop>
-    <tabstop>dSpinBox_arm_swing_gain</tabstop>
-    <tabstop>dSpinBox_pelvis_offset</tabstop>
+    <tabstop>dSpinBox_shoulder_swing_amplitude</tabstop>
+    <tabstop>dSpinBox_hip_swing_amplitude</tabstop>
     <tabstop>button_param_refresh</tabstop>
     <tabstop>button_param_save</tabstop>
     <tabstop>button_param_apply</tabstop>

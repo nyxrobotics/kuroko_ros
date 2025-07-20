@@ -381,13 +381,13 @@ void MainWindow::setHeadAngle(double pan, double tilt)
 void MainWindow::updateWalkingParams(kuroko_walking_module_msgs::WalkingParam params)
 {
   // init pose
-  ui_.dSpinBox_init_offset_x->setValue(params.init_x_offset);
-  ui_.dSpinBox_init_offset_y->setValue(params.init_y_offset);
-  ui_.dSpinBox_init_offset_z->setValue(params.init_z_offset);
-  ui_.dSpinBox_init_offset_roll->setValue(params.init_roll_offset * RADIAN2DEGREE);
-  ui_.dSpinBox_init_offset_pitch->setValue(params.init_pitch_offset * RADIAN2DEGREE);
-  ui_.dSpinBox_init_offset_yaw->setValue(params.init_yaw_offset * RADIAN2DEGREE);
-  ui_.dSpinBox_hip_pitch_offset->setValue(params.hip_pitch_offset * RADIAN2DEGREE);
+  ui_.dSpinBox_init_x_offset->setValue(params.init_x_offset);
+  ui_.dSpinBox_init_y_offset->setValue(params.init_y_offset);
+  ui_.dSpinBox_init_z_offset->setValue(params.init_z_offset);
+  ui_.dSpinBox_init_roll_offset->setValue(params.init_roll_offset * RADIAN2DEGREE);
+  ui_.dSpinBox_init_pitch_offset->setValue(params.init_pitch_offset * RADIAN2DEGREE);
+  ui_.dSpinBox_init_yaw_offset->setValue(params.init_yaw_offset * RADIAN2DEGREE);
+  ui_.dSpinBox_init_hip_pitch_offset->setValue(params.init_hip_pitch_offset * RADIAN2DEGREE);
   // time
   ui_.dSpinBox_period_time->setValue(params.period_time * 1000);  // s -> ms
   ui_.dSpinBox_dsp_ratio->setValue(params.dsp_ratio);
@@ -408,8 +408,8 @@ void MainWindow::updateWalkingParams(kuroko_walking_module_msgs::WalkingParam pa
   ui_.dSpinBox_ankle_pitch_gain->setValue(params.balance_ankle_pitch_gain);
   ui_.dSpinBox_y_swing_amplitude->setValue(params.y_swing_amplitude);
   ui_.dSpinBox_z_swing_amplitude->setValue(params.z_swing_amplitude);
-  ui_.dSpinBox_pelvis_offset->setValue(params.pelvis_offset * RADIAN2DEGREE);
-  ui_.dSpinBox_arm_swing_gain->setValue(params.arm_swing_gain);
+  ui_.dSpinBox_hip_swing_amplitude->setValue(params.hip_swing_amplitude * RADIAN2DEGREE);
+  ui_.dSpinBox_shoulder_swing_amplitude->setValue(params.shoulder_swing_amplitude);
 }
 
 void MainWindow::applyWalkingParams()
@@ -417,13 +417,13 @@ void MainWindow::applyWalkingParams()
   kuroko_walking_module_msgs::WalkingParam walking_param;
 
   // init pose
-  walking_param.init_x_offset = ui_.dSpinBox_init_offset_x->value();
-  walking_param.init_y_offset = ui_.dSpinBox_init_offset_y->value();
-  walking_param.init_z_offset = ui_.dSpinBox_init_offset_z->value();
-  walking_param.init_roll_offset = ui_.dSpinBox_init_offset_roll->value() * DEGREE2RADIAN;
-  walking_param.init_pitch_offset = ui_.dSpinBox_init_offset_pitch->value() * DEGREE2RADIAN;
-  walking_param.init_yaw_offset = ui_.dSpinBox_init_offset_yaw->value() * DEGREE2RADIAN;
-  walking_param.hip_pitch_offset = ui_.dSpinBox_hip_pitch_offset->value() * DEGREE2RADIAN;
+  walking_param.init_x_offset = ui_.dSpinBox_init_x_offset->value();
+  walking_param.init_y_offset = ui_.dSpinBox_init_y_offset->value();
+  walking_param.init_z_offset = ui_.dSpinBox_init_z_offset->value();
+  walking_param.init_roll_offset = ui_.dSpinBox_init_roll_offset->value() * DEGREE2RADIAN;
+  walking_param.init_pitch_offset = ui_.dSpinBox_init_pitch_offset->value() * DEGREE2RADIAN;
+  walking_param.init_yaw_offset = ui_.dSpinBox_init_yaw_offset->value() * DEGREE2RADIAN;
+  walking_param.init_hip_pitch_offset = ui_.dSpinBox_init_hip_pitch_offset->value() * DEGREE2RADIAN;
   // time
   walking_param.period_time = ui_.dSpinBox_period_time->value() * 0.001;  // ms -> s
   walking_param.dsp_ratio = ui_.dSpinBox_dsp_ratio->value();
@@ -443,8 +443,8 @@ void MainWindow::applyWalkingParams()
   walking_param.balance_ankle_pitch_gain = ui_.dSpinBox_ankle_pitch_gain->value();
   walking_param.y_swing_amplitude = ui_.dSpinBox_y_swing_amplitude->value();
   walking_param.z_swing_amplitude = ui_.dSpinBox_z_swing_amplitude->value();
-  walking_param.pelvis_offset = ui_.dSpinBox_pelvis_offset->value() * DEGREE2RADIAN;
-  walking_param.arm_swing_gain = ui_.dSpinBox_arm_swing_gain->value();
+  walking_param.hip_swing_amplitude = ui_.dSpinBox_hip_swing_amplitude->value() * DEGREE2RADIAN;
+  walking_param.shoulder_swing_amplitude = ui_.dSpinBox_shoulder_swing_amplitude->value();
 
   qnode_kuroko_.applyWalkingParam(walking_param);
 }

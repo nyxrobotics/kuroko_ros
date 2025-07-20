@@ -183,10 +183,10 @@ private:
   double a_move_amplitude_;
   double a_move_amplitude_shift_;
 
-  double pelvis_offset_;
+  double hip_swing_amplitude_;
   double pelvis_swing_;
-  double hip_pitch_offset_;
-  double arm_swing_gain_;
+  double init_hip_pitch_offset_;
+  double shoulder_swing_amplitude_;
 
   bool ctrl_running_;
   bool real_running_;

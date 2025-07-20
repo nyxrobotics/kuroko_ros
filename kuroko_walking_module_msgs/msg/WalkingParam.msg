@@ -5,7 +5,7 @@ float32 init_z_offset
 float32 init_roll_offset
 float32 init_pitch_offset
 float32 init_yaw_offset
-float32 hip_pitch_offset
+float32 init_hip_pitch_offset
 
 ####### time parameter #####
 float32 period_time
@@ -25,10 +25,14 @@ float32 balance_hip_roll_gain
 float32 balance_knee_gain
 float32 balance_ankle_roll_gain
 float32 balance_ankle_pitch_gain
+
+########## swing parameter ##########
 float32 y_swing_amplitude
 float32 z_swing_amplitude
-float32 arm_swing_gain
-float32 pelvis_offset
+float32 chest_swing_amplitude
+float32 shoulder_swing_amplitude
+float32 hip_swing_amplitude
+float32 hip_swing_phase
 
 ########## gain parameter ##########
 int32 p_gain

@@ -24,7 +24,7 @@ public:
 
   int all_time_steps_;  // all time steps of movement time
 
-  Eigen::MatrixXd calc_joint_tra_;  // calculated joint trajectory
+  Eigen::MatrixXd calc_joint_trajectory_;  // calculated joint trajectory
 
   Eigen::MatrixXd joint_ini_pose_;
   Eigen::MatrixXd joint_pose_;

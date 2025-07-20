@@ -1,18 +1,28 @@
 
 #include "../include/kuroko_walking_gui/qnode.hpp"
+#include "ros/subscriber.h"
 
 namespace walking_gui
 {
 void QNodeKuroko::initPreviewWalking(ros::NodeHandle& ros_node)
 {
-  // preview walking
+  // Parameter
+  ros::param::param<double>("/footstep_planner/foot/separation", foot_separation_, 0.1);
+  ros::param::param<double>("/footstep_planner/foot/size_x", foot_size_x_, 0.12);
+  ros::param::param<double>("/footstep_planner/foot/size_y", foot_size_y_, 0.075);
+  ros::param::param<double>("/footstep_planner/foot/size_z", foot_size_z_, 0.008);
+  ros::param::param<std::string>("world_frame_id", world_frame_id_, "world");
+  ros::param::param<std::string>("robot_frame_id", robot_frame_id_, "body_link");
+
+  // Publisher
   foot_step_command_pub_ = ros_node.advertise<op3_online_walking_module_msgs::FootStepCommand>("/motion_control/"
                                                                                                "online_walking/"
-                                                                                               "foot_step_command",
+                                                                                               "footstep_command",
                                                                                                0);
-  walking_param_pub_ = ros_node.advertise<op3_online_walking_module_msgs::WalkingParam>("/motion_control/"
-                                                                                        "online_walking/walking_param",
-                                                                                        0);
+  online_walking_param_pub_ =
+      ros_node.advertise<op3_online_walking_module_msgs::WalkingParam>("/motion_control/"
+                                                                       "online_walking/walking_param",
+                                                                       0);
   set_walking_footsteps_pub_ =
       ros_node.advertise<op3_online_walking_module_msgs::Step2DArray>("/motion_control/online_walking/footsteps_2d", 0);
 
@@ -24,13 +34,19 @@ void QNodeKuroko::initPreviewWalking(ros::NodeHandle& ros_node)
   joint_pose_msg_pub_ = ros_node.advertise<op3_online_walking_module_msgs::JointPose>("/motion_control/online_walking/"
                                                                                       "goal_joint_pose",
                                                                                       0);
+  // Subscriber
+  foot_distance_msg_sub_ = ros_node.subscribe("/motion_control/online_walking/foot_distance", 5,
+                                              &QNodeKuroko::setFootDistanceCallback, this);
 
+  // Footstep visualization
   humanoid_footstep_client_ = ros_node.serviceClient<humanoid_nav_msgs::PlanFootsteps>("plan_footsteps");
   marker_pub_ = ros_node.advertise<visualization_msgs::MarkerArray>("/motion_control/demo/foot_step_marker", 0);
 
   // interacrive marker
-  rviz_clicked_point_sub_ = ros_node.subscribe("clicked_point", 0, &QNodeKuroko::pointStampedCallback, this);
   interactive_marker_server_.reset(new interactive_markers::InteractiveMarkerServer("Feet_Pose", "", false));
+
+  // Rviz
+  rviz_clicked_point_sub_ = ros_node.subscribe("clicked_point", 0, &QNodeKuroko::pointStampedCallback, this);
 
   ROS_INFO("Initialized node handle for preview walking");
 }
@@ -94,23 +110,23 @@ bool QNodeKuroko::transformPose(const std::string& from_id, const std::string& t
 // demo
 void QNodeKuroko::pointStampedCallback(const geometry_msgs::PointStamped::ConstPtr& msg)
 {
-  ROS_INFO("get position from rviz");
+  ROS_INFO("get target pooint from rviz");
+  world_frame_id_ = msg->header.frame_id;
 
-  frame_id_ = msg->header.frame_id;
+  // update point ui
+  // Q_EMIT setWalkingTargetPoint(msg->point);
 
   // transform : world to local
-  geometry_msgs::Pose local_pose, world_pose;
-  world_pose.position = msg->point;
-  bool result = transformPose("/world", "/body_link", world_pose, local_pose);
+  geometry_msgs::Pose target_pose_local, target_pose_global;
+  target_pose_global.position = msg->point;
+  bool result = transformPose(world_frame_id_, robot_frame_id_, target_pose_global, target_pose_local);
   if (!result)
   {
     log(WARN, "transformation is failed.");
-    local_pose = world_pose;
+    target_pose_local = target_pose_global;
   }
 
-  // update point ui
-  // Q_EMIT updateDemoPoint(msg->point);
-  Q_EMIT updateDemoPoint(local_pose.position);
+  Q_EMIT setWalkingTargetPoint(target_pose_local.position);
 }
 
 // interactive marker
@@ -128,18 +144,17 @@ void QNodeKuroko::interactiveMarkerFeedback(const visualization_msgs::Interactiv
     case visualization_msgs::InteractiveMarkerFeedback::POSE_UPDATE:
     {
       // transform : world to local
-      geometry_msgs::Pose local_pose;
-      bool result = transformPose("/world", "/body_link", feedback->pose, local_pose);
+      geometry_msgs::Pose target_pose_local, target_pose_global;
+      target_pose_global.position = feedback->pose.position;
+      bool result = transformPose(world_frame_id_, robot_frame_id_, target_pose_global, target_pose_local);
       if (!result)
       {
         log(WARN, "transformation is failed.");
-        local_pose = feedback->pose;
+        target_pose_local = target_pose_global;
       }
 
-      current_pose_ = local_pose;
-
       // update pose ui
-      Q_EMIT updateDemoPose(current_pose_);
+      Q_EMIT setWalkingTargetPose(target_pose_local);
 
       break;
     }
@@ -158,12 +173,10 @@ void QNodeKuroko::interactiveMarkerFeedback(const visualization_msgs::Interactiv
 
 void QNodeKuroko::makeInteractiveMarker(const geometry_msgs::Pose& marker_pose)
 {
-  if (frame_id_.empty())
+  if (world_frame_id_.empty())
   {
-    ROS_ERROR("No frame id!!!");
-    // return;
-
-    frame_id_ = "world";
+    ROS_ERROR("World frame id is empty");
+    ros::param::param<std::string>("world_frame_id", world_frame_id_, "world");
   }
 
   ROS_INFO_STREAM("Make Interactive Marker! - " << marker_pose.position.x << ", " << marker_pose.position.y << ", "
@@ -175,7 +188,7 @@ void QNodeKuroko::makeInteractiveMarker(const geometry_msgs::Pose& marker_pose)
 
   // transform : local to world
   geometry_msgs::Pose world_pose;
-  bool result = transformPose("/world", "/body_link", marker_pose, world_pose, true);
+  bool result = transformPose(world_frame_id_, robot_frame_id_, marker_pose, world_pose, true);
   if (!result)
     world_pose = marker_pose;
 
@@ -183,100 +196,92 @@ void QNodeKuroko::makeInteractiveMarker(const geometry_msgs::Pose& marker_pose)
   interactive_marker.pose = world_pose;  // set pose
 
   // Visualize Interactive Marker
-  interactive_marker.header.frame_id = frame_id_;
+  interactive_marker.header.frame_id = world_frame_id_;
   interactive_marker.scale = 0.3;
 
   interactive_marker.name = marker_name_;  //"pose_marker";
-  interactive_marker.description = "3D Pose Control";
+  interactive_marker.description = "Online Walking Target";
 
-  // ----- center marker
+  // Center marker (Visualize boxes)
   visualization_msgs::InteractiveMarkerControl center_marker_control;
-
   center_marker_control.always_visible = true;
   center_marker_control.interaction_mode = visualization_msgs::InteractiveMarkerControl::NONE;
-
   visualization_msgs::Marker marker;
-
   marker.type = visualization_msgs::Marker::CUBE;
 
   // center cube
   marker.scale.x = 0.03;
   marker.scale.y = 0.03;
   marker.scale.z = 0.03;
-
   marker.color.r = 1.0;
   marker.color.g = 0.5;
   marker.color.b = 0.5;
   marker.color.a = 1.0;
-
   center_marker_control.markers.push_back(marker);
 
-  // axis x
+  // axis x box
   marker.pose.position.x = 0.05;
   marker.pose.position.y = 0.0;
   marker.pose.position.z = 0.0;
-
   marker.scale.x = 0.1;
   marker.scale.y = 0.01;
   marker.scale.z = 0.01;
-
   marker.color.r = 1.0;
   marker.color.g = 0.0;
   marker.color.b = 0.0;
   marker.color.a = 1.0;
-
   center_marker_control.markers.push_back(marker);
 
-  // axis y
+  // axis y box
   marker.pose.position.x = 0.0;
   marker.pose.position.y = 0.05;
   marker.pose.position.z = 0.0;
-
   marker.scale.x = 0.01;
   marker.scale.y = 0.1;
   marker.scale.z = 0.01;
-
   marker.color.r = 0.0;
   marker.color.g = 1.0;
   marker.color.b = 0.0;
   marker.color.a = 1.0;
-
   center_marker_control.markers.push_back(marker);
 
-  // axis z
+  // axis z box
   marker.pose.position.x = 0.0;
   marker.pose.position.y = 0.0;
   marker.pose.position.z = 0.05;
-
   marker.scale.x = 0.01;
   marker.scale.y = 0.01;
   marker.scale.z = 0.1;
-
   marker.color.r = 0.0;
   marker.color.g = 0.0;
   marker.color.b = 1.0;
   marker.color.a = 1.0;
-
   center_marker_control.markers.push_back(marker);
 
   interactive_marker.controls.push_back(center_marker_control);
 
-  // ----- controller
+  // Interactive Marker Move Control
   visualization_msgs::InteractiveMarkerControl interactive_control;
 
-  // move and rotate along axis x : default
+  // move along axis x
   interactive_control.orientation.x = 1;
   interactive_control.orientation.y = 0;
   interactive_control.orientation.z = 0;
   interactive_control.orientation.w = 1;
-  interactive_control.name = "rotate";
-  interactive_control.interaction_mode = visualization_msgs::InteractiveMarkerControl::ROTATE_AXIS;
-  interactive_marker.controls.push_back(interactive_control);
   interactive_control.name = "move";
   interactive_control.interaction_mode = visualization_msgs::InteractiveMarkerControl::MOVE_AXIS;
   interactive_marker.controls.push_back(interactive_control);
 
-  // move and rotate along axis y
+  // move along axis y
+  interactive_control.orientation.x = 0;
+  interactive_control.orientation.y = 0;
+  interactive_control.orientation.z = 1;
+  interactive_control.orientation.w = 1;
+  interactive_control.name = "move";
+  interactive_control.interaction_mode = visualization_msgs::InteractiveMarkerControl::MOVE_AXIS;
+  interactive_marker.controls.push_back(interactive_control);
+
+  // rotate along axis z
   interactive_control.orientation.x = 0;
   interactive_control.orientation.y = 1;
   interactive_control.orientation.z = 0;
@@ -284,26 +289,11 @@ void QNodeKuroko::makeInteractiveMarker(const geometry_msgs::Pose& marker_pose)
   interactive_control.name = "rotate";
   interactive_control.interaction_mode = visualization_msgs::InteractiveMarkerControl::ROTATE_AXIS;
   interactive_marker.controls.push_back(interactive_control);
-  interactive_control.name = "move";
-  interactive_control.interaction_mode = visualization_msgs::InteractiveMarkerControl::MOVE_AXIS;
-  interactive_marker.controls.push_back(interactive_control);
 
-  // move and rotate along axis z
-  interactive_control.orientation.x = 0;
-  interactive_control.orientation.y = 0;
-  interactive_control.orientation.z = 1;
-  interactive_control.orientation.w = 1;
-  interactive_control.name = "rotate";
-  interactive_control.interaction_mode = visualization_msgs::InteractiveMarkerControl::ROTATE_AXIS;
-  interactive_marker.controls.push_back(interactive_control);
-  interactive_control.name = "move";
-  interactive_control.interaction_mode = visualization_msgs::InteractiveMarkerControl::MOVE_AXIS;
-  interactive_marker.controls.push_back(interactive_control);
-
+  // Generate Interactive Marker
   interactive_marker_server_->insert(interactive_marker);
   interactive_marker_server_->setCallback(interactive_marker.name,
                                           boost::bind(&QNodeKuroko::interactiveMarkerFeedback, this, _1));
-
   interactive_marker_server_->applyChanges();
 }
 
@@ -323,7 +313,7 @@ bool QNodeKuroko::updateInteractiveMarker(const geometry_msgs::Pose& pose)
 
   // transform : local to world
   geometry_msgs::Pose world_pose;
-  bool result = transformPose("/world", "/body_link", pose, world_pose, true);
+  bool result = transformPose(world_frame_id_, robot_frame_id_, pose, world_pose, true);
   if (!result)
     world_pose = pose;
 
@@ -346,12 +336,12 @@ void QNodeKuroko::getInteractiveMarkerPose()
 
   // transform : world to local
   geometry_msgs::Pose local_pose;
-  bool result = transformPose("/world", "/body_link", interactive_marker.pose, local_pose);
+  bool result = transformPose(world_frame_id_, robot_frame_id_, interactive_marker.pose, local_pose);
   if (!result)
     local_pose = interactive_marker.pose;
 
   // update pose ui
-  Q_EMIT updateDemoPose(local_pose);
+  Q_EMIT setWalkingTargetPose(local_pose);
 
   clearInteractiveMarker();
 }
@@ -482,15 +472,13 @@ void QNodeKuroko::makeFootstepUsingPlanner(const geometry_msgs::Pose& target_foo
         preview_foot_types_.push_back(foot_type);
       }
 
-      double y_feet_offset = 0.186;
-      ros::param::get("/footstep_planner/foot/separation", y_feet_offset);
       geometry_msgs::Pose2D target_r_foot_pose, target_l_foot_pose;
-      target_r_foot_pose.x = goal.x - (-0.5 * y_feet_offset) * sin(theta);
-      target_r_foot_pose.y = goal.y + (-0.5 * y_feet_offset) * cos(theta);
+      target_r_foot_pose.x = goal.x - (-0.5 * foot_separation_) * sin(theta);
+      target_r_foot_pose.y = goal.y + (-0.5 * foot_separation_) * cos(theta);
       target_r_foot_pose.theta = theta;
 
-      target_l_foot_pose.x = goal.x - (0.5 * y_feet_offset) * sin(theta);
-      target_l_foot_pose.y = goal.y + (0.5 * y_feet_offset) * cos(theta);
+      target_l_foot_pose.x = goal.x - (0.5 * foot_separation_) * sin(theta);
+      target_l_foot_pose.y = goal.y + (0.5 * foot_separation_) * cos(theta);
       target_l_foot_pose.theta = theta;
 
       if (preview_foot_types_[preview_foot_types_.size() - 1] ==
@@ -546,7 +534,7 @@ void QNodeKuroko::visualizePreviewFootsteps(bool clear)
   ros::Time now = ros::Time::now();
   visualization_msgs::Marker rviz_marker;
 
-  rviz_marker.header.frame_id = "body_link";
+  rviz_marker.header.frame_id = robot_frame_id_;
   rviz_marker.header.stamp = now;
   rviz_marker.ns = "foot_step_marker";
 
@@ -554,15 +542,16 @@ void QNodeKuroko::visualizePreviewFootsteps(bool clear)
   rviz_marker.type = visualization_msgs::Marker::CUBE;
   rviz_marker.action = (!clear) ? visualization_msgs::Marker::ADD : visualization_msgs::Marker::DELETE;
 
-  rviz_marker.scale.x = 0.128;
-  rviz_marker.scale.y = 0.08;
-  rviz_marker.scale.z = 0.01;
+  // Foot size
+  rviz_marker.scale.x = foot_size_x_;
+  rviz_marker.scale.y = foot_size_y_;
+  rviz_marker.scale.z = foot_size_z_;
 
-  double alpha = 0.7;
-  double height = -0.229;
+  double alpha = 0.8;
+  double height = 0.0;
 
   geometry_msgs::Pose local_pose, world_pose;
-  bool result = transformPose("/world", "/body_link", world_pose, local_pose);
+  bool result = transformPose(robot_frame_id_, robot_frame_id_, world_pose, local_pose);
   if (result)
     height = local_pose.position.z;
 
@@ -587,7 +576,6 @@ void QNodeKuroko::visualizePreviewFootsteps(bool clear)
             << rviz_marker.pose.position.y << "]";
         log(INFO, msg.str());
       }
-      alpha *= 0.9;
 
       // set foot step color
       if (preview_foot_types_[ix] == op3_online_walking_module_msgs::Step2D::LEFT_FOOT_SWING)  // left
@@ -595,30 +583,18 @@ void QNodeKuroko::visualizePreviewFootsteps(bool clear)
         rviz_marker.color.r = 0.0;
         rviz_marker.color.g = 0.0;
         rviz_marker.color.b = 1.0;
-        rviz_marker.color.a = alpha + 0.3;
-
-        Eigen::Vector3d offset_y(0, 0.015, 0);
-        marker_position_offset = marker_orientation.toRotationMatrix() * offset_y;
+        rviz_marker.color.a = alpha;
       }
       else if (preview_foot_types_[ix] == op3_online_walking_module_msgs::Step2D::RIGHT_FOOT_SWING)  // right
       {
         rviz_marker.color.r = 1.0;
         rviz_marker.color.g = 0.0;
         rviz_marker.color.b = 0.0;
-        rviz_marker.color.a = alpha + 0.3;
-
-        Eigen::Vector3d offset_y(0, -0.015, 0);
-        marker_position_offset = marker_orientation.toRotationMatrix() * offset_y;
+        rviz_marker.color.a = alpha;
       }
-
-      marker_position = marker_position_offset + marker_position;
-
       tf::pointEigenToMsg(marker_position, rviz_marker.pose.position);
       tf::quaternionEigenToMsg(marker_orientation, rviz_marker.pose.orientation);
-
-      // apply foot x offset
     }
-
     marker_array.markers.push_back(rviz_marker);
   }
 
@@ -638,9 +614,9 @@ void QNodeKuroko::sendFootStepCommandMsg(const op3_online_walking_module_msgs::F
   log(INFO, "Send Foot Step Command Msg");
 }
 
-void QNodeKuroko::sendWalkingParamMsg(op3_online_walking_module_msgs::WalkingParam msg)
+void QNodeKuroko::sendOnlineWalkingParamMsg(op3_online_walking_module_msgs::WalkingParam msg)
 {
-  walking_param_pub_.publish(msg);
+  online_walking_param_pub_.publish(msg);
   log(INFO, "Set Walking Parameter");
 }
 
@@ -665,7 +641,9 @@ void QNodeKuroko::sendResetBodyMsg(std_msgs::Bool msg)
 void QNodeKuroko::sendWholebodyBalanceMsg(const std_msgs::String& msg)
 {
   wholebody_balance_pub_.publish(msg);
-  log(INFO, "Wholebody Balance Msg");
+  bool is_balance_active = msg.data == "balance_on" ? true : false;
+  log(INFO, is_balance_active ? "[QNodeKuroko::sendWholebodyBalanceMsg] Balance On" :
+                                "[QNodeKuroko::sendWholebodyBalanceMsg] Balance Off");
 }
 
 void QNodeKuroko::parseIniPoseData(const std::string& path)
@@ -708,6 +686,12 @@ void QNodeKuroko::sendJointPoseMsg(const op3_online_walking_module_msgs::JointPo
   joint_pose_msg_pub_.publish(msg);
 
   log(INFO, "Send Joint Pose Msg");
+}
+
+void QNodeKuroko::setFootDistanceCallback(const std_msgs::Float64::ConstPtr& msg)
+{
+  ROS_INFO("[QNodeKuroko::setFootDistanceCallback] %f -> %f", foot_separation_, msg->data);
+  foot_separation_ = msg->data;
 }
 
 }  // namespace walking_gui

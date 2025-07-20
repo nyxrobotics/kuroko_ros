@@ -19,7 +19,7 @@ void QNodeKuroko::initDefaultDemo(ros::NodeHandle& ros_node)
                                                                                                "walking/get_params");
 
   // Action
-  motion_index_pub_ = ros_node.advertise<std_msgs::Int32>("/motion_control/action/page_num", 0);
+  motion_index_pub_ = ros_node.advertise<std_msgs::Int32>("/motion_control/action/animation_num", 0);
 
   // Demo
   demo_command_pub_ = ros_node.advertise<std_msgs::String>("/motion_control/demo_command", 0);
@@ -78,7 +78,7 @@ void QNodeKuroko::setWalkingCommand(const std::string& command)
   set_walking_command_pub_.publish(commnd_msg);
 
   std::stringstream ss_log;
-  ss_log << "Set Walking Command : " << commnd_msg.data << std::endl;
+  ss_log << "Set Walking Command: " << commnd_msg.data << std::endl;
 
   log(INFO, ss_log.str());
 }
@@ -120,7 +120,7 @@ void QNodeKuroko::initGyro()
 {
   robotis_controller_msgs::SyncWriteItem init_gyro_msg;
   init_gyro_msg.item_name = "imu_control";
-  init_gyro_msg.joint_name.push_back("open-cr");
+  init_gyro_msg.joint_name.push_back("kuroko_imu");
   init_gyro_msg.value.push_back(0x08);
 
   init_gyro_pub_.publish(init_gyro_msg);
@@ -137,26 +137,14 @@ void QNodeKuroko::playMotion(int motion_index)
     return;
   }
 
+  // Show Motion Name
   std::stringstream log_ss;
-  switch (motion_index)
-  {
-    case -2:
-      log_ss << "Brake Motion";
-      break;
+  std::string motion_name = motion_table_[motion_index];
+  log_ss << "Play Motion: [" << motion_index << "] " << motion_name;
 
-    case -1:
-      log_ss << "STOP Motion";
-      break;
-
-    default:
-      std::string motion_name = motion_table_[motion_index];
-      log_ss << "Play Motion : [" << motion_index << "] " << motion_name;
-  }
-
-  // publish motion index
+  // Publish motion index
   std_msgs::Int32 motion_msg;
   motion_msg.data = motion_index;
-
   motion_index_pub_.publish(motion_msg);
 
   log(INFO, log_ss.str());

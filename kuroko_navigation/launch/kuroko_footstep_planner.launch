@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<launch>
+  <include file="$(find kuroko_navigation)/launch/map_server_empty.launch"/>
+  <node pkg="footstep_planner" type="footstep_planner_node" name="footstep_planner">
+    <rosparam file="$(find kuroko_navigation)/config/planning_params.yaml" command="load"/>
+    <rosparam file="$(find kuroko_navigation)/config/planning_params_kuroko.yaml" command="load"/>
+    <rosparam file="$(find kuroko_navigation)/config/footsteps_kuroko.yaml" command="load"/>
+    <remap from="map" to="projected_map"/>
+    <remap from="/goal" to="/move_base_simple/goal"/>
+  </node>
+</launch>

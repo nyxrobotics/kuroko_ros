@@ -140,7 +140,7 @@ void MainWindow::on_head_center_button_clicked(bool /*check*/)
   setHeadAngle(0, 0);
 }
 
-void MainWindow::on_button_demo_start_clicked(bool /*check*/)
+void MainWindow::on_button_start_tracking_clicked(bool /*check*/)
 {
   qnode_kuroko_.setModuleToDemo();
 
@@ -149,7 +149,7 @@ void MainWindow::on_button_demo_start_clicked(bool /*check*/)
   qnode_kuroko_.setDemoCommand("start");
 }
 
-void MainWindow::on_button_demo_stop_clicked(bool /*check*/)
+void MainWindow::on_button_stop_tracking_clicked(bool /*check*/)
 {
   qnode_kuroko_.setDemoCommand("stop");
 }
@@ -178,16 +178,16 @@ void MainWindow::on_button_getup_front_clicked(bool /*check*/)
 
   usleep(10 * 1000);
 
-  qnode_kuroko_.playMotion(GET_UP_FRONT);
+  qnode_kuroko_.playMotion(GETUP_FRONT);
 }
 
-void MainWindow::on_button_getup_back_clicked(bool /*check*/)
+void MainWindow::on_button_getup_rear_clicked(bool /*check*/)
 {
   qnode_kuroko_.setActionModuleBody();
 
   usleep(10 * 1000);
 
-  qnode_kuroko_.playMotion(GET_UP_BACK);
+  qnode_kuroko_.playMotion(GETUP_REAR);
 }
 
 /*****************************************************************************

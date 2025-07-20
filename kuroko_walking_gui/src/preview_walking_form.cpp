@@ -20,11 +20,20 @@ bool PreviewWalkingForm::init(walking_gui::QNodeKuroko* qnode)
   {
     qRegisterMetaType<geometry_msgs::Point>("geometry_msgs::Point");
     qRegisterMetaType<geometry_msgs::Pose>("geometry_msgs::Pose");
-    connect(qnode_kuroko_, SIGNAL(updateDemoPoint(geometry_msgs::Point)), this,
+    connect(qnode_kuroko_, SIGNAL(setWalkingTargetPoint(geometry_msgs::Point)), this,
             SLOT(updatePointPanel(geometry_msgs::Point)));
-    connect(qnode_kuroko_, SIGNAL(updateDemoPose(geometry_msgs::Pose)), this,
+    connect(qnode_kuroko_, SIGNAL(setWalkingTargetPose(geometry_msgs::Pose)), this,
             SLOT(updatePosePanel(geometry_msgs::Pose)));
   }
+  // Set online walking params
+  op3_online_walking_module_msgs::WalkingParam msg;
+  msg.dsp_ratio = p_walking_ui_->dSpinBox_dsp_ratio->value();
+  msg.lipm_height = p_walking_ui_->dSpinBox_lipm_height->value();
+  msg.foot_height_max = p_walking_ui_->dSpinBox_foot_height_max->value();
+  msg.zmp_offset_x = p_walking_ui_->dSpinBox_zmp_offset_x->value();
+  msg.zmp_offset_y = p_walking_ui_->dSpinBox_zmp_offset_y->value();
+
+  qnode_kuroko_->sendOnlineWalkingParamMsg(msg);
 
   return result;
 }
@@ -66,6 +75,7 @@ void PreviewWalkingForm::on_button_p_walking_right_clicked(bool /*check*/)
 
 void PreviewWalkingForm::on_button_set_walking_param_clicked(bool /*check*/)
 {
+  // Set walking params for online walking module
   op3_online_walking_module_msgs::WalkingParam msg;
 
   msg.dsp_ratio = p_walking_ui_->dSpinBox_dsp_ratio->value();
@@ -74,7 +84,7 @@ void PreviewWalkingForm::on_button_set_walking_param_clicked(bool /*check*/)
   msg.zmp_offset_x = p_walking_ui_->dSpinBox_zmp_offset_x->value();
   msg.zmp_offset_y = p_walking_ui_->dSpinBox_zmp_offset_y->value();
 
-  qnode_kuroko_->sendWalkingParamMsg(msg);
+  qnode_kuroko_->sendOnlineWalkingParamMsg(msg);
 }
 
 void PreviewWalkingForm::on_button_send_body_offset_clicked(bool /*check*/)

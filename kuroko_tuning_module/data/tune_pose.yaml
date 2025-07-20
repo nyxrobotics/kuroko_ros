@@ -51,25 +51,25 @@ tune_pose_04:
 pose_data:
   ready_pose: # DEG
     chest: 0.0
-    shoulder_r_pitch: 49.0
-    shoulder_r_roll: 0.0
-    elbow_r_front: -130.0
-    elbow_r_rear: 130.0
-    shoulder_l_pitch: 49.0
-    shoulder_l_roll: 0.0
-    elbow_l_front: 130.0
-    elbow_l_rear: -130.0
-    hip_r_roll: 0.0
+    shoulder_r_pitch: 65.0
+    shoulder_r_roll: -82.0
+    elbow_r_front: -115.0
+    elbow_r_rear: 115.0
+    shoulder_l_pitch: -65.0
+    shoulder_l_roll: 82.0
+    elbow_l_front: 115.0
+    elbow_l_rear: -115.0
+    hip_r_roll: -10.0
     hip_r_pitch: 0.0
-    thigh_r_active: 70.0
-    shin_r_active: -70.0
-    ankle_r_roll: 0.0
+    thigh_r_active: 5.0
+    shin_r_active: -5.0
+    ankle_r_roll: 10.0
     ankle_r_yaw: 0.0
-    hip_l_roll: 0.0
+    hip_l_roll: -10.0
     hip_l_pitch: 0.0
-    thigh_l_active: 70.0
-    shin_l_active: -70.0
-    ankle_l_roll: 0.0
+    thigh_l_active: -5.0
+    shin_l_active: 5.0
+    ankle_l_roll: -10.0
     ankle_l_yaw: 0.0
 
   init_pose: # degree

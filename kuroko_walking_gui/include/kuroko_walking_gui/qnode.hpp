@@ -114,7 +114,7 @@ public:
   // Preview Walking
   void initPreviewWalking(ros::NodeHandle& ros_node);
   void sendFootStepCommandMsg(const op3_online_walking_module_msgs::FootStepCommand& msg);
-  void sendWalkingParamMsg(op3_online_walking_module_msgs::WalkingParam msg);
+  void sendOnlineWalkingParamMsg(op3_online_walking_module_msgs::WalkingParam msg);
   void sendBodyOffsetMsg(geometry_msgs::Pose msg);
   void sendFootDistanceMsg(std_msgs::Float64 msg);
   void sendResetBodyMsg(std_msgs::Bool msg);
@@ -160,8 +160,8 @@ Q_SIGNALS:
   void updateWalkingParameters(op3_walking_module_msgs::WalkingParam params);
 
   // Interactive marker
-  void updateDemoPoint(const geometry_msgs::Point point);
-  void updateDemoPose(const geometry_msgs::Pose pose);
+  void setWalkingTargetPoint(const geometry_msgs::Point point);
+  void setWalkingTargetPose(const geometry_msgs::Pose pose);
 
 private:
   void parseJointNameFromYaml(const std::string& path);
@@ -169,6 +169,7 @@ private:
   void refreshCurrentJointControlCallback(const robotis_controller_msgs::JointCtrlModule::ConstPtr& msg);
   void updateHeadJointStatesCallback(const sensor_msgs::JointState::ConstPtr& msg);
   void statusMsgCallback(const robotis_controller_msgs::StatusMsg::ConstPtr& msg);
+  void setFootDistanceCallback(const std_msgs::Float64::ConstPtr& msg);
 
   // interactive marker
   void pointStampedCallback(const geometry_msgs::PointStamped::ConstPtr& msg);
@@ -183,9 +184,13 @@ private:
   bool debug_;
   double body_height_;
 
+  // ROS parameters
+  double foot_size_x_, foot_size_y_, foot_size_z_;
+  double foot_separation_;
+  std::string world_frame_id_, robot_frame_id_;
+
   // interactive marker
   ros::Subscriber rviz_clicked_point_sub_;
-  std::string frame_id_;
   std::string marker_name_;
   geometry_msgs::Pose pose_from_ui_;
   geometry_msgs::Pose current_pose_;
@@ -200,9 +205,8 @@ private:
   ros::Publisher module_control_preset_pub_;
   ros::Publisher init_gyro_pub_;
   ros::Subscriber status_msg_sub_;
-  ros::Subscriber init_ft_foot_sub_;
-  ros::Subscriber both_ft_foot_sub_;
   ros::Subscriber current_module_control_sub_;
+  ros::Subscriber foot_distance_msg_sub_;
   ros::ServiceClient get_module_control_client_;
 
   // Head
@@ -214,11 +218,11 @@ private:
   ros::Publisher set_walking_param_pub_;
   ros::ServiceClient get_walking_param_client_;
 
-  // preview walking
+  // Online Walking
   ros::ServiceClient humanoid_footstep_client_;
   ros::Publisher foot_step_command_pub_;
   ros::Publisher set_walking_footsteps_pub_;
-  ros::Publisher walking_param_pub_;
+  ros::Publisher online_walking_param_pub_;
   ros::Publisher body_offset_pub_;
   ros::Publisher foot_distance_pub_;
   ros::Publisher wholebody_balance_pub_;

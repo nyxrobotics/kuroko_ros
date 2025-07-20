@@ -24,13 +24,12 @@ module_list:
   [
     none,
     head_control_module,
-    initial_pose_module,
-    walking_module,
-    manipulation_module,
     action_module,
     walking_module,
-    direct_control_module,
     online_walking_module,
+    direct_control_module,
+    initial_pose_module,
+    manipulation_module,
   ]
 module_button:
   1: none

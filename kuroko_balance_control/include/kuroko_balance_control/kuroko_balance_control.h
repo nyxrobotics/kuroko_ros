@@ -119,6 +119,7 @@ public:
                             double foot_yaw_max_adjustment_rad);
 
   // Manual Adjustment
+  // Center of Body: Roughly insert the displacement from the origin of waist_link to the center of gravity of chest_link.
   void setCOBManualAdjustment(double cob_x_adjustment_m, double cob_y_adjustment_m, double cob_z_adjustment_m);
   double getCOBManualAdjustmentX();
   double getCOBManualAdjustmentY();

@@ -77,10 +77,10 @@ public:
 private:
   enum
   {
-    WALKING_DISABLE = 0,
-    WALKING_ENABLE = 1,
-    WALKING_INIT_POSE = 2,
-    WALKING_READY = 3
+    WALK_DISABLE = 0,
+    WALK_ENABLE = 1,
+    WALK_INITIAL_POSE = 2,
+    WALK_READY = 3
   };
 
   const bool debug_;
@@ -95,8 +95,8 @@ private:
 
   /* ROS Service Callback Functions */
   void processPhase(const double& time_unit);
-  bool computeLegAngle(double* leg_angle);
-  void sensoryFeedback(const double& rlGyroErr, const double& fbGyroErr, double* balance_angle);
+  bool updateLegTargetAngles(std::vector<double>& leg_joints);
+  void gyroFeedback(const double& roll_gyro_err, const double& pitch_gyro_err, std::vector<double>& balance_angle);
 
   void publishStatusMsg(unsigned int type, std::string msg);
   double wSin(double time, double period, double period_shift, double mag, double mag_shift);
@@ -108,7 +108,7 @@ private:
   void saveWalkingParam(std::string& path);
   void iniPoseTraGene(double mov_time);
 
-  KurokoKinematics* kuroko_kd_;
+  KurokoKinematics* kuroko_kinematics_;
   int control_cycle_msec_;
   std::string param_path_;
   boost::thread queue_thread_;
@@ -118,10 +118,10 @@ private:
   ros::Publisher robot_pose_pub_;
   ros::Publisher status_msg_pub_;
 
-  Eigen::MatrixXd calc_joint_tra_;
+  Eigen::MatrixXd calc_joint_trajectory_;
 
-  Eigen::MatrixXd target_position_;
-  Eigen::MatrixXd goal_position_;
+  Eigen::MatrixXd target_position_;  // Target values for joint angles inside the gait program
+  Eigen::MatrixXd goal_position_;    // Target angles currently set for Servo Motors
   Eigen::MatrixXd init_position_;
   Eigen::MatrixXi joint_axis_direction_;
   std::map<std::string, int> joint_table_;
@@ -129,6 +129,10 @@ private:
   int init_pose_count_;
   op3_walking_module_msgs::WalkingParam walking_param_;
   double previous_x_move_amplitude_;
+
+  // Leg parameters
+  double leg_default_length_;
+  double leg_default_separaion_;
 
   // variable for walking
   double period_time_;
@@ -181,7 +185,7 @@ private:
 
   double pelvis_offset_;
   double pelvis_swing_;
-  double hit_pitch_offset_;
+  double hip_pitch_offset_;
   double arm_swing_gain_;
 
   bool ctrl_running_;

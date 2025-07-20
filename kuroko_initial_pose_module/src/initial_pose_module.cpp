@@ -41,7 +41,7 @@ void InitialPoseModule::initialize(const int control_cycle_msec, robotis_framewo
 
   /* Load ROS Parameter */
   ros_node.param<std::string>("init_pose_file_path", init_pose_file_path_,
-                              ros::package::getPath("kuroko_initial_pose_module") + "/data/initial_pose.yaml");
+                              ros::package::getPath("kuroko_motion_data") + "/config/initial_pose.yaml");
 
   /* publish topics */
   status_msg_pub_ = ros_node.advertise<robotis_controller_msgs::StatusMsg>("/motion_control/status", 1);
@@ -54,7 +54,6 @@ void InitialPoseModule::parseInitPoseData(const std::string& path)
   ROS_INFO("InitialPoseModule - Loading: %s", path.c_str());
   try
   {
-    // Load YAML file
     doc = YAML::LoadFile(path);
   }
   catch (const std::exception& e)
@@ -67,18 +66,31 @@ void InitialPoseModule::parseInitPoseData(const std::string& path)
   double mov_time = doc["mov_time"] ? doc["mov_time"].as<double>() : 2.0;
   initial_pose_module_state_->mov_time_ = mov_time;
 
-  // Parse initial pose (joint positions)
-  YAML::Node tar_pose_node = doc["initial_pose"];
-  for (YAML::iterator yaml_it = tar_pose_node.begin(); yaml_it != tar_pose_node.end(); ++yaml_it)
+  // Parse joint positions under "joints"
+  YAML::Node joints_node = doc["joints"];
+  if (!joints_node || !joints_node.IsMap())
   {
-    std::string joint_name = yaml_it->first.as<std::string>();
-    double value = yaml_it->second.as<double>();
+    ROS_ERROR("Invalid or missing 'joints' field in YAML file.");
+    return;
+  }
 
-    // Check if joint name exists in joint_name_to_dxl_id_ map
+  for (YAML::const_iterator it = joints_node.begin(); it != joints_node.end(); ++it)
+  {
+    std::string joint_name = it->first.as<std::string>();
+    YAML::Node joint_data = it->second;
+
+    if (!joint_data["position"])
+    {
+      ROS_WARN("Joint %s has no 'position' field. Skipping.", joint_name.c_str());
+      continue;
+    }
+
+    double position = joint_data["position"].as<double>();
+
     if (joint_name_to_dxl_id_.find(joint_name) != joint_name_to_dxl_id_.end())
     {
       int id = joint_name_to_dxl_id_[joint_name];
-      initial_pose_module_state_->joint_ini_pose_.coeffRef(id, 0) = value;
+      initial_pose_module_state_->joint_ini_pose_.coeffRef(id, 0) = position;
     }
     else
     {
@@ -86,10 +98,10 @@ void InitialPoseModule::parseInitPoseData(const std::string& path)
     }
   }
 
-  // Calculate total number of time steps
   initial_pose_module_state_->all_time_steps_ =
       int(initial_pose_module_state_->mov_time_ / initial_pose_module_state_->smp_time_) + 1;
-  initial_pose_module_state_->calc_joint_tra_.resize(initial_pose_module_state_->all_time_steps_, MAX_JOINT_ID + 1);
+  initial_pose_module_state_->calc_joint_trajectory_.resize(initial_pose_module_state_->all_time_steps_,
+                                                            MAX_JOINT_ID + 1);
 }
 
 void InitialPoseModule::queueThread()
@@ -165,12 +177,13 @@ void InitialPoseModule::initPoseTrajGenerateProc()
                                                                initial_pose_module_state_->mov_time_);
     }
 
-    initial_pose_module_state_->calc_joint_tra_.block(0, id, initial_pose_module_state_->all_time_steps_, 1) = tra;
+    initial_pose_module_state_->calc_joint_trajectory_.block(0, id, initial_pose_module_state_->all_time_steps_, 1) =
+        tra;
   }
 
   initial_pose_module_state_->is_moving_ = true;
   initial_pose_module_state_->cnt_ = 0;
-  ROS_INFO("[start] send trajectory");
+  ROS_INFO("[InitialPoseModule] start init trajectory");
 }
 
 void InitialPoseModule::poseGenerateProc(Eigen::MatrixXd joint_angle_pose)
@@ -184,7 +197,8 @@ void InitialPoseModule::poseGenerateProc(Eigen::MatrixXd joint_angle_pose)
   initial_pose_module_state_->all_time_steps_ =
       int(initial_pose_module_state_->mov_time_ / initial_pose_module_state_->smp_time_) + 1;
 
-  initial_pose_module_state_->calc_joint_tra_.resize(initial_pose_module_state_->all_time_steps_, MAX_JOINT_ID + 1);
+  initial_pose_module_state_->calc_joint_trajectory_.resize(initial_pose_module_state_->all_time_steps_,
+                                                            MAX_JOINT_ID + 1);
 
   initial_pose_module_state_->joint_pose_ = std::move(joint_angle_pose);
 
@@ -199,13 +213,14 @@ void InitialPoseModule::poseGenerateProc(Eigen::MatrixXd joint_angle_pose)
                                                                 initial_pose_module_state_->smp_time_,
                                                                 initial_pose_module_state_->mov_time_);
 
-    initial_pose_module_state_->calc_joint_tra_.block(0, id, initial_pose_module_state_->all_time_steps_, 1) = tra;
+    initial_pose_module_state_->calc_joint_trajectory_.block(0, id, initial_pose_module_state_->all_time_steps_, 1) =
+        tra;
   }
 
   initial_pose_module_state_->is_moving_ = true;
   initial_pose_module_state_->cnt_ = 0;
   ini_pose_only_ = true;
-  ROS_INFO("[start] send trajectory");
+  ROS_INFO("[InitialPoseModule] Start trajectory");
 }
 
 void InitialPoseModule::poseGenerateProc(std::map<std::string, double>& joint_angle_pose)
@@ -235,7 +250,8 @@ void InitialPoseModule::poseGenerateProc(std::map<std::string, double>& joint_an
   initial_pose_module_state_->all_time_steps_ =
       int(initial_pose_module_state_->mov_time_ / initial_pose_module_state_->smp_time_) + 1;
 
-  initial_pose_module_state_->calc_joint_tra_.resize(initial_pose_module_state_->all_time_steps_, MAX_JOINT_ID + 1);
+  initial_pose_module_state_->calc_joint_trajectory_.resize(initial_pose_module_state_->all_time_steps_,
+                                                            MAX_JOINT_ID + 1);
 
   for (int id = 1; id <= MAX_JOINT_ID; id++)
   {
@@ -248,13 +264,14 @@ void InitialPoseModule::poseGenerateProc(std::map<std::string, double>& joint_an
                                                                 initial_pose_module_state_->smp_time_,
                                                                 initial_pose_module_state_->mov_time_);
 
-    initial_pose_module_state_->calc_joint_tra_.block(0, id, initial_pose_module_state_->all_time_steps_, 1) = tra;
+    initial_pose_module_state_->calc_joint_trajectory_.block(0, id, initial_pose_module_state_->all_time_steps_, 1) =
+        tra;
   }
 
   initial_pose_module_state_->is_moving_ = true;
   initial_pose_module_state_->cnt_ = 0;
   ini_pose_only_ = true;
-  ROS_INFO("[start] send trajectory");
+  ROS_INFO("[InitialPoseModule] Start trajectory");
 }
 
 bool InitialPoseModule::isRunning()
@@ -297,7 +314,7 @@ void InitialPoseModule::process(std::map<std::string, robotis_framework::Dynamix
 
     for (int id = 1; id <= MAX_JOINT_ID; id++)
       joint_state_->goal_joint_state_[id].position_ =
-          initial_pose_module_state_->calc_joint_tra_(initial_pose_module_state_->cnt_, id);
+          initial_pose_module_state_->calc_joint_trajectory_(initial_pose_module_state_->cnt_, id);
 
     initial_pose_module_state_->cnt_++;
   }
@@ -315,7 +332,7 @@ void InitialPoseModule::process(std::map<std::string, robotis_framework::Dynamix
   if ((initial_pose_module_state_->cnt_ >= initial_pose_module_state_->all_time_steps_) &&
       (initial_pose_module_state_->is_moving_))
   {
-    ROS_INFO("[end] send trajectory");
+    ROS_INFO("[InitialPoseModule] End trajectory");
 
     publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_INFO, "Finish Init Pose");
 
@@ -362,7 +379,7 @@ void InitialPoseModule::callServiceSettingModule(const std::string& module_name)
 
   if (!set_module_client_.call(set_module_srv))
   {
-    ROS_ERROR("Failed to set module");
+    ROS_ERROR("[InitialPoseModule] Failed to set module");
     return;
   }
 

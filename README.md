@@ -27,7 +27,23 @@ catkin build
 bash ../devel/setup.sh
 ```
 
+## RoboOne-Auto
+```bash
+roslaunch kuroko_bringup roboone_startup.launch
+```
+
 ## Gazebo
 ```bash
-roslaunch kuroko_description roboone_gazebo.launch
+roslaunch kuroko_bringup kuroko_bringup_gazebo.launch
+roslaunch kuroko_bringup manager.launch
+```
+
+- RonoOne
+```bash
+roslaunch kuroko_roboone roboone_auto.launch
+```
+
+- Walking GUI
+```bash
+roslaunch kuroko_walking_gui kuroko_walking_gui.launch
 ```

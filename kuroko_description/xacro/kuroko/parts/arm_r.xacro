@@ -23,9 +23,9 @@
     <joint name="shoulder_r_roll" type="revolute">
       <parent link="shoulder_r_pitch_link"/>
       <child link="shoulder_r_roll_link"/>
-      <origin xyz="0 -0.05425 0" rpy="0 0 0"/>
-      <axis xyz="-1 0 0"/>
-      <limit effort="1000.0" lower="-1.0472" upper="2.0071" velocity="10.0"/>
+      <origin xyz="0 -0.05425 0" rpy="-1.5708 0 0"/>
+      <axis xyz="1 0 0"/>
+      <limit effort="1000.0" lower="-3.1" upper="3.1" velocity="10.0"/>
       <dynamics damping="0.0" friction="0.0"/>
     </joint>
     <link name="shoulder_r_roll_link">

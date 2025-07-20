@@ -698,6 +698,9 @@
                                       <property name="maximum">
                                         <double>1.000000000000000</double>
                                       </property>
+                                      <property name="minimum">
+                                        <double>-1.000000000000000</double>
+                                      </property>
                                       <property name="singleStep">
                                         <double>0.100000000000000</double>
                                       </property>
@@ -710,6 +713,9 @@
                                     <widget class="QDoubleSpinBox" name="dSpinBox_knee_gain">
                                       <property name="maximum">
                                         <double>1.000000000000000</double>
+                                      </property>
+                                      <property name="minimum">
+                                        <double>-1.000000000000000</double>
                                       </property>
                                       <property name="singleStep">
                                         <double>0.100000000000000</double>
@@ -724,6 +730,9 @@
                                       <property name="maximum">
                                         <double>1.000000000000000</double>
                                       </property>
+                                      <property name="minimum">
+                                        <double>-1.000000000000000</double>
+                                      </property>
                                       <property name="singleStep">
                                         <double>0.100000000000000</double>
                                       </property>
@@ -736,6 +745,9 @@
                                     <widget class="QDoubleSpinBox" name="dSpinBox_ankle_pitch_gain">
                                       <property name="maximum">
                                         <double>1.000000000000000</double>
+                                      </property>
+                                      <property name="minimum">
+                                        <double>-1.000000000000000</double>
                                       </property>
                                       <property name="singleStep">
                                         <double>0.100000000000000</double>
@@ -1155,23 +1167,23 @@
                         </widget>
                       </item>
                       <item row="0" column="0">
-                        <widget class="QPushButton" name="button_demo_start">
+                        <widget class="QPushButton" name="button_start_tracking">
                           <property name="text">
                             <string>Start Tracking</string>
                           </property>
                         </widget>
                       </item>
                       <item row="0" column="1">
-                        <widget class="QPushButton" name="button_demo_stop">
+                        <widget class="QPushButton" name="button_stop_tracking">
                           <property name="text">
                             <string>Stop Tracking</string>
                           </property>
                         </widget>
                       </item>
                       <item row="3" column="1">
-                        <widget class="QPushButton" name="button_getup_back">
+                        <widget class="QPushButton" name="button_getup_rear">
                           <property name="text">
-                            <string>Get up(Back)</string>
+                            <string>Get up (Rear)</string>
                           </property>
                         </widget>
                       </item>
@@ -1198,7 +1210,7 @@
                       <item row="3" column="0">
                         <widget class="QPushButton" name="button_getup_front">
                           <property name="text">
-                            <string>Get up(Front)</string>
+                            <string>Get up (Front)</string>
                           </property>
                         </widget>
                       </item>

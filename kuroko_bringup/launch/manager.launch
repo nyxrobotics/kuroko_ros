@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- GDB Debugging Argument -->
+  <arg name="use_gdb" default="false"/>
+
+  <!-- Parameters -->
+  <param name="is_gazebo" value="true" type="bool"/>
+  <param name="gazebo_robot_name" value="kuroko"/>
+
+  <param name="offset_file_path" value="$(find kuroko_module_loader)/config/offset.yaml"/>
+  <param name="robot_file_path" value="$(find kuroko_module_loader)/config/kuroko.robot"/>
+  <param name="init_file_path" value="$(find kuroko_module_loader)/config/dxl_init_kuroko.yaml"/>
+  <param name="device_name" value="/dev/ttyDynamixel"/>
+
+  <!-- kuroko Manager -->
+  <node pkg="kuroko_module_loader" type="kuroko_module_loader" name="kuroko_module_loader" output="screen"
+    launch-prefix="$(eval 'gdb -ex run --args' if arg('use_gdb') == 'true' else '')"/>
+</launch>

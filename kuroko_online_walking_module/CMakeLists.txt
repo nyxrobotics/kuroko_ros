@@ -16,11 +16,13 @@ find_package(
              geometry_msgs
              robotis_controller_msgs
              op3_online_walking_module_msgs
+             op3_walking_module_msgs
              cmake_modules
              robotis_framework_common
              robotis_device
              robotis_math
              kuroko_balance_control
+             kuroko_kinematics
 )
 
 find_package(Boost REQUIRED)
@@ -86,6 +88,7 @@ catkin_package(
     geometry_msgs
     robotis_controller_msgs
     op3_online_walking_module_msgs
+    op3_walking_module_msgs
     cmake_modules
     robotis_framework_common
     robotis_device
@@ -110,10 +113,8 @@ include_directories(
 add_library(
   ${PROJECT_NAME}
   src/online_walking_module.cpp
-  src/joint_control.cpp
   src/walking_control.cpp
   src/wholebody_control.cpp
-  src/kuroko_kdl.cpp
 )
 add_dependencies(
   ${PROJECT_NAME}

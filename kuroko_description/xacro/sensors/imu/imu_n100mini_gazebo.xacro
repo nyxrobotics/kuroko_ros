@@ -14,7 +14,7 @@
         <frameId>${name}_link</frameId>
         <gaussianNoise>0</gaussianNoise>
         <xyzOffset>0 0 0</xyzOffset>
-        <rateOffset>0 0 0.01</rateOffset>
+        <rateOffset>0 0 0</rateOffset>
         <rpyOffset>0 0 0</rpyOffset>
       </plugin>
       <plugin filename="libhector_gazebo_ros_magnetic.so" name="magnetic_controller">

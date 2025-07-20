@@ -34,7 +34,11 @@ include_directories(
   ${Boost_INCLUDE_DIRS}
 )
 
-add_library(${PROJECT_NAME} src/action_module.cpp src/motion_files.cpp)
+add_library(
+  ${PROJECT_NAME}
+  src/action_module.cpp
+  src/animation_files.cpp
+)
 add_dependencies(
   ${PROJECT_NAME}
   ${${PROJECT_NAME}_EXPORTED_TARGETS}

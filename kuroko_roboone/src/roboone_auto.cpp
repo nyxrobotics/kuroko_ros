@@ -18,7 +18,7 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
 
   walking_command_pub_ = nh.advertise<std_msgs::String>("/motion_control/walking/command", 1);
   walking_params_pub_ = nh.advertise<op3_walking_module_msgs::WalkingParam>("/motion_control/walking/set_params", 1);
-  action_page_pub_ = nh.advertise<std_msgs::Int32>("/motion_control/action/page_num", 1);
+  action_page_pub_ = nh.advertise<std_msgs::Int32>("/motion_control/action/animation_num", 1);
 
   current_state_ = "IDLE";
   running_ = true;
@@ -93,14 +93,14 @@ void RobooneAuto::setWalkingParams(double x_move, double y_move, double angle_mo
   }
 
   // Initial values from the provided topic output
-  params.init_x_offset = 0.019999999552965164;
-  params.init_y_offset = 0.03999999910593033;
-  params.init_z_offset = 0.06499999761581421;
-  params.init_roll_offset = -0.0872664600610733;
+  params.init_x_offset = 0.0;
+  params.init_y_offset = 0.06;
+  params.init_z_offset = 0.08;
+  params.init_roll_offset = -0.0349;
   params.init_pitch_offset = 0.0;
   params.init_yaw_offset = 0.0;
-  params.period_time = 0.4699999988079071;
-  params.dsp_ratio = 0.4000000059604645;
+  params.period_time = 0.47;
+  params.dsp_ratio = 0.35;
   params.step_fb_ratio = 0.0;
 
   // Move amplitudes set dynamically
@@ -109,18 +109,18 @@ void RobooneAuto::setWalkingParams(double x_move, double y_move, double angle_mo
   params.angle_move_amplitude = angle_move;
 
   // Fixed initial values for other fields
-  params.z_move_amplitude = 0.14000000059604645;
+  params.z_move_amplitude = 0.12;
   params.move_aim_on = false;
   params.balance_enable = false;
   params.balance_hip_roll_gain = 0.3499999940395355;
   params.balance_knee_gain = 0.30000001192092896;
   params.balance_ankle_roll_gain = 0.699999988079071;
   params.balance_ankle_pitch_gain = 0.8999999761581421;
-  params.y_swap_amplitude = 0.02800000086426735;
-  params.z_swap_amplitude = 0.006000000052154064;
+  params.y_swap_amplitude = 0.016;
+  params.z_swap_amplitude = 0.003;
   params.arm_swing_gain = 1.5;
   params.pelvis_offset = 0.008726646192371845;
-  params.hip_pitch_offset = 0.0872664600610733;
+  params.hip_pitch_offset = 0;
 
   // PID gains
   params.p_gain = 0;
@@ -156,7 +156,7 @@ void RobooneAuto::manageState()
 {
   std::lock_guard<std::mutex> lock(state_mutex_);
 
-  if (current_state_ == "INIT_POSE" && last_joy_.buttons[2])
+  if (current_state_ == "INITIAL_POSE" && last_joy_.buttons[2])
   {
     transitionToAutoMoveState();
   }
@@ -164,7 +164,7 @@ void RobooneAuto::manageState()
   {
     transitionToIdleState();
   }
-  else if (current_state_ != "INIT_POSE" && last_joy_.buttons[0])
+  else if (current_state_ != "INITIAL_POSE" && last_joy_.buttons[0])
   {
     transitionToInitPose();
   }
@@ -219,11 +219,11 @@ void RobooneAuto::transitionToInitPose()
 {
   enableAllJoints();
   ros::Duration(0.1).sleep();
-  ROS_INFO("Transitioning to INIT_POSE state.");
+  ROS_INFO("Transitioning to INITIAL_POSE state.");
   setCtrlModule("initial_pose_module");
   setCtrlModule("action_module");
   setCtrlModule("walking_module");
-  current_state_ = "INIT_POSE";
+  current_state_ = "INITIAL_POSE";
 }
 
 // 自律移動への遷移
@@ -353,7 +353,7 @@ void RobooneAuto::handleAttack()
       else if ((ros::Time::now() - attacked_time_).toSec() < 8.0)
       {
         // 中央からのずれに基づいて旋回角を計算
-        double angle_move = -x_offset * (15.0 * M_PI / 180.0);  // 最大15度の旋回
+        double angle_move = -x_offset * (10.0 * M_PI / 180.0);  // 最大15度の旋回
         ROS_INFO("Calculated angle move for rotation only (radians): %f", angle_move);
 
         // 前後左右の移動は0で、旋回のみ許可
@@ -365,11 +365,11 @@ void RobooneAuto::handleAttack()
       {
         // 相手の方に向かって歩行処理
         // 中央からのずれに基づいて旋回角を計算
-        double angle_move = -x_offset * (15.0 * M_PI / 180.0);  // 最大15度の旋回
+        double angle_move = -x_offset * (10.0 * M_PI / 180.0);  // 最大15度の旋回
         ROS_INFO("Calculated angle move (radians): %f", angle_move);
 
-        // 0.02m前進しつつ旋回
-        setWalkingParams(0.02, 0.0, angle_move);
+        // 0.04m前進しつつ旋回
+        setWalkingParams(0.04, 0.0, angle_move);
         ROS_INFO("Moving towards target with x_move: 0.02, angle_move (radians): %f", angle_move);
         startWalking();
       }
@@ -378,7 +378,7 @@ void RobooneAuto::handleAttack()
   else
   {
     ROS_WARN("No roboone label found.");
-    double angle_move = last_target_detected_direction_ * (15.0 * M_PI / 180.0);  // 最大15度の旋回
+    double angle_move = last_target_detected_direction_ * (10.0 * M_PI / 180.0);  // 最大15度の旋回
     setWalkingParams(0.0, 0.0, angle_move);
     ROS_INFO("Rotating in place with angle_move (radians): %f", angle_move);
     startWalking();

@@ -16,11 +16,11 @@ private:
   double periodtime_;
   double dsp_ratio_;
   double ssp_ratio_;
-  double x_swap_periodtime_;
+  double x_swing_periodtime_;
   double x_move_periodtime_;
-  double y_swap_periodtime_;
+  double y_swing_periodtime_;
   double y_move_periodtime_;
-  double z_swap_periodtime_;
+  double z_swing_periodtime_;
   double z_move_periodtime_;
   double a_move_periodtime_;
   double ssp_time_;

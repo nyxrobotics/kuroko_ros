@@ -791,7 +791,7 @@
                                     </widget>
                                   </item>
                                   <item row="3" column="1">
-                                    <widget class="QDoubleSpinBox" name="dSpinBox_z_swap_amplitude">
+                                    <widget class="QDoubleSpinBox" name="dSpinBox_z_swing_amplitude">
                                       <property name="suffix">
                                         <string> ｍ</string>
                                       </property>
@@ -833,7 +833,7 @@
                                     </widget>
                                   </item>
                                   <item row="2" column="1">
-                                    <widget class="QDoubleSpinBox" name="dSpinBox_y_swap_amplitude">
+                                    <widget class="QDoubleSpinBox" name="dSpinBox_y_swing_amplitude">
                                       <property name="suffix">
                                         <string> ｍ</string>
                                       </property>
@@ -1374,8 +1374,8 @@
     <tabstop>dSpinBox_knee_gain</tabstop>
     <tabstop>dSpinBox_ankle_roll_gain</tabstop>
     <tabstop>dSpinBox_ankle_pitch_gain</tabstop>
-    <tabstop>dSpinBox_y_swap_amplitude</tabstop>
-    <tabstop>dSpinBox_z_swap_amplitude</tabstop>
+    <tabstop>dSpinBox_y_swing_amplitude</tabstop>
+    <tabstop>dSpinBox_z_swing_amplitude</tabstop>
     <tabstop>dSpinBox_arm_swing_gain</tabstop>
     <tabstop>dSpinBox_pelvis_offset</tabstop>
     <tabstop>button_param_refresh</tabstop>

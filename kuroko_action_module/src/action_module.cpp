@@ -24,7 +24,7 @@ void ActionModule::initialize(const int control_cycle_msec, robotis_framework::R
   ROS_INFO_STREAM("[ActionModule] Initializing");
 
   ros::NodeHandle nh;
-  std::string workspace_path = ros::package::getPath("kuroko_action_module") + "/motion";
+  std::string workspace_path = ros::package::getPath("kuroko_motion_data") + "/config";
   ROS_INFO_STREAM("[ActionModule] Loading workspace from: " << workspace_path);
   workspace_.loadWorkspace(workspace_path);
   std::vector<std::string> animation_names = workspace_.getAnimationNames();

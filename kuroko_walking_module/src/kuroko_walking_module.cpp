@@ -271,19 +271,19 @@ void WalkingModule::updateMovementParam()
   // Direction
   if (!static_cast<bool>(walking_param_.move_aim_on))
   {
-    a_step_ = walking_param_.yaw_step / 2;
-    if (a_step_ > 0)
-      a_step_shift_ = a_step_;
+    yaw_step_ = walking_param_.yaw_step / 2;
+    if (yaw_step_ > 0)
+      yaw_step_shift_ = yaw_step_;
     else
-      a_step_shift_ = -a_step_;
+      yaw_step_shift_ = -yaw_step_;
   }
   else
   {
-    a_step_ = -walking_param_.yaw_step / 2;
-    if (a_step_ > 0)
-      a_step_shift_ = -a_step_;
+    yaw_step_ = -walking_param_.yaw_step / 2;
+    if (yaw_step_ > 0)
+      yaw_step_shift_ = -yaw_step_;
     else
-      a_step_shift_ = a_step_;
+      yaw_step_shift_ = yaw_step_;
   }
 }
 
@@ -448,7 +448,7 @@ void WalkingModule::processPhase(const double& time_unit)
     phase_ = PHASE0;
     if (!ctrl_running_)
     {
-      if (x_step_ == 0 && y_step_ == 0 && a_step_ == 0)
+      if (x_step_ == 0 && y_step_ == 0 && yaw_step_ == 0)
       {
         real_running_ = false;
       }
@@ -478,7 +478,7 @@ void WalkingModule::processPhase(const double& time_unit)
     phase_ = PHASE2;
     if (!ctrl_running_)
     {
-      if (x_step_ == 0 && y_step_ == 0 && a_step_ == 0)
+      if (x_step_ == 0 && y_step_ == 0 && yaw_step_ == 0)
       {
         real_running_ = false;
       }
@@ -530,9 +530,9 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
     left_leg_move.z_ =
         wSin(l_ssp_start_time_, z_stance_period_time_,
              z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * l_ssp_start_time_, z_step_, z_step_shift_);
-    left_leg_move.yaw_ =
-        wSin(l_ssp_start_time_, yaw_stance_period_time_,
-             yaw_stance_phase_shift_ + 2 * M_PI / yaw_stance_period_time_ * l_ssp_start_time_, a_step_, a_step_shift_);
+    left_leg_move.yaw_ = wSin(l_ssp_start_time_, yaw_stance_period_time_,
+                              yaw_stance_phase_shift_ + 2 * M_PI / yaw_stance_period_time_ * l_ssp_start_time_,
+                              yaw_step_, yaw_step_shift_);
     right_leg_move.x_ =
         wSin(l_ssp_start_time_, x_stance_period_time_,
              x_stance_phase_shift_ + 2 * M_PI / x_stance_period_time_ * l_ssp_start_time_, -x_step_, -x_step_shift_);
@@ -544,7 +544,7 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
              z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * r_ssp_start_time_, z_step_, z_step_shift_);
     right_leg_move.yaw_ = wSin(l_ssp_start_time_, yaw_stance_period_time_,
                                yaw_stance_phase_shift_ + 2 * M_PI / yaw_stance_period_time_ * l_ssp_start_time_,
-                               -a_step_, -a_step_shift_);
+                               -yaw_step_, -yaw_step_shift_);
     hip_swing_amplitude_l = 0;
     hip_swing_amplitude_r = 0;
   }
@@ -559,9 +559,9 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
     left_leg_move.z_ =
         wSin(time_, z_stance_period_time_, z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * l_ssp_start_time_,
              z_step_, z_step_shift_);
-    left_leg_move.yaw_ =
-        wSin(time_, yaw_stance_period_time_,
-             yaw_stance_phase_shift_ + 2 * M_PI / yaw_stance_period_time_ * l_ssp_start_time_, a_step_, a_step_shift_);
+    left_leg_move.yaw_ = wSin(time_, yaw_stance_period_time_,
+                              yaw_stance_phase_shift_ + 2 * M_PI / yaw_stance_period_time_ * l_ssp_start_time_,
+                              yaw_step_, yaw_step_shift_);
     right_leg_move.x_ =
         wSin(time_, x_stance_period_time_, x_stance_phase_shift_ + 2 * M_PI / x_stance_period_time_ * l_ssp_start_time_,
              -x_step_, -x_step_shift_);
@@ -573,7 +573,7 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
              z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * r_ssp_start_time_, z_step_, z_step_shift_);
     right_leg_move.yaw_ = wSin(time_, yaw_stance_period_time_,
                                yaw_stance_phase_shift_ + 2 * M_PI / yaw_stance_period_time_ * l_ssp_start_time_,
-                               -a_step_, -a_step_shift_);
+                               -yaw_step_, -yaw_step_shift_);
     hip_swing_amplitude_l =
         wSin(time_, z_stance_period_time_, z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * l_ssp_start_time_,
              hip_stance_amplitude_ / 2, hip_stance_amplitude_ / 2);
@@ -592,9 +592,9 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
     left_leg_move.z_ =
         wSin(l_ssp_end_time_, z_stance_period_time_,
              z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * l_ssp_start_time_, z_step_, z_step_shift_);
-    left_leg_move.yaw_ =
-        wSin(l_ssp_end_time_, yaw_stance_period_time_,
-             yaw_stance_phase_shift_ + 2 * M_PI / yaw_stance_period_time_ * l_ssp_start_time_, a_step_, a_step_shift_);
+    left_leg_move.yaw_ = wSin(l_ssp_end_time_, yaw_stance_period_time_,
+                              yaw_stance_phase_shift_ + 2 * M_PI / yaw_stance_period_time_ * l_ssp_start_time_,
+                              yaw_step_, yaw_step_shift_);
     right_leg_move.x_ =
         wSin(l_ssp_end_time_, x_stance_period_time_,
              x_stance_phase_shift_ + 2 * M_PI / x_stance_period_time_ * l_ssp_start_time_, -x_step_, -x_step_shift_);
@@ -606,7 +606,7 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
              z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * r_ssp_start_time_, z_step_, z_step_shift_);
     right_leg_move.yaw_ = wSin(l_ssp_end_time_, yaw_stance_period_time_,
                                yaw_stance_phase_shift_ + 2 * M_PI / yaw_stance_period_time_ * l_ssp_start_time_,
-                               -a_step_, -a_step_shift_);
+                               -yaw_step_, -yaw_step_shift_);
     hip_swing_amplitude_l = 0;
     hip_swing_amplitude_r = 0;
   }
@@ -623,7 +623,7 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
              z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * l_ssp_start_time_, z_step_, z_step_shift_);
     left_leg_move.yaw_ = wSin(time_, yaw_stance_period_time_,
                               yaw_stance_phase_shift_ + 2 * M_PI / yaw_stance_period_time_ * r_ssp_start_time_ + M_PI,
-                              a_step_, a_step_shift_);
+                              yaw_step_, yaw_step_shift_);
     right_leg_move.x_ = wSin(time_, x_stance_period_time_,
                              x_stance_phase_shift_ + 2 * M_PI / x_stance_period_time_ * r_ssp_start_time_ + M_PI,
                              -x_step_, -x_step_shift_);
@@ -635,7 +635,7 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
              z_step_, z_step_shift_);
     right_leg_move.yaw_ = wSin(time_, yaw_stance_period_time_,
                                yaw_stance_phase_shift_ + 2 * M_PI / yaw_stance_period_time_ * r_ssp_start_time_ + M_PI,
-                               -a_step_, -a_step_shift_);
+                               -yaw_step_, -yaw_step_shift_);
     hip_swing_amplitude_l =
         wSin(time_, z_stance_period_time_, z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * r_ssp_start_time_,
              hip_swing_amplitude_ / 2, hip_swing_amplitude_ / 2);
@@ -656,7 +656,7 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
              z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * l_ssp_start_time_, z_step_, z_step_shift_);
     left_leg_move.yaw_ = wSin(r_ssp_end_time_, yaw_stance_period_time_,
                               yaw_stance_phase_shift_ + 2 * M_PI / yaw_stance_period_time_ * r_ssp_start_time_ + M_PI,
-                              a_step_, a_step_shift_);
+                              yaw_step_, yaw_step_shift_);
     right_leg_move.x_ = wSin(r_ssp_end_time_, x_stance_period_time_,
                              x_stance_phase_shift_ + 2 * M_PI / x_stance_period_time_ * r_ssp_start_time_ + M_PI,
                              -x_step_, -x_step_shift_);
@@ -668,7 +668,7 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
              z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * r_ssp_start_time_, z_step_, z_step_shift_);
     right_leg_move.yaw_ = wSin(r_ssp_end_time_, yaw_stance_period_time_,
                                yaw_stance_phase_shift_ + 2 * M_PI / yaw_stance_period_time_ * r_ssp_start_time_ + M_PI,
-                               -a_step_, -a_step_shift_);
+                               -yaw_step_, -yaw_step_shift_);
     hip_swing_amplitude_l = 0;
     hip_swing_amplitude_r = 0;
   }

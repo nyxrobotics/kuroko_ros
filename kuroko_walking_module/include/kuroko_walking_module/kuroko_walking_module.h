@@ -1,8 +1,6 @@
 #ifndef KUROKO_WALKING_MODULE_H_
 #define KUROKO_WALKING_MODULE_H_
 
-#include "kuroko_walking_parameter.h"
-
 #include <boost/thread.hpp>
 #include <eigen3/Eigen/Eigen>
 #include <fstream>
@@ -117,6 +115,7 @@ private:
   /* ROS Topic Publish Functions */
   ros::Publisher robot_pose_pub_;
   ros::Publisher status_msg_pub_;
+  kuroko_walking_module_msgs::WalkingParam walking_param_;
 
   Eigen::MatrixXd calc_joint_trajectory_;
 
@@ -127,7 +126,6 @@ private:
   std::map<std::string, int> joint_table_;
   int walking_state_;
   int init_pose_count_;
-  kuroko_walking_module_msgs::WalkingParam walking_param_;
   double previous_x_step_;
 
   // Leg parameters
@@ -182,8 +180,8 @@ private:
   double z_step_;
   double z_step_shift_;
   double yaw_stance_phase_shift_;
-  double a_step_;
-  double a_step_shift_;
+  double yaw_step_;
+  double yaw_step_shift_;
 
   double hip_swing_amplitude_;
   double hip_stance_amplitude_;

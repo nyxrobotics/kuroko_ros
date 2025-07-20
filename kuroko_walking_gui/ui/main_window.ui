@@ -532,7 +532,7 @@
                                     </widget>
                                   </item>
                                   <item row="0" column="1">
-                                    <widget class="QDoubleSpinBox" name="dSpinBox_x_move_amplitude">
+                                    <widget class="QDoubleSpinBox" name="dSpinBox_x_step">
                                       <property name="suffix">
                                         <string> ｍ</string>
                                       </property>
@@ -558,7 +558,7 @@
                                     </widget>
                                   </item>
                                   <item row="1" column="1">
-                                    <widget class="QDoubleSpinBox" name="dSpinBox_y_move_amplitude">
+                                    <widget class="QDoubleSpinBox" name="dSpinBox_y_step">
                                       <property name="suffix">
                                         <string> ｍ</string>
                                       </property>
@@ -577,7 +577,7 @@
                                     </widget>
                                   </item>
                                   <item row="2" column="1">
-                                    <widget class="QDoubleSpinBox" name="dSpinBox_z_move_amplitude">
+                                    <widget class="QDoubleSpinBox" name="dSpinBox_z_step">
                                       <property name="suffix">
                                         <string> ｍ</string>
                                       </property>
@@ -599,7 +599,7 @@
                                     </widget>
                                   </item>
                                   <item row="3" column="1">
-                                    <widget class="QDoubleSpinBox" name="dSpinBox_a_move_amplitude">
+                                    <widget class="QDoubleSpinBox" name="dSpinBox_a_step">
                                       <property name="suffix">
                                         <string> ﾟ</string>
                                       </property>
@@ -1364,10 +1364,10 @@
     <tabstop>dSpinBox_step_fb_ratio</tabstop>
     <tabstop>checkBox_move_aim_on</tabstop>
     <tabstop>checkBox_move_aim_off</tabstop>
-    <tabstop>dSpinBox_x_move_amplitude</tabstop>
-    <tabstop>dSpinBox_y_move_amplitude</tabstop>
-    <tabstop>dSpinBox_z_move_amplitude</tabstop>
-    <tabstop>dSpinBox_a_move_amplitude</tabstop>
+    <tabstop>dSpinBox_x_step</tabstop>
+    <tabstop>dSpinBox_y_step</tabstop>
+    <tabstop>dSpinBox_z_step</tabstop>
+    <tabstop>dSpinBox_a_step</tabstop>
     <tabstop>checkBox_balance_on</tabstop>
     <tabstop>checkBox_balance_off</tabstop>
     <tabstop>dSpinBox_hip_roll_gain</tabstop>

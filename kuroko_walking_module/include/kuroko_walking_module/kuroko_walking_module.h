@@ -128,7 +128,7 @@ private:
   int walking_state_;
   int init_pose_count_;
   kuroko_walking_module_msgs::WalkingParam walking_param_;
-  double previous_x_move_amplitude_;
+  double previous_x_step_;
 
   // Leg parameters
   double leg_default_length_;
@@ -139,12 +139,13 @@ private:
   double dsp_ratio_;
   double ssp_ratio_;
   double x_swing_period_time_;
-  double x_move_period_time_;
+  double x_stance_period_time_;
   double y_swing_period_time_;
-  double y_move_period_time_;
+  double y_stance_period_time_;
   double z_swing_period_time_;
-  double z_move_period_time_;
-  double a_move_period_time_;
+  double z_stance_period_time_;
+  double yaw_swing_period_time_;
+  double yaw_stance_period_time_;
   double ssp_time_;
   double l_ssp_start_time_;
   double l_ssp_end_time_;
@@ -154,38 +155,38 @@ private:
   double phase2_time_;
   double phase3_time_;
 
-  double x_offset_;
-  double y_offset_;
-  double z_offset_;
-  double r_offset_;
-  double p_offset_;
-  double a_offset_;
+  double init_x_offset_;
+  double init_y_offset_;
+  double init_z_offset_;
+  double init_roll_offset_;
+  double init_pitch_offset_;
+  double init_yaw_offset_;
+  double init_hip_pitch_offset_;
 
   double x_swing_phase_shift_;
   double x_swing_amplitude_;
   double x_swing_amplitude_shift_;
-  double x_move_phase_shift_;
-  double x_move_amplitude_;
-  double x_move_amplitude_shift_;
+  double x_stance_phase_shift_;
+  double x_step_;
+  double x_step_shift_;
   double y_swing_phase_shift_;
   double y_swing_amplitude_;
   double y_swing_amplitude_shift_;
-  double y_move_phase_shift_;
-  double y_move_amplitude_;
-  double y_move_amplitude_shift_;
+  double y_stance_phase_shift_;
+  double y_step_;
+  double y_step_shift_;
   double z_swing_phase_shift_;
   double z_swing_amplitude_;
   double z_swing_amplitude_shift_;
-  double z_move_phase_shift_;
-  double z_move_amplitude_;
-  double z_move_amplitude_shift_;
-  double a_move_phase_shift_;
-  double a_move_amplitude_;
-  double a_move_amplitude_shift_;
+  double z_stance_phase_shift_;
+  double z_step_;
+  double z_step_shift_;
+  double yaw_stance_phase_shift_;
+  double a_step_;
+  double a_step_shift_;
 
   double hip_swing_amplitude_;
-  double pelvis_swing_;
-  double init_hip_pitch_offset_;
+  double hip_stance_amplitude_;
   double shoulder_swing_amplitude_;
 
   bool ctrl_running_;

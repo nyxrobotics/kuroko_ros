@@ -13,10 +13,10 @@ float32 dsp_ratio
 float32 step_fb_ratio
 
 ########## walking parameter ########
-float32 x_move_amplitude
-float32 y_move_amplitude
-float32 z_move_amplitude
-float32 angle_move_amplitude
+float32 x_step
+float32 y_step
+float32 z_step
+float32 yaw_step
 bool move_aim_on
 
 ########## balance parameter ##########

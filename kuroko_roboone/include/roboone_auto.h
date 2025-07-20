@@ -28,7 +28,7 @@ public:
 
   void startWalking();
   void stopWalking();
-  void setWalkingParams(double x_move, double y_move, double angle_move);
+  void setWalkingParams(double x_step, double y_move, double angle_move);
   void executeAction(int action_id);
   void manageState();  // 状態管理関数
   bool setCtrlModule(const std::string& module_name);

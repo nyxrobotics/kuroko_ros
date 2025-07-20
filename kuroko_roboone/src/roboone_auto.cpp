@@ -80,14 +80,14 @@ void RobooneAuto::stopWalking()
   walking_command_pub_.publish(msg);
 }
 // Set walking parameters with specified initial values
-void RobooneAuto::setWalkingParams(double x_move, double y_move, double angle_move)
+void RobooneAuto::setWalkingParams(double x_step, double y_move, double angle_move)
 {
   kuroko_walking_module_msgs::WalkingParam params;
-  double normalization_factor = std::abs(angle_move / 0.26) + std::abs(x_move / 0.02) + std::abs(y_move / 0.015);
+  double normalization_factor = std::abs(angle_move / 0.26) + std::abs(x_step / 0.02) + std::abs(y_move / 0.015);
 
   if (normalization_factor > 1.0)
   {
-    x_move /= normalization_factor;
+    x_step /= normalization_factor;
     y_move /= normalization_factor;
     angle_move /= normalization_factor;
   }
@@ -104,12 +104,12 @@ void RobooneAuto::setWalkingParams(double x_move, double y_move, double angle_mo
   params.step_fb_ratio = 0.0;
 
   // Move amplitudes set dynamically
-  params.x_move_amplitude = x_move;
-  params.y_move_amplitude = y_move;
-  params.angle_move_amplitude = angle_move;
+  params.x_step = x_step;
+  params.y_step = y_move;
+  params.yaw_step = angle_move;
 
   // Fixed initial values for other fields
-  params.z_move_amplitude = 0.12;
+  params.z_step = 0.12;
   params.move_aim_on = false;
   params.balance_enable = false;
   params.balance_hip_roll_gain = 0.3499999940395355;
@@ -370,7 +370,7 @@ void RobooneAuto::handleAttack()
 
         // 0.04m前進しつつ旋回
         setWalkingParams(0.04, 0.0, angle_move);
-        ROS_INFO("Moving towards target with x_move: 0.02, angle_move (radians): %f", angle_move);
+        ROS_INFO("Moving towards target with x_step: 0.02, angle_move (radians): %f", angle_move);
         startWalking();
       }
     }

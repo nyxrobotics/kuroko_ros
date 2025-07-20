@@ -80,16 +80,16 @@ void RobooneAuto::stopWalking()
   walking_command_pub_.publish(msg);
 }
 // Set walking parameters with specified initial values
-void RobooneAuto::setWalkingParams(double x_step, double y_move, double angle_move)
+void RobooneAuto::setWalkingParams(double x_step, double y_step, double yaw_step)
 {
   kuroko_walking_module_msgs::WalkingParam params;
-  double normalization_factor = std::abs(angle_move / 0.26) + std::abs(x_step / 0.02) + std::abs(y_move / 0.015);
+  double normalization_factor = std::abs(yaw_step / 0.26) + std::abs(x_step / 0.02) + std::abs(y_step / 0.015);
 
   if (normalization_factor > 1.0)
   {
     x_step /= normalization_factor;
-    y_move /= normalization_factor;
-    angle_move /= normalization_factor;
+    y_step /= normalization_factor;
+    yaw_step /= normalization_factor;
   }
 
   // Initial values from the provided topic output
@@ -105,8 +105,8 @@ void RobooneAuto::setWalkingParams(double x_step, double y_move, double angle_mo
 
   // Move amplitudes set dynamically
   params.x_step = x_step;
-  params.y_step = y_move;
-  params.yaw_step = angle_move;
+  params.y_step = y_step;
+  params.yaw_step = yaw_step;
 
   // Fixed initial values for other fields
   params.z_step = 0.12;
@@ -353,24 +353,24 @@ void RobooneAuto::handleAttack()
       else if ((ros::Time::now() - attacked_time_).toSec() < 8.0)
       {
         // 中央からのずれに基づいて旋回角を計算
-        double angle_move = -x_offset * (10.0 * M_PI / 180.0);  // 最大15度の旋回
-        ROS_INFO("Calculated angle move for rotation only (radians): %f", angle_move);
+        double yaw_step = -x_offset * (10.0 * M_PI / 180.0);  // 最大15度の旋回
+        ROS_INFO("Calculated angle move for rotation only (radians): %f", yaw_step);
 
         // 前後左右の移動は0で、旋回のみ許可
-        setWalkingParams(0.0, 0.0, angle_move);
-        ROS_INFO("Rotating in place with angle_move (radians): %f", angle_move);
+        setWalkingParams(0.0, 0.0, yaw_step);
+        ROS_INFO("Rotating in place with yaw_step (radians): %f", yaw_step);
         startWalking();
       }
       else
       {
         // 相手の方に向かって歩行処理
         // 中央からのずれに基づいて旋回角を計算
-        double angle_move = -x_offset * (10.0 * M_PI / 180.0);  // 最大15度の旋回
-        ROS_INFO("Calculated angle move (radians): %f", angle_move);
+        double yaw_step = -x_offset * (10.0 * M_PI / 180.0);  // 最大15度の旋回
+        ROS_INFO("Calculated angle move (radians): %f", yaw_step);
 
         // 0.04m前進しつつ旋回
-        setWalkingParams(0.04, 0.0, angle_move);
-        ROS_INFO("Moving towards target with x_step: 0.02, angle_move (radians): %f", angle_move);
+        setWalkingParams(0.04, 0.0, yaw_step);
+        ROS_INFO("Moving towards target with x_step: 0.02, yaw_step (radians): %f", yaw_step);
         startWalking();
       }
     }
@@ -378,9 +378,9 @@ void RobooneAuto::handleAttack()
   else
   {
     ROS_WARN("No roboone label found.");
-    double angle_move = last_target_detected_direction_ * (10.0 * M_PI / 180.0);  // 最大15度の旋回
-    setWalkingParams(0.0, 0.0, angle_move);
-    ROS_INFO("Rotating in place with angle_move (radians): %f", angle_move);
+    double yaw_step = last_target_detected_direction_ * (10.0 * M_PI / 180.0);  // 最大15度の旋回
+    setWalkingParams(0.0, 0.0, yaw_step);
+    ROS_INFO("Rotating in place with yaw_step (radians): %f", yaw_step);
     startWalking();
   }
 }

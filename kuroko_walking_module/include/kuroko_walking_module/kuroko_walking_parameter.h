@@ -17,12 +17,12 @@ private:
   double dsp_ratio_;
   double ssp_ratio_;
   double x_swing_periodtime_;
-  double x_move_periodtime_;
+  double x_stance_periodtime_;
   double y_swing_periodtime_;
-  double y_move_periodtime_;
+  double y_stance_periodtime_;
   double z_swing_periodtime_;
-  double z_move_periodtime_;
-  double a_move_periodtime_;
+  double z_stance_periodtime_;
+  double yaw_stance_periodtime_;
   double ssp_time_;
   double ssp_time_start_l_;
   double ssp_time_end_l_;

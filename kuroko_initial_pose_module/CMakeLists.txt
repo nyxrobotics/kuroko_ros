@@ -129,11 +129,6 @@ install(
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )
 
-install(
-  DIRECTORY data
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-)
-
 ################################################################################
 # Test
 ################################################################################

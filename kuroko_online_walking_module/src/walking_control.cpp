@@ -85,7 +85,7 @@ WalkingControl::~WalkingControl()
 {
 }
 
-void WalkingControl::initialize(op3_online_walking_module_msgs::FootStepCommand footstep_command,
+void WalkingControl::initialize(kuroko_online_walking_module_msgs::FootStepCommand footstep_command,
                                 const std::vector<double_t>& init_body_pos, std::vector<double_t> init_body_rpy,
                                 std::vector<double_t> init_r_foot_pos, std::vector<double_t> init_r_foot_rpy,
                                 std::vector<double_t> init_l_foot_pos, std::vector<double_t> init_l_foot_rpy)
@@ -131,7 +131,7 @@ void WalkingControl::initialize(op3_online_walking_module_msgs::FootStepCommand 
   u_y_.fill(0.0);
 }
 
-void WalkingControl::initialize(op3_online_walking_module_msgs::Step2DArray footstep_2d,
+void WalkingControl::initialize(kuroko_online_walking_module_msgs::Step2DArray footstep_2d,
                                 const std::vector<double_t>& init_body_pos, std::vector<double_t> init_body_rpy,
                                 std::vector<double_t> init_r_foot_pos, std::vector<double_t> init_r_foot_rpy,
                                 std::vector<double_t> init_l_foot_pos, std::vector<double_t> init_l_foot_rpy)
@@ -393,11 +393,11 @@ void WalkingControl::transformFootStep2D()
   goal_r_foot_pos.resize(2, 0.0);
   goal_l_foot_pos.resize(2, 0.0);
 
-  op3_online_walking_module_msgs::FootStepArray footstep_param;
+  kuroko_online_walking_module_msgs::FootStepArray footstep_param;
 
   for (int step = 0; step < footstep_size_; step++)
   {
-    op3_online_walking_module_msgs::Step2D msg = footstep_2d_.footsteps_2d[step];
+    kuroko_online_walking_module_msgs::Step2D msg = footstep_2d_.footsteps_2d[step];
 
     footstep_param.moving_foot.push_back(msg.moving_foot);
     geometry_msgs::Pose2D foot_pose_2d;

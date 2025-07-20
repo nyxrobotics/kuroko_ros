@@ -32,19 +32,19 @@
 #include "kuroko_balance_control/kuroko_balance_control.h"
 #include "kuroko_kinematics/kuroko_kinematics.h"
 
-#include "op3_online_walking_module_msgs/FootStepCommand.h"
-#include "op3_online_walking_module_msgs/JointPose.h"
-#include "op3_online_walking_module_msgs/KinematicsPose.h"
-#include "op3_online_walking_module_msgs/PreviewRequest.h"
-#include "op3_online_walking_module_msgs/PreviewResponse.h"
-#include "op3_online_walking_module_msgs/WalkingParam.h"
+#include "kuroko_online_walking_module_msgs/FootStepCommand.h"
+#include "kuroko_online_walking_module_msgs/JointPose.h"
+#include "kuroko_online_walking_module_msgs/KinematicsPose.h"
+#include "kuroko_online_walking_module_msgs/PreviewRequest.h"
+#include "kuroko_online_walking_module_msgs/PreviewResponse.h"
+#include "kuroko_online_walking_module_msgs/WalkingParam.h"
 
-#include "op3_online_walking_module_msgs/GetJointPose.h"
-#include "op3_online_walking_module_msgs/GetKinematicsPose.h"
-#include "op3_online_walking_module_msgs/GetPreviewMatrix.h"
+#include "kuroko_online_walking_module_msgs/GetJointPose.h"
+#include "kuroko_online_walking_module_msgs/GetKinematicsPose.h"
+#include "kuroko_online_walking_module_msgs/GetPreviewMatrix.h"
 
-#include "op3_online_walking_module_msgs/Step2D.h"
-#include "op3_online_walking_module_msgs/Step2DArray.h"
+#include "kuroko_online_walking_module_msgs/Step2D.h"
+#include "kuroko_online_walking_module_msgs/Step2DArray.h"
 
 #include "kuroko_walking_module_msgs/WalkingParam.h"
 
@@ -77,27 +77,27 @@ public:
   void setResetBodyCallback(const std_msgs::Bool::ConstPtr& msg);
   void setWholebodyBalanceMsgCallback(const std_msgs::String::ConstPtr& msg);
 
-  void onlineWalkingParamCallback(const op3_online_walking_module_msgs::WalkingParam& msg);
+  void onlineWalkingParamCallback(const kuroko_online_walking_module_msgs::WalkingParam& msg);
   void setBodyOffsetCallback(const geometry_msgs::Pose::ConstPtr& msg);
   void setFootDistanceCallback(const std_msgs::Float64::ConstPtr& msg);
 
-  void goalJointPoseCallback(const op3_online_walking_module_msgs::JointPose& msg);
-  void goalKinematicsPoseCallback(const op3_online_walking_module_msgs::KinematicsPose& msg);
-  void footStepCommandCallback(const op3_online_walking_module_msgs::FootStepCommand& msg);
+  void goalJointPoseCallback(const kuroko_online_walking_module_msgs::JointPose& msg);
+  void goalKinematicsPoseCallback(const kuroko_online_walking_module_msgs::KinematicsPose& msg);
+  void footStepCommandCallback(const kuroko_online_walking_module_msgs::FootStepCommand& msg);
   // void walkingParamCallback(const kuroko_walking_module_msgs::WalkingParam::ConstPtr& msg);
 
-  void footStep2DCallback(const op3_online_walking_module_msgs::Step2DArray& msg);
+  void footStep2DCallback(const kuroko_online_walking_module_msgs::Step2DArray& msg);
 
   void imuDataCallback(const sensor_msgs::Imu::ConstPtr& msg);
   void leftFootForceTorqueOutputCallback(const geometry_msgs::WrenchStamped::ConstPtr& msg);
   void rightFootForceTorqueOutputCallback(const geometry_msgs::WrenchStamped::ConstPtr& msg);
 
   /* ROS Service Functions */
-  bool getJointPoseCallback(op3_online_walking_module_msgs::GetJointPose::Request& req,
-                            op3_online_walking_module_msgs::GetJointPose::Response& res);
-  bool getKinematicsPoseCallback(op3_online_walking_module_msgs::GetKinematicsPose::Request& req,
-                                 op3_online_walking_module_msgs::GetKinematicsPose::Response& res);
-  bool getPreviewMatrix(op3_online_walking_module_msgs::PreviewRequest msg);
+  bool getJointPoseCallback(kuroko_online_walking_module_msgs::GetJointPose::Request& req,
+                            kuroko_online_walking_module_msgs::GetJointPose::Response& res);
+  bool getKinematicsPoseCallback(kuroko_online_walking_module_msgs::GetKinematicsPose::Request& req,
+                                 kuroko_online_walking_module_msgs::GetKinematicsPose::Response& res);
+  bool getPreviewMatrix(kuroko_online_walking_module_msgs::PreviewRequest msg);
   bool definePreviewMatrix();
 
   /* ROS Framework Functions */
@@ -217,13 +217,13 @@ private:
   // lipm: Lineared Inverted Pendulum Model
   std::vector<double_t> lipm_x_, lipm_y_;
 
-  op3_online_walking_module_msgs::FootStepCommand footstep_command_;
-  op3_online_walking_module_msgs::PreviewRequest preview_request_;
-  op3_online_walking_module_msgs::PreviewResponse preview_response_;
-  op3_online_walking_module_msgs::WalkingParam online_walking_param_;
+  kuroko_online_walking_module_msgs::FootStepCommand footstep_command_;
+  kuroko_online_walking_module_msgs::PreviewRequest preview_request_;
+  kuroko_online_walking_module_msgs::PreviewResponse preview_response_;
+  kuroko_online_walking_module_msgs::WalkingParam online_walking_param_;
   // kuroko_walking_module_msgs::WalkingParam walking_param_;
 
-  op3_online_walking_module_msgs::Step2DArray footstep_2d_;
+  kuroko_online_walking_module_msgs::Step2DArray footstep_2d_;
   bool is_footstep_2d_active_;
 
   // Wholebody Control

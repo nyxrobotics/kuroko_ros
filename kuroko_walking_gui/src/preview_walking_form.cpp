@@ -26,7 +26,7 @@ bool PreviewWalkingForm::init(walking_gui::QNodeKuroko* qnode)
             SLOT(updatePosePanel(geometry_msgs::Pose)));
   }
   // Set online walking params
-  op3_online_walking_module_msgs::WalkingParam msg;
+  kuroko_online_walking_module_msgs::WalkingParam msg;
   msg.dsp_ratio = p_walking_ui_->dSpinBox_dsp_ratio->value();
   msg.lipm_height = p_walking_ui_->dSpinBox_lipm_height->value();
   msg.foot_height_max = p_walking_ui_->dSpinBox_foot_height_max->value();
@@ -76,7 +76,7 @@ void PreviewWalkingForm::on_button_p_walking_right_clicked(bool /*check*/)
 void PreviewWalkingForm::on_button_set_walking_param_clicked(bool /*check*/)
 {
   // Set walking params for online walking module
-  op3_online_walking_module_msgs::WalkingParam msg;
+  kuroko_online_walking_module_msgs::WalkingParam msg;
 
   msg.dsp_ratio = p_walking_ui_->dSpinBox_dsp_ratio->value();
   msg.lipm_height = p_walking_ui_->dSpinBox_lipm_height->value();
@@ -211,7 +211,7 @@ void PreviewWalkingForm::on_dSpinBox_marker_ori_y_valueChanged(double /*value*/)
 
 void PreviewWalkingForm::sendPWalkingCommand(const std::string& command, bool set_start_foot)
 {
-  op3_online_walking_module_msgs::FootStepCommand msg;
+  kuroko_online_walking_module_msgs::FootStepCommand msg;
 
   msg.step_time = p_walking_ui_->dSpinBox_p_walking_step_time->value();
   msg.step_num = p_walking_ui_->dSpinBox_p_walking_step_num->value();

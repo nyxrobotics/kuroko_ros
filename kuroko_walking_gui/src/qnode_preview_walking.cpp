@@ -15,23 +15,23 @@ void QNodeKuroko::initPreviewWalking(ros::NodeHandle& ros_node)
   ros::param::param<std::string>("robot_frame_id", robot_frame_id_, "body_link");
 
   // Publisher
-  foot_step_command_pub_ = ros_node.advertise<op3_online_walking_module_msgs::FootStepCommand>("/motion_control/"
+  foot_step_command_pub_ = ros_node.advertise<kuroko_online_walking_module_msgs::FootStepCommand>("/motion_control/"
                                                                                                "online_walking/"
                                                                                                "footstep_command",
                                                                                                0);
   online_walking_param_pub_ =
-      ros_node.advertise<op3_online_walking_module_msgs::WalkingParam>("/motion_control/"
+      ros_node.advertise<kuroko_online_walking_module_msgs::WalkingParam>("/motion_control/"
                                                                        "online_walking/walking_param",
                                                                        0);
   set_walking_footsteps_pub_ =
-      ros_node.advertise<op3_online_walking_module_msgs::Step2DArray>("/motion_control/online_walking/footsteps_2d", 0);
+      ros_node.advertise<kuroko_online_walking_module_msgs::Step2DArray>("/motion_control/online_walking/footsteps_2d", 0);
 
   body_offset_pub_ = ros_node.advertise<geometry_msgs::Pose>("/motion_control/online_walking/body_offset", 0);
   foot_distance_pub_ = ros_node.advertise<std_msgs::Float64>("/motion_control/online_walking/foot_distance", 0);
   wholebody_balance_pub_ =
       ros_node.advertise<std_msgs::String>("/motion_control/online_walking/wholebody_balance_msg", 0);
   reset_body_msg_pub_ = ros_node.advertise<std_msgs::Bool>("/motion_control/online_walking/reset_body", 0);
-  joint_pose_msg_pub_ = ros_node.advertise<op3_online_walking_module_msgs::JointPose>("/motion_control/online_walking/"
+  joint_pose_msg_pub_ = ros_node.advertise<kuroko_online_walking_module_msgs::JointPose>("/motion_control/online_walking/"
                                                                                       "goal_joint_pose",
                                                                                       0);
   // Subscriber
@@ -369,11 +369,11 @@ void QNodeKuroko::setWalkingFootsteps(const double& step_time)
     return;
   }
 
-  op3_online_walking_module_msgs::Step2DArray footsteps;
+  kuroko_online_walking_module_msgs::Step2DArray footsteps;
 
   for (int ix = 0; ix < preview_foot_steps_.size(); ix++)
   {
-    op3_online_walking_module_msgs::Step2D step;
+    kuroko_online_walking_module_msgs::Step2D step;
 
     step.moving_foot = preview_foot_types_[ix];
     step.step2d = preview_foot_steps_[ix];
@@ -449,16 +449,16 @@ void QNodeKuroko::makeFootstepUsingPlanner(const geometry_msgs::Pose& target_foo
         std::string foot_string;
         if (type == humanoid_nav_msgs::StepTarget::right)
         {
-          foot_type = op3_online_walking_module_msgs::Step2D::RIGHT_FOOT_SWING;
+          foot_type = kuroko_online_walking_module_msgs::Step2D::RIGHT_FOOT_SWING;
           foot_string = "right";
         }
         else if (type == humanoid_nav_msgs::StepTarget::left)
         {
-          foot_type = op3_online_walking_module_msgs::Step2D::LEFT_FOOT_SWING;
+          foot_type = kuroko_online_walking_module_msgs::Step2D::LEFT_FOOT_SWING;
           foot_string = "left";
         }
         else
-          foot_type = op3_online_walking_module_msgs::Step2D::STANDING;
+          foot_type = kuroko_online_walking_module_msgs::Step2D::STANDING;
 
         std::stringstream msg_stream;
         geometry_msgs::Pose2D foot_pose = get_step.response.footsteps[ix].pose;
@@ -482,29 +482,29 @@ void QNodeKuroko::makeFootstepUsingPlanner(const geometry_msgs::Pose& target_foo
       target_l_foot_pose.theta = theta;
 
       if (preview_foot_types_[preview_foot_types_.size() - 1] ==
-          op3_online_walking_module_msgs::Step2D::RIGHT_FOOT_SWING)
+          kuroko_online_walking_module_msgs::Step2D::RIGHT_FOOT_SWING)
       {
         preview_foot_steps_.push_back(target_l_foot_pose);
-        preview_foot_types_.push_back(op3_online_walking_module_msgs::Step2D::LEFT_FOOT_SWING);
+        preview_foot_types_.push_back(kuroko_online_walking_module_msgs::Step2D::LEFT_FOOT_SWING);
         preview_foot_steps_.push_back(target_r_foot_pose);
-        preview_foot_types_.push_back(op3_online_walking_module_msgs::Step2D::RIGHT_FOOT_SWING);
+        preview_foot_types_.push_back(kuroko_online_walking_module_msgs::Step2D::RIGHT_FOOT_SWING);
         preview_foot_steps_.push_back(target_l_foot_pose);
-        preview_foot_types_.push_back(op3_online_walking_module_msgs::Step2D::LEFT_FOOT_SWING);
+        preview_foot_types_.push_back(kuroko_online_walking_module_msgs::Step2D::LEFT_FOOT_SWING);
       }
       else if (preview_foot_types_[preview_foot_types_.size() - 1] ==
-               op3_online_walking_module_msgs::Step2D::LEFT_FOOT_SWING)
+               kuroko_online_walking_module_msgs::Step2D::LEFT_FOOT_SWING)
       {
         preview_foot_steps_.push_back(target_r_foot_pose);
-        preview_foot_types_.push_back(op3_online_walking_module_msgs::Step2D::RIGHT_FOOT_SWING);
+        preview_foot_types_.push_back(kuroko_online_walking_module_msgs::Step2D::RIGHT_FOOT_SWING);
         preview_foot_steps_.push_back(target_l_foot_pose);
-        preview_foot_types_.push_back(op3_online_walking_module_msgs::Step2D::LEFT_FOOT_SWING);
+        preview_foot_types_.push_back(kuroko_online_walking_module_msgs::Step2D::LEFT_FOOT_SWING);
       }
       else
       {
         preview_foot_steps_.push_back(target_r_foot_pose);
-        preview_foot_types_.push_back(op3_online_walking_module_msgs::Step2D::RIGHT_FOOT_SWING);
+        preview_foot_types_.push_back(kuroko_online_walking_module_msgs::Step2D::RIGHT_FOOT_SWING);
         preview_foot_steps_.push_back(target_l_foot_pose);
-        preview_foot_types_.push_back(op3_online_walking_module_msgs::Step2D::LEFT_FOOT_SWING);
+        preview_foot_types_.push_back(kuroko_online_walking_module_msgs::Step2D::LEFT_FOOT_SWING);
       }
 
       // visualize foot steps
@@ -578,14 +578,14 @@ void QNodeKuroko::visualizePreviewFootsteps(bool clear)
       }
 
       // set foot step color
-      if (preview_foot_types_[ix] == op3_online_walking_module_msgs::Step2D::LEFT_FOOT_SWING)  // left
+      if (preview_foot_types_[ix] == kuroko_online_walking_module_msgs::Step2D::LEFT_FOOT_SWING)  // left
       {
         rviz_marker.color.r = 0.0;
         rviz_marker.color.g = 0.0;
         rviz_marker.color.b = 1.0;
         rviz_marker.color.a = alpha;
       }
-      else if (preview_foot_types_[ix] == op3_online_walking_module_msgs::Step2D::RIGHT_FOOT_SWING)  // right
+      else if (preview_foot_types_[ix] == kuroko_online_walking_module_msgs::Step2D::RIGHT_FOOT_SWING)  // right
       {
         rviz_marker.color.r = 1.0;
         rviz_marker.color.g = 0.0;
@@ -608,13 +608,13 @@ void QNodeKuroko::visualizePreviewFootsteps(bool clear)
 }
 
 // Preview walking
-void QNodeKuroko::sendFootStepCommandMsg(const op3_online_walking_module_msgs::FootStepCommand& msg)
+void QNodeKuroko::sendFootStepCommandMsg(const kuroko_online_walking_module_msgs::FootStepCommand& msg)
 {
   foot_step_command_pub_.publish(msg);
   log(INFO, "Send Foot Step Command Msg");
 }
 
-void QNodeKuroko::sendOnlineWalkingParamMsg(op3_online_walking_module_msgs::WalkingParam msg)
+void QNodeKuroko::sendOnlineWalkingParamMsg(kuroko_online_walking_module_msgs::WalkingParam msg)
 {
   online_walking_param_pub_.publish(msg);
   log(INFO, "Set Walking Parameter");
@@ -661,7 +661,7 @@ void QNodeKuroko::parseIniPoseData(const std::string& path)
     return;
   }
 
-  op3_online_walking_module_msgs::JointPose msg;
+  kuroko_online_walking_module_msgs::JointPose msg;
 
   // parse movement time
   double mov_time = doc["mov_time"].as<double>();
@@ -681,7 +681,7 @@ void QNodeKuroko::parseIniPoseData(const std::string& path)
   sendJointPoseMsg(msg);
 }
 
-void QNodeKuroko::sendJointPoseMsg(const op3_online_walking_module_msgs::JointPose& msg)
+void QNodeKuroko::sendJointPoseMsg(const kuroko_online_walking_module_msgs::JointPose& msg)
 {
   joint_pose_msg_pub_.publish(msg);
 

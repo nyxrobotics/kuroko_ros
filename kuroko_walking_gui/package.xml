@@ -24,7 +24,7 @@
   <build_depend>eigen_conversions</build_depend>
   <build_depend>robotis_controller_msgs</build_depend>
   <build_depend>kuroko_walking_module_msgs</build_depend>
-  <build_depend>op3_online_walking_module_msgs</build_depend>
+  <build_depend>kuroko_online_walking_module_msgs</build_depend>
   <build_depend>humanoid_nav_msgs</build_depend>
   <build_depend>kuroko_action_module</build_depend>
   <build_depend>tf</build_depend>
@@ -41,7 +41,7 @@
   <run_depend>eigen_conversions</run_depend>
   <run_depend>robotis_controller_msgs</run_depend>
   <run_depend>kuroko_walking_module_msgs</run_depend>
-  <run_depend>op3_online_walking_module_msgs</run_depend>
+  <run_depend>kuroko_online_walking_module_msgs</run_depend>
   <run_depend>humanoid_nav_msgs</run_depend>
   <run_depend>kuroko_action_module</run_depend>
   <run_depend>tf</run_depend>

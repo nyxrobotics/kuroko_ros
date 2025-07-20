@@ -3,11 +3,11 @@
 
 #pragma once
 
-#include "op3_online_walking_module_msgs/FootStepArray.h"
-#include "op3_online_walking_module_msgs/FootStepCommand.h"
-#include "op3_online_walking_module_msgs/PreviewResponse.h"
-#include "op3_online_walking_module_msgs/Step2D.h"
-#include "op3_online_walking_module_msgs/Step2DArray.h"
+#include "kuroko_online_walking_module_msgs/FootStepArray.h"
+#include "kuroko_online_walking_module_msgs/FootStepCommand.h"
+#include "kuroko_online_walking_module_msgs/PreviewResponse.h"
+#include "kuroko_online_walking_module_msgs/Step2D.h"
+#include "kuroko_online_walking_module_msgs/Step2DArray.h"
 #include "robotis_math/robotis_math.h"
 #include <eigen3/Eigen/Eigen>
 #include <geometry_msgs/Pose2D.h>
@@ -39,11 +39,11 @@ public:
                  double foot_distance);
   virtual ~WalkingControl();
 
-  void initialize(op3_online_walking_module_msgs::FootStepCommand footstep_command,
+  void initialize(kuroko_online_walking_module_msgs::FootStepCommand footstep_command,
                   const std::vector<double_t>& init_body_pos, std::vector<double_t> init_body_rpy,
                   std::vector<double_t> init_r_foot_pos, std::vector<double_t> init_r_foot_rpy,
                   std::vector<double_t> init_l_foot_pos, std::vector<double_t> init_l_foot_rpy);
-  void initialize(op3_online_walking_module_msgs::Step2DArray footstep_2d, const std::vector<double_t>& init_body_pos,
+  void initialize(kuroko_online_walking_module_msgs::Step2DArray footstep_2d, const std::vector<double_t>& init_body_pos,
                   std::vector<double_t> init_body_rpy, std::vector<double_t> init_r_foot_pos,
                   std::vector<double_t> init_r_foot_rpy, std::vector<double_t> init_l_foot_pos,
                   std::vector<double_t> init_l_foot_rpy);
@@ -102,11 +102,11 @@ protected:
   double foot_trajectory_max_z_;
 
   int footstep_size_;
-  op3_online_walking_module_msgs::FootStepCommand footstep_command_;
-  op3_online_walking_module_msgs::FootStepArray footstep_param_;
-  op3_online_walking_module_msgs::PreviewResponse preview_response_;
+  kuroko_online_walking_module_msgs::FootStepCommand footstep_command_;
+  kuroko_online_walking_module_msgs::FootStepArray footstep_param_;
+  kuroko_online_walking_module_msgs::PreviewResponse preview_response_;
 
-  op3_online_walking_module_msgs::Step2DArray footstep_2d_;
+  kuroko_online_walking_module_msgs::Step2DArray footstep_2d_;
 
   // Preview Control
   int preview_size_;

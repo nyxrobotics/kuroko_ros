@@ -15,7 +15,7 @@ find_package(
              sensor_msgs
              geometry_msgs
              robotis_controller_msgs
-             op3_online_walking_module_msgs
+             kuroko_online_walking_module_msgs
              kuroko_walking_module_msgs
              cmake_modules
              robotis_framework_common
@@ -87,7 +87,7 @@ catkin_package(
     sensor_msgs
     geometry_msgs
     robotis_controller_msgs
-    op3_online_walking_module_msgs
+    kuroko_online_walking_module_msgs
     kuroko_walking_module_msgs
     cmake_modules
     robotis_framework_common

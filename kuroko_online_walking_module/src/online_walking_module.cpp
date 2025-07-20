@@ -173,7 +173,7 @@ void OnlineWalkingModule::initialize(const int control_cycle_msec, robotis_frame
   robot_frame_id_ = "body_link";
 
   // Service
-  get_preview_matrix_client_ = ros_node.serviceClient<op3_online_walking_module_msgs::GetPreviewMatrix>(
+  get_preview_matrix_client_ = ros_node.serviceClient<kuroko_online_walking_module_msgs::GetPreviewMatrix>(
       "/motion_control/online_walking/get_preview_matrix", 0);
 }
 
@@ -647,7 +647,7 @@ void OnlineWalkingModule::setResetBodyCallback(const std_msgs::Bool::ConstPtr& m
 //   walking_param_ = *msg;
 // }
 
-void OnlineWalkingModule::goalJointPoseCallback(const op3_online_walking_module_msgs::JointPose& msg)
+void OnlineWalkingModule::goalJointPoseCallback(const kuroko_online_walking_module_msgs::JointPose& msg)
 {
   if (!enable_)
     return;
@@ -739,7 +739,7 @@ void OnlineWalkingModule::runJointControl()
   }
 }
 
-void OnlineWalkingModule::onlineWalkingParamCallback(const op3_online_walking_module_msgs::WalkingParam& msg)
+void OnlineWalkingModule::onlineWalkingParamCallback(const kuroko_online_walking_module_msgs::WalkingParam& msg)
 {
   ROS_INFO("OnlineWalkingModule::onlineWalkingParamCallback");
   online_walking_param_ = msg;  // TODO: Edit params
@@ -843,7 +843,7 @@ void OnlineWalkingModule::applyBodyOffset()
   }
 }
 
-void OnlineWalkingModule::goalKinematicsPoseCallback(const op3_online_walking_module_msgs::KinematicsPose& msg)
+void OnlineWalkingModule::goalKinematicsPoseCallback(const kuroko_online_walking_module_msgs::KinematicsPose& msg)
 {
   if (!enable_)
     return;
@@ -934,7 +934,7 @@ void OnlineWalkingModule::runWholebodyControl()
   }
 }
 
-void OnlineWalkingModule::footStep2DCallback(const op3_online_walking_module_msgs::Step2DArray& msg)
+void OnlineWalkingModule::footStep2DCallback(const kuroko_online_walking_module_msgs::Step2DArray& msg)
 {
   if (!enable_)
     return;
@@ -963,13 +963,13 @@ void OnlineWalkingModule::footStep2DCallback(const op3_online_walking_module_msg
   body_t.coeffRef(0, 3) = body_target_pos_[0];
   body_t.coeffRef(1, 3) = body_target_pos_[1];
 
-  op3_online_walking_module_msgs::Step2DArray footstep_msg;
+  kuroko_online_walking_module_msgs::Step2DArray footstep_msg;
 
   int old_size = msg.footsteps_2d.size();
   int new_size = old_size + 3;
 
-  op3_online_walking_module_msgs::Step2D first_msg;
-  op3_online_walking_module_msgs::Step2D second_msg;
+  kuroko_online_walking_module_msgs::Step2D first_msg;
+  kuroko_online_walking_module_msgs::Step2D second_msg;
 
   first_msg.moving_foot = msg.footsteps_2d[0].moving_foot - 1;
   second_msg.moving_foot = first_msg.moving_foot + 1;
@@ -1002,7 +1002,7 @@ void OnlineWalkingModule::footStep2DCallback(const op3_online_walking_module_msg
 
   for (int i = 0; i < old_size; i++)
   {
-    op3_online_walking_module_msgs::Step2D step_msg = msg.footsteps_2d[i];
+    kuroko_online_walking_module_msgs::Step2D step_msg = msg.footsteps_2d[i];
     step_msg.moving_foot -= 1;
 
     Eigen::MatrixXd step_r = robotis_framework::convertRPYToRotation(0.0, 0.0, step_msg.step2d.theta);
@@ -1029,7 +1029,7 @@ void OnlineWalkingModule::footStep2DCallback(const op3_online_walking_module_msg
     footstep_msg.footsteps_2d.push_back(step_msg);
   }
 
-  op3_online_walking_module_msgs::Step2D step_msg = msg.footsteps_2d[old_size - 1];
+  kuroko_online_walking_module_msgs::Step2D step_msg = msg.footsteps_2d[old_size - 1];
 
   if (step_msg.moving_foot - 1 == LEFT_LEG)
     first_msg.moving_foot = RIGHT_LEG;
@@ -1053,7 +1053,7 @@ void OnlineWalkingModule::footStep2DCallback(const op3_online_walking_module_msg
   initWalkingControl();
 }
 
-void OnlineWalkingModule::footStepCommandCallback(const op3_online_walking_module_msgs::FootStepCommand& msg)
+void OnlineWalkingModule::footStepCommandCallback(const kuroko_online_walking_module_msgs::FootStepCommand& msg)
 {
   if (!enable_)
     return;
@@ -1712,8 +1712,8 @@ void OnlineWalkingModule::publishStatusMsg(unsigned int type, std::string msg)
   status_msg_pub_.publish(status);
 }
 
-bool OnlineWalkingModule::getJointPoseCallback(op3_online_walking_module_msgs::GetJointPose::Request& /*req*/,
-                                               op3_online_walking_module_msgs::GetJointPose::Response& res)
+bool OnlineWalkingModule::getJointPoseCallback(kuroko_online_walking_module_msgs::GetJointPose::Request& /*req*/,
+                                               kuroko_online_walking_module_msgs::GetJointPose::Response& res)
 {
   for (int i = 0; i < joint_name_.size(); i++)
   {
@@ -1724,8 +1724,8 @@ bool OnlineWalkingModule::getJointPoseCallback(op3_online_walking_module_msgs::G
   return true;
 }
 
-bool OnlineWalkingModule::getKinematicsPoseCallback(op3_online_walking_module_msgs::GetKinematicsPose::Request& req,
-                                                    op3_online_walking_module_msgs::GetKinematicsPose::Response& res)
+bool OnlineWalkingModule::getKinematicsPoseCallback(kuroko_online_walking_module_msgs::GetKinematicsPose::Request& req,
+                                                    kuroko_online_walking_module_msgs::GetKinematicsPose::Response& res)
 {
   std::string group_name = req.name;
 
@@ -1814,9 +1814,9 @@ bool OnlineWalkingModule::definePreviewMatrix()
   return true;
 }
 
-bool OnlineWalkingModule::getPreviewMatrix(op3_online_walking_module_msgs::PreviewRequest preview_request)
+bool OnlineWalkingModule::getPreviewMatrix(kuroko_online_walking_module_msgs::PreviewRequest preview_request)
 {
-  op3_online_walking_module_msgs::GetPreviewMatrix get_preview_matrix;
+  kuroko_online_walking_module_msgs::GetPreviewMatrix get_preview_matrix;
 
   // request
   get_preview_matrix.request.req.control_cycle = preview_request.control_cycle;

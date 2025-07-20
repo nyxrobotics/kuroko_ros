@@ -15,7 +15,7 @@ find_package(
   COMPONENTS roscpp
              robotis_controller_msgs
              kuroko_walking_module_msgs
-             op3_online_walking_module_msgs
+             kuroko_online_walking_module_msgs
              cmake_modules
              dynamixel_sdk
              robotis_framework_common
@@ -53,7 +53,7 @@ catkin_package(
     robotis_controller_msgs
     op3_walking_module_msgs
     kuroko_walking_module_msgs
-    op3_online_walking_module_msgs
+    kuroko_online_walking_module_msgs
     cmake_modules
     dynamixel_sdk
     robotis_framework_common

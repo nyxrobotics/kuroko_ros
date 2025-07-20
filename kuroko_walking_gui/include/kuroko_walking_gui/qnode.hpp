@@ -39,10 +39,10 @@
 
 // Preview walking
 #include "humanoid_nav_msgs/PlanFootsteps.h"
-#include "op3_online_walking_module_msgs/FootStepCommand.h"
-#include "op3_online_walking_module_msgs/JointPose.h"
-#include "op3_online_walking_module_msgs/Step2DArray.h"
-#include "op3_online_walking_module_msgs/WalkingParam.h"
+#include "kuroko_online_walking_module_msgs/FootStepCommand.h"
+#include "kuroko_online_walking_module_msgs/JointPose.h"
+#include "kuroko_online_walking_module_msgs/Step2DArray.h"
+#include "kuroko_online_walking_module_msgs/WalkingParam.h"
 
 // Action module
 #include "kuroko_action_module/action_module.h"
@@ -113,14 +113,14 @@ public:
 
   // Preview Walking
   void initPreviewWalking(ros::NodeHandle& ros_node);
-  void sendFootStepCommandMsg(const op3_online_walking_module_msgs::FootStepCommand& msg);
-  void sendOnlineWalkingParamMsg(op3_online_walking_module_msgs::WalkingParam msg);
+  void sendFootStepCommandMsg(const kuroko_online_walking_module_msgs::FootStepCommand& msg);
+  void sendOnlineWalkingParamMsg(kuroko_online_walking_module_msgs::WalkingParam msg);
   void sendBodyOffsetMsg(geometry_msgs::Pose msg);
   void sendFootDistanceMsg(std_msgs::Float64 msg);
   void sendResetBodyMsg(std_msgs::Bool msg);
   void sendWholebodyBalanceMsg(const std_msgs::String& msg);
   void parseIniPoseData(const std::string& path);
-  void sendJointPoseMsg(const op3_online_walking_module_msgs::JointPose& msg);
+  void sendJointPoseMsg(const kuroko_online_walking_module_msgs::JointPose& msg);
 
   // Preview /w footstep
   void makeFootstepUsingPlanner();

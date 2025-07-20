@@ -26,7 +26,7 @@ find_package(
              kuroko_action_module
              robotis_controller_msgs
              kuroko_walking_module_msgs
-             op3_online_walking_module_msgs
+             kuroko_online_walking_module_msgs
              humanoid_nav_msgs
              tf
 )
@@ -96,7 +96,7 @@ catkin_package(
     kuroko_action_module
     robotis_controller_msgs
     kuroko_walking_module_msgs
-    op3_online_walking_module_msgs
+    kuroko_online_walking_module_msgs
     humanoid_nav_msgs
 )
 #catkin_python_setup()

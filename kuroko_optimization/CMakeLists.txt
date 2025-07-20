@@ -17,7 +17,7 @@ find_package(
              std_msgs
              robotis_math
              scilab_optimization
-             op3_online_walking_module_msgs
+             kuroko_online_walking_module_msgs
 )
 
 ################################################################################
@@ -34,7 +34,7 @@ catkin_package(
     std_msgs
     robotis_math
     scilab_optimization
-    op3_online_walking_module_msgs
+    kuroko_online_walking_module_msgs
 )
 
 ################################################################################

@@ -121,8 +121,8 @@ bool KurokoOptimization::calcPreviewParam(double control_cycle, double lipm_heig
   return true;
 }
 
-bool KurokoOptimization::getPreviewMatrixCallback(op3_online_walking_module_msgs::GetPreviewMatrix::Request& req,
-                                                  op3_online_walking_module_msgs::GetPreviewMatrix::Response& res)
+bool KurokoOptimization::getPreviewMatrixCallback(kuroko_online_walking_module_msgs::GetPreviewMatrix::Request& req,
+                                                  kuroko_online_walking_module_msgs::GetPreviewMatrix::Response& res)
 {
   double control_cycle = req.req.control_cycle;
   double lipm_height = req.req.lipm_height;

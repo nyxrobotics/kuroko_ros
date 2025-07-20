@@ -15,7 +15,7 @@
   <depend>robotis_controller_msgs</depend>
   <depend>op3_walking_module_msgs</depend>
   <depend>kuroko_walking_module_msgs</depend>
-  <depend>op3_online_walking_module_msgs</depend>
+  <depend>kuroko_online_walking_module_msgs</depend>
   <depend>cmake_modules</depend>
   <depend>dynamixel_sdk</depend>
   <depend>robotis_framework_common</depend>

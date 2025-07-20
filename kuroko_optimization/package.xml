@@ -12,12 +12,12 @@
   <build_depend>std_msgs</build_depend>
   <build_depend>robotis_math</build_depend>
   <build_depend>scilab_optimization</build_depend>
-  <build_depend>op3_online_walking_module_msgs</build_depend>
+  <build_depend>kuroko_online_walking_module_msgs</build_depend>
 
   <exec_depend>roscpp</exec_depend>
   <exec_depend>std_msgs</exec_depend>
   <exec_depend>robotis_math</exec_depend>
   <exec_depend>scilab_optimization</exec_depend>
-  <exec_depend>op3_online_walking_module_msgs</exec_depend>
+  <exec_depend>kuroko_online_walking_module_msgs</exec_depend>
 
 </package>

@@ -397,8 +397,6 @@ void MainWindow::updateWalkingParams(kuroko_walking_module_msgs::WalkingParam pa
   ui_.dSpinBox_y_step->setValue(params.y_step);
   ui_.dSpinBox_z_step->setValue(params.z_step);
   ui_.dSpinBox_y_step->setValue(params.yaw_step);
-  ui_.checkBox_move_aim_on->setChecked(params.move_aim_on);
-  ui_.checkBox_move_aim_off->setChecked(!params.move_aim_on);
   // balance
   ui_.checkBox_balance_on->setChecked(params.balance_enable);
   ui_.checkBox_balance_off->setChecked(!params.balance_enable);
@@ -428,13 +426,11 @@ void MainWindow::applyWalkingParams()
   walking_param.period_time = ui_.dSpinBox_period_time->value() * 0.001;  // ms -> s
   walking_param.dsp_ratio = ui_.dSpinBox_dsp_ratio->value();
   walking_param.step_fb_ratio = ui_.dSpinBox_step_fb_ratio->value();
-  ;
   // walking
   walking_param.x_step = ui_.dSpinBox_x_step->value();
   walking_param.y_step = ui_.dSpinBox_y_step->value();
   walking_param.z_step = ui_.dSpinBox_z_step->value();
   walking_param.yaw_step = ui_.dSpinBox_a_step->value() * DEGREE2RADIAN;
-  walking_param.move_aim_on = ui_.checkBox_move_aim_on->isChecked();
   // balance
   walking_param.balance_enable = ui_.checkBox_balance_on->isChecked();
   walking_param.balance_gyro_roll_gain = ui_.dSpinBox_balance_gyro_y_gain->value();

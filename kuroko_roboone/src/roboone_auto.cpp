@@ -110,7 +110,6 @@ void RobooneAuto::setWalkingParams(double x_step, double y_step, double yaw_step
 
   // Fixed initial values for other fields
   params.z_step = 0.12;
-  params.move_aim_on = false;
   params.balance_enable = false;
   params.balance_gyro_roll_gain = 0.3499999940395355;
   params.balance_gyro_pitch_gain = 0.30000001192092896;

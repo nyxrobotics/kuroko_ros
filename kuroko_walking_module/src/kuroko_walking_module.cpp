@@ -275,24 +275,6 @@ void WalkingModule::updateMovementParam()
   z_step_shift_ = z_step_ / 2;
   z_swing_amplitude_ = walking_param_.z_swing_amplitude;
   z_swing_amplitude_shift_ = z_swing_amplitude_;
-
-  // Direction
-  if (!static_cast<bool>(walking_param_.move_aim_on))
-  {
-    yaw_step_ = walking_param_.yaw_step / 2;
-    if (yaw_step_ > 0)
-      yaw_step_shift_ = yaw_step_;
-    else
-      yaw_step_shift_ = -yaw_step_;
-  }
-  else
-  {
-    yaw_step_ = -walking_param_.yaw_step / 2;
-    if (yaw_step_ > 0)
-      yaw_step_shift_ = -yaw_step_;
-    else
-      yaw_step_shift_ = yaw_step_;
-  }
 }
 
 void WalkingModule::updatePoseParam()
@@ -842,7 +824,6 @@ void WalkingModule::loadWalkingParam(const std::string& path)
   // walking_param_.x_step = doc["x_step"].as<double>();
   // walking_param_.y_step = doc["y_step"].as<double>();
   // walking_param_.yaw_step = doc["yaw_step"].as<double>();
-  // walking_param_.move_aim_on = doc["move_aim_on"].as<double>();
 
   // balance
   // walking_param_.balance_enable = doc["balance_enable"].as<uint8_t>();

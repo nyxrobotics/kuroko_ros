@@ -40,6 +40,3 @@ float32 shoulder_swing_amplitude
 int32 p_gain
 int32 i_gain
 int32 d_gain
-
-########## move aim parameter ##########
-bool move_aim_on

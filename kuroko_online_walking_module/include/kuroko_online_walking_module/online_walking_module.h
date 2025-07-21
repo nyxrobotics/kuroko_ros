@@ -287,10 +287,10 @@ private:
   double foot_roll_torque_cut_off_frequency_;
   double foot_pitch_torque_cut_off_frequency_;
 
-  double balance_hip_roll_gain_;
-  double balance_knee_gain_;
-  double balance_ankle_roll_gain_;
-  double balance_ankle_pitch_gain_;
+  double balance_gyro_roll_gain_;
+  double balance_gyro_pitch_gain_;
+  double balance_gyro_y_gain_;
+  double balance_gyro_x_gain_;
 
   // Balance Control : Desired Force
   double balance_l_foot_force_x_;

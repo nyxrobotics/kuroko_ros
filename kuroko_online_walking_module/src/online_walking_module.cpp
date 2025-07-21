@@ -351,10 +351,10 @@ void OnlineWalkingModule::parseBalanceGainData(const std::string& path)
   foot_roll_torque_cut_off_frequency_ = doc["foot_roll_torque_cut_off_frequency"].as<double>();
   foot_pitch_torque_cut_off_frequency_ = doc["foot_pitch_torque_cut_off_frequency"].as<double>();
 
-  balance_hip_roll_gain_ = doc["balance_hip_roll_gain"].as<double>();
-  balance_knee_gain_ = doc["balance_knee_gain"].as<double>();
-  balance_ankle_roll_gain_ = doc["balance_ankle_roll_gain"].as<double>();
-  balance_ankle_pitch_gain_ = doc["balance_ankle_pitch_gain"].as<double>();
+  balance_gyro_roll_gain_ = doc["balance_gyro_roll_gain"].as<double>();
+  balance_gyro_pitch_gain_ = doc["balance_gyro_pitch_gain"].as<double>();
+  balance_gyro_y_gain_ = doc["balance_gyro_y_gain"].as<double>();
+  balance_gyro_x_gain_ = doc["balance_gyro_x_gain"].as<double>();
 
   if (!doc["foot_roll_gyro_p_gain"])
     ROS_ERROR("[ERROR] foot_roll_gyro_p_gain not found in YAML!");
@@ -1534,14 +1534,14 @@ void OnlineWalkingModule::gyroFeedback(const double& roll_gyro_err, const double
   // adjust balance offset
   balance_angle.resize(joint_name_.size(), 0.0);
 
-  balance_angle[getJointIndex("hip_r_roll")] = -1.0 * roll_gyro_err * balance_hip_roll_gain_;
-  balance_angle[getJointIndex("thigh_r_active")] = 1.0 * pitch_gyro_err * balance_knee_gain_;
-  balance_angle[getJointIndex("shin_r_active")] = -1.0 * pitch_gyro_err * balance_ankle_pitch_gain_;
-  balance_angle[getJointIndex("ankle_r_roll")] = -1.0 * roll_gyro_err * balance_ankle_roll_gain_;
-  balance_angle[getJointIndex("hip_l_roll")] = -1.0 * roll_gyro_err * balance_hip_roll_gain_;
-  balance_angle[getJointIndex("thigh_l_active")] = -1.0 * pitch_gyro_err * balance_knee_gain_;
-  balance_angle[getJointIndex("shin_l_active")] = 1.0 * pitch_gyro_err * balance_ankle_pitch_gain_;
-  balance_angle[getJointIndex("ankle_l_roll")] = -1.0 * roll_gyro_err * balance_ankle_roll_gain_;
+  balance_angle[getJointIndex("hip_r_roll")] = -1.0 * roll_gyro_err * balance_gyro_roll_gain_;
+  balance_angle[getJointIndex("thigh_r_active")] = 1.0 * pitch_gyro_err * balance_gyro_pitch_gain_;
+  balance_angle[getJointIndex("shin_r_active")] = -1.0 * pitch_gyro_err * balance_gyro_x_gain_;
+  balance_angle[getJointIndex("ankle_r_roll")] = -1.0 * roll_gyro_err * balance_gyro_y_gain_;
+  balance_angle[getJointIndex("hip_l_roll")] = -1.0 * roll_gyro_err * balance_gyro_roll_gain_;
+  balance_angle[getJointIndex("thigh_l_active")] = -1.0 * pitch_gyro_err * balance_gyro_pitch_gain_;
+  balance_angle[getJointIndex("shin_l_active")] = 1.0 * pitch_gyro_err * balance_gyro_x_gain_;
+  balance_angle[getJointIndex("ankle_l_roll")] = -1.0 * roll_gyro_err * balance_gyro_y_gain_;
 }
 
 void OnlineWalkingModule::process(std::map<std::string, robotis_framework::Dynamixel*> dxls,

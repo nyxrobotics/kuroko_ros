@@ -126,7 +126,6 @@ private:
   std::map<std::string, int> joint_table_;
   int walking_state_;
   int init_pose_count_;
-  double previous_x_step_;
 
   // Leg parameters
   double leg_default_length_;
@@ -165,26 +164,43 @@ private:
   double x_swing_amplitude_;
   double x_swing_amplitude_shift_;
   double x_stance_phase_shift_;
-  double x_step_;
   double x_step_shift_;
   double y_swing_phase_shift_;
   double y_swing_amplitude_;
   double y_swing_amplitude_shift_;
   double y_stance_phase_shift_;
-  double y_step_;
   double y_step_shift_;
   double z_swing_phase_shift_;
   double z_swing_amplitude_;
   double z_swing_amplitude_shift_;
   double z_stance_phase_shift_;
-  double z_step_;
   double z_step_shift_;
   double yaw_stance_phase_shift_;
-  double yaw_step_;
   double yaw_step_shift_;
 
-  double hip_swing_amplitude_;
-  double hip_stance_amplitude_;
+  double x_step_;
+  double y_step_;
+  double z_step_;
+  double yaw_step_;
+
+  double previous_x_step_;
+  double previous_y_step_;
+  double previous_z_step_;
+  double previous_yaw_step_;
+
+  double x_accel_max_;
+  double y_accel_max_;
+  double z_accel_max_;
+  double yaw_accel_max_;
+
+  double y_brake_max_;
+  double x_brake_max_;
+  double z_brake_max_;
+  double yaw_brake_max_;
+
+  double hip_swing_up_amplitude_;
+  double hip_swing_down_amplitude_;
+  double chest_swing_amplitude_;
   double shoulder_swing_amplitude_;
 
   bool ctrl_running_;

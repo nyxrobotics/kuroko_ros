@@ -402,13 +402,13 @@ void MainWindow::updateWalkingParams(kuroko_walking_module_msgs::WalkingParam pa
   // balance
   ui_.checkBox_balance_on->setChecked(params.balance_enable);
   ui_.checkBox_balance_off->setChecked(!params.balance_enable);
-  ui_.dSpinBox_hip_roll_gain->setValue(params.balance_hip_roll_gain);
-  ui_.dSpinBox_knee_gain->setValue(params.balance_knee_gain);
-  ui_.dSpinBox_ankle_roll_gain->setValue(params.balance_ankle_roll_gain);
-  ui_.dSpinBox_ankle_pitch_gain->setValue(params.balance_ankle_pitch_gain);
+  ui_.dSpinBox_hip_roll_gain->setValue(params.balance_gyro_roll_gain);
+  ui_.dSpinBox_knee_gain->setValue(params.balance_gyro_pitch_gain);
+  ui_.dSpinBox_ankle_roll_gain->setValue(params.balance_gyro_y_gain);
+  ui_.dSpinBox_ankle_pitch_gain->setValue(params.balance_gyro_x_gain);
   ui_.dSpinBox_y_swing_amplitude->setValue(params.y_swing_amplitude);
   ui_.dSpinBox_z_swing_amplitude->setValue(params.z_swing_amplitude);
-  ui_.dSpinBox_hip_swing_amplitude->setValue(params.hip_swing_amplitude * RADIAN2DEGREE);
+  ui_.dSpinBox_hip_swing_up_amplitude_->setValue(params.hip_swing_up_amplitude_ * RADIAN2DEGREE);
   ui_.dSpinBox_shoulder_swing_amplitude->setValue(params.shoulder_swing_amplitude);
 }
 
@@ -437,13 +437,13 @@ void MainWindow::applyWalkingParams()
   walking_param.move_aim_on = ui_.checkBox_move_aim_on->isChecked();
   // balance
   walking_param.balance_enable = ui_.checkBox_balance_on->isChecked();
-  walking_param.balance_hip_roll_gain = ui_.dSpinBox_hip_roll_gain->value();
-  walking_param.balance_knee_gain = ui_.dSpinBox_knee_gain->value();
-  walking_param.balance_ankle_roll_gain = ui_.dSpinBox_ankle_roll_gain->value();
-  walking_param.balance_ankle_pitch_gain = ui_.dSpinBox_ankle_pitch_gain->value();
+  walking_param.balance_gyro_roll_gain = ui_.dSpinBox_hip_roll_gain->value();
+  walking_param.balance_gyro_pitch_gain = ui_.dSpinBox_knee_gain->value();
+  walking_param.balance_gyro_y_gain = ui_.dSpinBox_ankle_roll_gain->value();
+  walking_param.balance_gyro_x_gain = ui_.dSpinBox_ankle_pitch_gain->value();
   walking_param.y_swing_amplitude = ui_.dSpinBox_y_swing_amplitude->value();
   walking_param.z_swing_amplitude = ui_.dSpinBox_z_swing_amplitude->value();
-  walking_param.hip_swing_amplitude = ui_.dSpinBox_hip_swing_amplitude->value() * DEGREE2RADIAN;
+  walking_param.hip_swing_up_amplitude_ = ui_.dSpinBox_hip_swing_up_amplitude_->value() * DEGREE2RADIAN;
   walking_param.shoulder_swing_amplitude = ui_.dSpinBox_shoulder_swing_amplitude->value();
 
   qnode_kuroko_.applyWalkingParam(walking_param);

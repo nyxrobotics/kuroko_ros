@@ -112,14 +112,14 @@ void RobooneAuto::setWalkingParams(double x_step, double y_step, double yaw_step
   params.z_step = 0.12;
   params.move_aim_on = false;
   params.balance_enable = false;
-  params.balance_hip_roll_gain = 0.3499999940395355;
-  params.balance_knee_gain = 0.30000001192092896;
-  params.balance_ankle_roll_gain = 0.699999988079071;
-  params.balance_ankle_pitch_gain = 0.8999999761581421;
+  params.balance_gyro_roll_gain = 0.3499999940395355;
+  params.balance_gyro_pitch_gain = 0.30000001192092896;
+  params.balance_gyro_y_gain = 0.699999988079071;
+  params.balance_gyro_x_gain = 0.8999999761581421;
   params.y_swing_amplitude = 0.016;
   params.z_swing_amplitude = 0.003;
   params.shoulder_swing_amplitude = 1.5;
-  params.hip_swing_amplitude = 0.008726646192371845;
+  params.hip_swing_up_amplitude_ = 0.008726646192371845;
   params.init_hip_pitch_offset = 0;
 
   // PID gains

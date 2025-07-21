@@ -11,8 +11,8 @@ step_forward_back_ratio: 0
 foot_height: 0.12
 swing_right_left: 0.016
 swing_top_down: 0.003
-hip_swing_amplitude: 0.4999999961268166
-balance_hip_roll_gain: -0.1
-balance_knee_gain: -0.02
-balance_ankle_roll_gain: -0.2
-balance_ankle_pitch_gain: 0.02
+hip_swing_up_amplitude_: 0.4999999961268166
+balance_gyro_roll_gain: -0.1
+balance_gyro_pitch_gain: -0.02
+balance_gyro_y_gain: -0.2
+balance_gyro_x_gain: 0.02

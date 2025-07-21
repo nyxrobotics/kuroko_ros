@@ -17,24 +17,29 @@ float32 x_step
 float32 y_step
 float32 z_step
 float32 yaw_step
-bool move_aim_on
 
 ########## balance parameter ##########
 bool balance_enable
-float32 balance_hip_roll_gain
-float32 balance_knee_gain
-float32 balance_ankle_roll_gain
-float32 balance_ankle_pitch_gain
+float32 balance_gyro_x_gain
+float32 balance_gyro_y_gain
+float32 balance_gyro_pitch_gain
+float32 balance_gyro_roll_gain
 
 ########## swing parameter ##########
 float32 y_swing_amplitude
 float32 z_swing_amplitude
+float32 roll_swing_amplitude
+
+float32 hip_swing_up_amplitude_
+float32 hip_swing_donw_amplitude_
+
 float32 chest_swing_amplitude
 float32 shoulder_swing_amplitude
-float32 hip_swing_amplitude
-float32 hip_swing_phase
 
 ########## gain parameter ##########
 int32 p_gain
 int32 i_gain
 int32 d_gain
+
+########## move aim parameter ##########
+bool move_aim_on

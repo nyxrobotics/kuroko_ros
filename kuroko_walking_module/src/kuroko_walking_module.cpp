@@ -247,7 +247,7 @@ void WalkingModule::updateTimeParam()
   phase3_time_ = (r_ssp_start_time_ + r_ssp_end_time_) / 2;
 
   hip_swing_up_amplitude_ = walking_param_.hip_swing_up_amplitude_;
-  hip_swing_down_amplitude_ = hip_swing_up_amplitude_ * 0.35;
+  hip_swing_down_amplitude_ = walking_param_.hip_swing_down_amplitude_;
   shoulder_swing_amplitude_ = walking_param_.shoulder_swing_amplitude;
 }
 
@@ -503,7 +503,7 @@ void WalkingModule::processPhase(const double& time_unit)
 bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
 {
   Pose3D swing, right_leg_move, left_leg_move;
-  double hip_swing_up_amplitude_r, hip_swing_up_amplitude_l;
+  double hip_swing_r, hip_swing_l;
   std::vector<double> right_target_point(6, 0);
   std::vector<double> left_target_point(6, 0);
 
@@ -546,8 +546,8 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
     right_leg_move.yaw_ = wSin(l_ssp_start_time_, yaw_stance_period_time_,
                                yaw_stance_phase_shift_ + 2 * M_PI / yaw_stance_period_time_ * l_ssp_start_time_,
                                -yaw_step_, -yaw_step_shift_);
-    hip_swing_up_amplitude_l = 0;
-    hip_swing_up_amplitude_r = 0;
+    hip_swing_l = 0;
+    hip_swing_r = 0;
   }
   else if (time_ <= l_ssp_end_time_)
   {
@@ -575,10 +575,8 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
     right_leg_move.yaw_ = wSin(time_, yaw_stance_period_time_,
                                yaw_stance_phase_shift_ + 2 * M_PI / yaw_stance_period_time_ * l_ssp_start_time_,
                                -yaw_step_, -yaw_step_shift_);
-    hip_swing_up_amplitude_l =
-        wSin(time_, z_stance_period_time_, z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * l_ssp_start_time_,
-             hip_swing_down_amplitude_ / 2, hip_swing_down_amplitude_ / 2);
-    hip_swing_up_amplitude_r =
+    hip_swing_l = 0;
+    hip_swing_r =
         wSin(time_, z_stance_period_time_, z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * l_ssp_start_time_,
              -hip_swing_up_amplitude_ / 2, -hip_swing_up_amplitude_ / 2);
   }
@@ -608,8 +606,8 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
     right_leg_move.yaw_ = wSin(l_ssp_end_time_, yaw_stance_period_time_,
                                yaw_stance_phase_shift_ + 2 * M_PI / yaw_stance_period_time_ * l_ssp_start_time_,
                                -yaw_step_, -yaw_step_shift_);
-    hip_swing_up_amplitude_l = 0;
-    hip_swing_up_amplitude_r = 0;
+    hip_swing_l = 0;
+    hip_swing_r = 0;
   }
   else if (time_ <= r_ssp_end_time_)
   {
@@ -637,12 +635,10 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
     right_leg_move.yaw_ = wSin(time_, yaw_stance_period_time_,
                                yaw_stance_phase_shift_ + 2 * M_PI / yaw_stance_period_time_ * r_ssp_start_time_ + M_PI,
                                -yaw_step_, -yaw_step_shift_);
-    hip_swing_up_amplitude_l =
+    hip_swing_l =
         wSin(time_, z_stance_period_time_, z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * r_ssp_start_time_,
              hip_swing_up_amplitude_ / 2, hip_swing_up_amplitude_ / 2);
-    hip_swing_up_amplitude_r =
-        wSin(time_, z_stance_period_time_, z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * r_ssp_start_time_,
-             -hip_swing_down_amplitude_ / 2, -hip_swing_down_amplitude_ / 2);
+    hip_swing_r = 0;
   }
   else
   {
@@ -670,8 +666,8 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
     right_leg_move.yaw_ = wSin(r_ssp_end_time_, yaw_stance_period_time_,
                                yaw_stance_phase_shift_ + 2 * M_PI / yaw_stance_period_time_ * r_ssp_start_time_ + M_PI,
                                -yaw_step_, -yaw_step_shift_);
-    hip_swing_up_amplitude_l = 0;
-    hip_swing_up_amplitude_r = 0;
+    hip_swing_l = 0;
+    hip_swing_r = 0;
   }
 
   left_leg_move.roll_ = 0;
@@ -741,8 +737,8 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
 
   // Add offset angles [rad]
   // Hip Roll Offset
-  right_joints[0] += kuroko_kinematics_->getJointDirection("hip_r_roll") * hip_swing_up_amplitude_r;
-  left_joints[0] += kuroko_kinematics_->getJointDirection("hip_l_roll") * hip_swing_up_amplitude_l;
+  right_joints[0] += kuroko_kinematics_->getJointDirection("hip_r_roll") * hip_swing_r;
+  left_joints[0] += kuroko_kinematics_->getJointDirection("hip_l_roll") * hip_swing_l;
   // Hip Pitch Offset
   right_joints[1] -= kuroko_kinematics_->getJointDirection("hip_r_pitch") * init_hip_pitch_offset_;
   left_joints[1] -= kuroko_kinematics_->getJointDirection("hip_l_pitch") * init_hip_pitch_offset_;

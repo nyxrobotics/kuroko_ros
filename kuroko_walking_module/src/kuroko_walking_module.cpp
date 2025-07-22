@@ -105,7 +105,7 @@ void WalkingModule::initialize(const int control_cycle_msec, robotis_framework::
   walking_param_.balance_gyro_x_gain = 0.9;
   walking_param_.y_swing_amplitude = 0.020;
   walking_param_.z_swing_amplitude = 0.005;
-  walking_param_.hip_swing_up_amplitude_ = 3.0 * DEGREE2RADIAN;
+  walking_param_.hip_swing_up_amplitude = 3.0 * DEGREE2RADIAN;
   walking_param_.shoulder_swing_amplitude = 1.5;
 
   // member variable
@@ -246,8 +246,8 @@ void WalkingModule::updateTimeParam()
   phase2_time_ = (l_ssp_end_time_ + r_ssp_start_time_) / 2;
   phase3_time_ = (r_ssp_start_time_ + r_ssp_end_time_) / 2;
 
-  hip_swing_up_amplitude_ = walking_param_.hip_swing_up_amplitude_;
-  hip_swing_down_amplitude_ = walking_param_.hip_swing_down_amplitude_;
+  hip_swing_up_amplitude_ = walking_param_.hip_swing_up_amplitude;
+  hip_swing_down_amplitude_ = walking_param_.hip_swing_down_amplitude;
   shoulder_swing_amplitude_ = walking_param_.shoulder_swing_amplitude;
 }
 
@@ -401,8 +401,9 @@ void WalkingModule::process(std::map<std::string, robotis_framework::Dynamixel*>
       ROS_INFO_STREAM_COND(debug_, "foot_height: " << walking_param_.foot_height);
       ROS_INFO_STREAM_COND(debug_, "y_swing_amplitude: " << walking_param_.y_swing_amplitude);
       ROS_INFO_STREAM_COND(debug_, "z_swing_amplitude: " << walking_param_.z_swing_amplitude);
+      ROS_INFO_STREAM_COND(debug_, "hip_swing_up_amplitude: " << walking_param_.hip_swing_up_amplitude * RADIAN2DEGREE);
       ROS_INFO_STREAM_COND(debug_,
-                           "hip_swing_up_amplitude_: " << walking_param_.hip_swing_up_amplitude_ * RADIAN2DEGREE);
+                           "hip_swing_down_amplitude: " << walking_param_.hip_swing_down_amplitude * RADIAN2DEGREE);
       ROS_INFO_STREAM_COND(debug_, "shoulder_swing_amplitude: " << walking_param_.shoulder_swing_amplitude);
       ROS_INFO_STREAM_COND(debug_, "balance_gyro_roll_gain: " << walking_param_.balance_gyro_roll_gain);
       ROS_INFO_STREAM_COND(debug_, "balance_gyro_pitch_gain: " << walking_param_.balance_gyro_pitch_gain);
@@ -548,6 +549,8 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
     right_leg_move.yaw_ = wSin(l_ssp_start_time_, yaw_stance_period_time_,
                                yaw_stance_phase_shift_ + 2 * M_PI / yaw_stance_period_time_ * l_ssp_start_time_,
                                -yaw_step_, -yaw_step_shift_);
+    hip_swing_l = 0;
+    hip_swing_r = 0;
   }
   else if (time_ <= l_ssp_end_time_)
   {
@@ -575,14 +578,12 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
     right_leg_move.yaw_ = wSin(time_, yaw_stance_period_time_,
                                yaw_stance_phase_shift_ + 2 * M_PI / yaw_stance_period_time_ * l_ssp_start_time_,
                                -yaw_step_, -yaw_step_shift_);
-    if (hip_swing_up_amplitude_ > 0.0001 &&
-        (l_ssp_end_time_ - time_) / (l_ssp_end_time_ - l_ssp_start_time_) <
-            hip_swing_up_amplitude_ / (hip_swing_up_amplitude_ + hip_swing_down_amplitude_))
-    {
-      hip_swing_r = wSin(time_, z_stance_period_time_,
-                         z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * l_ssp_start_time_,
-                         -hip_swing_up_amplitude_ / 2, -hip_swing_up_amplitude_ / 2);
-    }
+    hip_swing_l =
+        wSin(time_, z_stance_period_time_, z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * l_ssp_start_time_,
+             hip_swing_down_amplitude_ / 2, hip_swing_down_amplitude_ / 2);
+    hip_swing_r =
+        wSin(time_, z_stance_period_time_, z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * l_ssp_start_time_,
+             -hip_swing_up_amplitude_ / 2, -hip_swing_up_amplitude_ / 2);
   }
   else if (time_ <= r_ssp_start_time_)
   {
@@ -610,6 +611,8 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
     right_leg_move.yaw_ = wSin(l_ssp_end_time_, yaw_stance_period_time_,
                                yaw_stance_phase_shift_ + 2 * M_PI / yaw_stance_period_time_ * l_ssp_start_time_,
                                -yaw_step_, -yaw_step_shift_);
+    hip_swing_l = 0;
+    hip_swing_r = 0;
   }
   else if (time_ <= r_ssp_end_time_)
   {
@@ -640,6 +643,9 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
     hip_swing_l =
         wSin(time_, z_stance_period_time_, z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * r_ssp_start_time_,
              hip_swing_up_amplitude_ / 2, hip_swing_up_amplitude_ / 2);
+    hip_swing_r =
+        wSin(time_, z_stance_period_time_, z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * r_ssp_start_time_,
+             -hip_swing_down_amplitude_ / 2, -hip_swing_down_amplitude_ / 2);
   }
   else
   {
@@ -667,6 +673,8 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
     right_leg_move.yaw_ = wSin(r_ssp_end_time_, yaw_stance_period_time_,
                                yaw_stance_phase_shift_ + 2 * M_PI / yaw_stance_period_time_ * r_ssp_start_time_ + M_PI,
                                -yaw_step_, -yaw_step_shift_);
+    hip_swing_l = 0;
+    hip_swing_r = 0;
   }
 
   left_leg_move.roll_ = 0;
@@ -831,8 +839,8 @@ void WalkingModule::loadWalkingParam(const std::string& path)
   walking_param_.y_swing_amplitude = doc["y_swing_amplitude"].as<double>();
   walking_param_.z_swing_amplitude = doc["z_swing_amplitude"].as<double>();
   walking_param_.roll_swing_amplitude = doc["roll_swing_amplitude"].as<double>() * DEGREE2RADIAN;
-  walking_param_.hip_swing_up_amplitude_ = doc["hip_swing_up_amplitude_"].as<double>() * DEGREE2RADIAN;
-  walking_param_.hip_swing_down_amplitude_ = doc["hip_swing_down_amplitude_"].as<double>() * DEGREE2RADIAN;
+  walking_param_.hip_swing_up_amplitude = doc["hip_swing_up_amplitude"].as<double>() * DEGREE2RADIAN;
+  walking_param_.hip_swing_down_amplitude = doc["hip_swing_down_amplitude"].as<double>() * DEGREE2RADIAN;
   walking_param_.chest_swing_amplitude = doc["chest_swing_amplitude"].as<double>() * DEGREE2RADIAN;
   walking_param_.shoulder_swing_amplitude = doc["shoulder_swing_amplitude"].as<double>() * DEGREE2RADIAN;
 }
@@ -857,12 +865,12 @@ void WalkingModule::saveWalkingParam(std::string& path)
   out_emitter << YAML::Key << "y_swing_amplitude" << YAML::Value << walking_param_.y_swing_amplitude;
   out_emitter << YAML::Key << "z_swing_amplitude" << YAML::Value << walking_param_.z_swing_amplitude;
   out_emitter << YAML::Key << "roll_swing_amplitude" << YAML::Value << walking_param_.roll_swing_amplitude;
-  out_emitter << YAML::Key << "hip_swing_up_amplitude_" << YAML::Value
-              << walking_param_.hip_swing_up_amplitude_ * RADIAN2DEGREE;
-  out_emitter << YAML::Key << "hip_swing_down_amplitude_" << YAML::Value
-              << walking_param_.hip_swing_down_amplitude_ * RADIAN2DEGREE;
   out_emitter << YAML::Key << "chest_swing_amplitude" << YAML::Value << walking_param_.chest_swing_amplitude;
   out_emitter << YAML::Key << "shoulder_swing_amplitude" << YAML::Value << walking_param_.shoulder_swing_amplitude;
+  out_emitter << YAML::Key << "hip_swing_up_amplitude" << YAML::Value
+              << walking_param_.hip_swing_up_amplitude * RADIAN2DEGREE;
+  out_emitter << YAML::Key << "hip_swing_down_amplitude" << YAML::Value
+              << walking_param_.hip_swing_down_amplitude * RADIAN2DEGREE;
   out_emitter << YAML::Key << "balance_gyro_roll_gain" << YAML::Value << walking_param_.balance_gyro_roll_gain;
   out_emitter << YAML::Key << "balance_gyro_pitch_gain" << YAML::Value << walking_param_.balance_gyro_pitch_gain;
   out_emitter << YAML::Key << "balance_gyro_y_gain" << YAML::Value << walking_param_.balance_gyro_y_gain;

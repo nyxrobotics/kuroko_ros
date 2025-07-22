@@ -637,7 +637,7 @@
                               </widget>
                             </item>
                             <item row="1" column="3">
-                              <widget class="QDoubleSpinBox" name="dSpinBox_hip_swing_up_amplitude_">
+                              <widget class="QDoubleSpinBox" name="dSpinBox_hip_swing_up_amplitude">
                                 <property name="suffix">
                                   <string> ﾟ</string>
                                 </property>

@@ -174,7 +174,6 @@ private:
   double z_swing_amplitude_;
   double z_swing_amplitude_shift_;
   double z_stance_phase_shift_;
-
   double foot_height_shift_;
   double yaw_stance_phase_shift_;
   double yaw_step_shift_;

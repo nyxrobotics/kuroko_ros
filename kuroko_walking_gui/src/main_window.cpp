@@ -406,7 +406,7 @@ void MainWindow::updateWalkingParams(kuroko_walking_module_msgs::WalkingParam pa
   ui_.dSpinBox_balance_gyro_pitch_gain->setValue(params.balance_gyro_x_gain);
   ui_.dSpinBox_y_swing_amplitude->setValue(params.y_swing_amplitude);
   ui_.dSpinBox_z_swing_amplitude->setValue(params.z_swing_amplitude);
-  ui_.dSpinBox_hip_swing_up_amplitude_->setValue(params.hip_swing_up_amplitude_ * RADIAN2DEGREE);
+  ui_.dSpinBox_hip_swing_up_amplitude->setValue(params.hip_swing_up_amplitude * RADIAN2DEGREE);
   ui_.dSpinBox_shoulder_swing_amplitude->setValue(params.shoulder_swing_amplitude);
 }
 
@@ -439,7 +439,7 @@ void MainWindow::applyWalkingParams()
   walking_param.balance_gyro_x_gain = ui_.dSpinBox_balance_gyro_pitch_gain->value();
   walking_param.y_swing_amplitude = ui_.dSpinBox_y_swing_amplitude->value();
   walking_param.z_swing_amplitude = ui_.dSpinBox_z_swing_amplitude->value();
-  walking_param.hip_swing_up_amplitude_ = ui_.dSpinBox_hip_swing_up_amplitude_->value() * DEGREE2RADIAN;
+  walking_param.hip_swing_up_amplitude = ui_.dSpinBox_hip_swing_up_amplitude->value() * DEGREE2RADIAN;
   walking_param.shoulder_swing_amplitude = ui_.dSpinBox_shoulder_swing_amplitude->value();
 
   qnode_kuroko_.applyWalkingParam(walking_param);

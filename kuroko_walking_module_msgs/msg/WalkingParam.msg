@@ -30,8 +30,8 @@ float32 y_swing_amplitude
 float32 z_swing_amplitude
 float32 roll_swing_amplitude
 
-float32 hip_swing_up_amplitude_
-float32 hip_swing_down_amplitude_
+float32 hip_swing_up_amplitude
+float32 hip_swing_down_amplitude
 
 float32 chest_swing_amplitude
 float32 shoulder_swing_amplitude

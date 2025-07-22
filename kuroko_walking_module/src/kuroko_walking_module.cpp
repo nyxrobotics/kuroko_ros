@@ -15,7 +15,7 @@ WalkingModule::WalkingModule() : control_cycle_msec_(8), debug_(false)
   walking_state_ = WALK_READY;
   previous_x_step_ = 0;
   previous_y_step_ = 0;
-  previous_z_step_ = 0;
+  previous_foot_height_ = 0;
   previous_yaw_step_ = 0;
 
   x_accel_max_ = 0.1;
@@ -91,11 +91,11 @@ void WalkingModule::initialize(const int control_cycle_msec, robotis_framework::
   // time
   walking_param_.period_time = 600 * 0.001;
   walking_param_.dsp_ratio = 0.1;
-  walking_param_.step_fb_ratio = 0.28;
+  walking_param_.step_forward_back_ratio = 0.28;
   // walking
   walking_param_.x_step = 0.0;
   walking_param_.y_step = 0.0;
-  walking_param_.z_step = 0.040;  // foot height
+  walking_param_.foot_height = 0.040;  // foot height
   walking_param_.yaw_step = 0.0;
   // balance
   walking_param_.balance_enable = false;
@@ -257,7 +257,7 @@ void WalkingModule::updateMovementParam()
   x_step_ = walking_param_.x_step;
   if (previous_x_step_ == 0)
     x_step_ *= 0.5;
-  x_swing_amplitude_ = x_step_ * walking_param_.step_fb_ratio;
+  x_swing_amplitude_ = x_step_ * walking_param_.step_forward_back_ratio;
 
   // Right/Left
   y_step_ = walking_param_.y_step / 2;
@@ -269,10 +269,10 @@ void WalkingModule::updateMovementParam()
     y_step_shift_ = -y_step_;
   y_swing_amplitude_ = walking_param_.y_swing_amplitude + y_step_shift_ * 0.04;
 
-  z_step_ = walking_param_.z_step / 2;
-  if (previous_z_step_ == 0)
-    z_step_ *= 0.5;
-  z_step_shift_ = z_step_ / 2;
+  foot_height_ = walking_param_.foot_height / 2;
+  if (previous_foot_height_ == 0)
+    foot_height_ *= 0.5;
+  foot_height_shift_ = foot_height_ / 2;
   z_swing_amplitude_ = walking_param_.z_swing_amplitude;
   z_swing_amplitude_shift_ = z_swing_amplitude_;
 }
@@ -331,7 +331,7 @@ void WalkingModule::process(std::map<std::string, robotis_framework::Dynamixel*>
       walking_state_ = WALK_READY;
       previous_x_step_ = 0;
       previous_y_step_ = 0;
-      previous_z_step_ = 0;
+      previous_foot_height_ = 0;
       previous_yaw_step_ = 0;
       if (debug_)
         std::cout << "End moving to Init : " << init_pose_count_ << std::endl;
@@ -397,10 +397,10 @@ void WalkingModule::process(std::map<std::string, robotis_framework::Dynamixel*>
       ROS_INFO_STREAM_COND(debug_, "init_hip_pitch_offset: " << walking_param_.init_hip_pitch_offset * RADIAN2DEGREE);
       ROS_INFO_STREAM_COND(debug_, "period_time: " << walking_param_.period_time * 1000);
       ROS_INFO_STREAM_COND(debug_, "dsp_ratio: " << walking_param_.dsp_ratio);
-      ROS_INFO_STREAM_COND(debug_, "step_forward_back_ratio: " << walking_param_.step_fb_ratio);
-      ROS_INFO_STREAM_COND(debug_, "foot_height: " << walking_param_.z_step);
-      ROS_INFO_STREAM_COND(debug_, "swing_right_left: " << walking_param_.y_swing_amplitude);
-      ROS_INFO_STREAM_COND(debug_, "swing_top_down: " << walking_param_.z_swing_amplitude);
+      ROS_INFO_STREAM_COND(debug_, "step_forward_back_ratio: " << walking_param_.step_forward_back_ratio);
+      ROS_INFO_STREAM_COND(debug_, "foot_height: " << walking_param_.foot_height);
+      ROS_INFO_STREAM_COND(debug_, "y_swing_amplitude: " << walking_param_.y_swing_amplitude);
+      ROS_INFO_STREAM_COND(debug_, "z_swing_amplitude: " << walking_param_.z_swing_amplitude);
       ROS_INFO_STREAM_COND(debug_,
                            "hip_swing_up_amplitude_: " << walking_param_.hip_swing_up_amplitude_ * RADIAN2DEGREE);
       ROS_INFO_STREAM_COND(debug_, "shoulder_swing_amplitude: " << walking_param_.shoulder_swing_amplitude);
@@ -431,7 +431,7 @@ void WalkingModule::process(std::map<std::string, robotis_framework::Dynamixel*>
       time_ = 0;
       previous_x_step_ = walking_param_.x_step * 0.5;
       previous_y_step_ = walking_param_.y_step * 0.5;
-      previous_z_step_ = walking_param_.z_step * 0.5;
+      previous_foot_height_ = walking_param_.foot_height * 0.5;
       previous_yaw_step_ = walking_param_.yaw_step * 0.5;
     }
   }
@@ -459,7 +459,7 @@ void WalkingModule::processPhase(const double& time_unit)
 
         previous_x_step_ = 0;
         previous_y_step_ = 0;
-        previous_z_step_ = 0;
+        previous_foot_height_ = 0;
         previous_yaw_step_ = 0;
       }
     }
@@ -528,9 +528,9 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
     left_leg_move.y_ =
         wSin(l_ssp_start_time_, y_stance_period_time_,
              y_stance_phase_shift_ + 2 * M_PI / y_stance_period_time_ * l_ssp_start_time_, y_step_, y_step_shift_);
-    left_leg_move.z_ =
-        wSin(l_ssp_start_time_, z_stance_period_time_,
-             z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * l_ssp_start_time_, z_step_, z_step_shift_);
+    left_leg_move.z_ = wSin(l_ssp_start_time_, z_stance_period_time_,
+                            z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * l_ssp_start_time_, foot_height_,
+                            foot_height_shift_);
     left_leg_move.yaw_ = wSin(l_ssp_start_time_, yaw_stance_period_time_,
                               yaw_stance_phase_shift_ + 2 * M_PI / yaw_stance_period_time_ * l_ssp_start_time_,
                               yaw_step_, yaw_step_shift_);
@@ -540,9 +540,9 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
     right_leg_move.y_ =
         wSin(l_ssp_start_time_, y_stance_period_time_,
              y_stance_phase_shift_ + 2 * M_PI / y_stance_period_time_ * l_ssp_start_time_, -y_step_, -y_step_shift_);
-    right_leg_move.z_ =
-        wSin(r_ssp_start_time_, z_stance_period_time_,
-             z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * r_ssp_start_time_, z_step_, z_step_shift_);
+    right_leg_move.z_ = wSin(r_ssp_start_time_, z_stance_period_time_,
+                             z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * r_ssp_start_time_, foot_height_,
+                             foot_height_shift_);
     right_leg_move.yaw_ = wSin(l_ssp_start_time_, yaw_stance_period_time_,
                                yaw_stance_phase_shift_ + 2 * M_PI / yaw_stance_period_time_ * l_ssp_start_time_,
                                -yaw_step_, -yaw_step_shift_);
@@ -559,7 +559,7 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
              y_step_, y_step_shift_);
     left_leg_move.z_ =
         wSin(time_, z_stance_period_time_, z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * l_ssp_start_time_,
-             z_step_, z_step_shift_);
+             foot_height_, foot_height_shift_);
     left_leg_move.yaw_ = wSin(time_, yaw_stance_period_time_,
                               yaw_stance_phase_shift_ + 2 * M_PI / yaw_stance_period_time_ * l_ssp_start_time_,
                               yaw_step_, yaw_step_shift_);
@@ -569,9 +569,9 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
     right_leg_move.y_ =
         wSin(time_, y_stance_period_time_, y_stance_phase_shift_ + 2 * M_PI / y_stance_period_time_ * l_ssp_start_time_,
              -y_step_, -y_step_shift_);
-    right_leg_move.z_ =
-        wSin(r_ssp_start_time_, z_stance_period_time_,
-             z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * r_ssp_start_time_, z_step_, z_step_shift_);
+    right_leg_move.z_ = wSin(r_ssp_start_time_, z_stance_period_time_,
+                             z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * r_ssp_start_time_, foot_height_,
+                             foot_height_shift_);
     right_leg_move.yaw_ = wSin(time_, yaw_stance_period_time_,
                                yaw_stance_phase_shift_ + 2 * M_PI / yaw_stance_period_time_ * l_ssp_start_time_,
                                -yaw_step_, -yaw_step_shift_);
@@ -590,9 +590,9 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
     left_leg_move.y_ =
         wSin(l_ssp_end_time_, y_stance_period_time_,
              y_stance_phase_shift_ + 2 * M_PI / y_stance_period_time_ * l_ssp_start_time_, y_step_, y_step_shift_);
-    left_leg_move.z_ =
-        wSin(l_ssp_end_time_, z_stance_period_time_,
-             z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * l_ssp_start_time_, z_step_, z_step_shift_);
+    left_leg_move.z_ = wSin(l_ssp_end_time_, z_stance_period_time_,
+                            z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * l_ssp_start_time_, foot_height_,
+                            foot_height_shift_);
     left_leg_move.yaw_ = wSin(l_ssp_end_time_, yaw_stance_period_time_,
                               yaw_stance_phase_shift_ + 2 * M_PI / yaw_stance_period_time_ * l_ssp_start_time_,
                               yaw_step_, yaw_step_shift_);
@@ -602,9 +602,9 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
     right_leg_move.y_ =
         wSin(l_ssp_end_time_, y_stance_period_time_,
              y_stance_phase_shift_ + 2 * M_PI / y_stance_period_time_ * l_ssp_start_time_, -y_step_, -y_step_shift_);
-    right_leg_move.z_ =
-        wSin(r_ssp_start_time_, z_stance_period_time_,
-             z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * r_ssp_start_time_, z_step_, z_step_shift_);
+    right_leg_move.z_ = wSin(r_ssp_start_time_, z_stance_period_time_,
+                             z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * r_ssp_start_time_, foot_height_,
+                             foot_height_shift_);
     right_leg_move.yaw_ = wSin(l_ssp_end_time_, yaw_stance_period_time_,
                                yaw_stance_phase_shift_ + 2 * M_PI / yaw_stance_period_time_ * l_ssp_start_time_,
                                -yaw_step_, -yaw_step_shift_);
@@ -619,9 +619,9 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
     left_leg_move.y_ = wSin(time_, y_stance_period_time_,
                             y_stance_phase_shift_ + 2 * M_PI / y_stance_period_time_ * r_ssp_start_time_ + M_PI,
                             y_step_, y_step_shift_);
-    left_leg_move.z_ =
-        wSin(l_ssp_end_time_, z_stance_period_time_,
-             z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * l_ssp_start_time_, z_step_, z_step_shift_);
+    left_leg_move.z_ = wSin(l_ssp_end_time_, z_stance_period_time_,
+                            z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * l_ssp_start_time_, foot_height_,
+                            foot_height_shift_);
     left_leg_move.yaw_ = wSin(time_, yaw_stance_period_time_,
                               yaw_stance_phase_shift_ + 2 * M_PI / yaw_stance_period_time_ * r_ssp_start_time_ + M_PI,
                               yaw_step_, yaw_step_shift_);
@@ -633,7 +633,7 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
                              -y_step_, -y_step_shift_);
     right_leg_move.z_ =
         wSin(time_, z_stance_period_time_, z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * r_ssp_start_time_,
-             z_step_, z_step_shift_);
+             foot_height_, foot_height_shift_);
     right_leg_move.yaw_ = wSin(time_, yaw_stance_period_time_,
                                yaw_stance_phase_shift_ + 2 * M_PI / yaw_stance_period_time_ * r_ssp_start_time_ + M_PI,
                                -yaw_step_, -yaw_step_shift_);
@@ -652,9 +652,9 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
     left_leg_move.y_ = wSin(r_ssp_end_time_, y_stance_period_time_,
                             y_stance_phase_shift_ + 2 * M_PI / y_stance_period_time_ * r_ssp_start_time_ + M_PI,
                             y_step_, y_step_shift_);
-    left_leg_move.z_ =
-        wSin(l_ssp_end_time_, z_stance_period_time_,
-             z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * l_ssp_start_time_, z_step_, z_step_shift_);
+    left_leg_move.z_ = wSin(l_ssp_end_time_, z_stance_period_time_,
+                            z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * l_ssp_start_time_, foot_height_,
+                            foot_height_shift_);
     left_leg_move.yaw_ = wSin(r_ssp_end_time_, yaw_stance_period_time_,
                               yaw_stance_phase_shift_ + 2 * M_PI / yaw_stance_period_time_ * r_ssp_start_time_ + M_PI,
                               yaw_step_, yaw_step_shift_);
@@ -664,9 +664,9 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
     right_leg_move.y_ = wSin(r_ssp_end_time_, y_stance_period_time_,
                              y_stance_phase_shift_ + 2 * M_PI / y_stance_period_time_ * r_ssp_start_time_ + M_PI,
                              -y_step_, -y_step_shift_);
-    right_leg_move.z_ =
-        wSin(r_ssp_end_time_, z_stance_period_time_,
-             z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * r_ssp_start_time_, z_step_, z_step_shift_);
+    right_leg_move.z_ = wSin(r_ssp_end_time_, z_stance_period_time_,
+                             z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * r_ssp_start_time_, foot_height_,
+                             foot_height_shift_);
     right_leg_move.yaw_ = wSin(r_ssp_end_time_, yaw_stance_period_time_,
                                yaw_stance_phase_shift_ + 2 * M_PI / yaw_stance_period_time_ * r_ssp_start_time_ + M_PI,
                                -yaw_step_, -yaw_step_shift_);
@@ -807,33 +807,39 @@ void WalkingModule::loadWalkingParam(const std::string& path)
   }
 
   // Initial pose offset
-  walking_param_.init_x_offset = doc["x_offset"].as<double>();
-  walking_param_.init_y_offset = doc["y_offset"].as<double>();
-  walking_param_.init_z_offset = doc["z_offset"].as<double>();
-  walking_param_.init_roll_offset = doc["roll_offset"].as<double>() * DEGREE2RADIAN;
-  walking_param_.init_pitch_offset = doc["pitch_offset"].as<double>() * DEGREE2RADIAN;
-  walking_param_.init_yaw_offset = doc["yaw_offset"].as<double>() * DEGREE2RADIAN;
+  walking_param_.init_x_offset = doc["init_x_offset"].as<double>();
+  walking_param_.init_y_offset = doc["init_y_offset"].as<double>();
+  walking_param_.init_z_offset = doc["init_z_offset"].as<double>();
+  walking_param_.init_roll_offset = doc["init_roll_offset"].as<double>() * DEGREE2RADIAN;
+  walking_param_.init_pitch_offset = doc["init_pitch_offset"].as<double>() * DEGREE2RADIAN;
+  walking_param_.init_yaw_offset = doc["init_yaw_offset"].as<double>() * DEGREE2RADIAN;
   walking_param_.init_hip_pitch_offset = doc["init_hip_pitch_offset"].as<double>() * DEGREE2RADIAN;
   // Cycle Time
   walking_param_.period_time = doc["period_time"].as<double>() * 0.001;  // ms -> s
   walking_param_.dsp_ratio = doc["dsp_ratio"].as<double>();
-  walking_param_.step_fb_ratio = doc["step_forward_back_ratio"].as<double>();
+  walking_param_.step_forward_back_ratio = doc["step_forward_back_ratio"].as<double>();
   // Foot Height
-  walking_param_.z_step = doc["foot_height"].as<double>();
+  walking_param_.foot_height = doc["foot_height"].as<double>();
   // Target step length
   // walking_param_.x_step = doc["x_step"].as<double>();
   // walking_param_.y_step = doc["y_step"].as<double>();
   // walking_param_.yaw_step = doc["yaw_step"].as<double>();
 
-  // balance
+  // Balance
   // walking_param_.balance_enable = doc["balance_enable"].as<uint8_t>();
   walking_param_.balance_gyro_roll_gain = doc["balance_gyro_roll_gain"].as<double>();
   walking_param_.balance_gyro_pitch_gain = doc["balance_gyro_pitch_gain"].as<double>();
   walking_param_.balance_gyro_y_gain = doc["balance_gyro_y_gain"].as<double>();
   walking_param_.balance_gyro_x_gain = doc["balance_gyro_x_gain"].as<double>();
-  walking_param_.y_swing_amplitude = doc["swing_right_left"].as<double>();
-  walking_param_.z_swing_amplitude = doc["swing_top_down"].as<double>();
+
+  // Swing parameters
+  walking_param_.y_swing_amplitude = doc["y_swing_amplitude"].as<double>();
+  walking_param_.z_swing_amplitude = doc["z_swing_amplitude"].as<double>();
+  walking_param_.roll_swing_amplitude = doc["roll_swing_amplitude"].as<double>() * DEGREE2RADIAN;
   walking_param_.hip_swing_up_amplitude_ = doc["hip_swing_up_amplitude_"].as<double>() * DEGREE2RADIAN;
+  walking_param_.hip_swing_down_amplitude_ = doc["hip_swing_down_amplitude_"].as<double>() * DEGREE2RADIAN;
+  walking_param_.chest_swing_amplitude = doc["chest_swing_amplitude"].as<double>() * DEGREE2RADIAN;
+  walking_param_.shoulder_swing_amplitude = doc["shoulder_swing_amplitude"].as<double>() * DEGREE2RADIAN;
 }
 
 void WalkingModule::saveWalkingParam(std::string& path)
@@ -841,23 +847,27 @@ void WalkingModule::saveWalkingParam(std::string& path)
   YAML::Emitter out_emitter;
 
   out_emitter << YAML::BeginMap;
-  out_emitter << YAML::Key << "x_offset" << YAML::Value << walking_param_.init_x_offset;
-  out_emitter << YAML::Key << "y_offset" << YAML::Value << walking_param_.init_y_offset;
-  out_emitter << YAML::Key << "z_offset" << YAML::Value << walking_param_.init_z_offset;
-  out_emitter << YAML::Key << "roll_offset" << YAML::Value << walking_param_.init_roll_offset * RADIAN2DEGREE;
-  out_emitter << YAML::Key << "pitch_offset" << YAML::Value << walking_param_.init_pitch_offset * RADIAN2DEGREE;
-  out_emitter << YAML::Key << "yaw_offset" << YAML::Value << walking_param_.init_yaw_offset * RADIAN2DEGREE;
+  out_emitter << YAML::Key << "init_x_offset" << YAML::Value << walking_param_.init_x_offset;
+  out_emitter << YAML::Key << "init_y_offset" << YAML::Value << walking_param_.init_y_offset;
+  out_emitter << YAML::Key << "init_z_offset" << YAML::Value << walking_param_.init_z_offset;
+  out_emitter << YAML::Key << "init_roll_offset" << YAML::Value << walking_param_.init_roll_offset * RADIAN2DEGREE;
+  out_emitter << YAML::Key << "init_pitch_offset" << YAML::Value << walking_param_.init_pitch_offset * RADIAN2DEGREE;
+  out_emitter << YAML::Key << "init_yaw_offset" << YAML::Value << walking_param_.init_yaw_offset * RADIAN2DEGREE;
   out_emitter << YAML::Key << "init_hip_pitch_offset" << YAML::Value
               << walking_param_.init_hip_pitch_offset * RADIAN2DEGREE;
   out_emitter << YAML::Key << "period_time" << YAML::Value << walking_param_.period_time * 1000;
   out_emitter << YAML::Key << "dsp_ratio" << YAML::Value << walking_param_.dsp_ratio;
-  out_emitter << YAML::Key << "step_forward_back_ratio" << YAML::Value << walking_param_.step_fb_ratio;
-  out_emitter << YAML::Key << "foot_height" << YAML::Value << walking_param_.z_step;
-  out_emitter << YAML::Key << "swing_right_left" << YAML::Value << walking_param_.y_swing_amplitude;
-  out_emitter << YAML::Key << "swing_top_down" << YAML::Value << walking_param_.z_swing_amplitude;
+  out_emitter << YAML::Key << "step_forward_back_ratio" << YAML::Value << walking_param_.step_forward_back_ratio;
+  out_emitter << YAML::Key << "foot_height" << YAML::Value << walking_param_.foot_height;
+  out_emitter << YAML::Key << "y_swing_amplitude" << YAML::Value << walking_param_.y_swing_amplitude;
+  out_emitter << YAML::Key << "z_swing_amplitude" << YAML::Value << walking_param_.z_swing_amplitude;
+  out_emitter << YAML::Key << "roll_swing_amplitude" << YAML::Value << walking_param_.roll_swing_amplitude;
   out_emitter << YAML::Key << "hip_swing_up_amplitude_" << YAML::Value
               << walking_param_.hip_swing_up_amplitude_ * RADIAN2DEGREE;
-  // out_emitter << YAML::Key << "shoulder_swing_amplitude" << YAML::Value << walking_param_.shoulder_swing_amplitude;
+  out_emitter << YAML::Key << "hip_swing_down_amplitude_" << YAML::Value
+              << walking_param_.hip_swing_down_amplitude_ * RADIAN2DEGREE;
+  out_emitter << YAML::Key << "chest_swing_amplitude" << YAML::Value << walking_param_.chest_swing_amplitude;
+  out_emitter << YAML::Key << "shoulder_swing_amplitude" << YAML::Value << walking_param_.shoulder_swing_amplitude;
   out_emitter << YAML::Key << "balance_gyro_roll_gain" << YAML::Value << walking_param_.balance_gyro_roll_gain;
   out_emitter << YAML::Key << "balance_gyro_pitch_gain" << YAML::Value << walking_param_.balance_gyro_pitch_gain;
   out_emitter << YAML::Key << "balance_gyro_y_gain" << YAML::Value << walking_param_.balance_gyro_y_gain;

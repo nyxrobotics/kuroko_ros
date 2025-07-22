@@ -391,11 +391,11 @@ void MainWindow::updateWalkingParams(kuroko_walking_module_msgs::WalkingParam pa
   // time
   ui_.dSpinBox_period_time->setValue(params.period_time * 1000);  // s -> ms
   ui_.dSpinBox_dsp_ratio->setValue(params.dsp_ratio);
-  ui_.dSpinBox_step_fb_ratio->setValue(params.step_fb_ratio);
+  ui_.dSpinBox_step_forward_back_ratio->setValue(params.step_forward_back_ratio);
   // walking
   ui_.dSpinBox_x_step->setValue(params.x_step);
   ui_.dSpinBox_y_step->setValue(params.y_step);
-  ui_.dSpinBox_z_step->setValue(params.z_step);
+  ui_.dSpinBox_foot_height->setValue(params.foot_height);
   ui_.dSpinBox_y_step->setValue(params.yaw_step);
   // balance
   ui_.checkBox_balance_on->setChecked(params.balance_enable);
@@ -425,11 +425,11 @@ void MainWindow::applyWalkingParams()
   // time
   walking_param.period_time = ui_.dSpinBox_period_time->value() * 0.001;  // ms -> s
   walking_param.dsp_ratio = ui_.dSpinBox_dsp_ratio->value();
-  walking_param.step_fb_ratio = ui_.dSpinBox_step_fb_ratio->value();
+  walking_param.step_forward_back_ratio = ui_.dSpinBox_step_forward_back_ratio->value();
   // walking
   walking_param.x_step = ui_.dSpinBox_x_step->value();
   walking_param.y_step = ui_.dSpinBox_y_step->value();
-  walking_param.z_step = ui_.dSpinBox_z_step->value();
+  walking_param.foot_height = ui_.dSpinBox_foot_height->value();
   walking_param.yaw_step = ui_.dSpinBox_a_step->value() * DEGREE2RADIAN;
   // balance
   walking_param.balance_enable = ui_.checkBox_balance_on->isChecked();

@@ -10,12 +10,12 @@ float32 init_hip_pitch_offset
 ####### time parameter #####
 float32 period_time
 float32 dsp_ratio
-float32 step_fb_ratio
+float32 step_forward_back_ratio
 
 ########## walking parameter ########
 float32 x_step
 float32 y_step
-float32 z_step
+float32 foot_height
 float32 yaw_step
 
 ########## balance parameter ##########
@@ -31,7 +31,7 @@ float32 z_swing_amplitude
 float32 roll_swing_amplitude
 
 float32 hip_swing_up_amplitude_
-float32 hip_swing_donw_amplitude_
+float32 hip_swing_down_amplitude_
 
 float32 chest_swing_amplitude
 float32 shoulder_swing_amplitude

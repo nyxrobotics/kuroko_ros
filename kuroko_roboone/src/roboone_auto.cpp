@@ -101,7 +101,7 @@ void RobooneAuto::setWalkingParams(double x_step, double y_step, double yaw_step
   params.init_yaw_offset = 0.0;
   params.period_time = 0.47;
   params.dsp_ratio = 0.35;
-  params.step_fb_ratio = 0.0;
+  params.step_forward_back_ratio = 0.0;
 
   // Move amplitudes set dynamically
   params.x_step = x_step;
@@ -109,7 +109,7 @@ void RobooneAuto::setWalkingParams(double x_step, double y_step, double yaw_step
   params.yaw_step = yaw_step;
 
   // Fixed initial values for other fields
-  params.z_step = 0.12;
+  params.foot_height = 0.12;
   params.balance_enable = false;
   params.balance_gyro_roll_gain = 0.3499999940395355;
   params.balance_gyro_pitch_gain = 0.30000001192092896;

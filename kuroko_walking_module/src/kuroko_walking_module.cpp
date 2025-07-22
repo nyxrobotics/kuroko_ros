@@ -519,6 +519,8 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
   swing.roll_ = 0.0;
   swing.pitch_ = 0.0;
   swing.yaw_ = 0.0;
+  hip_swing_l = 0;
+  hip_swing_r = 0;
 
   if (time_ <= l_ssp_start_time_)
   {
@@ -546,8 +548,6 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
     right_leg_move.yaw_ = wSin(l_ssp_start_time_, yaw_stance_period_time_,
                                yaw_stance_phase_shift_ + 2 * M_PI / yaw_stance_period_time_ * l_ssp_start_time_,
                                -yaw_step_, -yaw_step_shift_);
-    hip_swing_l = 0;
-    hip_swing_r = 0;
   }
   else if (time_ <= l_ssp_end_time_)
   {
@@ -575,10 +575,14 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
     right_leg_move.yaw_ = wSin(time_, yaw_stance_period_time_,
                                yaw_stance_phase_shift_ + 2 * M_PI / yaw_stance_period_time_ * l_ssp_start_time_,
                                -yaw_step_, -yaw_step_shift_);
-    hip_swing_l = 0;
-    hip_swing_r =
-        wSin(time_, z_stance_period_time_, z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * l_ssp_start_time_,
-             -hip_swing_up_amplitude_ / 2, -hip_swing_up_amplitude_ / 2);
+    if (hip_swing_up_amplitude_ > 0.0001 &&
+        (l_ssp_end_time_ - time_) / (l_ssp_end_time_ - l_ssp_start_time_) <
+            hip_swing_up_amplitude_ / (hip_swing_up_amplitude_ + hip_swing_down_amplitude_))
+    {
+      hip_swing_r = wSin(time_, z_stance_period_time_,
+                         z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * l_ssp_start_time_,
+                         -hip_swing_up_amplitude_ / 2, -hip_swing_up_amplitude_ / 2);
+    }
   }
   else if (time_ <= r_ssp_start_time_)
   {
@@ -606,8 +610,6 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
     right_leg_move.yaw_ = wSin(l_ssp_end_time_, yaw_stance_period_time_,
                                yaw_stance_phase_shift_ + 2 * M_PI / yaw_stance_period_time_ * l_ssp_start_time_,
                                -yaw_step_, -yaw_step_shift_);
-    hip_swing_l = 0;
-    hip_swing_r = 0;
   }
   else if (time_ <= r_ssp_end_time_)
   {
@@ -638,7 +640,6 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
     hip_swing_l =
         wSin(time_, z_stance_period_time_, z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * r_ssp_start_time_,
              hip_swing_up_amplitude_ / 2, hip_swing_up_amplitude_ / 2);
-    hip_swing_r = 0;
   }
   else
   {
@@ -666,8 +667,6 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
     right_leg_move.yaw_ = wSin(r_ssp_end_time_, yaw_stance_period_time_,
                                yaw_stance_phase_shift_ + 2 * M_PI / yaw_stance_period_time_ * r_ssp_start_time_ + M_PI,
                                -yaw_step_, -yaw_step_shift_);
-    hip_swing_l = 0;
-    hip_swing_r = 0;
   }
 
   left_leg_move.roll_ = 0;
@@ -790,7 +789,7 @@ void WalkingModule::gyroFeedback(const double& roll_gyro_err, const double& pitc
 void WalkingModule::loadWalkingParam(const std::string& path)
 {
   YAML::Node doc;
-  ROS_INFO("WAlkingModule::loadWalkingParam - Loading: %s", path.c_str());
+  ROS_INFO("WalkingModule::loadWalkingParam - Loading: %s", path.c_str());
   try
   {
     // load yaml

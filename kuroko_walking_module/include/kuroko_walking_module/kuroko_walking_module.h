@@ -201,8 +201,8 @@ private:
   double chest_swing_amplitude_;
   double shoulder_swing_amplitude_;
 
-  bool ctrl_running_;
-  bool real_running_;
+  bool request_walk_;
+  bool is_walking_;
   double time_;
 
   int phase_;

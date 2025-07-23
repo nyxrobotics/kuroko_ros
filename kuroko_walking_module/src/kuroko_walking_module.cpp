@@ -123,8 +123,8 @@ void WalkingModule::initialize(const int control_cycle_msec, robotis_framework::
   z_stance_phase_shift_ = M_PI / 2;
   yaw_stance_phase_shift_ = M_PI / 2;
 
-  ctrl_running_ = false;
-  real_running_ = false;
+  request_walk_ = false;
+  is_walking_ = false;
   time_ = 0;
   // TODO: set joint directions from robot model
   joint_axis_direction_ << 1, -1, 1, 1, 1,
@@ -293,21 +293,21 @@ void WalkingModule::updatePoseParam()
 
 void WalkingModule::startWalking()
 {
-  ctrl_running_ = true;
-  real_running_ = true;
+  request_walk_ = true;
+  is_walking_ = true;
 
   publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_INFO, "Start walking");
 }
 
 void WalkingModule::stop()
 {
-  ctrl_running_ = false;
+  request_walk_ = false;
   publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_INFO, "Stop walking");
 }
 
 bool WalkingModule::isRunning()
 {
-  return real_running_ || (walking_state_ == WALK_INITIAL_POSE);
+  return is_walking_ || (walking_state_ == WALK_INITIAL_POSE);
 }
 
 // default [angle : radian, length : m]
@@ -423,7 +423,7 @@ void WalkingModule::process(std::map<std::string, robotis_framework::Dynamixel*>
     result_[joint_name]->goal_position_ = target_position_.coeff(0, joint_index);
   }
 
-  if (real_running_)
+  if (is_walking_)
   {
     time_ += time_unit;
     if (time_ >= period_time_)
@@ -438,23 +438,19 @@ void WalkingModule::processPhase(const double& time_unit)
   {
     updateTimeParam();
     phase_ = PHASE0;
-    if (!ctrl_running_)
+    if (!request_walk_)
     {
-      if (x_step_ == 0 && y_step_ == 0 && yaw_step_ == 0)
+      x_step_ = y_step_ = yaw_step_ = 0;
+      walking_param_.x_step = 0;
+      walking_param_.y_step = 0;
+      walking_param_.yaw_step = 0;
+      previous_x_step_ = 0;
+      previous_y_step_ = 0;
+      previous_foot_height_ = 0;
+      previous_yaw_step_ = 0;
+      if (fabs(x_step_) < 0.001 && fabs(y_step_) < 0.001 && fabs(yaw_step_) < 0.001)
       {
-        real_running_ = false;
-      }
-      else
-      {
-        // set walking param to init
-        walking_param_.x_step = 0;
-        walking_param_.y_step = 0;
-        walking_param_.yaw_step = 0;
-
-        previous_x_step_ = 0;
-        previous_y_step_ = 0;
-        previous_foot_height_ = 0;
-        previous_yaw_step_ = 0;
+        is_walking_ = false;
       }
     }
   }
@@ -471,18 +467,19 @@ void WalkingModule::processPhase(const double& time_unit)
 
     time_ = phase2_time_;
     phase_ = PHASE2;
-    if (!ctrl_running_)
+    if (!request_walk_)
     {
-      if (x_step_ == 0 && y_step_ == 0 && yaw_step_ == 0)
+      x_step_ = y_step_ = yaw_step_ = 0;
+      walking_param_.x_step = 0;
+      walking_param_.y_step = 0;
+      walking_param_.yaw_step = 0;
+      previous_x_step_ = 0;
+      previous_y_step_ = 0;
+      previous_foot_height_ = 0;
+      previous_yaw_step_ = 0;
+      if (fabs(x_step_) < 0.001 && fabs(y_step_) < 0.001 && fabs(yaw_step_) < 0.001)
       {
-        real_running_ = false;
-      }
-      else
-      {
-        // set walking param to init
-        walking_param_.x_step = 0;
-        walking_param_.y_step = 0;
-        walking_param_.yaw_step = 0;
+        is_walking_ = false;
       }
     }
   }

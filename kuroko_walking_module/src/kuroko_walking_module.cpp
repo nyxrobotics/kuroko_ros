@@ -13,10 +13,10 @@ WalkingModule::WalkingModule() : control_cycle_msec_(8), debug_(false)
 
   init_pose_count_ = 0;
   walking_state_ = WALK_READY;
-  previous_x_step_ = 0;
-  previous_y_step_ = 0;
-  previous_yaw_step_ = 0;
-  previous_foot_height_ = 0;
+  previous_step_length_x_ = 0;
+  previous_step_length_y_ = 0;
+  previous_step_length_yaw_ = 0;
+  previous_foot_swing_amplitude_ = 0;
 
   x_accel_max_ = 0.1;
   y_accel_max_ = 0.1;
@@ -115,7 +115,7 @@ void WalkingModule::initialize(const int control_cycle_msec, robotis_framework::
   x_swing_phase_shift_ = M_PI;
   x_swing_amplitude_shift_ = 0;
   x_stance_phase_shift_ = M_PI / 2;
-  x_step_shift_ = 0;
+  step_length_x_shift_ = 0;
   y_swing_phase_shift_ = 0;
   y_swing_amplitude_shift_ = 0;
   y_stance_phase_shift_ = M_PI / 2;
@@ -251,33 +251,35 @@ void WalkingModule::updateTimeParam()
 
 void WalkingModule::updateMovementParam()
 {
-  // Forward/Back
-  x_step_ = walking_param_.x_step;
-  if (previous_x_step_ == 0)
-    x_step_ *= 0.5;
-  x_swing_amplitude_ = x_step_ * walking_param_.step_forward_back_ratio;
+  // Step length
+  step_length_x_ = walking_param_.x_step;
+  step_length_y_ = walking_param_.y_step / 2;
+  step_length_yaw_ = walking_param_.yaw_step;
+  foot_swing_amplitude_ = walking_param_.foot_height;
 
-  // Right/Left
-  y_step_ = walking_param_.y_step / 2;
-  if (previous_y_step_ == 0)
-    y_step_ *= 0.5;
-  if (y_step_ > 0)
-    y_step_shift_ = y_step_;
+  // Body Forward/Back Swing
+  x_swing_amplitude_ = step_length_x_ * walking_param_.step_forward_back_ratio;
+
+  // Body Right/Left Swing
+  if (step_length_y_ > 0)
+    step_length_y_shift_ = step_length_y_;
   else
-    y_step_shift_ = -y_step_;
-  y_swing_amplitude_ = walking_param_.y_swing_amplitude + y_step_shift_ * 0.04;
+    step_length_y_shift_ = -step_length_y_;
+  y_swing_amplitude_ = walking_param_.y_swing_amplitude;
 
-  foot_height_ = walking_param_.foot_height / 2;
-  if (previous_foot_height_ == 0)
-    foot_height_ *= 0.5;
-  foot_height_shift_ = foot_height_ / 2;
+  // Body Up/Down Swing
   z_swing_amplitude_ = walking_param_.z_swing_amplitude;
   z_swing_amplitude_shift_ = z_swing_amplitude_;
 
-  previous_x_step_ = x_step_;
-  previous_y_step_ = y_step_;
-  previous_yaw_step_ = walking_param_.yaw_step;
-  previous_foot_height_ = foot_height_;
+  // Foot Up/Down Swing
+  foot_swing_amplitude_ = foot_swing_amplitude_ / 2.0;
+  foot_swing_amplitude_shift_ = foot_swing_amplitude_ / 2.0;
+
+  // Remember one previous stride to prevent a sudden change in stride
+  previous_step_length_x_ = step_length_x_;
+  previous_step_length_y_ = step_length_y_;
+  previous_step_length_yaw_ = step_length_yaw_;
+  previous_foot_swing_amplitude_ = foot_swing_amplitude_;
 }
 
 void WalkingModule::updatePoseParam()
@@ -440,15 +442,15 @@ void WalkingModule::processPhase(const double& time_unit)
     phase_ = PHASE0;
     if (!request_walk_)
     {
-      x_step_ = y_step_ = yaw_step_ = 0;
+      step_length_x_ = step_length_y_ = step_length_yaw_ = 0;
       walking_param_.x_step = 0;
       walking_param_.y_step = 0;
       walking_param_.yaw_step = 0;
-      previous_x_step_ = 0;
-      previous_y_step_ = 0;
-      previous_foot_height_ = 0;
-      previous_yaw_step_ = 0;
-      if (fabs(x_step_) < 0.001 && fabs(y_step_) < 0.001 && fabs(yaw_step_) < 0.001)
+      previous_step_length_x_ = 0;
+      previous_step_length_y_ = 0;
+      previous_foot_swing_amplitude_ = 0;
+      previous_step_length_yaw_ = 0;
+      if (fabs(step_length_x_) < 0.001 && fabs(step_length_y_) < 0.001 && fabs(step_length_yaw_) < 0.001)
       {
         is_walking_ = false;
       }
@@ -469,15 +471,15 @@ void WalkingModule::processPhase(const double& time_unit)
     phase_ = PHASE2;
     if (!request_walk_)
     {
-      x_step_ = y_step_ = yaw_step_ = 0;
+      step_length_x_ = step_length_y_ = step_length_yaw_ = 0;
       walking_param_.x_step = 0;
       walking_param_.y_step = 0;
       walking_param_.yaw_step = 0;
-      previous_x_step_ = 0;
-      previous_y_step_ = 0;
-      previous_foot_height_ = 0;
-      previous_yaw_step_ = 0;
-      if (fabs(x_step_) < 0.001 && fabs(y_step_) < 0.001 && fabs(yaw_step_) < 0.001)
+      previous_step_length_x_ = 0;
+      previous_step_length_y_ = 0;
+      previous_foot_swing_amplitude_ = 0;
+      previous_step_length_yaw_ = 0;
+      if (fabs(step_length_x_) < 0.001 && fabs(step_length_y_) < 0.001 && fabs(step_length_yaw_) < 0.001)
       {
         is_walking_ = false;
       }
@@ -515,156 +517,142 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
 
   if (time_ <= l_ssp_start_time_)
   {
-    left_leg_move.x_ =
-        wSin(l_ssp_start_time_, x_stance_period_time_,
-             x_stance_phase_shift_ + 2 * M_PI / x_stance_period_time_ * l_ssp_start_time_, x_step_, x_step_shift_);
-    left_leg_move.y_ =
-        wSin(l_ssp_start_time_, y_stance_period_time_,
-             y_stance_phase_shift_ + 2 * M_PI / y_stance_period_time_ * l_ssp_start_time_, y_step_, y_step_shift_);
+    // Shift center of gravity to the left foot while keeping both feet attached
+    left_leg_move.x_ = wSin(l_ssp_start_time_, x_stance_period_time_,
+                            x_stance_phase_shift_ + 2 * M_PI / x_stance_period_time_ * l_ssp_start_time_,
+                            step_length_x_, step_length_x_shift_);
+    left_leg_move.y_ = wSin(l_ssp_start_time_, y_stance_period_time_,
+                            y_stance_phase_shift_ + 2 * M_PI / y_stance_period_time_ * l_ssp_start_time_,
+                            step_length_y_, step_length_y_shift_);
     left_leg_move.z_ = wSin(l_ssp_start_time_, z_stance_period_time_,
-                            z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * l_ssp_start_time_, foot_height_,
-                            foot_height_shift_);
+                            z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * l_ssp_start_time_,
+                            foot_swing_amplitude_, foot_swing_amplitude_shift_);
     left_leg_move.yaw_ = wSin(l_ssp_start_time_, yaw_stance_period_time_,
                               yaw_stance_phase_shift_ + 2 * M_PI / yaw_stance_period_time_ * l_ssp_start_time_,
-                              yaw_step_, yaw_step_shift_);
-    right_leg_move.x_ =
-        wSin(l_ssp_start_time_, x_stance_period_time_,
-             x_stance_phase_shift_ + 2 * M_PI / x_stance_period_time_ * l_ssp_start_time_, -x_step_, -x_step_shift_);
-    right_leg_move.y_ =
-        wSin(l_ssp_start_time_, y_stance_period_time_,
-             y_stance_phase_shift_ + 2 * M_PI / y_stance_period_time_ * l_ssp_start_time_, -y_step_, -y_step_shift_);
+                              step_length_yaw_, step_length_yaw_shift_);
+    right_leg_move.x_ = wSin(l_ssp_start_time_, x_stance_period_time_,
+                             x_stance_phase_shift_ + 2 * M_PI / x_stance_period_time_ * l_ssp_start_time_,
+                             -step_length_x_, -step_length_x_shift_);
+    right_leg_move.y_ = wSin(l_ssp_start_time_, y_stance_period_time_,
+                             y_stance_phase_shift_ + 2 * M_PI / y_stance_period_time_ * l_ssp_start_time_,
+                             -step_length_y_, -step_length_y_shift_);
     right_leg_move.z_ = wSin(r_ssp_start_time_, z_stance_period_time_,
-                             z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * r_ssp_start_time_, foot_height_,
-                             foot_height_shift_);
+                             z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * r_ssp_start_time_,
+                             foot_swing_amplitude_, foot_swing_amplitude_shift_);
     right_leg_move.yaw_ = wSin(l_ssp_start_time_, yaw_stance_period_time_,
                                yaw_stance_phase_shift_ + 2 * M_PI / yaw_stance_period_time_ * l_ssp_start_time_,
-                               -yaw_step_, -yaw_step_shift_);
-    hip_swing_l = 0;
-    hip_swing_r = 0;
+                               -step_length_yaw_, -step_length_yaw_shift_);
   }
   else if (time_ <= l_ssp_end_time_)
   {
+    // Lift left leg and swing forward
     left_leg_move.x_ =
         wSin(time_, x_stance_period_time_, x_stance_phase_shift_ + 2 * M_PI / x_stance_period_time_ * l_ssp_start_time_,
-             x_step_, x_step_shift_);
+             step_length_x_, step_length_x_shift_);
     left_leg_move.y_ =
         wSin(time_, y_stance_period_time_, y_stance_phase_shift_ + 2 * M_PI / y_stance_period_time_ * l_ssp_start_time_,
-             y_step_, y_step_shift_);
+             step_length_y_, step_length_y_shift_);
     left_leg_move.z_ =
         wSin(time_, z_stance_period_time_, z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * l_ssp_start_time_,
-             foot_height_, foot_height_shift_);
+             foot_swing_amplitude_, foot_swing_amplitude_shift_);
     left_leg_move.yaw_ = wSin(time_, yaw_stance_period_time_,
                               yaw_stance_phase_shift_ + 2 * M_PI / yaw_stance_period_time_ * l_ssp_start_time_,
-                              yaw_step_, yaw_step_shift_);
+                              step_length_yaw_, step_length_yaw_shift_);
     right_leg_move.x_ =
         wSin(time_, x_stance_period_time_, x_stance_phase_shift_ + 2 * M_PI / x_stance_period_time_ * l_ssp_start_time_,
-             -x_step_, -x_step_shift_);
+             -step_length_x_, -step_length_x_shift_);
     right_leg_move.y_ =
         wSin(time_, y_stance_period_time_, y_stance_phase_shift_ + 2 * M_PI / y_stance_period_time_ * l_ssp_start_time_,
-             -y_step_, -y_step_shift_);
+             -step_length_y_, -step_length_y_shift_);
     right_leg_move.z_ = wSin(r_ssp_start_time_, z_stance_period_time_,
-                             z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * r_ssp_start_time_, foot_height_,
-                             foot_height_shift_);
+                             z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * r_ssp_start_time_,
+                             foot_swing_amplitude_, foot_swing_amplitude_shift_);
     right_leg_move.yaw_ = wSin(time_, yaw_stance_period_time_,
                                yaw_stance_phase_shift_ + 2 * M_PI / yaw_stance_period_time_ * l_ssp_start_time_,
-                               -yaw_step_, -yaw_step_shift_);
-    hip_swing_l =
-        wSin(time_, z_stance_period_time_, z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * l_ssp_start_time_,
-             hip_swing_down_amplitude_ / 2, hip_swing_down_amplitude_ / 2);
-    hip_swing_r =
-        wSin(time_, z_stance_period_time_, z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * l_ssp_start_time_,
-             -hip_swing_up_amplitude_ / 2, -hip_swing_up_amplitude_ / 2);
+                               -step_length_yaw_, -step_length_yaw_shift_);
   }
   else if (time_ <= r_ssp_start_time_)
   {
-    left_leg_move.x_ =
-        wSin(l_ssp_end_time_, x_stance_period_time_,
-             x_stance_phase_shift_ + 2 * M_PI / x_stance_period_time_ * l_ssp_start_time_, x_step_, x_step_shift_);
-    left_leg_move.y_ =
-        wSin(l_ssp_end_time_, y_stance_period_time_,
-             y_stance_phase_shift_ + 2 * M_PI / y_stance_period_time_ * l_ssp_start_time_, y_step_, y_step_shift_);
+    // Shift center of gravity to the right foot while keeping both feet attached
+    left_leg_move.x_ = wSin(l_ssp_end_time_, x_stance_period_time_,
+                            x_stance_phase_shift_ + 2 * M_PI / x_stance_period_time_ * l_ssp_start_time_,
+                            step_length_x_, step_length_x_shift_);
+    left_leg_move.y_ = wSin(l_ssp_end_time_, y_stance_period_time_,
+                            y_stance_phase_shift_ + 2 * M_PI / y_stance_period_time_ * l_ssp_start_time_,
+                            step_length_y_, step_length_y_shift_);
     left_leg_move.z_ = wSin(l_ssp_end_time_, z_stance_period_time_,
-                            z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * l_ssp_start_time_, foot_height_,
-                            foot_height_shift_);
+                            z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * l_ssp_start_time_,
+                            foot_swing_amplitude_, foot_swing_amplitude_shift_);
     left_leg_move.yaw_ = wSin(l_ssp_end_time_, yaw_stance_period_time_,
                               yaw_stance_phase_shift_ + 2 * M_PI / yaw_stance_period_time_ * l_ssp_start_time_,
-                              yaw_step_, yaw_step_shift_);
-    right_leg_move.x_ =
-        wSin(l_ssp_end_time_, x_stance_period_time_,
-             x_stance_phase_shift_ + 2 * M_PI / x_stance_period_time_ * l_ssp_start_time_, -x_step_, -x_step_shift_);
-    right_leg_move.y_ =
-        wSin(l_ssp_end_time_, y_stance_period_time_,
-             y_stance_phase_shift_ + 2 * M_PI / y_stance_period_time_ * l_ssp_start_time_, -y_step_, -y_step_shift_);
+                              step_length_yaw_, step_length_yaw_shift_);
+    right_leg_move.x_ = wSin(l_ssp_end_time_, x_stance_period_time_,
+                             x_stance_phase_shift_ + 2 * M_PI / x_stance_period_time_ * l_ssp_start_time_,
+                             -step_length_x_, -step_length_x_shift_);
+    right_leg_move.y_ = wSin(l_ssp_end_time_, y_stance_period_time_,
+                             y_stance_phase_shift_ + 2 * M_PI / y_stance_period_time_ * l_ssp_start_time_,
+                             -step_length_y_, -step_length_y_shift_);
     right_leg_move.z_ = wSin(r_ssp_start_time_, z_stance_period_time_,
-                             z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * r_ssp_start_time_, foot_height_,
-                             foot_height_shift_);
+                             z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * r_ssp_start_time_,
+                             foot_swing_amplitude_, foot_swing_amplitude_shift_);
     right_leg_move.yaw_ = wSin(l_ssp_end_time_, yaw_stance_period_time_,
                                yaw_stance_phase_shift_ + 2 * M_PI / yaw_stance_period_time_ * l_ssp_start_time_,
-                               -yaw_step_, -yaw_step_shift_);
-    hip_swing_l = 0;
-    hip_swing_r = 0;
+                               -step_length_yaw_, -step_length_yaw_shift_);
   }
   else if (time_ <= r_ssp_end_time_)
   {
+    // Lift Right leg and swing forward
     left_leg_move.x_ = wSin(time_, x_stance_period_time_,
                             x_stance_phase_shift_ + 2 * M_PI / x_stance_period_time_ * r_ssp_start_time_ + M_PI,
-                            x_step_, x_step_shift_);
+                            step_length_x_, step_length_x_shift_);
     left_leg_move.y_ = wSin(time_, y_stance_period_time_,
                             y_stance_phase_shift_ + 2 * M_PI / y_stance_period_time_ * r_ssp_start_time_ + M_PI,
-                            y_step_, y_step_shift_);
+                            step_length_y_, step_length_y_shift_);
     left_leg_move.z_ = wSin(l_ssp_end_time_, z_stance_period_time_,
-                            z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * l_ssp_start_time_, foot_height_,
-                            foot_height_shift_);
+                            z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * l_ssp_start_time_,
+                            foot_swing_amplitude_, foot_swing_amplitude_shift_);
     left_leg_move.yaw_ = wSin(time_, yaw_stance_period_time_,
                               yaw_stance_phase_shift_ + 2 * M_PI / yaw_stance_period_time_ * r_ssp_start_time_ + M_PI,
-                              yaw_step_, yaw_step_shift_);
+                              step_length_yaw_, step_length_yaw_shift_);
     right_leg_move.x_ = wSin(time_, x_stance_period_time_,
                              x_stance_phase_shift_ + 2 * M_PI / x_stance_period_time_ * r_ssp_start_time_ + M_PI,
-                             -x_step_, -x_step_shift_);
+                             -step_length_x_, -step_length_x_shift_);
     right_leg_move.y_ = wSin(time_, y_stance_period_time_,
                              y_stance_phase_shift_ + 2 * M_PI / y_stance_period_time_ * r_ssp_start_time_ + M_PI,
-                             -y_step_, -y_step_shift_);
+                             -step_length_y_, -step_length_y_shift_);
     right_leg_move.z_ =
         wSin(time_, z_stance_period_time_, z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * r_ssp_start_time_,
-             foot_height_, foot_height_shift_);
+             foot_swing_amplitude_, foot_swing_amplitude_shift_);
     right_leg_move.yaw_ = wSin(time_, yaw_stance_period_time_,
                                yaw_stance_phase_shift_ + 2 * M_PI / yaw_stance_period_time_ * r_ssp_start_time_ + M_PI,
-                               -yaw_step_, -yaw_step_shift_);
-    hip_swing_l =
-        wSin(time_, z_stance_period_time_, z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * r_ssp_start_time_,
-             hip_swing_up_amplitude_ / 2, hip_swing_up_amplitude_ / 2);
-    hip_swing_r =
-        wSin(time_, z_stance_period_time_, z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * r_ssp_start_time_,
-             -hip_swing_down_amplitude_ / 2, -hip_swing_down_amplitude_ / 2);
+                               -step_length_yaw_, -step_length_yaw_shift_);
   }
   else
   {
     left_leg_move.x_ = wSin(r_ssp_end_time_, x_stance_period_time_,
                             x_stance_phase_shift_ + 2 * M_PI / x_stance_period_time_ * r_ssp_start_time_ + M_PI,
-                            x_step_, x_step_shift_);
+                            step_length_x_, step_length_x_shift_);
     left_leg_move.y_ = wSin(r_ssp_end_time_, y_stance_period_time_,
                             y_stance_phase_shift_ + 2 * M_PI / y_stance_period_time_ * r_ssp_start_time_ + M_PI,
-                            y_step_, y_step_shift_);
+                            step_length_y_, step_length_y_shift_);
     left_leg_move.z_ = wSin(l_ssp_end_time_, z_stance_period_time_,
-                            z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * l_ssp_start_time_, foot_height_,
-                            foot_height_shift_);
+                            z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * l_ssp_start_time_,
+                            foot_swing_amplitude_, foot_swing_amplitude_shift_);
     left_leg_move.yaw_ = wSin(r_ssp_end_time_, yaw_stance_period_time_,
                               yaw_stance_phase_shift_ + 2 * M_PI / yaw_stance_period_time_ * r_ssp_start_time_ + M_PI,
-                              yaw_step_, yaw_step_shift_);
+                              step_length_yaw_, step_length_yaw_shift_);
     right_leg_move.x_ = wSin(r_ssp_end_time_, x_stance_period_time_,
                              x_stance_phase_shift_ + 2 * M_PI / x_stance_period_time_ * r_ssp_start_time_ + M_PI,
-                             -x_step_, -x_step_shift_);
+                             -step_length_x_, -step_length_x_shift_);
     right_leg_move.y_ = wSin(r_ssp_end_time_, y_stance_period_time_,
                              y_stance_phase_shift_ + 2 * M_PI / y_stance_period_time_ * r_ssp_start_time_ + M_PI,
-                             -y_step_, -y_step_shift_);
+                             -step_length_y_, -step_length_y_shift_);
     right_leg_move.z_ = wSin(r_ssp_end_time_, z_stance_period_time_,
-                             z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * r_ssp_start_time_, foot_height_,
-                             foot_height_shift_);
+                             z_stance_phase_shift_ + 2 * M_PI / z_stance_period_time_ * r_ssp_start_time_,
+                             foot_swing_amplitude_, foot_swing_amplitude_shift_);
     right_leg_move.yaw_ = wSin(r_ssp_end_time_, yaw_stance_period_time_,
                                yaw_stance_phase_shift_ + 2 * M_PI / yaw_stance_period_time_ * r_ssp_start_time_ + M_PI,
-                               -yaw_step_, -yaw_step_shift_);
-    hip_swing_l = 0;
-    hip_swing_r = 0;
+                               -step_length_yaw_, -step_length_yaw_shift_);
   }
 
   left_leg_move.roll_ = 0;

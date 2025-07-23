@@ -162,29 +162,30 @@ private:
   double x_swing_amplitude_;
   double x_swing_amplitude_shift_;
   double x_stance_phase_shift_;
-  double x_step_shift_;
+  double step_length_x_shift_;
   double y_swing_phase_shift_;
   double y_swing_amplitude_;
   double y_swing_amplitude_shift_;
   double y_stance_phase_shift_;
-  double y_step_shift_;
+  double step_length_y_shift_;
   double z_swing_phase_shift_;
   double z_swing_amplitude_;
   double z_swing_amplitude_shift_;
   double z_stance_phase_shift_;
-  double foot_height_shift_;
+  double foot_swing_amplitude_;
+  double foot_swing_amplitude_shift_;
   double yaw_stance_phase_shift_;
-  double yaw_step_shift_;
+  double step_length_yaw_shift_;
 
-  double x_step_;
-  double y_step_;
-  double yaw_step_;
-  double foot_height_;
+  double step_length_x_;
+  double step_length_y_;
+  double step_length_yaw_;
+  double foot_swing_amplitude_;
 
-  double previous_x_step_;
-  double previous_y_step_;
-  double previous_yaw_step_;
-  double previous_foot_height_;
+  double previous_step_length_x_;
+  double previous_step_length_y_;
+  double previous_step_length_yaw_;
+  double previous_foot_swing_amplitude_;
 
   double x_accel_max_;
   double y_accel_max_;

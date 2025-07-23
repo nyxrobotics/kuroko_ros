@@ -180,7 +180,7 @@ private:
   double step_length_x_;
   double step_length_y_;
   double step_length_yaw_;
-  double foot_swing_amplitude_;
+  double foot_lift_height_;
 
   double previous_step_length_x_;
   double previous_step_length_y_;

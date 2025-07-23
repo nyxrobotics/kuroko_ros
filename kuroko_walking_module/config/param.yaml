@@ -1,6 +1,6 @@
 init_x_offset: 0
 init_y_offset: 0.06
-init_z_offset: 0.08
+init_z_offset: 0.05
 init_roll_offset: -1.999999984507266
 init_pitch_offset: 0
 init_yaw_offset: 0
@@ -13,7 +13,7 @@ y_swing_amplitude: 0.016
 z_swing_amplitude: 0.003
 roll_swing_amplitude: 0
 chest_swing_amplitude: 0
-shoulder_swing_amplitude: 0.0
+shoulder_swing_amplitude: 0
 hip_swing_up_amplitude: 0.4999999961268166
 hip_swing_down_amplitude: 0
 balance_gyro_roll_gain: -0.1

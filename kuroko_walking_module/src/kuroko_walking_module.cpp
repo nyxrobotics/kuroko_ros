@@ -15,8 +15,8 @@ WalkingModule::WalkingModule() : control_cycle_msec_(8), debug_(false)
   walking_state_ = WALK_READY;
   previous_x_step_ = 0;
   previous_y_step_ = 0;
-  previous_foot_height_ = 0;
   previous_yaw_step_ = 0;
+  previous_foot_height_ = 0;
 
   x_accel_max_ = 0.1;
   y_accel_max_ = 0.1;
@@ -220,31 +220,29 @@ double WalkingModule::wSin(double time, double period, double period_shift, doub
 
 void WalkingModule::updateTimeParam()
 {
-  period_time_ = walking_param_.period_time;  // * 1000;   // s -> ms
+  period_time_ = walking_param_.period_time;
   dsp_ratio_ = walking_param_.dsp_ratio;
-  ssp_ratio_ = 1 - dsp_ratio_;
 
-  x_swing_period_time_ = period_time_ / 2;
-  x_stance_period_time_ = period_time_ * ssp_ratio_;
+  x_swing_period_time_ = period_time_ / 2.0;
+  x_stance_period_time_ = period_time_ * (1.0 - dsp_ratio_);
 
   y_swing_period_time_ = period_time_;
-  y_stance_period_time_ = period_time_ * ssp_ratio_;
+  y_stance_period_time_ = period_time_ * (1.0 - dsp_ratio_);
 
-  z_swing_period_time_ = period_time_ / 2;
-  z_stance_period_time_ = period_time_ * ssp_ratio_ / 2;
+  z_swing_period_time_ = period_time_ / 2.0;
+  z_stance_period_time_ = period_time_ * (1.0 - dsp_ratio_) / 2.0;
 
-  yaw_swing_period_time_ = period_time_ / 2;
-  yaw_stance_period_time_ = period_time_ * ssp_ratio_;
+  yaw_swing_period_time_ = period_time_ / 2.0;
+  yaw_stance_period_time_ = period_time_ * (1.0 - dsp_ratio_);
 
-  ssp_time_ = period_time_ * ssp_ratio_;
-  l_ssp_start_time_ = (1 - ssp_ratio_) * period_time_ / 4;
-  l_ssp_end_time_ = (1 + ssp_ratio_) * period_time_ / 4;
-  r_ssp_start_time_ = (3 - ssp_ratio_) * period_time_ / 4;
-  r_ssp_end_time_ = (3 + ssp_ratio_) * period_time_ / 4;
+  l_ssp_start_time_ = dsp_ratio_ * period_time_ / 4.0;
+  l_ssp_end_time_ = (2.0 - dsp_ratio_) * period_time_ / 4.0;
+  r_ssp_start_time_ = (2.0 + dsp_ratio_) * period_time_ / 4.0;
+  r_ssp_end_time_ = (4.0 - dsp_ratio_) * period_time_ / 4.0;
 
-  phase1_time_ = (l_ssp_start_time_ + l_ssp_end_time_) / 2;
-  phase2_time_ = (l_ssp_end_time_ + r_ssp_start_time_) / 2;
-  phase3_time_ = (r_ssp_start_time_ + r_ssp_end_time_) / 2;
+  phase1_time_ = (l_ssp_start_time_ + l_ssp_end_time_) / 2.0;
+  phase2_time_ = (l_ssp_end_time_ + r_ssp_start_time_) / 2.0;
+  phase3_time_ = (r_ssp_start_time_ + r_ssp_end_time_) / 2.0;
 
   hip_swing_up_amplitude_ = walking_param_.hip_swing_up_amplitude;
   hip_swing_down_amplitude_ = walking_param_.hip_swing_down_amplitude;
@@ -275,6 +273,11 @@ void WalkingModule::updateMovementParam()
   foot_height_shift_ = foot_height_ / 2;
   z_swing_amplitude_ = walking_param_.z_swing_amplitude;
   z_swing_amplitude_shift_ = z_swing_amplitude_;
+
+  previous_x_step_ = x_step_;
+  previous_y_step_ = y_step_;
+  previous_yaw_step_ = walking_param_.yaw_step;
+  previous_foot_height_ = foot_height_;
 }
 
 void WalkingModule::updatePoseParam()
@@ -329,10 +332,6 @@ void WalkingModule::process(std::map<std::string, robotis_framework::Dynamixel*>
     if (init_pose_count_ >= total_count)
     {
       walking_state_ = WALK_READY;
-      previous_x_step_ = 0;
-      previous_y_step_ = 0;
-      previous_foot_height_ = 0;
-      previous_yaw_step_ = 0;
       if (debug_)
         std::cout << "End moving to Init : " << init_pose_count_ << std::endl;
     }
@@ -428,13 +427,7 @@ void WalkingModule::process(std::map<std::string, robotis_framework::Dynamixel*>
   {
     time_ += time_unit;
     if (time_ >= period_time_)
-    {
-      time_ = 0;
-      previous_x_step_ = walking_param_.x_step * 0.5;
-      previous_y_step_ = walking_param_.y_step * 0.5;
-      previous_foot_height_ = walking_param_.foot_height * 0.5;
-      previous_yaw_step_ = walking_param_.yaw_step * 0.5;
-    }
+      time_ -= period_time_;  // reset time
   }
 }
 

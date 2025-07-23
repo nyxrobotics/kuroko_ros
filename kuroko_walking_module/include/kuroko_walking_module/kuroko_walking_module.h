@@ -134,7 +134,6 @@ private:
   // variable for walking
   double period_time_;
   double dsp_ratio_;
-  double ssp_ratio_;
   double x_swing_period_time_;
   double x_stance_period_time_;
   double y_swing_period_time_;
@@ -143,7 +142,6 @@ private:
   double z_stance_period_time_;
   double yaw_swing_period_time_;
   double yaw_stance_period_time_;
-  double ssp_time_;
   double l_ssp_start_time_;
   double l_ssp_end_time_;
   double r_ssp_start_time_;
@@ -180,13 +178,13 @@ private:
 
   double x_step_;
   double y_step_;
-  double foot_height_;
   double yaw_step_;
+  double foot_height_;
 
   double previous_x_step_;
   double previous_y_step_;
-  double previous_foot_height_;
   double previous_yaw_step_;
+  double previous_foot_height_;
 
   double x_accel_max_;
   double y_accel_max_;

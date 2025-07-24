@@ -710,17 +710,16 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
 void WalkingModule::gyroFeedback(const double& roll_gyro_err, const double& pitch_gyro_err,
                                  std::vector<double>& balance_angle)
 {
-  // adjust balance offset
   if (!static_cast<bool>(walking_param_.balance_enable))
     return;
 
-  // std::cout << "roll_gyro_err : " << roll_gyro_err << ", pitch_gyro_err : " << pitch_gyro_err << std::endl;
-
   // Roll joints
   balance_angle[joint_table_["hip_r_roll"]] =
-      kuroko_kinematics_->getJointDirection("hip_r_roll") * roll_gyro_err * walking_param_.balance_gyro_roll_gain;
+      kuroko_kinematics_->getJointDirection("hip_r_roll") * roll_gyro_err *
+      (walking_param_.balance_gyro_y_gain + walking_param_.balance_gyro_roll_gain);
   balance_angle[joint_table_["hip_l_roll"]] =
-      kuroko_kinematics_->getJointDirection("hip_l_roll") * roll_gyro_err * walking_param_.balance_gyro_roll_gain;
+      kuroko_kinematics_->getJointDirection("hip_l_roll") * roll_gyro_err *
+      (walking_param_.balance_gyro_y_gain + walking_param_.balance_gyro_roll_gain);
   balance_angle[joint_table_["ankle_r_roll"]] =
       -kuroko_kinematics_->getJointDirection("ankle_r_roll") * roll_gyro_err * walking_param_.balance_gyro_y_gain;
   balance_angle[joint_table_["ankle_l_roll"]] =
@@ -728,17 +727,15 @@ void WalkingModule::gyroFeedback(const double& roll_gyro_err, const double& pitc
 
   // Pitch joints
   balance_angle[joint_table_["hip_r_pitch"]] =
-      kuroko_kinematics_->getJointDirection("hip_r_pitch") * pitch_gyro_err * walking_param_.balance_gyro_pitch_gain;
+      kuroko_kinematics_->getJointDirection("hip_r_pitch") * pitch_gyro_err *
+      (walking_param_.balance_gyro_x_gain + walking_param_.balance_gyro_pitch_gain);
   balance_angle[joint_table_["hip_l_pitch"]] =
-      kuroko_kinematics_->getJointDirection("hip_l_pitch") * pitch_gyro_err * walking_param_.balance_gyro_pitch_gain;
-  balance_angle[joint_table_["thigh_r_active"]] =
-      -kuroko_kinematics_->getJointDirection("thigh_r_active") * pitch_gyro_err * walking_param_.balance_gyro_x_gain;
-  balance_angle[joint_table_["thigh_l_active"]] =
-      -kuroko_kinematics_->getJointDirection("thigh_l_active") * pitch_gyro_err * walking_param_.balance_gyro_x_gain;
-  balance_angle[joint_table_["shin_r_active"]] =
-      -kuroko_kinematics_->getJointDirection("shin_r_active") * pitch_gyro_err * walking_param_.balance_gyro_x_gain;
-  balance_angle[joint_table_["shin_l_active"]] =
-      -kuroko_kinematics_->getJointDirection("shin_l_active") * pitch_gyro_err * walking_param_.balance_gyro_x_gain;
+      kuroko_kinematics_->getJointDirection("hip_l_pitch") * pitch_gyro_err *
+      (walking_param_.balance_gyro_x_gain + walking_param_.balance_gyro_pitch_gain);
+  balance_angle[joint_table_["ankle_r_pitch"]] =
+      -kuroko_kinematics_->getJointDirection("ankle_r_pitch") * roll_gyro_err * walking_param_.balance_gyro_x_gain;
+  balance_angle[joint_table_["ankle_l_pitvh"]] =
+      -kuroko_kinematics_->getJointDirection("ankle_l_pitch") * roll_gyro_err * walking_param_.balance_gyro_x_gain;
 }
 
 void WalkingModule::loadWalkingParam(const std::string& path)
@@ -770,18 +767,6 @@ void WalkingModule::loadWalkingParam(const std::string& path)
   walking_param_.step_forward_back_ratio = doc["step_forward_back_ratio"].as<double>();
   // Foot Height
   walking_param_.foot_height = doc["foot_height"].as<double>();
-  // Target step length
-  // walking_param_.x_step = doc["x_step"].as<double>();
-  // walking_param_.y_step = doc["y_step"].as<double>();
-  // walking_param_.yaw_step = doc["yaw_step"].as<double>();
-
-  // Balance
-  // walking_param_.balance_enable = doc["balance_enable"].as<uint8_t>();
-  walking_param_.balance_gyro_roll_gain = doc["balance_gyro_roll_gain"].as<double>();
-  walking_param_.balance_gyro_pitch_gain = doc["balance_gyro_pitch_gain"].as<double>();
-  walking_param_.balance_gyro_y_gain = doc["balance_gyro_y_gain"].as<double>();
-  walking_param_.balance_gyro_x_gain = doc["balance_gyro_x_gain"].as<double>();
-
   // Swing parameters
   walking_param_.y_swing_amplitude = doc["y_swing_amplitude"].as<double>();
   walking_param_.z_swing_amplitude = doc["z_swing_amplitude"].as<double>();
@@ -790,6 +775,11 @@ void WalkingModule::loadWalkingParam(const std::string& path)
   walking_param_.hip_swing_down_amplitude = doc["hip_swing_down_amplitude"].as<double>() * DEGREE2RADIAN;
   walking_param_.chest_swing_amplitude = doc["chest_swing_amplitude"].as<double>() * DEGREE2RADIAN;
   walking_param_.shoulder_swing_amplitude = doc["shoulder_swing_amplitude"].as<double>() * DEGREE2RADIAN;
+  // Feedback parameters
+  walking_param_.balance_gyro_roll_gain = doc["balance_gyro_roll_gain"].as<double>();
+  walking_param_.balance_gyro_pitch_gain = doc["balance_gyro_pitch_gain"].as<double>();
+  walking_param_.balance_gyro_y_gain = doc["balance_gyro_y_gain"].as<double>();
+  walking_param_.balance_gyro_x_gain = doc["balance_gyro_x_gain"].as<double>();
 }
 
 void WalkingModule::saveWalkingParam(std::string& path)

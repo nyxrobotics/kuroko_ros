@@ -134,14 +134,6 @@ private:
   // variable for walking
   double walk_period_;
   double dsp_ratio_;
-  double x_swing_period_;
-  double x_stance_period_;
-  double y_swing_period_;
-  double y_stance_period_;
-  double z_swing_period_;
-  double z_stance_period_;
-  double yaw_swing_period_;
-  double yaw_stance_period_;
   double l_ssp_start_time_;
   double l_ssp_end_time_;
   double r_ssp_start_time_;
@@ -158,24 +150,9 @@ private:
   double init_yaw_offset_;
   double init_hip_pitch_offset_;
 
-  double x_swing_phase_shift_;
   double x_swing_amplitude_;
-  double x_swing_amplitude_shift_;
-  double x_stance_phase_shift_;
-  double step_length_x_shift_;
-  double y_swing_phase_shift_;
   double y_swing_amplitude_;
-  double y_swing_amplitude_shift_;
-  double y_stance_phase_shift_;
-  double step_length_y_shift_;
-  double z_swing_phase_shift_;
   double z_swing_amplitude_;
-  double z_swing_amplitude_shift_;
-  double z_stance_phase_shift_;
-  double foot_swing_amplitude_;
-  double foot_swing_amplitude_shift_;
-  double yaw_stance_phase_shift_;
-  double step_length_yaw_shift_;
 
   double step_length_x_;
   double step_length_y_;
@@ -185,12 +162,7 @@ private:
   double previous_step_length_x_;
   double previous_step_length_y_;
   double previous_step_length_yaw_;
-  double previous_foot_swing_amplitude_;
-
-  double x_accel_max_;
-  double y_accel_max_;
-  double z_accel_max_;
-  double yaw_accel_max_;
+  double previous_foot_lift_height_;
 
   double y_brake_max_;
   double x_brake_max_;

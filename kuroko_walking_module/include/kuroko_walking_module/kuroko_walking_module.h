@@ -132,16 +132,16 @@ private:
   double leg_default_separaion_;
 
   // variable for walking
-  double period_time_;
+  double walk_period_;
   double dsp_ratio_;
-  double x_swing_period_time_;
-  double x_stance_period_time_;
-  double y_swing_period_time_;
-  double y_stance_period_time_;
-  double z_swing_period_time_;
-  double z_stance_period_time_;
-  double yaw_swing_period_time_;
-  double yaw_stance_period_time_;
+  double x_swing_period_;
+  double x_stance_period_;
+  double y_swing_period_;
+  double y_stance_period_;
+  double z_swing_period_;
+  double z_stance_period_;
+  double yaw_swing_period_;
+  double yaw_stance_period_;
   double l_ssp_start_time_;
   double l_ssp_end_time_;
   double r_ssp_start_time_;

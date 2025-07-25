@@ -523,6 +523,24 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
     r_foot_rpy[2] =
         wSin(time_, walk_period_ * (1.0 - dsp_ratio_), M_PI / 2.0 + M_PI / 2.0 * dsp_ratio_ / (1.0 - dsp_ratio_),
              -step_length_yaw_, -fabs(step_length_yaw_));
+    if (fabs(hip_swing_up_amplitude_) > 0.001 || fabs(hip_swing_down_amplitude_) > 0.001)
+    {
+      double hip_swing_up_ratio =
+          fabs(hip_swing_up_amplitude_) / (fabs(hip_swing_up_amplitude_) + fabs(hip_swing_down_amplitude_));
+      double hip_swing_up_period = walk_period_ * (1.0 - dsp_ratio_) * hip_swing_up_ratio;
+      double hip_swing_down_period = walk_period_ * (1.0 - dsp_ratio_) * (1.0 - hip_swing_up_ratio);
+      if (time_ - l_ssp_start_time_ <= hip_swing_up_period)
+      {
+        // Swing up left hip
+        l_hip_roll_swing = wSin(time_ - l_ssp_start_time_, hip_swing_up_period, 0, hip_swing_up_amplitude_, 0);
+      }
+      else
+      {
+        // Swing down left hip
+        l_hip_roll_swing = wSin(time_ - l_ssp_start_time_ - hip_swing_up_period, hip_swing_down_period, 0,
+                                hip_swing_down_amplitude_, 0);
+      }
+    }
   }
   else if (time_ <= r_ssp_start_time_)
   {
@@ -575,6 +593,25 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
     r_foot_rpy[2] = wSin(time_, walk_period_ * (1.0 - dsp_ratio_),
                          M_PI * 1.5 + M_PI / 2.0 * (2.0 + dsp_ratio_) / (1.0 - dsp_ratio_), -step_length_yaw_,
                          -fabs(step_length_yaw_));
+
+    if (fabs(hip_swing_up_amplitude_) > 0.001 || fabs(hip_swing_down_amplitude_) > 0.001)
+    {
+      double hip_swing_up_ratio =
+          fabs(hip_swing_up_amplitude_) / (fabs(hip_swing_up_amplitude_) + fabs(hip_swing_down_amplitude_));
+      double hip_swing_up_period = walk_period_ * (1.0 - dsp_ratio_) * hip_swing_up_ratio;
+      double hip_swing_down_period = walk_period_ * (1.0 - dsp_ratio_) * (1.0 - hip_swing_up_ratio);
+      if (time_ - r_ssp_start_time_ <= hip_swing_up_period)
+      {
+        // Swing up right hip
+        r_hip_roll_swing = -wSin(time_ - r_ssp_start_time_, hip_swing_up_period, 0, hip_swing_up_amplitude_, 0);
+      }
+      else
+      {
+        // Swing down right hip
+        r_hip_roll_swing = -wSin(time_ - r_ssp_start_time_ - hip_swing_up_period, hip_swing_down_period, 0,
+                                 hip_swing_down_amplitude_, 0);
+      }
+    }
   }
   else
   {

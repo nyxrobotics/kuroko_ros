@@ -168,10 +168,9 @@ private:
   double previous_step_length_yaw_;
   double previous_foot_lift_height_;
 
-  double y_brake_max_;
-  double x_brake_max_;
-  double z_brake_max_;
-  double yaw_brake_max_;
+  double step_y_accel_max_;
+  double step_x_accel_max_;
+  double step_yaw_accel_max_;
 
   double hip_swing_up_amplitude_;
   double hip_swing_down_amplitude_;

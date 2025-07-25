@@ -13,6 +13,11 @@ WalkingModule::WalkingModule() : control_cycle_msec_(8), debug_(false)
 
   init_pose_count_ = 0;
   walking_state_ = WALK_READY;
+
+  step_x_accel_max_ = 0.01;
+  step_y_accel_max_ = 0.01;
+  step_yaw_accel_max_ = 0.01;
+
   previous_step_length_x_ = 0;
   previous_step_length_y_ = 0;
   previous_step_length_yaw_ = 0;
@@ -227,6 +232,20 @@ void WalkingModule::updateMovementParam()
   step_length_x_ = walking_param_.x_step;
   step_length_y_ = walking_param_.y_step / 2;
   step_length_yaw_ = walking_param_.yaw_step;
+
+  // Limit acceleration
+  if (step_length_x_ - previous_step_length_x_ > step_x_accel_max_)
+    step_length_x_ = previous_step_length_x_ + step_x_accel_max_;
+  else if (step_length_x_ - previous_step_length_x_ < -step_x_accel_max_)
+    step_length_x_ = previous_step_length_x_ - step_x_accel_max_;
+  if (step_length_y_ - previous_step_length_y_ > step_y_accel_max_)
+    step_length_y_ = previous_step_length_y_ + step_y_accel_max_;
+  else if (step_length_y_ - previous_step_length_y_ < -step_y_accel_max_)
+    step_length_y_ = previous_step_length_y_ - step_y_accel_max_;
+  if (step_length_yaw_ - previous_step_length_yaw_ > step_yaw_accel_max_)
+    step_length_yaw_ = previous_step_length_yaw_ + step_yaw_accel_max_;
+  else if (step_length_yaw_ - previous_step_length_yaw_ < -step_yaw_accel_max_)
+    step_length_yaw_ = previous_step_length_yaw_ - step_yaw_accel_max_;
 
   // Body Forward/Back Swing
   x_swing_amplitude_ = step_length_x_ * walking_param_.step_forward_back_ratio;
@@ -822,7 +841,8 @@ void WalkingModule::saveWalkingParam(std::string& path)
   out_emitter << YAML::Key << "foot_height" << YAML::Value << walking_param_.foot_height;
   out_emitter << YAML::Key << "y_swing_amplitude" << YAML::Value << walking_param_.y_swing_amplitude;
   out_emitter << YAML::Key << "z_swing_amplitude" << YAML::Value << walking_param_.z_swing_amplitude;
-  out_emitter << YAML::Key << "roll_swing_amplitude" << YAML::Value << walking_param_.roll_swing_amplitude;
+  out_emitter << YAML::Key << "roll_swing_amplitude" << YAML::Value
+              << walking_param_.roll_swing_amplitude * RADIAN2DEGREE;
   out_emitter << YAML::Key << "chest_swing_amplitude" << YAML::Value << walking_param_.chest_swing_amplitude;
   out_emitter << YAML::Key << "shoulder_swing_amplitude" << YAML::Value << walking_param_.shoulder_swing_amplitude;
   out_emitter << YAML::Key << "hip_swing_up_amplitude" << YAML::Value

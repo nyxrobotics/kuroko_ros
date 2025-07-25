@@ -12,6 +12,7 @@ foot_height: 0.08
 y_swing_amplitude: 0.016
 z_swing_amplitude: 0.003
 roll_swing_amplitude: -3.000000083482606
+roll_swing_phase: 0
 chest_swing_amplitude: 0
 shoulder_swing_amplitude: 0
 hip_swing_up_amplitude: 3.999999969014533

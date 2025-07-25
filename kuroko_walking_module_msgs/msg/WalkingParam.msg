@@ -29,6 +29,7 @@ float32 balance_gyro_roll_gain
 float32 y_swing_amplitude
 float32 z_swing_amplitude
 float32 roll_swing_amplitude
+float32 roll_swing_phase
 
 float32 hip_swing_up_amplitude
 float32 hip_swing_down_amplitude

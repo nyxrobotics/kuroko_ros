@@ -253,6 +253,7 @@ void WalkingModule::updateMovementParam()
   // Body Right/Left Swing
   y_swing_amplitude_ = walking_param_.y_swing_amplitude;
   roll_swing_amplitude_ = walking_param_.roll_swing_amplitude;
+  roll_swing_phase_ = walking_param_.roll_swing_phase;
 
   // Body Up/Down Swing
   z_swing_amplitude_ = walking_param_.z_swing_amplitude;
@@ -487,7 +488,7 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
   body_pos.x() = wSin(time_, walk_period_ * 0.5, M_PI, -x_swing_amplitude_, 0);
   body_pos.y() = wSin(time_, walk_period_, 0, -y_swing_amplitude_, 0);
   body_pos.z() = wSin(time_, walk_period_ * 0.5, M_PI * 1.5, -z_swing_amplitude_, -z_swing_amplitude_);
-  body_rpy[0] = wSin(time_, walk_period_, 0, -roll_swing_amplitude_, 0);
+  body_rpy[0] = wSin(time_, walk_period_, roll_swing_phase_, -roll_swing_amplitude_, 0);
   body_rpy[1] = 0;
   body_rpy[2] = 0;
 
@@ -811,6 +812,7 @@ void WalkingModule::loadWalkingParam(const std::string& path)
   walking_param_.y_swing_amplitude = doc["y_swing_amplitude"].as<double>();
   walking_param_.z_swing_amplitude = doc["z_swing_amplitude"].as<double>();
   walking_param_.roll_swing_amplitude = doc["roll_swing_amplitude"].as<double>() * DEGREE2RADIAN;
+  walking_param_.roll_swing_phase = doc["roll_swing_phase"].as<double>() * DEGREE2RADIAN;
   walking_param_.hip_swing_up_amplitude = doc["hip_swing_up_amplitude"].as<double>() * DEGREE2RADIAN;
   walking_param_.hip_swing_down_amplitude = doc["hip_swing_down_amplitude"].as<double>() * DEGREE2RADIAN;
   walking_param_.chest_swing_amplitude = doc["chest_swing_amplitude"].as<double>() * DEGREE2RADIAN;
@@ -843,6 +845,7 @@ void WalkingModule::saveWalkingParam(std::string& path)
   out_emitter << YAML::Key << "z_swing_amplitude" << YAML::Value << walking_param_.z_swing_amplitude;
   out_emitter << YAML::Key << "roll_swing_amplitude" << YAML::Value
               << walking_param_.roll_swing_amplitude * RADIAN2DEGREE;
+  out_emitter << YAML::Key << "roll_swing_phase" << YAML::Value << walking_param_.roll_swing_phase * RADIAN2DEGREE;
   out_emitter << YAML::Key << "chest_swing_amplitude" << YAML::Value << walking_param_.chest_swing_amplitude;
   out_emitter << YAML::Key << "shoulder_swing_amplitude" << YAML::Value << walking_param_.shoulder_swing_amplitude;
   out_emitter << YAML::Key << "hip_swing_up_amplitude" << YAML::Value

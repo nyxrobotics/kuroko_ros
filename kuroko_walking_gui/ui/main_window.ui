@@ -671,15 +671,24 @@
                </widget>
               </item>
               <item row="0" column="3">
-               <widget class="QDoubleSpinBox" name="dSpinBox_shoulder_swing_amplitude">
+               <widget class="QDoubleSpinBox" name="dSpinBox_roll_swing_phase">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="suffix">
+                 <string> ﾟ</string>
+                </property>
+                <property name="decimals">
+                 <number>1</number>
+                </property>
+                <property name="minimum">
+                 <double>-180.000000000000000</double>
+                </property>
                 <property name="maximum">
-                 <double>2.000000000000000</double>
+                 <double>180.000000000000000</double>
                 </property>
                 <property name="singleStep">
                  <double>0.100000000000000</double>
@@ -752,7 +761,7 @@
               <item row="0" column="2">
                <widget class="QLabel" name="label_31">
                 <property name="text">
-                 <string>Arm Swing</string>
+                 <string>Roll Pase</string>
                 </property>
                </widget>
               </item>
@@ -1289,8 +1298,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>411</width>
-                <height>763</height>
+                <width>98</width>
+                <height>28</height>
                </rect>
               </property>
              </widget>

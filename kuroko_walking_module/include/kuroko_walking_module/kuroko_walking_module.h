@@ -3,6 +3,7 @@
 
 #include <boost/thread.hpp>
 #include <eigen3/Eigen/Eigen>
+#include <eigen3/Eigen/Geometry>
 #include <fstream>
 #include <math.h>
 #include <stdio.h>
@@ -105,6 +106,8 @@ private:
   void loadWalkingParam(const std::string& path);
   void saveWalkingParam(std::string& path);
   void iniPoseTraGene(double mov_time);
+  Eigen::Vector3d quaterionToRpy(const Eigen::Quaterniond& q);
+  Eigen::Quaterniond rpyToQuaternion(const Eigen::Vector3d& rpy);
 
   KurokoKinematics* kuroko_kinematics_;
   int control_cycle_msec_;

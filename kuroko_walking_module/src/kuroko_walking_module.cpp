@@ -453,8 +453,9 @@ void WalkingModule::processPhase(const double& time_unit)
 
 bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
 {
-  Pose3D body, r_foot, l_foot;
-  double r_hip_roll_swing, l_hip_roll_swing;
+  Eigen::Vector3d body_pos, r_foot_pos, l_foot_pos;
+  Eigen::Vector3d body_rpy, r_foot_rpy, l_foot_rpy;
+  double r_hip_roll_swing = 0, l_hip_roll_swing = 0;
   std::vector<double> r_target_pose(6, 0);
   std::vector<double> l_target_pose(6, 0);
 
@@ -464,161 +465,185 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
   updatePoseParam();
 
   // Compute endpoints
-  
-  body.x_ = wSin(time_, walk_period_ * 0.5, M_PI, x_swing_amplitude_, 0);
-  body.y_ = wSin(time_, walk_period_, 0, y_swing_amplitude_, 0);
-  body.z_ = wSin(time_, walk_period_ * 0.5, M_PI * 1.5, z_swing_amplitude_, z_swing_amplitude_);
-  body.roll_ = wSin(time_, walk_period_, 0, roll_swing_amplitude_, 0);
-  body.pitch_ = 0.0;
-  body.yaw_ = 0.0;
-  l_hip_roll_swing = 0;
-  r_hip_roll_swing = 0;
+  body_pos.x() = wSin(time_, walk_period_ * 0.5, M_PI, -x_swing_amplitude_, 0);
+  body_pos.y() = wSin(time_, walk_period_, 0, -y_swing_amplitude_, 0);
+  body_pos.z() = wSin(time_, walk_period_ * 0.5, M_PI * 1.5, -z_swing_amplitude_, -z_swing_amplitude_);
+  body_rpy[0] = wSin(time_, walk_period_, 0, -roll_swing_amplitude_, 0);
+  body_rpy[1] = 0;
+  body_rpy[2] = 0;
 
   if (time_ <= l_ssp_start_time_)
   {
     // Shift center of gravity to the left foot while keeping both feet attached
-    l_foot.x_ = wSin(walk_period_ * dsp_ratio_ / 4.0, walk_period_ * (1.0 - dsp_ratio_),
-                     M_PI / 2.0 + M_PI / 2.0 * dsp_ratio_ / (1.0 - dsp_ratio_), step_length_x_, 0);
-    l_foot.y_ = wSin(walk_period_ * dsp_ratio_ / 4.0, walk_period_ * (1.0 - dsp_ratio_),
-                     M_PI / 2.0 + M_PI / 2.0 * dsp_ratio_ / (1.0 - dsp_ratio_), step_length_y_, fabs(step_length_y_));
-    l_foot.z_ =
+    l_foot_pos.x() = wSin(walk_period_ * dsp_ratio_ / 4.0, walk_period_ * (1.0 - dsp_ratio_),
+                          M_PI / 2.0 + M_PI / 2.0 * dsp_ratio_ / (1.0 - dsp_ratio_), step_length_x_, 0);
+    l_foot_pos.y() =
+        wSin(walk_period_ * dsp_ratio_ / 4.0, walk_period_ * (1.0 - dsp_ratio_),
+             M_PI / 2.0 + M_PI / 2.0 * dsp_ratio_ / (1.0 - dsp_ratio_), step_length_y_, fabs(step_length_y_));
+    l_foot_pos.z() =
         wSin(walk_period_ * dsp_ratio_ / 4.0, walk_period_ * (1.0 - dsp_ratio_) / 2.0,
              M_PI / 2.0 + M_PI * dsp_ratio_ / (1.0 - dsp_ratio_), foot_lift_height_ / 2.0, foot_lift_height_ / 2.0);
-    l_foot.yaw_ =
+    l_foot_rpy[2] =
         wSin(walk_period_ * dsp_ratio_ / 4.0, walk_period_ * (1.0 - dsp_ratio_),
              M_PI / 2.0 + M_PI / 2.0 * dsp_ratio_ / (1.0 - dsp_ratio_), step_length_yaw_, fabs(step_length_yaw_));
-    r_foot.x_ = wSin(walk_period_ * dsp_ratio_ / 4.0, walk_period_ * (1.0 - dsp_ratio_),
-                     M_PI / 2.0 + M_PI / 2.0 * dsp_ratio_ / (1.0 - dsp_ratio_), -step_length_x_, -0);
-    r_foot.y_ = wSin(walk_period_ * dsp_ratio_ / 4.0, walk_period_ * (1.0 - dsp_ratio_),
-                     M_PI / 2.0 + M_PI / 2.0 * dsp_ratio_ / (1.0 - dsp_ratio_), -step_length_y_, -fabs(step_length_y_));
-    r_foot.z_ = wSin((2.0 + dsp_ratio_) * walk_period_ / 4.0, walk_period_ * (1.0 - dsp_ratio_) / 2.0,
-                     M_PI / 2.0 + M_PI * (2.0 + dsp_ratio_) / (1.0 - dsp_ratio_), foot_lift_height_ / 2.0,
-                     foot_lift_height_ / 2.0);
-    r_foot.yaw_ =
+    r_foot_pos.x() = wSin(walk_period_ * dsp_ratio_ / 4.0, walk_period_ * (1.0 - dsp_ratio_),
+                          M_PI / 2.0 + M_PI / 2.0 * dsp_ratio_ / (1.0 - dsp_ratio_), -step_length_x_, -0);
+    r_foot_pos.y() =
+        wSin(walk_period_ * dsp_ratio_ / 4.0, walk_period_ * (1.0 - dsp_ratio_),
+             M_PI / 2.0 + M_PI / 2.0 * dsp_ratio_ / (1.0 - dsp_ratio_), -step_length_y_, -fabs(step_length_y_));
+    r_foot_pos.z() = wSin((2.0 + dsp_ratio_) * walk_period_ / 4.0, walk_period_ * (1.0 - dsp_ratio_) / 2.0,
+                          M_PI / 2.0 + M_PI * (2.0 + dsp_ratio_) / (1.0 - dsp_ratio_), foot_lift_height_ / 2.0,
+                          foot_lift_height_ / 2.0);
+    r_foot_rpy[2] =
         wSin(walk_period_ * dsp_ratio_ / 4.0, walk_period_ * (1.0 - dsp_ratio_),
              M_PI / 2.0 + M_PI / 2.0 * dsp_ratio_ / (1.0 - dsp_ratio_), -step_length_yaw_, -fabs(step_length_yaw_));
   }
   else if (time_ <= l_ssp_end_time_)
   {
     // Lift left leg and move left leg forward, move right leg backward
-    l_foot.x_ = wSin(time_, walk_period_ * (1.0 - dsp_ratio_),
-                     M_PI / 2.0 + M_PI / 2.0 * dsp_ratio_ / (1.0 - dsp_ratio_), step_length_x_, 0);
-    l_foot.y_ = wSin(time_, walk_period_ * (1.0 - dsp_ratio_),
-                     M_PI / 2.0 + M_PI / 2.0 * dsp_ratio_ / (1.0 - dsp_ratio_), step_length_y_, fabs(step_length_y_));
-    l_foot.z_ =
+    l_foot_pos.x() = wSin(time_, walk_period_ * (1.0 - dsp_ratio_),
+                          M_PI / 2.0 + M_PI / 2.0 * dsp_ratio_ / (1.0 - dsp_ratio_), step_length_x_, 0);
+    l_foot_pos.y() =
+        wSin(time_, walk_period_ * (1.0 - dsp_ratio_), M_PI / 2.0 + M_PI / 2.0 * dsp_ratio_ / (1.0 - dsp_ratio_),
+             step_length_y_, fabs(step_length_y_));
+    l_foot_pos.z() =
         wSin(time_, walk_period_ * (1.0 - dsp_ratio_) / 2.0, M_PI / 2.0 + M_PI / (1.0 - dsp_ratio_) * dsp_ratio_,
              foot_lift_height_ / 2.0, foot_lift_height_ / 2.0);
-    l_foot.yaw_ =
+    l_foot_rpy[2] =
         wSin(time_, walk_period_ * (1.0 - dsp_ratio_), M_PI / 2.0 + M_PI / 2.0 * dsp_ratio_ / (1.0 - dsp_ratio_),
              step_length_yaw_, fabs(step_length_yaw_));
-    r_foot.x_ = wSin(time_, walk_period_ * (1.0 - dsp_ratio_),
-                     M_PI / 2.0 + M_PI / 2.0 * dsp_ratio_ / (1.0 - dsp_ratio_), -step_length_x_, 0);
-    r_foot.y_ = wSin(time_, walk_period_ * (1.0 - dsp_ratio_),
-                     M_PI / 2.0 + M_PI / 2.0 * dsp_ratio_ / (1.0 - dsp_ratio_), -step_length_y_, -fabs(step_length_y_));
-    r_foot.z_ = wSin((2.0 + dsp_ratio_) * walk_period_ / 4.0, walk_period_ * (1.0 - dsp_ratio_) / 2.0,
-                     M_PI / 2.0 + M_PI * (2.0 + dsp_ratio_) / (1.0 - dsp_ratio_), foot_lift_height_ / 2.0,
-                     foot_lift_height_ / 2.0);
-    r_foot.yaw_ =
+    r_foot_pos.x() = wSin(time_, walk_period_ * (1.0 - dsp_ratio_),
+                          M_PI / 2.0 + M_PI / 2.0 * dsp_ratio_ / (1.0 - dsp_ratio_), -step_length_x_, 0);
+    r_foot_pos.y() =
+        wSin(time_, walk_period_ * (1.0 - dsp_ratio_), M_PI / 2.0 + M_PI / 2.0 * dsp_ratio_ / (1.0 - dsp_ratio_),
+             -step_length_y_, -fabs(step_length_y_));
+    r_foot_pos.z() = wSin((2.0 + dsp_ratio_) * walk_period_ / 4.0, walk_period_ * (1.0 - dsp_ratio_) / 2.0,
+                          M_PI / 2.0 + M_PI * (2.0 + dsp_ratio_) / (1.0 - dsp_ratio_), foot_lift_height_ / 2.0,
+                          foot_lift_height_ / 2.0);
+    r_foot_rpy[2] =
         wSin(time_, walk_period_ * (1.0 - dsp_ratio_), M_PI / 2.0 + M_PI / 2.0 * dsp_ratio_ / (1.0 - dsp_ratio_),
              -step_length_yaw_, -fabs(step_length_yaw_));
   }
   else if (time_ <= r_ssp_start_time_)
   {
     // Shift center of gravity to the right foot while keeping both feet attached
-    l_foot.x_ = wSin(walk_period_ * (0.5 - dsp_ratio_ / 4.0), walk_period_ * (1.0 - dsp_ratio_),
-                     M_PI / 2.0 + M_PI / 2.0 * dsp_ratio_ / (1.0 - dsp_ratio_), step_length_x_, 0);
-    l_foot.y_ = wSin(walk_period_ * (0.5 - dsp_ratio_ / 4.0), walk_period_ * (1.0 - dsp_ratio_),
-                     M_PI / 2.0 + M_PI / 2.0 * dsp_ratio_ / (1.0 - dsp_ratio_), step_length_y_, fabs(step_length_y_));
-    l_foot.z_ =
+    l_foot_pos.x() = wSin(walk_period_ * (0.5 - dsp_ratio_ / 4.0), walk_period_ * (1.0 - dsp_ratio_),
+                          M_PI / 2.0 + M_PI / 2.0 * dsp_ratio_ / (1.0 - dsp_ratio_), step_length_x_, 0);
+    l_foot_pos.y() =
+        wSin(walk_period_ * (0.5 - dsp_ratio_ / 4.0), walk_period_ * (1.0 - dsp_ratio_),
+             M_PI / 2.0 + M_PI / 2.0 * dsp_ratio_ / (1.0 - dsp_ratio_), step_length_y_, fabs(step_length_y_));
+    l_foot_pos.z() =
         wSin(walk_period_ * (0.5 - dsp_ratio_ / 4.0), walk_period_ * (1.0 - dsp_ratio_) / 2.0,
              M_PI / 2.0 + M_PI * dsp_ratio_ / (1.0 - dsp_ratio_), foot_lift_height_ / 2.0, foot_lift_height_ / 2.0);
-    l_foot.yaw_ =
+    l_foot_rpy[2] =
         wSin(walk_period_ * (0.5 - dsp_ratio_ / 4.0), walk_period_ * (1.0 - dsp_ratio_),
              M_PI / 2.0 + M_PI / 2.0 * dsp_ratio_ / (1.0 - dsp_ratio_), step_length_yaw_, fabs(step_length_yaw_));
-    r_foot.x_ = wSin(walk_period_ * (0.5 - dsp_ratio_ / 4.0), walk_period_ * (1.0 - dsp_ratio_),
-                     M_PI / 2.0 + M_PI / 2.0 * dsp_ratio_ / (1.0 - dsp_ratio_), -step_length_x_, 0);
-    r_foot.y_ = wSin(walk_period_ * (0.5 - dsp_ratio_ / 4.0), walk_period_ * (1.0 - dsp_ratio_),
-                     M_PI / 2.0 + M_PI / 2.0 * dsp_ratio_ / (1.0 - dsp_ratio_), -step_length_y_, -fabs(step_length_y_));
-    r_foot.z_ = wSin((2.0 + dsp_ratio_) * walk_period_ / 4.0, walk_period_ * (1.0 - dsp_ratio_) / 2.0,
-                     M_PI / 2.0 + M_PI * (2.0 + dsp_ratio_) / (1.0 - dsp_ratio_), (foot_lift_height_ / 2.0),
-                     (foot_lift_height_ / 2.0));
-    r_foot.yaw_ =
+    r_foot_pos.x() = wSin(walk_period_ * (0.5 - dsp_ratio_ / 4.0), walk_period_ * (1.0 - dsp_ratio_),
+                          M_PI / 2.0 + M_PI / 2.0 * dsp_ratio_ / (1.0 - dsp_ratio_), -step_length_x_, 0);
+    r_foot_pos.y() =
+        wSin(walk_period_ * (0.5 - dsp_ratio_ / 4.0), walk_period_ * (1.0 - dsp_ratio_),
+             M_PI / 2.0 + M_PI / 2.0 * dsp_ratio_ / (1.0 - dsp_ratio_), -step_length_y_, -fabs(step_length_y_));
+    r_foot_pos.z() = wSin((2.0 + dsp_ratio_) * walk_period_ / 4.0, walk_period_ * (1.0 - dsp_ratio_) / 2.0,
+                          M_PI / 2.0 + M_PI * (2.0 + dsp_ratio_) / (1.0 - dsp_ratio_), (foot_lift_height_ / 2.0),
+                          (foot_lift_height_ / 2.0));
+    r_foot_rpy[2] =
         wSin(walk_period_ * (0.5 - dsp_ratio_ / 4.0), walk_period_ * (1.0 - dsp_ratio_),
              M_PI / 2.0 + M_PI / 2.0 * dsp_ratio_ / (1.0 - dsp_ratio_), -step_length_yaw_, -fabs(step_length_yaw_));
   }
   else if (time_ <= r_ssp_end_time_)
   {
     // Lift Right leg and move right leg forward, move left leg backward
-    l_foot.x_ = wSin(time_, walk_period_ * (1.0 - dsp_ratio_),
-                     M_PI * 1.5 + M_PI / 2.0 * (2.0 + dsp_ratio_) / (1.0 - dsp_ratio_), step_length_x_, 0);
-    l_foot.y_ =
+    l_foot_pos.x() = wSin(time_, walk_period_ * (1.0 - dsp_ratio_),
+                          M_PI * 1.5 + M_PI / 2.0 * (2.0 + dsp_ratio_) / (1.0 - dsp_ratio_), step_length_x_, 0);
+    l_foot_pos.y() =
         wSin(time_, walk_period_ * (1.0 - dsp_ratio_),
              M_PI * 1.5 + M_PI / 2.0 * (2.0 + dsp_ratio_) / (1.0 - dsp_ratio_), step_length_y_, fabs(step_length_y_));
-    l_foot.z_ =
+    l_foot_pos.z() =
         wSin(walk_period_ * (0.5 - dsp_ratio_ / 4.0), (walk_period_ * (1.0 - dsp_ratio_) / 2.0),
              M_PI / 2.0 + M_PI * dsp_ratio_ / (1.0 - dsp_ratio_), foot_lift_height_ / 2.0, foot_lift_height_ / 2.0);
-    l_foot.yaw_ = wSin(time_, walk_period_ * (1.0 - dsp_ratio_),
-                       M_PI * 1.5 + M_PI / 2.0 * (2.0 + dsp_ratio_) / (1.0 - dsp_ratio_), step_length_yaw_,
-                       fabs(step_length_yaw_));
-    r_foot.x_ = wSin(time_, walk_period_ * (1.0 - dsp_ratio_),
-                     M_PI * 1.5 + M_PI / 2.0 * (2.0 + dsp_ratio_) / (1.0 - dsp_ratio_), -step_length_x_, 0);
-    r_foot.y_ =
+    l_foot_rpy[2] = wSin(time_, walk_period_ * (1.0 - dsp_ratio_),
+                         M_PI * 1.5 + M_PI / 2.0 * (2.0 + dsp_ratio_) / (1.0 - dsp_ratio_), step_length_yaw_,
+                         fabs(step_length_yaw_));
+    r_foot_pos.x() = wSin(time_, walk_period_ * (1.0 - dsp_ratio_),
+                          M_PI * 1.5 + M_PI / 2.0 * (2.0 + dsp_ratio_) / (1.0 - dsp_ratio_), -step_length_x_, 0);
+    r_foot_pos.y() =
         wSin(time_, walk_period_ * (1.0 - dsp_ratio_),
              M_PI * 1.5 + M_PI / 2.0 * (2.0 + dsp_ratio_) / (1.0 - dsp_ratio_), -step_length_y_, -fabs(step_length_y_));
-    r_foot.z_ = wSin(time_, walk_period_ * (1.0 - dsp_ratio_) / 2.0,
-                     M_PI / 2.0 + M_PI * (2.0 + dsp_ratio_) / (1.0 - dsp_ratio_), foot_lift_height_ / 2.0,
-                     foot_lift_height_ / 2.0);
-    r_foot.yaw_ = wSin(time_, walk_period_ * (1.0 - dsp_ratio_),
-                       M_PI * 1.5 + M_PI / 2.0 * (2.0 + dsp_ratio_) / (1.0 - dsp_ratio_), -step_length_yaw_,
-                       -fabs(step_length_yaw_));
+    r_foot_pos.z() = wSin(time_, walk_period_ * (1.0 - dsp_ratio_) / 2.0,
+                          M_PI / 2.0 + M_PI * (2.0 + dsp_ratio_) / (1.0 - dsp_ratio_), foot_lift_height_ / 2.0,
+                          foot_lift_height_ / 2.0);
+    r_foot_rpy[2] = wSin(time_, walk_period_ * (1.0 - dsp_ratio_),
+                         M_PI * 1.5 + M_PI / 2.0 * (2.0 + dsp_ratio_) / (1.0 - dsp_ratio_), -step_length_yaw_,
+                         -fabs(step_length_yaw_));
   }
   else
   {
     // Shift center of gravity to the left foot while keeping both feet attached
-    l_foot.x_ = wSin(walk_period_ * (1.0 - dsp_ratio_ / 4.0), walk_period_ * (1.0 - dsp_ratio_),
-                     M_PI * 1.5 + M_PI / 2.0 * (2.0 + dsp_ratio_) / (1.0 - dsp_ratio_), step_length_x_, 0);
-    l_foot.y_ =
+    l_foot_pos.x() = wSin(walk_period_ * (1.0 - dsp_ratio_ / 4.0), walk_period_ * (1.0 - dsp_ratio_),
+                          M_PI * 1.5 + M_PI / 2.0 * (2.0 + dsp_ratio_) / (1.0 - dsp_ratio_), step_length_x_, 0);
+    l_foot_pos.y() =
         wSin(walk_period_ * (1.0 - dsp_ratio_ / 4.0), walk_period_ * (1.0 - dsp_ratio_),
              M_PI * 1.5 + M_PI / 2.0 * (2.0 + dsp_ratio_) / (1.0 - dsp_ratio_), step_length_y_, fabs(step_length_y_));
-    l_foot.z_ =
+    l_foot_pos.z() =
         wSin(walk_period_ * (0.5 - dsp_ratio_ / 4.0), walk_period_ * (1.0 - dsp_ratio_) / 2.0,
              M_PI / 2.0 + M_PI * dsp_ratio_ / (1.0 - dsp_ratio_), foot_lift_height_ / 2.0, foot_lift_height_ / 2.0);
-    l_foot.yaw_ = wSin(walk_period_ * (1.0 - dsp_ratio_ / 4.0), walk_period_ * (1.0 - dsp_ratio_),
-                       M_PI * 1.5 + M_PI / 2.0 * (2.0 + dsp_ratio_) / (1.0 - dsp_ratio_), step_length_yaw_,
-                       fabs(step_length_yaw_));
-    r_foot.x_ = wSin(walk_period_ * (1.0 - dsp_ratio_ / 4.0), walk_period_ * (1.0 - dsp_ratio_),
-                     M_PI * 1.5 + M_PI / 2.0 * (2.0 + dsp_ratio_) / (1.0 - dsp_ratio_), -step_length_x_, 0);
-    r_foot.y_ =
+    l_foot_rpy[2] = wSin(walk_period_ * (1.0 - dsp_ratio_ / 4.0), walk_period_ * (1.0 - dsp_ratio_),
+                         M_PI * 1.5 + M_PI / 2.0 * (2.0 + dsp_ratio_) / (1.0 - dsp_ratio_), step_length_yaw_,
+                         fabs(step_length_yaw_));
+    r_foot_pos.x() = wSin(walk_period_ * (1.0 - dsp_ratio_ / 4.0), walk_period_ * (1.0 - dsp_ratio_),
+                          M_PI * 1.5 + M_PI / 2.0 * (2.0 + dsp_ratio_) / (1.0 - dsp_ratio_), -step_length_x_, 0);
+    r_foot_pos.y() =
         wSin(walk_period_ * (1.0 - dsp_ratio_ / 4.0), walk_period_ * (1.0 - dsp_ratio_),
              M_PI * 1.5 + M_PI / 2.0 * (2.0 + dsp_ratio_) / (1.0 - dsp_ratio_), -step_length_y_, -fabs(step_length_y_));
-    r_foot.z_ = wSin(walk_period_ * (1.0 - dsp_ratio_ / 4.0), walk_period_ * (1.0 - dsp_ratio_) / 2.0,
-                     M_PI / 2.0 + M_PI * (2.0 + dsp_ratio_) / (1.0 - dsp_ratio_), foot_lift_height_ / 2.0,
-                     foot_lift_height_ / 2.0);
-    r_foot.yaw_ = wSin(walk_period_ * (1.0 - dsp_ratio_ / 4.0), walk_period_ * (1.0 - dsp_ratio_),
-                       M_PI * 1.5 + M_PI / 2.0 * (2.0 + dsp_ratio_) / (1.0 - dsp_ratio_), -step_length_yaw_,
-                       -fabs(step_length_yaw_));
+    r_foot_pos.z() = wSin(walk_period_ * (1.0 - dsp_ratio_ / 4.0), walk_period_ * (1.0 - dsp_ratio_) / 2.0,
+                          M_PI / 2.0 + M_PI * (2.0 + dsp_ratio_) / (1.0 - dsp_ratio_), foot_lift_height_ / 2.0,
+                          foot_lift_height_ / 2.0);
+    r_foot_rpy[2] = wSin(walk_period_ * (1.0 - dsp_ratio_ / 4.0), walk_period_ * (1.0 - dsp_ratio_),
+                         M_PI * 1.5 + M_PI / 2.0 * (2.0 + dsp_ratio_) / (1.0 - dsp_ratio_), -step_length_yaw_,
+                         -fabs(step_length_yaw_));
   }
 
-  l_foot.roll_ = 0;
-  l_foot.pitch_ = 0;
-  r_foot.roll_ = 0;
-  r_foot.pitch_ = 0;
+  r_foot_pos.x() += init_x_offset_;
+  r_foot_pos.y() -= (init_y_offset_ + leg_default_separaion_) / 2.0;
+  r_foot_pos.z() += init_z_offset_ - leg_default_length_;
+  r_foot_rpy[0] -= init_roll_offset_ / 2.0;
+  r_foot_rpy[1] += init_pitch_offset_;
+  r_foot_rpy[2] -= init_yaw_offset_ / 2.0;
 
-  // mm, rad
+  l_foot_pos.x() += init_x_offset_;
+  l_foot_pos.y() += (init_y_offset_ + leg_default_separaion_) / 2.0;
+  l_foot_pos.z() += init_z_offset_ - leg_default_length_;
+  l_foot_rpy[0] += init_roll_offset_ / 2.0;
+  l_foot_rpy[1] += init_pitch_offset_;
+  l_foot_rpy[2] += init_yaw_offset_ / 2.0;
+
+  Eigen::Quaterniond body_quat = rpyToQuaternion(body_rpy);
+  Eigen::Quaterniond r_foot_quat = rpyToQuaternion(r_foot_rpy);
+  Eigen::Quaterniond l_foot_quat = rpyToQuaternion(l_foot_rpy);
+
+  Eigen::Vector3d body2r_foot_pos = body_quat.inverse() * (r_foot_pos - body_pos);
+  Eigen::Quaterniond body2r_foot_quat = body_quat.inverse() * r_foot_quat;
+  Eigen::Vector3d body2r_foot_rpy = quaterionToRpy(body2r_foot_quat);
+
+  Eigen::Vector3d body2l_foot_pos = body_quat.inverse() * (l_foot_pos - body_pos);
+  Eigen::Quaterniond body2l_foot_quat = body_quat.inverse() * l_foot_quat;
+  Eigen::Vector3d body2l_foot_rpy = quaterionToRpy(body2l_foot_quat);
+
   // Right leg target point
-  r_target_pose[0] = body.x_ + r_foot.x_ + init_x_offset_;
-  r_target_pose[1] = body.y_ + r_foot.y_ - (init_y_offset_ + leg_default_separaion_) / 2.0;
-  r_target_pose[2] = body.z_ + r_foot.z_ + init_z_offset_ - leg_default_length_;
-  r_target_pose[3] = body.roll_ + r_foot.roll_ - init_roll_offset_ / 2.0;
-  r_target_pose[4] = body.pitch_ + r_foot.pitch_ + init_pitch_offset_;
-  r_target_pose[5] = body.yaw_ + r_foot.yaw_ - init_yaw_offset_ / 2.0;
+  r_target_pose[0] = body2r_foot_pos[0];
+  r_target_pose[1] = body2r_foot_pos[1];
+  r_target_pose[2] = body2r_foot_pos[2];
+  r_target_pose[3] = body2r_foot_rpy[0];
+  r_target_pose[4] = body2r_foot_rpy[1];
+  r_target_pose[5] = body2r_foot_rpy[2];
+
   // Left leg target point
-  l_target_pose[0] = body.x_ + l_foot.x_ + init_x_offset_;
-  l_target_pose[1] = body.y_ + l_foot.y_ + (init_y_offset_ + leg_default_separaion_) / 2.0;
-  l_target_pose[2] = body.z_ + l_foot.z_ + init_z_offset_ - leg_default_length_;
-  l_target_pose[3] = body.roll_ + l_foot.roll_ + init_roll_offset_ / 2.0;
-  l_target_pose[4] = body.pitch_ + l_foot.pitch_ + init_pitch_offset_;
-  l_target_pose[5] = body.yaw_ + l_foot.yaw_ + init_yaw_offset_ / 2.0;
+  l_target_pose[0] = body2l_foot_pos[0];
+  l_target_pose[1] = body2l_foot_pos[1];
+  l_target_pose[2] = body2l_foot_pos[2];
+  l_target_pose[3] = body2l_foot_rpy[0];
+  l_target_pose[4] = body2l_foot_rpy[1];
+  l_target_pose[5] = body2l_foot_rpy[2];
 
   // Compute body swing
   if (time_ <= l_ssp_end_time_)
@@ -813,4 +838,38 @@ void WalkingModule::iniPoseTraGene(double mov_time)
 
   init_pose_count_ = 0;
 }
+
+Eigen::Vector3d WalkingModule::quaterionToRpy(const Eigen::Quaterniond& q)
+{
+  Eigen::Vector3d angles;  // roll pitch yaw
+  double x = q.x(), y = q.y(), z = q.z(), w = q.w();
+
+  // yaw (z-axis rotation)
+  double siny_cosp = 2 * (w * z + x * y);
+  double cosy_cosp = 1 - 2 * (y * y + z * z);
+  angles[2] = std::atan2(siny_cosp, cosy_cosp);
+
+  // pitch (y-axis rotation)
+  double sinp = 2 * (w * y - z * x);
+  if (std::abs(sinp) >= 1)
+    angles[1] = std::copysign(M_PI / 2, sinp);  // use 90 degrees if out of range
+  else
+    angles[1] = std::asin(sinp);
+
+  // roll (x-axis rotation)
+  double sinr_cosp = 2 * (w * x + y * z);
+  double cosr_cosp = 1 - 2 * (x * x + y * y);
+  angles[0] = std::atan2(sinr_cosp, cosr_cosp);
+
+  return angles;
+}
+
+Eigen::Quaterniond WalkingModule::rpyToQuaternion(const Eigen::Vector3d& rpy)
+{
+  Eigen::Quaterniond q;
+  q = Eigen::AngleAxisd(rpy[2], Eigen::Vector3d::UnitZ()) * Eigen::AngleAxisd(rpy[1], Eigen::Vector3d::UnitY()) *
+      Eigen::AngleAxisd(rpy[0], Eigen::Vector3d::UnitX());
+  return q;
+}
+
 }  // namespace motion_control

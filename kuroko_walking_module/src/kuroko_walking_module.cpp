@@ -21,6 +21,12 @@ WalkingModule::WalkingModule() : control_cycle_msec_(8), debug_(false)
   roll_swing_accel_max_ = 0.04;
   foot_lift_accel_max_ = 0.02;
 
+  step_x_brake_max_ = step_x_accel_max_ * 2.0;
+  step_y_brake_max_ = step_y_accel_max_ * 2.0;
+  step_yaw_brake_max_ = step_yaw_accel_max_ * 2.0;
+  roll_swing_brake_max_ = roll_swing_accel_max_ * 2.0;
+  foot_lift_brake_max_ = foot_lift_accel_max_ * 2.0;
+
   previous_step_length_x_ = 0;
   previous_step_length_y_ = 0;
   previous_step_length_yaw_ = 0;
@@ -238,18 +244,50 @@ void WalkingModule::updateMovementParam()
   step_length_yaw_ = walking_param_.yaw_step;
 
   // Limit acceleration
-  if (step_length_x_ - previous_step_length_x_ > step_x_accel_max_)
-    step_length_x_ = previous_step_length_x_ + step_x_accel_max_;
-  else if (step_length_x_ - previous_step_length_x_ < -step_x_accel_max_)
-    step_length_x_ = previous_step_length_x_ - step_x_accel_max_;
-  if (step_length_y_ - previous_step_length_y_ > step_y_accel_max_)
-    step_length_y_ = previous_step_length_y_ + step_y_accel_max_;
-  else if (step_length_y_ - previous_step_length_y_ < -step_y_accel_max_)
-    step_length_y_ = previous_step_length_y_ - step_y_accel_max_;
-  if (step_length_yaw_ - previous_step_length_yaw_ > step_yaw_accel_max_)
-    step_length_yaw_ = previous_step_length_yaw_ + step_yaw_accel_max_;
-  else if (step_length_yaw_ - previous_step_length_yaw_ < -step_yaw_accel_max_)
-    step_length_yaw_ = previous_step_length_yaw_ - step_yaw_accel_max_;
+  if (fabs(step_length_x_) > fabs(previous_step_length_x_) && step_length_x_ * previous_step_length_x_ > -0.001)
+  {
+    if (step_length_x_ - previous_step_length_x_ > step_x_accel_max_)
+      step_length_x_ = previous_step_length_x_ + step_x_accel_max_;
+    else if (step_length_x_ - previous_step_length_x_ < -step_x_accel_max_)
+      step_length_x_ = previous_step_length_x_ - step_x_accel_max_;
+  }
+  else
+  {
+    if (step_length_x_ - previous_step_length_x_ > step_x_brake_max_)
+      step_length_x_ = previous_step_length_x_ + step_x_brake_max_;
+    else if (step_length_x_ - previous_step_length_x_ < -step_x_brake_max_)
+      step_length_x_ = previous_step_length_x_ - step_x_brake_max_;
+  }
+
+  if (fabs(step_length_y_) > fabs(previous_step_length_y_) && step_length_y_ * previous_step_length_y_ > -0.001)
+  {
+    if (step_length_y_ - previous_step_length_y_ > step_y_accel_max_)
+      step_length_y_ = previous_step_length_y_ + step_y_accel_max_;
+    else if (step_length_y_ - previous_step_length_y_ < -step_y_accel_max_)
+      step_length_y_ = previous_step_length_y_ - step_y_accel_max_;
+  }
+  else
+  {
+    if (step_length_y_ - previous_step_length_y_ > step_y_brake_max_)
+      step_length_y_ = previous_step_length_y_ + step_y_brake_max_;
+    else if (step_length_y_ - previous_step_length_y_ < -step_y_brake_max_)
+      step_length_y_ = previous_step_length_y_ - step_y_brake_max_;
+  }
+
+  if (fabs(step_length_yaw_) > fabs(previous_step_length_yaw_) && step_length_yaw_ * previous_step_length_yaw_ > -0.001)
+  {
+    if (step_length_yaw_ - previous_step_length_yaw_ > step_yaw_accel_max_)
+      step_length_yaw_ = previous_step_length_yaw_ + step_yaw_accel_max_;
+    else if (step_length_yaw_ - previous_step_length_yaw_ < -step_yaw_accel_max_)
+      step_length_yaw_ = previous_step_length_yaw_ - step_yaw_accel_max_;
+  }
+  else
+  {
+    if (step_length_yaw_ - previous_step_length_yaw_ > step_yaw_brake_max_)
+      step_length_yaw_ = previous_step_length_yaw_ + step_yaw_brake_max_;
+    else if (step_length_yaw_ - previous_step_length_yaw_ < -step_yaw_brake_max_)
+      step_length_yaw_ = previous_step_length_yaw_ - step_yaw_brake_max_;
+  }
 
   // Body Forward/Back Swing
   x_swing_amplitude_ = step_length_x_ * walking_param_.step_forward_back_ratio;
@@ -257,14 +295,22 @@ void WalkingModule::updateMovementParam()
   // Body Right/Left Swing
   y_swing_amplitude_ = walking_param_.y_swing_amplitude;
   roll_swing_amplitude_ = walking_param_.roll_swing_amplitude;
-  if (roll_swing_amplitude_ - previous_roll_swing_amplitude_ > roll_swing_accel_max_)
+  if (fabs(roll_swing_amplitude_) > fabs(previous_roll_swing_amplitude_) &&
+      roll_swing_amplitude_ * previous_roll_swing_amplitude_ > -0.001)
   {
-    roll_swing_amplitude_ = previous_roll_swing_amplitude_ + roll_swing_accel_max_;
+    if (roll_swing_amplitude_ - previous_roll_swing_amplitude_ > roll_swing_accel_max_)
+      roll_swing_amplitude_ = previous_roll_swing_amplitude_ + roll_swing_accel_max_;
+    else if (roll_swing_amplitude_ - previous_roll_swing_amplitude_ < -roll_swing_accel_max_)
+      roll_swing_amplitude_ = previous_roll_swing_amplitude_ - roll_swing_accel_max_;
   }
-  else if (roll_swing_amplitude_ - previous_roll_swing_amplitude_ < -roll_swing_accel_max_)
+  else
   {
-    roll_swing_amplitude_ = previous_roll_swing_amplitude_ - roll_swing_accel_max_;
+    if (roll_swing_amplitude_ - previous_roll_swing_amplitude_ > roll_swing_brake_max_)
+      roll_swing_amplitude_ = previous_roll_swing_amplitude_ + roll_swing_brake_max_;
+    else if (roll_swing_amplitude_ - previous_roll_swing_amplitude_ < -roll_swing_brake_max_)
+      roll_swing_amplitude_ = previous_roll_swing_amplitude_ - roll_swing_brake_max_;
   }
+
   roll_swing_phase_ = walking_param_.roll_swing_phase;
 
   // Body Up/Down Swing
@@ -272,13 +318,20 @@ void WalkingModule::updateMovementParam()
 
   // Foot Up/Down Swing
   foot_lift_height_ = walking_param_.foot_height;
-  if (foot_lift_height_ - previous_foot_lift_height_ > foot_lift_accel_max_)
+  if (fabs(foot_lift_height_) > fabs(previous_foot_lift_height_) &&
+      foot_lift_height_ * previous_foot_lift_height_ > -0.001)
   {
-    foot_lift_height_ = previous_foot_lift_height_ + foot_lift_accel_max_;
+    if (foot_lift_height_ - previous_foot_lift_height_ > foot_lift_accel_max_)
+      foot_lift_height_ = previous_foot_lift_height_ + foot_lift_accel_max_;
+    else if (foot_lift_height_ - previous_foot_lift_height_ < -foot_lift_accel_max_)
+      foot_lift_height_ = previous_foot_lift_height_ - foot_lift_accel_max_;
   }
-  else if (foot_lift_height_ - previous_foot_lift_height_ < -foot_lift_accel_max_)
+  else
   {
-    foot_lift_height_ = previous_foot_lift_height_ - foot_lift_accel_max_;
+    if (foot_lift_height_ - previous_foot_lift_height_ > foot_lift_brake_max_)
+      foot_lift_height_ = previous_foot_lift_height_ + foot_lift_brake_max_;
+    else if (foot_lift_height_ - previous_foot_lift_height_ < -foot_lift_brake_max_)
+      foot_lift_height_ = previous_foot_lift_height_ - foot_lift_brake_max_;
   }
 
   // Remember one previous stride to prevent a sudden change in stride

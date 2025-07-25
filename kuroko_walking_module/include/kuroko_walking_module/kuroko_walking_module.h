@@ -176,6 +176,12 @@ private:
   double roll_swing_accel_max_;
   double foot_lift_accel_max_;
 
+  double step_y_brake_max_;
+  double step_x_brake_max_;
+  double step_yaw_brake_max_;
+  double roll_swing_brake_max_;
+  double foot_lift_brake_max_;
+
   double hip_swing_up_amplitude_;
   double hip_swing_down_amplitude_;
   double chest_swing_amplitude_;

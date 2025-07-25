@@ -233,6 +233,7 @@ void WalkingModule::updateMovementParam()
 
   // Body Right/Left Swing
   y_swing_amplitude_ = walking_param_.y_swing_amplitude;
+  roll_swing_amplitude_ = walking_param_.roll_swing_amplitude;
 
   // Body Up/Down Swing
   z_swing_amplitude_ = walking_param_.z_swing_amplitude;
@@ -463,10 +464,11 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
   updatePoseParam();
 
   // Compute endpoints
+  
   body.x_ = wSin(time_, walk_period_ * 0.5, M_PI, x_swing_amplitude_, 0);
   body.y_ = wSin(time_, walk_period_, 0, y_swing_amplitude_, 0);
   body.z_ = wSin(time_, walk_period_ * 0.5, M_PI * 1.5, z_swing_amplitude_, z_swing_amplitude_);
-  body.roll_ = 0.0;
+  body.roll_ = wSin(time_, walk_period_, 0, roll_swing_amplitude_, 0);
   body.pitch_ = 0.0;
   body.yaw_ = 0.0;
   l_hip_roll_swing = 0;

@@ -153,6 +153,7 @@ private:
   double x_swing_amplitude_;
   double y_swing_amplitude_;
   double z_swing_amplitude_;
+  double roll_swing_amplitude_;
 
   double step_length_x_;
   double step_length_y_;

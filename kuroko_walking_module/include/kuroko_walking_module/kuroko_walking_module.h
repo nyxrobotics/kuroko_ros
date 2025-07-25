@@ -167,11 +167,14 @@ private:
   double previous_step_length_x_;
   double previous_step_length_y_;
   double previous_step_length_yaw_;
+  double previous_roll_swing_amplitude_;
   double previous_foot_lift_height_;
 
   double step_y_accel_max_;
   double step_x_accel_max_;
   double step_yaw_accel_max_;
+  double roll_swing_accel_max_;
+  double foot_lift_accel_max_;
 
   double hip_swing_up_amplitude_;
   double hip_swing_down_amplitude_;

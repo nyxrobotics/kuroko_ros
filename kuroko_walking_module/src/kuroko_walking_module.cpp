@@ -14,13 +14,17 @@ WalkingModule::WalkingModule() : control_cycle_msec_(8), debug_(false)
   init_pose_count_ = 0;
   walking_state_ = WALK_READY;
 
+  // TODO: Create a parameter for this
   step_x_accel_max_ = 0.01;
   step_y_accel_max_ = 0.01;
-  step_yaw_accel_max_ = 0.01;
+  step_yaw_accel_max_ = 0.04;
+  roll_swing_accel_max_ = 0.04;
+  foot_lift_accel_max_ = 0.02;
 
   previous_step_length_x_ = 0;
   previous_step_length_y_ = 0;
   previous_step_length_yaw_ = 0;
+  previous_roll_swing_amplitude_ = 0;
   previous_foot_lift_height_ = 0;
 
   kuroko_kinematics_ = new KurokoKinematics(WHOLE_BODY);
@@ -253,6 +257,14 @@ void WalkingModule::updateMovementParam()
   // Body Right/Left Swing
   y_swing_amplitude_ = walking_param_.y_swing_amplitude;
   roll_swing_amplitude_ = walking_param_.roll_swing_amplitude;
+  if (roll_swing_amplitude_ - previous_roll_swing_amplitude_ > roll_swing_accel_max_)
+  {
+    roll_swing_amplitude_ = previous_roll_swing_amplitude_ + roll_swing_accel_max_;
+  }
+  else if (roll_swing_amplitude_ - previous_roll_swing_amplitude_ < -roll_swing_accel_max_)
+  {
+    roll_swing_amplitude_ = previous_roll_swing_amplitude_ - roll_swing_accel_max_;
+  }
   roll_swing_phase_ = walking_param_.roll_swing_phase;
 
   // Body Up/Down Swing
@@ -260,12 +272,21 @@ void WalkingModule::updateMovementParam()
 
   // Foot Up/Down Swing
   foot_lift_height_ = walking_param_.foot_height;
+  if (foot_lift_height_ - previous_foot_lift_height_ > foot_lift_accel_max_)
+  {
+    foot_lift_height_ = previous_foot_lift_height_ + foot_lift_accel_max_;
+  }
+  else if (foot_lift_height_ - previous_foot_lift_height_ < -foot_lift_accel_max_)
+  {
+    foot_lift_height_ = previous_foot_lift_height_ - foot_lift_accel_max_;
+  }
 
   // Remember one previous stride to prevent a sudden change in stride
   previous_step_length_x_ = step_length_x_;
   previous_step_length_y_ = step_length_y_;
   previous_step_length_yaw_ = step_length_yaw_;
   previous_foot_lift_height_ = foot_lift_height_;
+  previous_roll_swing_amplitude_ = roll_swing_amplitude_;
 }
 
 void WalkingModule::updatePoseParam()
@@ -464,6 +485,7 @@ void WalkingModule::processPhase(const double& time_unit)
       {
         step_length_x_ = step_length_y_ = step_length_yaw_ = 0;
         previous_step_length_x_ = previous_step_length_y_ = previous_step_length_yaw_ = 0;
+        previous_roll_swing_amplitude_ = 0;
         previous_foot_lift_height_ = 0;
         is_walking_ = false;
       }
@@ -489,6 +511,8 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
   body_pos.y() = wSin(time_, walk_period_, 0, -y_swing_amplitude_, 0);
   body_pos.z() = wSin(time_, walk_period_ * 0.5, M_PI * 1.5, -z_swing_amplitude_, -z_swing_amplitude_);
   body_rpy[0] = wSin(time_, walk_period_, roll_swing_phase_, -roll_swing_amplitude_, 0);
+  if (!is_walking_)
+    body_rpy[0] = 0;  // No roll swing if no movement
   body_rpy[1] = 0;
   body_rpy[2] = 0;
 

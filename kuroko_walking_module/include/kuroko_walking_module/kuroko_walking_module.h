@@ -99,10 +99,17 @@ private:
 
   void publishStatusMsg(unsigned int type, std::string msg);
   double wSin(double time, double period, double period_shift, double mag, double mag_shift);
-  void updateTimeParam();
-  void updateMovementParam();
-  void updatePoseParam();
+
+  void synchronizeTimeParam();
+  void applyTimeParam();
+  void synchronizeStepParam();
+  void applyStepParam();
+  void synchronizePoseParam();
+  void applyPoseParam();
+
   void startWalking();
+  void setTargetStepConfig();
+  void resetTargetStepConfig();
   void loadWalkingParam(const std::string& path);
   void saveWalkingParam(std::string& path);
   void iniPoseTraGene(double mov_time);
@@ -118,7 +125,9 @@ private:
   /* ROS Topic Publish Functions */
   ros::Publisher robot_pose_pub_;
   ros::Publisher status_msg_pub_;
-  kuroko_walking_module_msgs::WalkingParam walking_param_;
+  kuroko_walking_module_msgs::WalkingParam previouos_walking_param_;
+  kuroko_walking_module_msgs::WalkingParam config_walking_param_;
+  kuroko_walking_module_msgs::WalkingParam target_walking_param_;
   kuroko_walking_module_msgs::WalkingParam synchronized_walking_param_;
 
   Eigen::MatrixXd calc_joint_trajectory_;
@@ -165,12 +174,6 @@ private:
   double step_length_yaw_;
   double foot_lift_height_;
 
-  double previous_step_length_x_;
-  double previous_step_length_y_;
-  double previous_step_length_yaw_;
-  double previous_roll_swing_amplitude_;
-  double previous_foot_lift_height_;
-
   double step_y_accel_max_;
   double step_x_accel_max_;
   double step_yaw_accel_max_;
@@ -190,6 +193,8 @@ private:
 
   bool request_walk_;
   bool is_walking_;
+  bool is_applying_walk_param_;
+  bool is_applying_time_param_;
   double time_;
 
   int phase_;

@@ -1,5 +1,6 @@
 #include <iostream>
 #include <utility>
+#include "ros/console.h"
 
 #include "kuroko_walking_module/kuroko_walking_module.h"
 
@@ -26,12 +27,6 @@ WalkingModule::WalkingModule() : control_cycle_msec_(8), debug_(false)
   step_yaw_brake_max_ = step_yaw_accel_max_ * 2.0;
   roll_swing_brake_max_ = roll_swing_accel_max_ * 2.0;
   foot_lift_brake_max_ = foot_lift_accel_max_ * 2.0;
-
-  previous_step_length_x_ = 0;
-  previous_step_length_y_ = 0;
-  previous_step_length_yaw_ = 0;
-  previous_roll_swing_amplitude_ = 0;
-  previous_foot_lift_height_ = 0;
 
   kuroko_kinematics_ = new KurokoKinematics(WHOLE_BODY);
 
@@ -91,38 +86,36 @@ void WalkingModule::initialize(const int control_cycle_msec, robotis_framework::
 
   // m, s, rad
   // init pose
-  walking_param_.init_x_offset = 0;
-  walking_param_.init_y_offset = 0;
-  walking_param_.init_z_offset = 0;
-  walking_param_.init_roll_offset = 0;
-  walking_param_.init_pitch_offset = 0;
-  walking_param_.init_yaw_offset = 0;
-  walking_param_.init_hip_pitch_offset = 0;
+  config_walking_param_.init_x_offset = 0;
+  config_walking_param_.init_y_offset = 0;
+  config_walking_param_.init_z_offset = 0;
+  config_walking_param_.init_roll_offset = 0;
+  config_walking_param_.init_pitch_offset = 0;
+  config_walking_param_.init_yaw_offset = 0;
+  config_walking_param_.init_hip_pitch_offset = 0;
   // time
-  walking_param_.period_time = 0;
-  walking_param_.dsp_ratio = 0;
-  walking_param_.step_forward_back_ratio = 0;
+  config_walking_param_.period_time = 0;
+  config_walking_param_.dsp_ratio = 0;
+  config_walking_param_.step_forward_back_ratio = 0;
   // walking
-  walking_param_.x_step = 0;
-  walking_param_.y_step = 0;
-  walking_param_.yaw_step = 0;
-  walking_param_.foot_height = 0;  // foot height
+  config_walking_param_.x_step = 0;
+  config_walking_param_.y_step = 0;
+  config_walking_param_.yaw_step = 0;
+  config_walking_param_.foot_height = 0;  // foot height
   // balance
-  walking_param_.balance_enable = false;
-  walking_param_.balance_gyro_roll_gain = 0;
-  walking_param_.balance_gyro_pitch_gain = 0;
-  walking_param_.balance_gyro_y_gain = 0;
-  walking_param_.balance_gyro_x_gain = 0;
-  walking_param_.y_swing_amplitude = 0;
-  walking_param_.z_swing_amplitude = 0;
-  walking_param_.roll_swing_amplitude = 0;
-  walking_param_.roll_swing_phase = 0;
-  walking_param_.hip_swing_up_amplitude = 0;
-  walking_param_.hip_swing_down_amplitude = 0;
-  walking_param_.chest_swing_amplitude = 0;
-  walking_param_.shoulder_swing_amplitude = 0;
-
-  synchronized_walking_param_ = walking_param_;
+  config_walking_param_.balance_enable = false;
+  config_walking_param_.balance_gyro_roll_gain = 0;
+  config_walking_param_.balance_gyro_pitch_gain = 0;
+  config_walking_param_.balance_gyro_y_gain = 0;
+  config_walking_param_.balance_gyro_x_gain = 0;
+  config_walking_param_.y_swing_amplitude = 0;
+  config_walking_param_.z_swing_amplitude = 0;
+  config_walking_param_.roll_swing_amplitude = 0;
+  config_walking_param_.roll_swing_phase = 0;
+  config_walking_param_.hip_swing_up_amplitude = 0;
+  config_walking_param_.hip_swing_down_amplitude = 0;
+  config_walking_param_.chest_swing_amplitude = 0;
+  config_walking_param_.shoulder_swing_amplitude = 0;
 
   // member variable
   body_swing_y_ = 0;
@@ -144,9 +137,19 @@ void WalkingModule::initialize(const int control_cycle_msec, robotis_framework::
   ros_node.param<std::string>("walking_param_path", param_path_, default_param_path);
 
   loadWalkingParam(param_path_);
+  target_walking_param_ = config_walking_param_;
+  target_walking_param_.x_step = 0;
+  target_walking_param_.y_step = 0;
+  target_walking_param_.yaw_step = 0;
+  target_walking_param_.foot_height = 0;
+  target_walking_param_.hip_swing_up_amplitude = 0;
+  target_walking_param_.hip_swing_down_amplitude = 0;
+  previouos_walking_param_ = target_walking_param_;
+  synchronized_walking_param_ = target_walking_param_;
 
-  updateTimeParam();
-  updateMovementParam();
+  applyTimeParam();
+  applyStepParam();
+  applyPoseParam();
 }
 
 void WalkingModule::queueThread()
@@ -198,23 +201,27 @@ void WalkingModule::walkingCommandCallback(const std_msgs::String::ConstPtr& msg
   else if (msg->data == "stop")
     stop();
   else if (msg->data == "balance on")
-    walking_param_.balance_enable = true;
+    config_walking_param_.balance_enable = true;
   else if (msg->data == "balance off")
-    walking_param_.balance_enable = false;
+    config_walking_param_.balance_enable = false;
   else if (msg->data == "save")
     saveWalkingParam(param_path_);
 }
 
 void WalkingModule::walkingParameterCallback(const kuroko_walking_module_msgs::WalkingParam::ConstPtr& msg)
 {
-  walking_param_ = *msg;
+  config_walking_param_ = *msg;
+  if (is_walking_)
+  {
+    previouos_walking_param_ = synchronized_walking_param_;
+    target_walking_param_ = config_walking_param_;
+  }
 }
 
 bool WalkingModule::getWalkigParameterCallback(kuroko_walking_module_msgs::GetWalkingParam::Request& /*req*/,
                                                kuroko_walking_module_msgs::GetWalkingParam::Response& res)
 {
-  res.parameters = walking_param_;
-
+  res.parameters = config_walking_param_;
   return true;
 }
 
@@ -223,10 +230,49 @@ double WalkingModule::wSin(double time, double period, double period_shift, doub
   return mag * sin(2.0 * M_PI / period * time - period_shift) + mag_shift;
 }
 
-void WalkingModule::updateTimeParam()
+void WalkingModule::synchronizeTimeParam()
 {
-  walk_period_ = walking_param_.period_time;
-  dsp_ratio_ = walking_param_.dsp_ratio;
+  if (synchronized_walking_param_.period_time == target_walking_param_.period_time &&
+      synchronized_walking_param_.dsp_ratio == target_walking_param_.dsp_ratio)
+  {
+    previouos_walking_param_.period_time = target_walking_param_.period_time;
+    previouos_walking_param_.dsp_ratio = target_walking_param_.dsp_ratio;
+  }
+  else
+  {
+    // 1 second to change time parameters
+    double time_to_change = 1.0;
+    double period_step = (target_walking_param_.period_time - previouos_walking_param_.period_time) /
+                         (time_to_change / (control_cycle_msec_ / 1000.0));
+    if (fabs(target_walking_param_.period_time - synchronized_walking_param_.period_time) < fabs(period_step) ||
+        (target_walking_param_.period_time - synchronized_walking_param_.period_time) * period_step < 0)
+    {
+      synchronized_walking_param_.period_time = target_walking_param_.period_time;
+      previouos_walking_param_.period_time = target_walking_param_.period_time;
+    }
+    else
+    {
+      synchronized_walking_param_.period_time += period_step;
+    }
+    double dsp_ratio_step = (target_walking_param_.dsp_ratio - previouos_walking_param_.dsp_ratio) /
+                            (time_to_change / (control_cycle_msec_ / 1000.0));
+    if (fabs(target_walking_param_.dsp_ratio - synchronized_walking_param_.dsp_ratio) < fabs(dsp_ratio_step) ||
+        (target_walking_param_.dsp_ratio - synchronized_walking_param_.dsp_ratio) * dsp_ratio_step < 0)
+    {
+      synchronized_walking_param_.dsp_ratio = target_walking_param_.dsp_ratio;
+      previouos_walking_param_.dsp_ratio = target_walking_param_.dsp_ratio;
+    }
+    else
+    {
+      synchronized_walking_param_.dsp_ratio += dsp_ratio_step;
+    }
+  }
+}
+
+void WalkingModule::applyTimeParam()
+{
+  walk_period_ = synchronized_walking_param_.period_time;
+  dsp_ratio_ = synchronized_walking_param_.dsp_ratio;
 
   l_ssp_start_time_ = dsp_ratio_ * walk_period_ / 4.0;
   l_ssp_end_time_ = (2.0 - dsp_ratio_) * walk_period_ / 4.0;
@@ -236,140 +282,435 @@ void WalkingModule::updateTimeParam()
   phase1_time_ = (l_ssp_start_time_ + l_ssp_end_time_) / 2.0;
   phase2_time_ = (l_ssp_end_time_ + r_ssp_start_time_) / 2.0;
   phase3_time_ = (r_ssp_start_time_ + r_ssp_end_time_) / 2.0;
-
-  hip_swing_up_amplitude_ = walking_param_.hip_swing_up_amplitude;
-  hip_swing_down_amplitude_ = walking_param_.hip_swing_down_amplitude;
-  shoulder_swing_amplitude_ = walking_param_.shoulder_swing_amplitude;
 }
 
-void WalkingModule::updateMovementParam()
+void WalkingModule::synchronizeStepParam()
+{
+  if (synchronized_walking_param_.x_step == target_walking_param_.x_step &&
+      synchronized_walking_param_.y_step == target_walking_param_.y_step &&
+      synchronized_walking_param_.yaw_step == target_walking_param_.yaw_step &&
+      synchronized_walking_param_.y_swing_amplitude == target_walking_param_.y_swing_amplitude &&
+      synchronized_walking_param_.z_swing_amplitude == target_walking_param_.z_swing_amplitude &&
+      synchronized_walking_param_.roll_swing_amplitude == target_walking_param_.roll_swing_amplitude &&
+      synchronized_walking_param_.roll_swing_phase == target_walking_param_.roll_swing_phase &&
+      synchronized_walking_param_.foot_height == target_walking_param_.foot_height &&
+      synchronized_walking_param_.hip_swing_up_amplitude == target_walking_param_.hip_swing_up_amplitude &&
+      synchronized_walking_param_.hip_swing_down_amplitude == target_walking_param_.hip_swing_down_amplitude &&
+      synchronized_walking_param_.chest_swing_amplitude == target_walking_param_.chest_swing_amplitude &&
+      synchronized_walking_param_.shoulder_swing_amplitude == target_walking_param_.shoulder_swing_amplitude)
+  {
+    previouos_walking_param_.x_step = target_walking_param_.x_step;
+    previouos_walking_param_.y_step = target_walking_param_.y_step;
+    previouos_walking_param_.yaw_step = target_walking_param_.yaw_step;
+    previouos_walking_param_.y_swing_amplitude = target_walking_param_.y_swing_amplitude;
+    previouos_walking_param_.z_swing_amplitude = target_walking_param_.z_swing_amplitude;
+    previouos_walking_param_.roll_swing_amplitude = target_walking_param_.roll_swing_amplitude;
+    previouos_walking_param_.roll_swing_phase = target_walking_param_.roll_swing_phase;
+    previouos_walking_param_.foot_height = target_walking_param_.foot_height;
+    previouos_walking_param_.hip_swing_up_amplitude = target_walking_param_.hip_swing_up_amplitude;
+    previouos_walking_param_.hip_swing_down_amplitude = target_walking_param_.hip_swing_down_amplitude;
+    previouos_walking_param_.chest_swing_amplitude = target_walking_param_.chest_swing_amplitude;
+    previouos_walking_param_.shoulder_swing_amplitude = target_walking_param_.shoulder_swing_amplitude;
+  }
+  else
+  {
+    // 1 second to change step parameters
+    double time_to_change = 1.0;
+    double foot_height_step = (target_walking_param_.foot_height - previouos_walking_param_.foot_height) /
+                              (time_to_change / (control_cycle_msec_ / 1000.0));
+    if (fabs(target_walking_param_.foot_height - synchronized_walking_param_.foot_height) < fabs(foot_height_step) ||
+        (target_walking_param_.foot_height - synchronized_walking_param_.foot_height) * foot_height_step < 0)
+    {
+      synchronized_walking_param_.foot_height = target_walking_param_.foot_height;
+    }
+    else
+    {
+      synchronized_walking_param_.foot_height += foot_height_step;
+    }
+    double x_step_step = (target_walking_param_.x_step - previouos_walking_param_.x_step) /
+                         (time_to_change / (control_cycle_msec_ / 1000.0));
+    if (fabs(target_walking_param_.x_step - synchronized_walking_param_.x_step) < fabs(x_step_step) ||
+        (target_walking_param_.x_step - synchronized_walking_param_.x_step) * x_step_step < 0)
+    {
+      synchronized_walking_param_.x_step = target_walking_param_.x_step;
+    }
+    else
+    {
+      synchronized_walking_param_.x_step += x_step_step;
+    }
+    double y_step_step = (target_walking_param_.y_step - previouos_walking_param_.y_step) /
+                         (time_to_change / (control_cycle_msec_ / 1000.0));
+    if (fabs(target_walking_param_.y_step - synchronized_walking_param_.y_step) < fabs(y_step_step) ||
+        (target_walking_param_.y_step - synchronized_walking_param_.y_step) * y_step_step < 0)
+    {
+      synchronized_walking_param_.y_step = target_walking_param_.y_step;
+    }
+    else
+    {
+      synchronized_walking_param_.y_step += y_step_step;
+    }
+    double yaw_step_step = (target_walking_param_.yaw_step - previouos_walking_param_.yaw_step) /
+                           (time_to_change / (control_cycle_msec_ / 1000.0));
+    if (fabs(target_walking_param_.yaw_step - synchronized_walking_param_.yaw_step) < fabs(yaw_step_step) ||
+        (target_walking_param_.yaw_step - synchronized_walking_param_.yaw_step) * yaw_step_step < 0)
+    {
+      synchronized_walking_param_.yaw_step = target_walking_param_.yaw_step;
+    }
+    else
+    {
+      synchronized_walking_param_.yaw_step += yaw_step_step;
+    }
+    double y_swing_amplitude_step =
+        (target_walking_param_.y_swing_amplitude - previouos_walking_param_.y_swing_amplitude) /
+        (time_to_change / (control_cycle_msec_ / 1000.0));
+    if (fabs(target_walking_param_.y_swing_amplitude - synchronized_walking_param_.y_swing_amplitude) <
+            fabs(y_swing_amplitude_step) ||
+        (target_walking_param_.y_swing_amplitude - synchronized_walking_param_.y_swing_amplitude) *
+                y_swing_amplitude_step <
+            0)
+    {
+      synchronized_walking_param_.y_swing_amplitude = target_walking_param_.y_swing_amplitude;
+    }
+    else
+    {
+      synchronized_walking_param_.y_swing_amplitude += y_swing_amplitude_step;
+    }
+    double z_swing_amplitude_step =
+        (target_walking_param_.z_swing_amplitude - previouos_walking_param_.z_swing_amplitude) /
+        (time_to_change / (control_cycle_msec_ / 1000.0));
+    if (fabs(target_walking_param_.z_swing_amplitude - synchronized_walking_param_.z_swing_amplitude) <
+            fabs(z_swing_amplitude_step) ||
+        (target_walking_param_.z_swing_amplitude - synchronized_walking_param_.z_swing_amplitude) *
+                z_swing_amplitude_step <
+            0)
+    {
+      synchronized_walking_param_.z_swing_amplitude = target_walking_param_.z_swing_amplitude;
+    }
+    else
+    {
+      synchronized_walking_param_.z_swing_amplitude += z_swing_amplitude_step;
+    }
+    double roll_swing_amplitude_step =
+        (target_walking_param_.roll_swing_amplitude - previouos_walking_param_.roll_swing_amplitude) /
+        (time_to_change / (control_cycle_msec_ / 1000.0));
+    if (fabs(target_walking_param_.roll_swing_amplitude - synchronized_walking_param_.roll_swing_amplitude) <
+            fabs(roll_swing_amplitude_step) ||
+        (target_walking_param_.roll_swing_amplitude - synchronized_walking_param_.roll_swing_amplitude) *
+                roll_swing_amplitude_step <
+            0)
+    {
+      synchronized_walking_param_.roll_swing_amplitude = target_walking_param_.roll_swing_amplitude;
+    }
+    else
+    {
+      synchronized_walking_param_.roll_swing_amplitude += roll_swing_amplitude_step;
+    }
+
+    double roll_swing_phase_step =
+        (target_walking_param_.roll_swing_phase - previouos_walking_param_.roll_swing_phase) /
+        (time_to_change / (control_cycle_msec_ / 1000.0));
+    if (fabs(target_walking_param_.roll_swing_phase - synchronized_walking_param_.roll_swing_phase) <
+            fabs(roll_swing_phase_step) ||
+        (target_walking_param_.roll_swing_phase - synchronized_walking_param_.roll_swing_phase) * roll_swing_phase_step <
+            0)
+    {
+      synchronized_walking_param_.roll_swing_phase = target_walking_param_.roll_swing_phase;
+    }
+    else
+    {
+      synchronized_walking_param_.roll_swing_phase += roll_swing_phase_step;
+    }
+    double hip_swing_up_amplitude_step =
+        (target_walking_param_.hip_swing_up_amplitude - previouos_walking_param_.hip_swing_up_amplitude) /
+        (time_to_change / (control_cycle_msec_ / 1000.0));
+    if (fabs(target_walking_param_.hip_swing_up_amplitude - synchronized_walking_param_.hip_swing_up_amplitude) <
+            fabs(hip_swing_up_amplitude_step) ||
+        (target_walking_param_.hip_swing_up_amplitude - synchronized_walking_param_.hip_swing_up_amplitude) *
+                hip_swing_up_amplitude_step <
+            0)
+    {
+      synchronized_walking_param_.hip_swing_up_amplitude = target_walking_param_.hip_swing_up_amplitude;
+    }
+    else
+    {
+      synchronized_walking_param_.hip_swing_up_amplitude += hip_swing_up_amplitude_step;
+    }
+    double hip_swing_down_amplitude_step =
+        (target_walking_param_.hip_swing_down_amplitude - previouos_walking_param_.hip_swing_down_amplitude) /
+        (time_to_change / (control_cycle_msec_ / 1000.0));
+    if (fabs(target_walking_param_.hip_swing_down_amplitude - synchronized_walking_param_.hip_swing_down_amplitude) <
+            fabs(hip_swing_down_amplitude_step) ||
+        (target_walking_param_.hip_swing_down_amplitude - synchronized_walking_param_.hip_swing_down_amplitude) *
+                hip_swing_down_amplitude_step <
+            0)
+    {
+      synchronized_walking_param_.hip_swing_down_amplitude = target_walking_param_.hip_swing_down_amplitude;
+    }
+    else
+    {
+      synchronized_walking_param_.hip_swing_down_amplitude += hip_swing_down_amplitude_step;
+    }
+    double chest_swing_amplitude_step =
+        (target_walking_param_.chest_swing_amplitude - previouos_walking_param_.chest_swing_amplitude) /
+        (time_to_change / (control_cycle_msec_ / 1000.0));
+
+    if (fabs(target_walking_param_.chest_swing_amplitude - synchronized_walking_param_.chest_swing_amplitude) <
+            fabs(chest_swing_amplitude_step) ||
+        (target_walking_param_.chest_swing_amplitude - synchronized_walking_param_.chest_swing_amplitude) *
+                chest_swing_amplitude_step <
+            0)
+    {
+      synchronized_walking_param_.chest_swing_amplitude = target_walking_param_.chest_swing_amplitude;
+    }
+    else
+    {
+      synchronized_walking_param_.chest_swing_amplitude += chest_swing_amplitude_step;
+    }
+    double shoulder_swing_amplitude_step =
+        (target_walking_param_.shoulder_swing_amplitude - previouos_walking_param_.shoulder_swing_amplitude) /
+        (time_to_change / (control_cycle_msec_ / 1000.0));
+    if (fabs(target_walking_param_.shoulder_swing_amplitude - synchronized_walking_param_.shoulder_swing_amplitude) <
+            fabs(shoulder_swing_amplitude_step) ||
+        (target_walking_param_.shoulder_swing_amplitude - synchronized_walking_param_.shoulder_swing_amplitude) *
+                shoulder_swing_amplitude_step <
+            0)
+    {
+      synchronized_walking_param_.shoulder_swing_amplitude = target_walking_param_.shoulder_swing_amplitude;
+    }
+    else
+    {
+      synchronized_walking_param_.shoulder_swing_amplitude += shoulder_swing_amplitude_step;
+    }
+    // Log the synchronized parameters
+    // ROS_INFO("Sync step x: %f, config: %f, target: %f, previous: %f, step: %f", synchronized_walking_param_.x_step,
+    //          config_walking_param_.x_step, target_walking_param_.x_step, previouos_walking_param_.x_step, x_step_step);
+    // ROS_INFO("Sync step y: %f, config: %f, target: %f, previous: %f, step: %f", synchronized_walking_param_.y_step,
+    //          config_walking_param_.y_step, target_walking_param_.y_step, previouos_walking_param_.y_step, y_step_step);
+    // ROS_INFO("Sync foot_height: %f, config: %f, target: %f, previous: %f, step: %f",
+    //          synchronized_walking_param_.foot_height, config_walking_param_.foot_height,
+    //          target_walking_param_.foot_height, previouos_walking_param_.foot_height, foot_height_step);
+    // ROS_INFO("Sync yaw step: %f, config: %f, target: %f, previous: %f, step: %f", synchronized_walking_param_.yaw_step,
+    //          config_walking_param_.yaw_step, target_walking_param_.yaw_step, previouos_walking_param_.yaw_step,
+    //          yaw_step_step);
+    // ROS_INFO("Sync y_swing_amplitude: %f, config: %f, target: %f, previous: %f, step: %f",
+    //          synchronized_walking_param_.y_swing_amplitude, config_walking_param_.y_swing_amplitude,
+    //          target_walking_param_.y_swing_amplitude, previouos_walking_param_.y_swing_amplitude,
+    //          y_swing_amplitude_step);
+    // ROS_INFO("Sync z_swing_amplitude: %f, config: %f, target: %f, previous: %f, step: %f",
+    //          synchronized_walking_param_.z_swing_amplitude, config_walking_param_.z_swing_amplitude,
+    //          target_walking_param_.z_swing_amplitude, previouos_walking_param_.z_swing_amplitude,
+    //          z_swing_amplitude_step);
+    // ROS_INFO("Sync roll_swing_amplitude: %f, config: %f, target: %f, previous: %f, step: %f",
+    //          synchronized_walking_param_.roll_swing_amplitude, config_walking_param_.roll_swing_amplitude,
+    //          target_walking_param_.roll_swing_amplitude, previouos_walking_param_.roll_swing_amplitude,
+    //          roll_swing_amplitude_step);
+    // ROS_INFO("Sync roll_swing_phase: %f, config: %f, target: %f, previous: %f, step: %f",
+    //          synchronized_walking_param_.roll_swing_phase, config_walking_param_.roll_swing_phase,
+    //          target_walking_param_.roll_swing_phase, previouos_walking_param_.roll_swing_phase, roll_swing_phase_step);
+    // ROS_INFO("Sync hip_swing_up_amplitude: %f, config: %f, target: %f, previous: %f, step: %f",
+    //          synchronized_walking_param_.hip_swing_up_amplitude, config_walking_param_.hip_swing_up_amplitude,
+    //          target_walking_param_.hip_swing_up_amplitude, previouos_walking_param_.hip_swing_up_amplitude,
+    //          hip_swing_up_amplitude_step);
+    // ROS_INFO("Sync hip_swing_down_amplitude: %f, config: %f, target: %f, previous: %f, step: %f",
+    //          synchronized_walking_param_.hip_swing_down_amplitude, config_walking_param_.hip_swing_down_amplitude,
+    //          target_walking_param_.hip_swing_down_amplitude, previouos_walking_param_.hip_swing_down_amplitude,
+    //          hip_swing_down_amplitude_step);
+    // ROS_INFO("Sync chest_swing_amplitude: %f, config: %f, target: %f, previous: %f, step: %f",
+    //          synchronized_walking_param_.chest_swing_amplitude, config_walking_param_.chest_swing_amplitude,
+    //          target_walking_param_.chest_swing_amplitude, previouos_walking_param_.chest_swing_amplitude,
+    //          chest_swing_amplitude_step);
+    // ROS_INFO("Sync shoulder_swing_amplitude: %f, config: %f, target: %f, previous: %f, step: %f",
+    //          synchronized_walking_param_.shoulder_swing_amplitude, config_walking_param_.shoulder_swing_amplitude,
+    //          target_walking_param_.shoulder_swing_amplitude, previouos_walking_param_.shoulder_swing_amplitude,
+    //          shoulder_swing_amplitude_step);
+  }
+}
+
+void WalkingModule::applyStepParam()
 {
   // Step length
-  step_length_x_ = walking_param_.x_step;
-  step_length_y_ = walking_param_.y_step / 2;
-  step_length_yaw_ = walking_param_.yaw_step;
-
-  // Limit acceleration
-  if (fabs(step_length_x_) > fabs(previous_step_length_x_) && step_length_x_ * previous_step_length_x_ > -0.001)
-  {
-    if (step_length_x_ - previous_step_length_x_ > step_x_accel_max_)
-      step_length_x_ = previous_step_length_x_ + step_x_accel_max_;
-    else if (step_length_x_ - previous_step_length_x_ < -step_x_accel_max_)
-      step_length_x_ = previous_step_length_x_ - step_x_accel_max_;
-  }
-  else
-  {
-    if (step_length_x_ - previous_step_length_x_ > step_x_brake_max_)
-      step_length_x_ = previous_step_length_x_ + step_x_brake_max_;
-    else if (step_length_x_ - previous_step_length_x_ < -step_x_brake_max_)
-      step_length_x_ = previous_step_length_x_ - step_x_brake_max_;
-  }
-
-  if (fabs(step_length_y_) > fabs(previous_step_length_y_) && step_length_y_ * previous_step_length_y_ > -0.001)
-  {
-    if (step_length_y_ - previous_step_length_y_ > step_y_accel_max_)
-      step_length_y_ = previous_step_length_y_ + step_y_accel_max_;
-    else if (step_length_y_ - previous_step_length_y_ < -step_y_accel_max_)
-      step_length_y_ = previous_step_length_y_ - step_y_accel_max_;
-  }
-  else
-  {
-    if (step_length_y_ - previous_step_length_y_ > step_y_brake_max_)
-      step_length_y_ = previous_step_length_y_ + step_y_brake_max_;
-    else if (step_length_y_ - previous_step_length_y_ < -step_y_brake_max_)
-      step_length_y_ = previous_step_length_y_ - step_y_brake_max_;
-  }
-
-  if (fabs(step_length_yaw_) > fabs(previous_step_length_yaw_) && step_length_yaw_ * previous_step_length_yaw_ > -0.001)
-  {
-    if (step_length_yaw_ - previous_step_length_yaw_ > step_yaw_accel_max_)
-      step_length_yaw_ = previous_step_length_yaw_ + step_yaw_accel_max_;
-    else if (step_length_yaw_ - previous_step_length_yaw_ < -step_yaw_accel_max_)
-      step_length_yaw_ = previous_step_length_yaw_ - step_yaw_accel_max_;
-  }
-  else
-  {
-    if (step_length_yaw_ - previous_step_length_yaw_ > step_yaw_brake_max_)
-      step_length_yaw_ = previous_step_length_yaw_ + step_yaw_brake_max_;
-    else if (step_length_yaw_ - previous_step_length_yaw_ < -step_yaw_brake_max_)
-      step_length_yaw_ = previous_step_length_yaw_ - step_yaw_brake_max_;
-  }
-
+  step_length_x_ = synchronized_walking_param_.x_step;
+  step_length_y_ = synchronized_walking_param_.y_step / 2;
+  step_length_yaw_ = synchronized_walking_param_.yaw_step;
   // Body Forward/Back Swing
-  x_swing_amplitude_ = step_length_x_ * walking_param_.step_forward_back_ratio;
-
+  x_swing_amplitude_ = step_length_x_ * synchronized_walking_param_.step_forward_back_ratio;
   // Body Right/Left Swing
-  y_swing_amplitude_ = walking_param_.y_swing_amplitude;
-  roll_swing_amplitude_ = walking_param_.roll_swing_amplitude;
-  if (fabs(roll_swing_amplitude_) > fabs(previous_roll_swing_amplitude_) &&
-      roll_swing_amplitude_ * previous_roll_swing_amplitude_ > -0.001)
-  {
-    if (roll_swing_amplitude_ - previous_roll_swing_amplitude_ > roll_swing_accel_max_)
-      roll_swing_amplitude_ = previous_roll_swing_amplitude_ + roll_swing_accel_max_;
-    else if (roll_swing_amplitude_ - previous_roll_swing_amplitude_ < -roll_swing_accel_max_)
-      roll_swing_amplitude_ = previous_roll_swing_amplitude_ - roll_swing_accel_max_;
-  }
-  else
-  {
-    if (roll_swing_amplitude_ - previous_roll_swing_amplitude_ > roll_swing_brake_max_)
-      roll_swing_amplitude_ = previous_roll_swing_amplitude_ + roll_swing_brake_max_;
-    else if (roll_swing_amplitude_ - previous_roll_swing_amplitude_ < -roll_swing_brake_max_)
-      roll_swing_amplitude_ = previous_roll_swing_amplitude_ - roll_swing_brake_max_;
-  }
-
-  roll_swing_phase_ = walking_param_.roll_swing_phase;
-
+  y_swing_amplitude_ = synchronized_walking_param_.y_swing_amplitude;
+  roll_swing_amplitude_ = synchronized_walking_param_.roll_swing_amplitude;
+  roll_swing_phase_ = synchronized_walking_param_.roll_swing_phase;
   // Body Up/Down Swing
-  z_swing_amplitude_ = walking_param_.z_swing_amplitude;
-
+  z_swing_amplitude_ = synchronized_walking_param_.z_swing_amplitude;
   // Foot Up/Down Swing
-  foot_lift_height_ = walking_param_.foot_height;
-  if (fabs(foot_lift_height_) > fabs(previous_foot_lift_height_) &&
-      foot_lift_height_ * previous_foot_lift_height_ > -0.001)
-  {
-    if (foot_lift_height_ - previous_foot_lift_height_ > foot_lift_accel_max_)
-      foot_lift_height_ = previous_foot_lift_height_ + foot_lift_accel_max_;
-    else if (foot_lift_height_ - previous_foot_lift_height_ < -foot_lift_accel_max_)
-      foot_lift_height_ = previous_foot_lift_height_ - foot_lift_accel_max_;
-  }
-  else
-  {
-    if (foot_lift_height_ - previous_foot_lift_height_ > foot_lift_brake_max_)
-      foot_lift_height_ = previous_foot_lift_height_ + foot_lift_brake_max_;
-    else if (foot_lift_height_ - previous_foot_lift_height_ < -foot_lift_brake_max_)
-      foot_lift_height_ = previous_foot_lift_height_ - foot_lift_brake_max_;
-  }
+  foot_lift_height_ = synchronized_walking_param_.foot_height;
 
-  // Remember one previous stride to prevent a sudden change in stride
-  previous_step_length_x_ = step_length_x_;
-  previous_step_length_y_ = step_length_y_;
-  previous_step_length_yaw_ = step_length_yaw_;
-  previous_foot_lift_height_ = foot_lift_height_;
-  previous_roll_swing_amplitude_ = roll_swing_amplitude_;
+  hip_swing_up_amplitude_ = synchronized_walking_param_.hip_swing_up_amplitude;
+  hip_swing_down_amplitude_ = synchronized_walking_param_.hip_swing_down_amplitude;
+  shoulder_swing_amplitude_ = synchronized_walking_param_.shoulder_swing_amplitude;
+  chest_swing_amplitude_ = synchronized_walking_param_.chest_swing_amplitude;
 }
 
-void WalkingModule::updatePoseParam()
+void WalkingModule::synchronizePoseParam()
 {
-  init_x_offset_ = walking_param_.init_x_offset;
-  init_y_offset_ = walking_param_.init_y_offset;
-  init_z_offset_ = walking_param_.init_z_offset;
-  init_roll_offset_ = walking_param_.init_roll_offset;
-  init_pitch_offset_ = walking_param_.init_pitch_offset;
-  init_yaw_offset_ = walking_param_.init_yaw_offset;
-  init_hip_pitch_offset_ = walking_param_.init_hip_pitch_offset;
+  if (synchronized_walking_param_.init_x_offset == target_walking_param_.init_x_offset &&
+      synchronized_walking_param_.init_y_offset == target_walking_param_.init_y_offset &&
+      synchronized_walking_param_.init_z_offset == target_walking_param_.init_z_offset &&
+      synchronized_walking_param_.init_roll_offset == target_walking_param_.init_roll_offset &&
+      synchronized_walking_param_.init_pitch_offset == target_walking_param_.init_pitch_offset &&
+      synchronized_walking_param_.init_yaw_offset == target_walking_param_.init_yaw_offset &&
+      synchronized_walking_param_.init_hip_pitch_offset == target_walking_param_.init_hip_pitch_offset)
+  {
+    previouos_walking_param_.init_x_offset = target_walking_param_.init_x_offset;
+    previouos_walking_param_.init_y_offset = target_walking_param_.init_y_offset;
+    previouos_walking_param_.init_z_offset = target_walking_param_.init_z_offset;
+    previouos_walking_param_.init_roll_offset = target_walking_param_.init_roll_offset;
+    previouos_walking_param_.init_pitch_offset = target_walking_param_.init_pitch_offset;
+    previouos_walking_param_.init_yaw_offset = target_walking_param_.init_yaw_offset;
+    previouos_walking_param_.init_hip_pitch_offset = target_walking_param_.init_hip_pitch_offset;
+  }
+  else
+  {
+    // 1 second to change pose parameters
+    double time_to_change = 1.0;
+    double x_offset_diff = target_walking_param_.init_x_offset - previouos_walking_param_.init_x_offset;
+    double y_offset_diff = target_walking_param_.init_y_offset - previouos_walking_param_.init_y_offset;
+    double z_offset_diff = target_walking_param_.init_z_offset - previouos_walking_param_.init_z_offset;
+    double roll_offset_diff = target_walking_param_.init_roll_offset - previouos_walking_param_.init_roll_offset;
+    double pitch_offset_diff = target_walking_param_.init_pitch_offset - previouos_walking_param_.init_pitch_offset;
+    double yaw_offset_diff = target_walking_param_.init_yaw_offset - previouos_walking_param_.init_yaw_offset;
+    double hip_pitch_offset_diff =
+        target_walking_param_.init_hip_pitch_offset - previouos_walking_param_.init_hip_pitch_offset;
+    double x_offset_step = x_offset_diff / (time_to_change / (control_cycle_msec_ / 1000.0));
+    double y_offset_step = y_offset_diff / (time_to_change / (control_cycle_msec_ / 1000.0));
+    double z_offset_step = z_offset_diff / (time_to_change / (control_cycle_msec_ / 1000.0));
+    double roll_offset_step = roll_offset_diff / (time_to_change / (control_cycle_msec_ / 1000.0));
+    double pitch_offset_step = pitch_offset_diff / (time_to_change / (control_cycle_msec_ / 1000.0));
+    double yaw_offset_step = yaw_offset_diff / (time_to_change / (control_cycle_msec_ / 1000.0));
+    double hip_pitch_offset_step = hip_pitch_offset_diff / (time_to_change / (control_cycle_msec_ / 1000.0));
+    if (fabs(target_walking_param_.init_x_offset - synchronized_walking_param_.init_x_offset) < fabs(x_offset_step) ||
+        (target_walking_param_.init_x_offset - synchronized_walking_param_.init_x_offset) * x_offset_step < 0)
+    {
+      synchronized_walking_param_.init_x_offset = target_walking_param_.init_x_offset;
+    }
+    else
+    {
+      synchronized_walking_param_.init_x_offset += x_offset_step;
+    }
+    if (fabs(target_walking_param_.init_y_offset - synchronized_walking_param_.init_y_offset) < fabs(y_offset_step) ||
+        (target_walking_param_.init_y_offset - synchronized_walking_param_.init_y_offset) * y_offset_step < 0)
+    {
+      synchronized_walking_param_.init_y_offset = target_walking_param_.init_y_offset;
+    }
+    else
+    {
+      synchronized_walking_param_.init_y_offset += y_offset_step;
+    }
+    if (fabs(target_walking_param_.init_z_offset - synchronized_walking_param_.init_z_offset) < fabs(z_offset_step) ||
+        (target_walking_param_.init_z_offset - synchronized_walking_param_.init_z_offset) * z_offset_step < 0)
+    {
+      synchronized_walking_param_.init_z_offset = target_walking_param_.init_z_offset;
+    }
+    else
+    {
+      synchronized_walking_param_.init_z_offset += z_offset_step;
+    }
+    if (fabs(target_walking_param_.init_roll_offset - synchronized_walking_param_.init_roll_offset) <
+            fabs(roll_offset_step) ||
+        (target_walking_param_.init_roll_offset - synchronized_walking_param_.init_roll_offset) * roll_offset_step < 0)
+    {
+      synchronized_walking_param_.init_roll_offset = target_walking_param_.init_roll_offset;
+    }
+    else
+    {
+      synchronized_walking_param_.init_roll_offset += roll_offset_step;
+    }
+    if (fabs(target_walking_param_.init_pitch_offset - synchronized_walking_param_.init_pitch_offset) <
+            fabs(pitch_offset_step) ||
+        (target_walking_param_.init_pitch_offset - synchronized_walking_param_.init_pitch_offset) * pitch_offset_step <
+            0)
+    {
+      synchronized_walking_param_.init_pitch_offset = target_walking_param_.init_pitch_offset;
+    }
+    else
+    {
+      synchronized_walking_param_.init_pitch_offset += pitch_offset_step;
+    }
+    if (fabs(target_walking_param_.init_yaw_offset - synchronized_walking_param_.init_yaw_offset) <
+            fabs(yaw_offset_step) ||
+        (target_walking_param_.init_yaw_offset - synchronized_walking_param_.init_yaw_offset) * yaw_offset_step < 0)
+    {
+      synchronized_walking_param_.init_yaw_offset = target_walking_param_.init_yaw_offset;
+    }
+    else
+    {
+      synchronized_walking_param_.init_yaw_offset += yaw_offset_step;
+    }
+    if (fabs(target_walking_param_.init_hip_pitch_offset - synchronized_walking_param_.init_hip_pitch_offset) <
+            fabs(hip_pitch_offset_step) ||
+        (target_walking_param_.init_hip_pitch_offset - synchronized_walking_param_.init_hip_pitch_offset) *
+                hip_pitch_offset_step <
+            0)
+    {
+      synchronized_walking_param_.init_hip_pitch_offset = target_walking_param_.init_hip_pitch_offset;
+    }
+    else
+    {
+      synchronized_walking_param_.init_hip_pitch_offset += hip_pitch_offset_step;
+    }
+  }
+}
+
+void WalkingModule::applyPoseParam()
+{
+  init_x_offset_ = synchronized_walking_param_.init_x_offset;
+  init_y_offset_ = synchronized_walking_param_.init_y_offset;
+  init_z_offset_ = synchronized_walking_param_.init_z_offset;
+  init_roll_offset_ = synchronized_walking_param_.init_roll_offset;
+  init_pitch_offset_ = synchronized_walking_param_.init_pitch_offset;
+  init_yaw_offset_ = synchronized_walking_param_.init_yaw_offset;
+  init_hip_pitch_offset_ = synchronized_walking_param_.init_hip_pitch_offset;
 }
 
 void WalkingModule::startWalking()
 {
   request_walk_ = true;
-  is_walking_ = true;
-
+  previouos_walking_param_ = synchronized_walking_param_;
+  setTargetStepConfig();
+  if (!is_walking_)
+  {
+    if (time_ < walk_period_ * 0.5)
+      time_ = 0;
+    else
+      time_ = walk_period_ * 0.5;
+    is_walking_ = true;
+  }
   publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_INFO, "Start walking");
+}
+
+void WalkingModule::setTargetStepConfig()
+{
+  target_walking_param_ = config_walking_param_;
+}
+
+void WalkingModule::resetTargetStepConfig()
+{
+  target_walking_param_.x_step = 0;
+  target_walking_param_.y_step = 0;
+  target_walking_param_.yaw_step = 0;
+  target_walking_param_.y_swing_amplitude = 0;
+  target_walking_param_.z_swing_amplitude = 0;
+  target_walking_param_.roll_swing_amplitude = 0;
+  target_walking_param_.roll_swing_phase = 0;
+  target_walking_param_.foot_height = 0;
+  target_walking_param_.hip_swing_up_amplitude = 0;
+  target_walking_param_.hip_swing_down_amplitude = 0;
+  target_walking_param_.chest_swing_amplitude = 0;
+  target_walking_param_.shoulder_swing_amplitude = 0;
 }
 
 void WalkingModule::stop()
 {
   request_walk_ = false;
+  previouos_walking_param_ = synchronized_walking_param_;
   publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_INFO, "Stop walking");
 }
 
@@ -455,28 +796,30 @@ void WalkingModule::process(std::map<std::string, robotis_framework::Dynamixel*>
       iniPoseTraGene(mov_time < 1 ? 1 : mov_time);
       target_position_ = goal_position_;
       walking_state_ = WALK_INITIAL_POSE;
-      ROS_INFO_STREAM_COND(debug_, "x_offset: " << walking_param_.init_x_offset);
-      ROS_INFO_STREAM_COND(debug_, "y_offset: " << walking_param_.init_y_offset);
-      ROS_INFO_STREAM_COND(debug_, "z_offset: " << walking_param_.init_z_offset);
-      ROS_INFO_STREAM_COND(debug_, "roll_offset: " << walking_param_.init_roll_offset * RADIAN2DEGREE);
-      ROS_INFO_STREAM_COND(debug_, "pitch_offset: " << walking_param_.init_pitch_offset * RADIAN2DEGREE);
-      ROS_INFO_STREAM_COND(debug_, "yaw_offset: " << walking_param_.init_yaw_offset * RADIAN2DEGREE);
-      ROS_INFO_STREAM_COND(debug_, "init_hip_pitch_offset: " << walking_param_.init_hip_pitch_offset * RADIAN2DEGREE);
-      ROS_INFO_STREAM_COND(debug_, "period_time: " << walking_param_.period_time * 1000);
-      ROS_INFO_STREAM_COND(debug_, "dsp_ratio: " << walking_param_.dsp_ratio);
-      ROS_INFO_STREAM_COND(debug_, "step_forward_back_ratio: " << walking_param_.step_forward_back_ratio);
-      ROS_INFO_STREAM_COND(debug_, "foot_height: " << walking_param_.foot_height);
-      ROS_INFO_STREAM_COND(debug_, "y_swing_amplitude: " << walking_param_.y_swing_amplitude);
-      ROS_INFO_STREAM_COND(debug_, "z_swing_amplitude: " << walking_param_.z_swing_amplitude);
-      ROS_INFO_STREAM_COND(debug_, "hip_swing_up_amplitude: " << walking_param_.hip_swing_up_amplitude * RADIAN2DEGREE);
+      ROS_INFO_STREAM_COND(debug_, "x_offset: " << config_walking_param_.init_x_offset);
+      ROS_INFO_STREAM_COND(debug_, "y_offset: " << config_walking_param_.init_y_offset);
+      ROS_INFO_STREAM_COND(debug_, "z_offset: " << config_walking_param_.init_z_offset);
+      ROS_INFO_STREAM_COND(debug_, "roll_offset: " << config_walking_param_.init_roll_offset * RADIAN2DEGREE);
+      ROS_INFO_STREAM_COND(debug_, "pitch_offset: " << config_walking_param_.init_pitch_offset * RADIAN2DEGREE);
+      ROS_INFO_STREAM_COND(debug_, "yaw_offset: " << config_walking_param_.init_yaw_offset * RADIAN2DEGREE);
       ROS_INFO_STREAM_COND(debug_,
-                           "hip_swing_down_amplitude: " << walking_param_.hip_swing_down_amplitude * RADIAN2DEGREE);
-      ROS_INFO_STREAM_COND(debug_, "shoulder_swing_amplitude: " << walking_param_.shoulder_swing_amplitude);
-      ROS_INFO_STREAM_COND(debug_, "balance_gyro_roll_gain: " << walking_param_.balance_gyro_roll_gain);
-      ROS_INFO_STREAM_COND(debug_, "balance_gyro_pitch_gain: " << walking_param_.balance_gyro_pitch_gain);
-      ROS_INFO_STREAM_COND(debug_, "balance_gyro_y_gain: " << walking_param_.balance_gyro_y_gain);
-      ROS_INFO_STREAM_COND(debug_, "balance_gyro_x_gain: " << walking_param_.balance_gyro_x_gain);
-      ROS_INFO_STREAM_COND(debug_, "balance : " << (walking_param_.balance_enable ? "TRUE" : "FALSE"));
+                           "init_hip_pitch_offset: " << config_walking_param_.init_hip_pitch_offset * RADIAN2DEGREE);
+      ROS_INFO_STREAM_COND(debug_, "period_time: " << config_walking_param_.period_time * 1000);
+      ROS_INFO_STREAM_COND(debug_, "dsp_ratio: " << config_walking_param_.dsp_ratio);
+      ROS_INFO_STREAM_COND(debug_, "step_forward_back_ratio: " << config_walking_param_.step_forward_back_ratio);
+      ROS_INFO_STREAM_COND(debug_, "foot_height: " << config_walking_param_.foot_height);
+      ROS_INFO_STREAM_COND(debug_, "y_swing_amplitude: " << config_walking_param_.y_swing_amplitude);
+      ROS_INFO_STREAM_COND(debug_, "z_swing_amplitude: " << config_walking_param_.z_swing_amplitude);
+      ROS_INFO_STREAM_COND(debug_,
+                           "hip_swing_up_amplitude: " << config_walking_param_.hip_swing_up_amplitude * RADIAN2DEGREE);
+      ROS_INFO_STREAM_COND(debug_, "hip_swing_down_amplitude: " << config_walking_param_.hip_swing_down_amplitude *
+                                                                       RADIAN2DEGREE);
+      ROS_INFO_STREAM_COND(debug_, "shoulder_swing_amplitude: " << config_walking_param_.shoulder_swing_amplitude);
+      ROS_INFO_STREAM_COND(debug_, "balance_gyro_roll_gain: " << config_walking_param_.balance_gyro_roll_gain);
+      ROS_INFO_STREAM_COND(debug_, "balance_gyro_pitch_gain: " << config_walking_param_.balance_gyro_pitch_gain);
+      ROS_INFO_STREAM_COND(debug_, "balance_gyro_y_gain: " << config_walking_param_.balance_gyro_y_gain);
+      ROS_INFO_STREAM_COND(debug_, "balance_gyro_x_gain: " << config_walking_param_.balance_gyro_x_gain);
+      ROS_INFO_STREAM_COND(debug_, "balance : " << (config_walking_param_.balance_enable ? "TRUE" : "FALSE"));
     }
     else
     {
@@ -495,58 +838,73 @@ void WalkingModule::process(std::map<std::string, robotis_framework::Dynamixel*>
   {
     time_ += time_unit;
     if (time_ >= walk_period_)
-      time_ -= walk_period_;  // reset time
+      time_ = time_ - (walk_period_ * floor(time_ / walk_period_));
   }
 }
 
 void WalkingModule::processPhase(const double& time_unit)
 {
+  if (!is_walking_)
+  {
+    return;
+  }
   bool can_stop = false;
+  synchronizeTimeParam();
+  applyTimeParam();
 
-  // Update walk phase
+  if ((time_ > l_ssp_start_time_ && time_ <= l_ssp_end_time_) || (time_ > r_ssp_start_time_ && time_ <= r_ssp_end_time_))
+  {
+    // Update the robot's stride length only when one foot is off the ground
+    synchronizeStepParam();
+    applyStepParam();
+    // ROS_INFO("target height: %f, previous height: %f, synchronized height: %f", config_walking_param_.foot_height,
+    //          previouos_walking_param_.foot_height, synchronized_walking_param_.foot_height);
+  }
+  else
+  {
+    // Update the robot's initial posture only when both feet are on the ground.
+    synchronizePoseParam();
+    applyPoseParam();
+  }
+
+  // Detect middle phases
   if (time_ >= -time_unit * 0.5 && time_ < time_unit * 0.5)
   {
     // middle of double support state
     can_stop = true;
-    updateTimeParam();
     phase_ = PHASE0;
   }
   else if (time_ >= (phase1_time_ - time_unit * 0.5) && time_ < (phase1_time_ + time_unit * 0.5))
   {
     // the position of left foot is the highest
-    updateMovementParam();
     phase_ = PHASE1;
   }
   else if (time_ >= (phase2_time_ - time_unit * 0.5) && time_ < (phase2_time_ + time_unit * 0.5))
   {
     // middle of double support state
     can_stop = true;
-    updateTimeParam();
     phase_ = PHASE2;
   }
   else if (time_ >= (phase3_time_ - time_unit * 0.5) && time_ < (phase3_time_ + time_unit * 0.5))
   {
     // the position of right foot is the highest
-    updateMovementParam();
     phase_ = PHASE3;
   }
 
   // Receive Stop Request
   if (can_stop && !request_walk_)
   {
-    walking_param_.x_step = 0;
-    walking_param_.y_step = 0;
-    walking_param_.yaw_step = 0;
+    resetTargetStepConfig();
     // Finish Walk
     if (phase_ == PHASE0 || phase_ == PHASE2)
     {
       if (fabs(step_length_x_) < 0.001 && fabs(step_length_y_) < 0.001 && fabs(step_length_yaw_) < 0.001)
       {
         step_length_x_ = step_length_y_ = step_length_yaw_ = 0;
-        previous_step_length_x_ = previous_step_length_y_ = previous_step_length_yaw_ = 0;
-        previous_roll_swing_amplitude_ = 0;
-        previous_foot_lift_height_ = 0;
+        synchronized_walking_param_ = target_walking_param_;
+        previouos_walking_param_ = target_walking_param_;
         is_walking_ = false;
+        publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_INFO, "Stoped walking");
       }
     }
   }
@@ -563,7 +921,7 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
   std::vector<double> r_leg_joints(6, 0);
   std::vector<double> l_leg_joints(6, 0);
 
-  updatePoseParam();
+  applyPoseParam();
 
   // Compute endpoints
   body_pos.x() = wSin(time_, walk_period_ * 0.5, M_PI, -x_swing_amplitude_, 0);
@@ -834,32 +1192,32 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
 void WalkingModule::gyroFeedback(const double& roll_gyro_err, const double& pitch_gyro_err,
                                  std::vector<double>& balance_angle)
 {
-  if (!static_cast<bool>(walking_param_.balance_enable))
+  if (!static_cast<bool>(config_walking_param_.balance_enable))
     return;
 
   // Roll joints
   balance_angle[joint_table_["hip_r_roll"]] =
       kuroko_kinematics_->getJointDirection("hip_r_roll") * roll_gyro_err *
-      (walking_param_.balance_gyro_y_gain + walking_param_.balance_gyro_roll_gain);
+      (config_walking_param_.balance_gyro_y_gain + config_walking_param_.balance_gyro_roll_gain);
   balance_angle[joint_table_["hip_l_roll"]] =
       kuroko_kinematics_->getJointDirection("hip_l_roll") * roll_gyro_err *
-      (walking_param_.balance_gyro_y_gain + walking_param_.balance_gyro_roll_gain);
-  balance_angle[joint_table_["ankle_r_roll"]] =
-      -kuroko_kinematics_->getJointDirection("ankle_r_roll") * roll_gyro_err * walking_param_.balance_gyro_y_gain;
-  balance_angle[joint_table_["ankle_l_roll"]] =
-      -kuroko_kinematics_->getJointDirection("ankle_l_roll") * roll_gyro_err * walking_param_.balance_gyro_y_gain;
+      (config_walking_param_.balance_gyro_y_gain + config_walking_param_.balance_gyro_roll_gain);
+  balance_angle[joint_table_["ankle_r_roll"]] = -kuroko_kinematics_->getJointDirection("ankle_r_roll") * roll_gyro_err *
+                                                config_walking_param_.balance_gyro_y_gain;
+  balance_angle[joint_table_["ankle_l_roll"]] = -kuroko_kinematics_->getJointDirection("ankle_l_roll") * roll_gyro_err *
+                                                config_walking_param_.balance_gyro_y_gain;
 
   // Pitch joints
   balance_angle[joint_table_["hip_r_pitch"]] =
       kuroko_kinematics_->getJointDirection("hip_r_pitch") * pitch_gyro_err *
-      (walking_param_.balance_gyro_x_gain + walking_param_.balance_gyro_pitch_gain);
+      (config_walking_param_.balance_gyro_x_gain + config_walking_param_.balance_gyro_pitch_gain);
   balance_angle[joint_table_["hip_l_pitch"]] =
       kuroko_kinematics_->getJointDirection("hip_l_pitch") * pitch_gyro_err *
-      (walking_param_.balance_gyro_x_gain + walking_param_.balance_gyro_pitch_gain);
-  balance_angle[joint_table_["ankle_r_pitch"]] =
-      -kuroko_kinematics_->getJointDirection("ankle_r_pitch") * roll_gyro_err * walking_param_.balance_gyro_x_gain;
-  balance_angle[joint_table_["ankle_l_pitvh"]] =
-      -kuroko_kinematics_->getJointDirection("ankle_l_pitch") * roll_gyro_err * walking_param_.balance_gyro_x_gain;
+      (config_walking_param_.balance_gyro_x_gain + config_walking_param_.balance_gyro_pitch_gain);
+  balance_angle[joint_table_["ankle_r_pitch"]] = -kuroko_kinematics_->getJointDirection("ankle_r_pitch") *
+                                                 roll_gyro_err * config_walking_param_.balance_gyro_x_gain;
+  balance_angle[joint_table_["ankle_l_pitch"]] = -kuroko_kinematics_->getJointDirection("ankle_l_pitch") *
+                                                 roll_gyro_err * config_walking_param_.balance_gyro_x_gain;
 }
 
 void WalkingModule::loadWalkingParam(const std::string& path)
@@ -878,33 +1236,33 @@ void WalkingModule::loadWalkingParam(const std::string& path)
   }
 
   // Initial pose offset
-  walking_param_.init_x_offset = doc["init_x_offset"].as<double>();
-  walking_param_.init_y_offset = doc["init_y_offset"].as<double>();
-  walking_param_.init_z_offset = doc["init_z_offset"].as<double>();
-  walking_param_.init_roll_offset = doc["init_roll_offset"].as<double>() * DEGREE2RADIAN;
-  walking_param_.init_pitch_offset = doc["init_pitch_offset"].as<double>() * DEGREE2RADIAN;
-  walking_param_.init_yaw_offset = doc["init_yaw_offset"].as<double>() * DEGREE2RADIAN;
-  walking_param_.init_hip_pitch_offset = doc["init_hip_pitch_offset"].as<double>() * DEGREE2RADIAN;
+  config_walking_param_.init_x_offset = doc["init_x_offset"].as<double>();
+  config_walking_param_.init_y_offset = doc["init_y_offset"].as<double>();
+  config_walking_param_.init_z_offset = doc["init_z_offset"].as<double>();
+  config_walking_param_.init_roll_offset = doc["init_roll_offset"].as<double>() * DEGREE2RADIAN;
+  config_walking_param_.init_pitch_offset = doc["init_pitch_offset"].as<double>() * DEGREE2RADIAN;
+  config_walking_param_.init_yaw_offset = doc["init_yaw_offset"].as<double>() * DEGREE2RADIAN;
+  config_walking_param_.init_hip_pitch_offset = doc["init_hip_pitch_offset"].as<double>() * DEGREE2RADIAN;
   // Cycle Time
-  walking_param_.period_time = doc["period_time"].as<double>() * 0.001;  // ms -> s
-  walking_param_.dsp_ratio = doc["dsp_ratio"].as<double>();
-  walking_param_.step_forward_back_ratio = doc["step_forward_back_ratio"].as<double>();
+  config_walking_param_.period_time = doc["period_time"].as<double>() * 0.001;  // ms -> s
+  config_walking_param_.dsp_ratio = doc["dsp_ratio"].as<double>();
+  config_walking_param_.step_forward_back_ratio = doc["step_forward_back_ratio"].as<double>();
   // Foot Height
-  walking_param_.foot_height = doc["foot_height"].as<double>();
+  config_walking_param_.foot_height = doc["foot_height"].as<double>();
   // Swing parameters
-  walking_param_.y_swing_amplitude = doc["y_swing_amplitude"].as<double>();
-  walking_param_.z_swing_amplitude = doc["z_swing_amplitude"].as<double>();
-  walking_param_.roll_swing_amplitude = doc["roll_swing_amplitude"].as<double>() * DEGREE2RADIAN;
-  walking_param_.roll_swing_phase = doc["roll_swing_phase"].as<double>() * DEGREE2RADIAN;
-  walking_param_.hip_swing_up_amplitude = doc["hip_swing_up_amplitude"].as<double>() * DEGREE2RADIAN;
-  walking_param_.hip_swing_down_amplitude = doc["hip_swing_down_amplitude"].as<double>() * DEGREE2RADIAN;
-  walking_param_.chest_swing_amplitude = doc["chest_swing_amplitude"].as<double>() * DEGREE2RADIAN;
-  walking_param_.shoulder_swing_amplitude = doc["shoulder_swing_amplitude"].as<double>() * DEGREE2RADIAN;
+  config_walking_param_.y_swing_amplitude = doc["y_swing_amplitude"].as<double>();
+  config_walking_param_.z_swing_amplitude = doc["z_swing_amplitude"].as<double>();
+  config_walking_param_.roll_swing_amplitude = doc["roll_swing_amplitude"].as<double>() * DEGREE2RADIAN;
+  config_walking_param_.roll_swing_phase = doc["roll_swing_phase"].as<double>() * DEGREE2RADIAN;
+  config_walking_param_.hip_swing_up_amplitude = doc["hip_swing_up_amplitude"].as<double>() * DEGREE2RADIAN;
+  config_walking_param_.hip_swing_down_amplitude = doc["hip_swing_down_amplitude"].as<double>() * DEGREE2RADIAN;
+  config_walking_param_.chest_swing_amplitude = doc["chest_swing_amplitude"].as<double>() * DEGREE2RADIAN;
+  config_walking_param_.shoulder_swing_amplitude = doc["shoulder_swing_amplitude"].as<double>() * DEGREE2RADIAN;
   // Feedback parameters
-  walking_param_.balance_gyro_roll_gain = doc["balance_gyro_roll_gain"].as<double>();
-  walking_param_.balance_gyro_pitch_gain = doc["balance_gyro_pitch_gain"].as<double>();
-  walking_param_.balance_gyro_y_gain = doc["balance_gyro_y_gain"].as<double>();
-  walking_param_.balance_gyro_x_gain = doc["balance_gyro_x_gain"].as<double>();
+  config_walking_param_.balance_gyro_roll_gain = doc["balance_gyro_roll_gain"].as<double>();
+  config_walking_param_.balance_gyro_pitch_gain = doc["balance_gyro_pitch_gain"].as<double>();
+  config_walking_param_.balance_gyro_y_gain = doc["balance_gyro_y_gain"].as<double>();
+  config_walking_param_.balance_gyro_x_gain = doc["balance_gyro_x_gain"].as<double>();
 }
 
 void WalkingModule::saveWalkingParam(std::string& path)
@@ -912,33 +1270,37 @@ void WalkingModule::saveWalkingParam(std::string& path)
   YAML::Emitter out_emitter;
 
   out_emitter << YAML::BeginMap;
-  out_emitter << YAML::Key << "init_x_offset" << YAML::Value << walking_param_.init_x_offset;
-  out_emitter << YAML::Key << "init_y_offset" << YAML::Value << walking_param_.init_y_offset;
-  out_emitter << YAML::Key << "init_z_offset" << YAML::Value << walking_param_.init_z_offset;
-  out_emitter << YAML::Key << "init_roll_offset" << YAML::Value << walking_param_.init_roll_offset * RADIAN2DEGREE;
-  out_emitter << YAML::Key << "init_pitch_offset" << YAML::Value << walking_param_.init_pitch_offset * RADIAN2DEGREE;
-  out_emitter << YAML::Key << "init_yaw_offset" << YAML::Value << walking_param_.init_yaw_offset * RADIAN2DEGREE;
+  out_emitter << YAML::Key << "init_x_offset" << YAML::Value << config_walking_param_.init_x_offset;
+  out_emitter << YAML::Key << "init_y_offset" << YAML::Value << config_walking_param_.init_y_offset;
+  out_emitter << YAML::Key << "init_z_offset" << YAML::Value << config_walking_param_.init_z_offset;
+  out_emitter << YAML::Key << "init_roll_offset" << YAML::Value
+              << config_walking_param_.init_roll_offset * RADIAN2DEGREE;
+  out_emitter << YAML::Key << "init_pitch_offset" << YAML::Value
+              << config_walking_param_.init_pitch_offset * RADIAN2DEGREE;
+  out_emitter << YAML::Key << "init_yaw_offset" << YAML::Value << config_walking_param_.init_yaw_offset * RADIAN2DEGREE;
   out_emitter << YAML::Key << "init_hip_pitch_offset" << YAML::Value
-              << walking_param_.init_hip_pitch_offset * RADIAN2DEGREE;
-  out_emitter << YAML::Key << "period_time" << YAML::Value << walking_param_.period_time * 1000;
-  out_emitter << YAML::Key << "dsp_ratio" << YAML::Value << walking_param_.dsp_ratio;
-  out_emitter << YAML::Key << "step_forward_back_ratio" << YAML::Value << walking_param_.step_forward_back_ratio;
-  out_emitter << YAML::Key << "foot_height" << YAML::Value << walking_param_.foot_height;
-  out_emitter << YAML::Key << "y_swing_amplitude" << YAML::Value << walking_param_.y_swing_amplitude;
-  out_emitter << YAML::Key << "z_swing_amplitude" << YAML::Value << walking_param_.z_swing_amplitude;
+              << config_walking_param_.init_hip_pitch_offset * RADIAN2DEGREE;
+  out_emitter << YAML::Key << "period_time" << YAML::Value << config_walking_param_.period_time * 1000;
+  out_emitter << YAML::Key << "dsp_ratio" << YAML::Value << config_walking_param_.dsp_ratio;
+  out_emitter << YAML::Key << "step_forward_back_ratio" << YAML::Value << config_walking_param_.step_forward_back_ratio;
+  out_emitter << YAML::Key << "foot_height" << YAML::Value << config_walking_param_.foot_height;
+  out_emitter << YAML::Key << "y_swing_amplitude" << YAML::Value << config_walking_param_.y_swing_amplitude;
+  out_emitter << YAML::Key << "z_swing_amplitude" << YAML::Value << config_walking_param_.z_swing_amplitude;
   out_emitter << YAML::Key << "roll_swing_amplitude" << YAML::Value
-              << walking_param_.roll_swing_amplitude * RADIAN2DEGREE;
-  out_emitter << YAML::Key << "roll_swing_phase" << YAML::Value << walking_param_.roll_swing_phase * RADIAN2DEGREE;
-  out_emitter << YAML::Key << "chest_swing_amplitude" << YAML::Value << walking_param_.chest_swing_amplitude;
-  out_emitter << YAML::Key << "shoulder_swing_amplitude" << YAML::Value << walking_param_.shoulder_swing_amplitude;
+              << config_walking_param_.roll_swing_amplitude * RADIAN2DEGREE;
+  out_emitter << YAML::Key << "roll_swing_phase" << YAML::Value
+              << config_walking_param_.roll_swing_phase * RADIAN2DEGREE;
+  out_emitter << YAML::Key << "chest_swing_amplitude" << YAML::Value << config_walking_param_.chest_swing_amplitude;
+  out_emitter << YAML::Key << "shoulder_swing_amplitude" << YAML::Value
+              << config_walking_param_.shoulder_swing_amplitude;
   out_emitter << YAML::Key << "hip_swing_up_amplitude" << YAML::Value
-              << walking_param_.hip_swing_up_amplitude * RADIAN2DEGREE;
+              << config_walking_param_.hip_swing_up_amplitude * RADIAN2DEGREE;
   out_emitter << YAML::Key << "hip_swing_down_amplitude" << YAML::Value
-              << walking_param_.hip_swing_down_amplitude * RADIAN2DEGREE;
-  out_emitter << YAML::Key << "balance_gyro_roll_gain" << YAML::Value << walking_param_.balance_gyro_roll_gain;
-  out_emitter << YAML::Key << "balance_gyro_pitch_gain" << YAML::Value << walking_param_.balance_gyro_pitch_gain;
-  out_emitter << YAML::Key << "balance_gyro_y_gain" << YAML::Value << walking_param_.balance_gyro_y_gain;
-  out_emitter << YAML::Key << "balance_gyro_x_gain" << YAML::Value << walking_param_.balance_gyro_x_gain;
+              << config_walking_param_.hip_swing_down_amplitude * RADIAN2DEGREE;
+  out_emitter << YAML::Key << "balance_gyro_roll_gain" << YAML::Value << config_walking_param_.balance_gyro_roll_gain;
+  out_emitter << YAML::Key << "balance_gyro_pitch_gain" << YAML::Value << config_walking_param_.balance_gyro_pitch_gain;
+  out_emitter << YAML::Key << "balance_gyro_y_gain" << YAML::Value << config_walking_param_.balance_gyro_y_gain;
+  out_emitter << YAML::Key << "balance_gyro_x_gain" << YAML::Value << config_walking_param_.balance_gyro_x_gain;
   out_emitter << YAML::EndMap;
 
   // output to file

@@ -91,32 +91,38 @@ void WalkingModule::initialize(const int control_cycle_msec, robotis_framework::
 
   // m, s, rad
   // init pose
-  walking_param_.init_x_offset = -0.010;
-  walking_param_.init_y_offset = 0.005;
-  walking_param_.init_z_offset = 0.020;
-  walking_param_.init_roll_offset = 0.0;
-  walking_param_.init_pitch_offset = 0.0 * DEGREE2RADIAN;
-  walking_param_.init_yaw_offset = 0.0 * DEGREE2RADIAN;
-  walking_param_.init_hip_pitch_offset = 13.0 * DEGREE2RADIAN;
+  walking_param_.init_x_offset = 0;
+  walking_param_.init_y_offset = 0;
+  walking_param_.init_z_offset = 0;
+  walking_param_.init_roll_offset = 0;
+  walking_param_.init_pitch_offset = 0;
+  walking_param_.init_yaw_offset = 0;
+  walking_param_.init_hip_pitch_offset = 0;
   // time
-  walking_param_.period_time = 600 * 0.001;
-  walking_param_.dsp_ratio = 0.1;
-  walking_param_.step_forward_back_ratio = 0.28;
+  walking_param_.period_time = 0;
+  walking_param_.dsp_ratio = 0;
+  walking_param_.step_forward_back_ratio = 0;
   // walking
-  walking_param_.x_step = 0.0;
-  walking_param_.y_step = 0.0;
-  walking_param_.foot_height = 0.040;  // foot height
-  walking_param_.yaw_step = 0.0;
+  walking_param_.x_step = 0;
+  walking_param_.y_step = 0;
+  walking_param_.yaw_step = 0;
+  walking_param_.foot_height = 0;  // foot height
   // balance
   walking_param_.balance_enable = false;
-  walking_param_.balance_gyro_roll_gain = 0.5;
-  walking_param_.balance_gyro_pitch_gain = 0.3;
-  walking_param_.balance_gyro_y_gain = 1.0;
-  walking_param_.balance_gyro_x_gain = 0.9;
-  walking_param_.y_swing_amplitude = 0.020;
-  walking_param_.z_swing_amplitude = 0.005;
-  walking_param_.hip_swing_up_amplitude = 3.0 * DEGREE2RADIAN;
-  walking_param_.shoulder_swing_amplitude = 1.5;
+  walking_param_.balance_gyro_roll_gain = 0;
+  walking_param_.balance_gyro_pitch_gain = 0;
+  walking_param_.balance_gyro_y_gain = 0;
+  walking_param_.balance_gyro_x_gain = 0;
+  walking_param_.y_swing_amplitude = 0;
+  walking_param_.z_swing_amplitude = 0;
+  walking_param_.roll_swing_amplitude = 0;
+  walking_param_.roll_swing_phase = 0;
+  walking_param_.hip_swing_up_amplitude = 0;
+  walking_param_.hip_swing_down_amplitude = 0;
+  walking_param_.chest_swing_amplitude = 0;
+  walking_param_.shoulder_swing_amplitude = 0;
+
+  synchronized_walking_param_ = walking_param_;
 
   // member variable
   body_swing_y_ = 0;

@@ -119,6 +119,7 @@ private:
   ros::Publisher robot_pose_pub_;
   ros::Publisher status_msg_pub_;
   kuroko_walking_module_msgs::WalkingParam walking_param_;
+  kuroko_walking_module_msgs::WalkingParam synchronized_walking_param_;
 
   Eigen::MatrixXd calc_joint_trajectory_;
 

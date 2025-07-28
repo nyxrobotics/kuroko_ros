@@ -59,7 +59,6 @@ public Q_SLOTS:
   void on_button_param_save_clicked(bool check);
 
   void on_checkBox_balance_on_clicked(bool check);
-  void on_checkBox_balance_off_clicked(bool check);
 
   // Head Control
   void on_head_center_button_clicked(bool check);

@@ -130,9 +130,6 @@ void MainWindow::on_button_param_apply_clicked(bool /*check*/)
 void MainWindow::on_checkBox_balance_on_clicked(bool /*check*/)
 {
 }
-void MainWindow::on_checkBox_balance_off_clicked(bool /*check*/)
-{
-}
 
 void MainWindow::on_head_center_button_clicked(bool /*check*/)
 {
@@ -399,7 +396,6 @@ void MainWindow::updateWalkingParams(kuroko_walking_module_msgs::WalkingParam pa
   ui_.dSpinBox_y_step->setValue(params.yaw_step);
   // balance
   ui_.checkBox_balance_on->setChecked(params.balance_enable);
-  ui_.checkBox_balance_off->setChecked(!params.balance_enable);
   ui_.dSpinBox_balance_gyro_y_gain->setValue(params.balance_gyro_roll_gain);
   ui_.dSpinBox_balance_gyro_x_gain->setValue(params.balance_gyro_pitch_gain);
   ui_.dSpinBox_balance_gyro_roll_gain->setValue(params.balance_gyro_y_gain);

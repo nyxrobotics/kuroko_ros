@@ -123,11 +123,19 @@ void RobooneAuto::setWalkingParams(double x_step, double y_step, double yaw_step
   params.shoulder_swing_amplitude = 0;
   params.chest_swing_amplitude = 0;
 
-  params.balance_enable = false;
-  params.balance_gyro_roll_gain = 0;
-  params.balance_gyro_pitch_gain = 0;
-  params.balance_gyro_y_gain = 0;
-  params.balance_gyro_x_gain = 0;
+  params.balance_enable = true;
+  params.balance_gyro_x_gain = 0.008;
+  params.balance_gyro_y_gain = -0.004;
+  params.balance_gyro_zx_gain = 0.004;
+  params.balance_gyro_zy_gain = 0.008;
+  params.balance_gyro_roll_gain = -0.01;
+  params.balance_gyro_pitch_gain = 0.04;
+  params.balance_euler_x_gain = 0.04;
+  params.balance_euler_y_gain = -0.02;
+  params.balance_euler_zx_gain = 0.004;
+  params.balance_euler_zy_gain = 0.008;
+  params.balance_euler_roll_gain = -0.01;
+  params.balance_euler_pitch_gain = 0.04;
 
   // PID gains
   params.p_gain = 0;
@@ -273,7 +281,7 @@ void RobooneAuto::handleFall()
   }
 
   ros::Duration(1.0).sleep();
-  // モーション再生完了後、一時停止状態に遷移、3秒待機
+  // モーション再生完了後、一時停止状態に遷移、1秒待機
   setCtrlModule("walking_module");
   current_state_ = "PAUSE_WALKING";
   fall_detected_time_ = ros::Time::now() + ros::Duration(1.0);
@@ -423,11 +431,11 @@ void RobooneAuto::handleAttack()
       last_attack_id_ = action_id;
       setWalkingParams(0.0, 0.0, 0.0);
       stopWalking();
-      ros::Duration(0.1).sleep();
+      ros::Duration(0.2).sleep();
       setCtrlModule("action_module");
-      ros::Duration(0.1).sleep();
+      ros::Duration(0.2).sleep();
       executeAction(action_id);
-      ros::Duration(0.1).sleep();
+      ros::Duration(1.0).sleep();
       setCtrlModule("walking_module");
       // 攻撃実行時刻を記録
       attacked_time_ = ros::Time::now();

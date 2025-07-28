@@ -846,8 +846,8 @@ void WalkingModule::process(std::map<std::string, robotis_framework::Dynamixel*>
     {
       if (debug_)
         std::cout << "Check Err : " << err_max << std::endl;
-      int mov_time = err_max / 30;
-      iniPoseTraGene(mov_time < 1 ? 1 : mov_time);
+      double mov_time = err_max / 30.0;
+      iniPoseTraGene(mov_time < 1.0 ? 1.0 : mov_time);
       target_position_ = goal_position_;
       walking_state_ = WALK_INITIAL_POSE;
       ROS_INFO_STREAM_COND(debug_, "x_offset: " << config_walking_param_.init_x_offset);

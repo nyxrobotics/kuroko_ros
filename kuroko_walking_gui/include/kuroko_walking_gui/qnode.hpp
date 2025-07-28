@@ -109,7 +109,6 @@ public:
   void refreshWalkingParam();
   void saveWalkingParam();
   void applyWalkingParam(const kuroko_walking_module_msgs::WalkingParam& walking_param);
-  void initGyro();
 
   // Preview Walking
   void initPreviewWalking(ros::NodeHandle& ros_node);
@@ -203,7 +202,6 @@ private:
   ros::Publisher init_pose_pub_;
   ros::Publisher module_control_pub_;
   ros::Publisher module_control_preset_pub_;
-  ros::Publisher init_gyro_pub_;
   ros::Subscriber status_msg_sub_;
   ros::Subscriber current_module_control_sub_;
   ros::Subscriber foot_distance_msg_sub_;

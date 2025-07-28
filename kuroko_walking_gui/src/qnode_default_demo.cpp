@@ -4,7 +4,6 @@ namespace walking_gui
 {
 void QNodeKuroko::initDefaultDemo(ros::NodeHandle& ros_node)
 {
-  init_gyro_pub_ = ros_node.advertise<robotis_controller_msgs::SyncWriteItem>("/motion_control/sync_write_item", 0);
   set_head_joint_angle_pub_ =
       ros_node.advertise<sensor_msgs::JointState>("/motion_control/head_control/set_joint_states", 0);
 
@@ -16,7 +15,7 @@ void QNodeKuroko::initDefaultDemo(ros::NodeHandle& ros_node)
   set_walking_param_pub_ =
       ros_node.advertise<kuroko_walking_module_msgs::WalkingParam>("/motion_control/walking/set_params", 0);
   get_walking_param_client_ = ros_node.serviceClient<kuroko_walking_module_msgs::GetWalkingParam>("/motion_control/"
-                                                                                               "walking/get_params");
+                                                                                                  "walking/get_params");
 
   // Action
   motion_index_pub_ = ros_node.advertise<std_msgs::Int32>("/motion_control/action/animation_num", 0);
@@ -114,18 +113,6 @@ void QNodeKuroko::applyWalkingParam(const kuroko_walking_module_msgs::WalkingPar
 
   set_walking_param_pub_.publish(walking_param_);
   log(INFO, "Apply Walking Parameters");
-}
-
-void QNodeKuroko::initGyro()
-{
-  robotis_controller_msgs::SyncWriteItem init_gyro_msg;
-  init_gyro_msg.item_name = "imu_control";
-  init_gyro_msg.joint_name.push_back("kuroko_imu");
-  init_gyro_msg.value.push_back(0x08);
-
-  init_gyro_pub_.publish(init_gyro_msg);
-
-  log(INFO, "Initialize Gyro");
 }
 
 // Motion

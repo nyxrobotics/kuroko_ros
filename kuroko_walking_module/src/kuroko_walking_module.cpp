@@ -137,13 +137,8 @@ void WalkingModule::initialize(const int control_cycle_msec, robotis_framework::
   ros_node.param<std::string>("walking_param_path", param_path_, default_param_path);
 
   loadWalkingParam(param_path_);
-  target_walking_param_ = config_walking_param_;
-  target_walking_param_.x_step = 0;
-  target_walking_param_.y_step = 0;
-  target_walking_param_.yaw_step = 0;
-  target_walking_param_.foot_height = 0;
-  target_walking_param_.hip_swing_up_amplitude = 0;
-  target_walking_param_.hip_swing_down_amplitude = 0;
+  setTargetStepConfig();
+  resetTargetStepConfig();
   previouos_walking_param_ = target_walking_param_;
   synchronized_walking_param_ = target_walking_param_;
 
@@ -214,7 +209,14 @@ void WalkingModule::walkingParameterCallback(const kuroko_walking_module_msgs::W
   if (is_walking_)
   {
     previouos_walking_param_ = synchronized_walking_param_;
-    target_walking_param_ = config_walking_param_;
+    setTargetStepConfig();
+  }
+  else
+  {
+    setTargetStepConfig();
+    resetTargetStepConfig();
+    previouos_walking_param_ = target_walking_param_;
+    synchronized_walking_param_ = target_walking_param_;
   }
 }
 
@@ -240,8 +242,9 @@ void WalkingModule::synchronizeTimeParam()
   }
   else
   {
-    // 1 second to change time parameters
-    double time_to_change = 1.0;
+    // 4 steps to change time parameters
+    double steps_to_change = 4.0;
+    double time_to_change = target_walking_param_.period_time * 0.5 * steps_to_change;
     double period_step = (target_walking_param_.period_time - previouos_walking_param_.period_time) /
                          (time_to_change / (control_cycle_msec_ / 1000.0));
     if (fabs(target_walking_param_.period_time - synchronized_walking_param_.period_time) < fabs(period_step) ||
@@ -302,11 +305,11 @@ void WalkingModule::synchronizeStepParam()
     previouos_walking_param_.x_step = target_walking_param_.x_step;
     previouos_walking_param_.y_step = target_walking_param_.y_step;
     previouos_walking_param_.yaw_step = target_walking_param_.yaw_step;
+    previouos_walking_param_.foot_height = target_walking_param_.foot_height;
     previouos_walking_param_.y_swing_amplitude = target_walking_param_.y_swing_amplitude;
     previouos_walking_param_.z_swing_amplitude = target_walking_param_.z_swing_amplitude;
     previouos_walking_param_.roll_swing_amplitude = target_walking_param_.roll_swing_amplitude;
     previouos_walking_param_.roll_swing_phase = target_walking_param_.roll_swing_phase;
-    previouos_walking_param_.foot_height = target_walking_param_.foot_height;
     previouos_walking_param_.hip_swing_up_amplitude = target_walking_param_.hip_swing_up_amplitude;
     previouos_walking_param_.hip_swing_down_amplitude = target_walking_param_.hip_swing_down_amplitude;
     previouos_walking_param_.chest_swing_amplitude = target_walking_param_.chest_swing_amplitude;
@@ -314,25 +317,17 @@ void WalkingModule::synchronizeStepParam()
   }
   else
   {
-    // 1 second to change step parameters
-    double time_to_change = 1.0;
-    double foot_height_step = (target_walking_param_.foot_height - previouos_walking_param_.foot_height) /
-                              (time_to_change / (control_cycle_msec_ / 1000.0));
-    if (fabs(target_walking_param_.foot_height - synchronized_walking_param_.foot_height) < fabs(foot_height_step) ||
-        (target_walking_param_.foot_height - synchronized_walking_param_.foot_height) * foot_height_step < 0)
-    {
-      synchronized_walking_param_.foot_height = target_walking_param_.foot_height;
-    }
-    else
-    {
-      synchronized_walking_param_.foot_height += foot_height_step;
-    }
+    // 4 spteps to change step parameters
+    double steps_to_change = 4.0;
+    double time_to_change =
+        target_walking_param_.period_time * (1.0 - target_walking_param_.dsp_ratio) * 0.5 * steps_to_change;
     double x_step_step = (target_walking_param_.x_step - previouos_walking_param_.x_step) /
                          (time_to_change / (control_cycle_msec_ / 1000.0));
     if (fabs(target_walking_param_.x_step - synchronized_walking_param_.x_step) < fabs(x_step_step) ||
         (target_walking_param_.x_step - synchronized_walking_param_.x_step) * x_step_step < 0)
     {
       synchronized_walking_param_.x_step = target_walking_param_.x_step;
+      previouos_walking_param_.x_step = target_walking_param_.x_step;
     }
     else
     {
@@ -344,6 +339,7 @@ void WalkingModule::synchronizeStepParam()
         (target_walking_param_.y_step - synchronized_walking_param_.y_step) * y_step_step < 0)
     {
       synchronized_walking_param_.y_step = target_walking_param_.y_step;
+      previouos_walking_param_.y_step = target_walking_param_.y_step;
     }
     else
     {
@@ -355,10 +351,23 @@ void WalkingModule::synchronizeStepParam()
         (target_walking_param_.yaw_step - synchronized_walking_param_.yaw_step) * yaw_step_step < 0)
     {
       synchronized_walking_param_.yaw_step = target_walking_param_.yaw_step;
+      previouos_walking_param_.yaw_step = target_walking_param_.yaw_step;
     }
     else
     {
       synchronized_walking_param_.yaw_step += yaw_step_step;
+    }
+    double foot_height_step = (target_walking_param_.foot_height - previouos_walking_param_.foot_height) /
+                              (time_to_change / (control_cycle_msec_ / 1000.0));
+    if (fabs(target_walking_param_.foot_height - synchronized_walking_param_.foot_height) < fabs(foot_height_step) ||
+        (target_walking_param_.foot_height - synchronized_walking_param_.foot_height) * foot_height_step < 0)
+    {
+      synchronized_walking_param_.foot_height = target_walking_param_.foot_height;
+      previouos_walking_param_.foot_height = target_walking_param_.foot_height;
+    }
+    else
+    {
+      synchronized_walking_param_.foot_height += foot_height_step;
     }
     double y_swing_amplitude_step =
         (target_walking_param_.y_swing_amplitude - previouos_walking_param_.y_swing_amplitude) /
@@ -370,6 +379,7 @@ void WalkingModule::synchronizeStepParam()
             0)
     {
       synchronized_walking_param_.y_swing_amplitude = target_walking_param_.y_swing_amplitude;
+      previouos_walking_param_.y_swing_amplitude = target_walking_param_.y_swing_amplitude;
     }
     else
     {
@@ -385,6 +395,7 @@ void WalkingModule::synchronizeStepParam()
             0)
     {
       synchronized_walking_param_.z_swing_amplitude = target_walking_param_.z_swing_amplitude;
+      previouos_walking_param_.z_swing_amplitude = target_walking_param_.z_swing_amplitude;
     }
     else
     {
@@ -400,6 +411,7 @@ void WalkingModule::synchronizeStepParam()
             0)
     {
       synchronized_walking_param_.roll_swing_amplitude = target_walking_param_.roll_swing_amplitude;
+      previouos_walking_param_.roll_swing_amplitude = target_walking_param_.roll_swing_amplitude;
     }
     else
     {
@@ -415,6 +427,7 @@ void WalkingModule::synchronizeStepParam()
             0)
     {
       synchronized_walking_param_.roll_swing_phase = target_walking_param_.roll_swing_phase;
+      previouos_walking_param_.roll_swing_phase = target_walking_param_.roll_swing_phase;
     }
     else
     {
@@ -430,6 +443,7 @@ void WalkingModule::synchronizeStepParam()
             0)
     {
       synchronized_walking_param_.hip_swing_up_amplitude = target_walking_param_.hip_swing_up_amplitude;
+      previouos_walking_param_.hip_swing_up_amplitude = target_walking_param_.hip_swing_up_amplitude;
     }
     else
     {
@@ -445,6 +459,7 @@ void WalkingModule::synchronizeStepParam()
             0)
     {
       synchronized_walking_param_.hip_swing_down_amplitude = target_walking_param_.hip_swing_down_amplitude;
+      previouos_walking_param_.hip_swing_down_amplitude = target_walking_param_.hip_swing_down_amplitude;
     }
     else
     {
@@ -461,6 +476,7 @@ void WalkingModule::synchronizeStepParam()
             0)
     {
       synchronized_walking_param_.chest_swing_amplitude = target_walking_param_.chest_swing_amplitude;
+      previouos_walking_param_.chest_swing_amplitude = target_walking_param_.chest_swing_amplitude;
     }
     else
     {
@@ -476,6 +492,7 @@ void WalkingModule::synchronizeStepParam()
             0)
     {
       synchronized_walking_param_.shoulder_swing_amplitude = target_walking_param_.shoulder_swing_amplitude;
+      previouos_walking_param_.shoulder_swing_amplitude = target_walking_param_.shoulder_swing_amplitude;
     }
     else
     {
@@ -530,7 +547,7 @@ void WalkingModule::applyStepParam()
 {
   // Step length
   step_length_x_ = synchronized_walking_param_.x_step;
-  step_length_y_ = synchronized_walking_param_.y_step / 2;
+  step_length_y_ = synchronized_walking_param_.y_step;
   step_length_yaw_ = synchronized_walking_param_.yaw_step;
   // Body Forward/Back Swing
   x_swing_amplitude_ = step_length_x_ * synchronized_walking_param_.step_forward_back_ratio;
@@ -570,7 +587,8 @@ void WalkingModule::synchronizePoseParam()
   else
   {
     // 1 second to change pose parameters
-    double time_to_change = 1.0;
+    double steps_to_change = 4.0;
+    double time_to_change = target_walking_param_.period_time * target_walking_param_.dsp_ratio * 0.5 * steps_to_change;
     double x_offset_diff = target_walking_param_.init_x_offset - previouos_walking_param_.init_x_offset;
     double y_offset_diff = target_walking_param_.init_y_offset - previouos_walking_param_.init_y_offset;
     double z_offset_diff = target_walking_param_.init_z_offset - previouos_walking_param_.init_z_offset;
@@ -590,6 +608,7 @@ void WalkingModule::synchronizePoseParam()
         (target_walking_param_.init_x_offset - synchronized_walking_param_.init_x_offset) * x_offset_step < 0)
     {
       synchronized_walking_param_.init_x_offset = target_walking_param_.init_x_offset;
+      previouos_walking_param_.init_x_offset = target_walking_param_.init_x_offset;
     }
     else
     {
@@ -599,6 +618,7 @@ void WalkingModule::synchronizePoseParam()
         (target_walking_param_.init_y_offset - synchronized_walking_param_.init_y_offset) * y_offset_step < 0)
     {
       synchronized_walking_param_.init_y_offset = target_walking_param_.init_y_offset;
+      previouos_walking_param_.init_y_offset = target_walking_param_.init_y_offset;
     }
     else
     {
@@ -608,6 +628,7 @@ void WalkingModule::synchronizePoseParam()
         (target_walking_param_.init_z_offset - synchronized_walking_param_.init_z_offset) * z_offset_step < 0)
     {
       synchronized_walking_param_.init_z_offset = target_walking_param_.init_z_offset;
+      previouos_walking_param_.init_z_offset = target_walking_param_.init_z_offset;
     }
     else
     {
@@ -618,6 +639,7 @@ void WalkingModule::synchronizePoseParam()
         (target_walking_param_.init_roll_offset - synchronized_walking_param_.init_roll_offset) * roll_offset_step < 0)
     {
       synchronized_walking_param_.init_roll_offset = target_walking_param_.init_roll_offset;
+      previouos_walking_param_.init_roll_offset = target_walking_param_.init_roll_offset;
     }
     else
     {
@@ -629,6 +651,7 @@ void WalkingModule::synchronizePoseParam()
             0)
     {
       synchronized_walking_param_.init_pitch_offset = target_walking_param_.init_pitch_offset;
+      previouos_walking_param_.init_pitch_offset = target_walking_param_.init_pitch_offset;
     }
     else
     {
@@ -639,6 +662,7 @@ void WalkingModule::synchronizePoseParam()
         (target_walking_param_.init_yaw_offset - synchronized_walking_param_.init_yaw_offset) * yaw_offset_step < 0)
     {
       synchronized_walking_param_.init_yaw_offset = target_walking_param_.init_yaw_offset;
+      previouos_walking_param_.init_yaw_offset = target_walking_param_.init_yaw_offset;
     }
     else
     {
@@ -651,6 +675,7 @@ void WalkingModule::synchronizePoseParam()
             0)
     {
       synchronized_walking_param_.init_hip_pitch_offset = target_walking_param_.init_hip_pitch_offset;
+      previouos_walking_param_.init_hip_pitch_offset = target_walking_param_.init_hip_pitch_offset;
     }
     else
     {
@@ -677,7 +702,11 @@ void WalkingModule::startWalking()
   setTargetStepConfig();
   if (!is_walking_)
   {
-    if (time_ < walk_period_ * 0.5)
+    if (target_walking_param_.y_step > 0.0001)
+      time_ = 0;
+    else if (target_walking_param_.y_step < -0.0001)
+      time_ = walk_period_ * 0.5;
+    else if (time_ < walk_period_ * 0.5)
       time_ = 0;
     else
       time_ = walk_period_ * 0.5;
@@ -698,13 +727,14 @@ void WalkingModule::resetTargetStepConfig()
   target_walking_param_.yaw_step = 0;
   target_walking_param_.y_swing_amplitude = 0;
   target_walking_param_.z_swing_amplitude = 0;
-  target_walking_param_.roll_swing_amplitude = 0;
+  // target_walking_param_.roll_swing_amplitude = 0;
   target_walking_param_.roll_swing_phase = 0;
-  target_walking_param_.foot_height = 0;
-  target_walking_param_.hip_swing_up_amplitude = 0;
-  target_walking_param_.hip_swing_down_amplitude = 0;
+  // target_walking_param_.foot_height = 0;
+  // target_walking_param_.hip_swing_up_amplitude = 0;
+  // target_walking_param_.hip_swing_down_amplitude = 0;
   target_walking_param_.chest_swing_amplitude = 0;
   target_walking_param_.shoulder_swing_amplitude = 0;
+  target_walking_param_.init_roll_offset = 0;
 }
 
 void WalkingModule::stop()
@@ -855,8 +885,17 @@ void WalkingModule::processPhase(const double& time_unit)
   if ((time_ > l_ssp_start_time_ && time_ <= l_ssp_end_time_) || (time_ > r_ssp_start_time_ && time_ <= r_ssp_end_time_))
   {
     // Update the robot's stride length only when one foot is off the ground
+    double y_step_before = synchronized_walking_param_.y_step;
+    double y_step_target = target_walking_param_.y_step;
     synchronizeStepParam();
+    if (y_step_target < 0 && fabs(y_step_before) < fabs(y_step_target) &&
+        (time_ > l_ssp_start_time_ && time_ <= l_ssp_end_time_))
+      synchronized_walking_param_.y_step = y_step_before;
+    else if (y_step_target > 0 && fabs(y_step_before) < fabs(y_step_target) &&
+             (time_ > r_ssp_start_time_ && time_ <= r_ssp_end_time_))
+      synchronized_walking_param_.y_step = y_step_before;
     applyStepParam();
+
     // ROS_INFO("target height: %f, previous height: %f, synchronized height: %f", config_walking_param_.foot_height,
     //          previouos_walking_param_.foot_height, synchronized_walking_param_.foot_height);
   }
@@ -920,8 +959,6 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
 
   std::vector<double> r_leg_joints(6, 0);
   std::vector<double> l_leg_joints(6, 0);
-
-  applyPoseParam();
 
   // Compute endpoints
   body_pos.x() = wSin(time_, walk_period_ * 0.5, M_PI, -x_swing_amplitude_, 0);

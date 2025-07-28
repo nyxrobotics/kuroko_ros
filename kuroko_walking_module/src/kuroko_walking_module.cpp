@@ -122,12 +122,12 @@ void WalkingModule::initialize(const int control_cycle_msec, robotis_framework::
   config_walking_param_.balance_gyro_zy_gain = 0;
   config_walking_param_.balance_gyro_roll_gain = 0;
   config_walking_param_.balance_gyro_pitch_gain = 0;
-  config_walking_param_.balance_acc_x_gain = 0;
-  config_walking_param_.balance_acc_y_gain = 0;
-  config_walking_param_.balance_acc_zx_gain = 0;
-  config_walking_param_.balance_acc_zy_gain = 0;
-  config_walking_param_.balance_acc_roll_gain = 0;
-  config_walking_param_.balance_acc_pitch_gain = 0;
+  config_walking_param_.balance_euler_x_gain = 0;
+  config_walking_param_.balance_euler_y_gain = 0;
+  config_walking_param_.balance_euler_zx_gain = 0;
+  config_walking_param_.balance_euler_zy_gain = 0;
+  config_walking_param_.balance_euler_roll_gain = 0;
+  config_walking_param_.balance_euler_pitch_gain = 0;
 
   // member variable
   body_swing_y_ = 0;
@@ -811,14 +811,15 @@ void WalkingModule::process(std::map<std::string, robotis_framework::Dynamixel*>
     if (static_cast<bool>(config_walking_param_.balance_enable))
     {
       Eigen::Vector3d gyro = Eigen::Vector3d::Zero();
-      Eigen::Vector3d acc = Eigen::Vector3d::Zero();
+      Eigen::Vector3d euler = Eigen::Vector3d::Zero();
       gyro.x() = sensors["gyro_x"];
       gyro.y() = sensors["gyro_y"];
       gyro.z() = sensors["gyro_z"];
-      acc.x() = sensors["acc_x"];
-      acc.y() = sensors["acc_y"];
-      acc.z() = sensors["acc_z"];
-      gyroFeedback(gyro, acc, feedback_xyz_, feedback_rpy_);
+      euler.x() = sensors["euler_roll"];
+      euler.y() = sensors["euler_pitch"];
+      euler.z() = sensors["euler_yaw"];
+      // ROS_INFO("gyro: %f, %f, %f, euler: %f, %f, %f", gyro.x(), gyro.y(), gyro.z(), euler.x(), euler.y(), euler.z());
+      gyroFeedback(gyro, euler, feedback_xyz_, feedback_rpy_);
     }
 
     // Walk
@@ -876,12 +877,12 @@ void WalkingModule::process(std::map<std::string, robotis_framework::Dynamixel*>
       ROS_INFO_STREAM_COND(debug_, "balance_gyro_zy_gain: " << config_walking_param_.balance_gyro_zy_gain);
       ROS_INFO_STREAM_COND(debug_, "balance_gyro_roll_gain: " << config_walking_param_.balance_gyro_roll_gain);
       ROS_INFO_STREAM_COND(debug_, "balance_gyro_pitch_gain: " << config_walking_param_.balance_gyro_pitch_gain);
-      ROS_INFO_STREAM_COND(debug_, "balance_acc_x_gain: " << config_walking_param_.balance_acc_x_gain);
-      ROS_INFO_STREAM_COND(debug_, "balance_acc_y_gain: " << config_walking_param_.balance_acc_y_gain);
-      ROS_INFO_STREAM_COND(debug_, "balance_acc_zx_gain: " << config_walking_param_.balance_acc_zx_gain);
-      ROS_INFO_STREAM_COND(debug_, "balance_acc_zy_gain: " << config_walking_param_.balance_acc_zy_gain);
-      ROS_INFO_STREAM_COND(debug_, "balance_acc_roll_gain: " << config_walking_param_.balance_acc_roll_gain);
-      ROS_INFO_STREAM_COND(debug_, "balance_acc_pitch_gain: " << config_walking_param_.balance_acc_pitch_gain);
+      ROS_INFO_STREAM_COND(debug_, "balance_euler_x_gain: " << config_walking_param_.balance_euler_x_gain);
+      ROS_INFO_STREAM_COND(debug_, "balance_euler_y_gain: " << config_walking_param_.balance_euler_y_gain);
+      ROS_INFO_STREAM_COND(debug_, "balance_euler_zx_gain: " << config_walking_param_.balance_euler_zx_gain);
+      ROS_INFO_STREAM_COND(debug_, "balance_euler_zy_gain: " << config_walking_param_.balance_euler_zy_gain);
+      ROS_INFO_STREAM_COND(debug_, "balance_euler_roll_gain: " << config_walking_param_.balance_euler_roll_gain);
+      ROS_INFO_STREAM_COND(debug_, "balance_euler_pitch_gain: " << config_walking_param_.balance_euler_pitch_gain);
     }
     else
     {
@@ -1265,7 +1266,7 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
   return true;
 }
 
-void WalkingModule::gyroFeedback(const Eigen::Vector3d& gyro_in, const Eigen::Vector3d& acc_in,
+void WalkingModule::gyroFeedback(const Eigen::Vector3d& gyro_in, const Eigen::Vector3d& euler_in,
                                  Eigen::Vector3d& xyz_out, Eigen::Vector3d& rpy_out)
 {
   if (!static_cast<bool>(config_walking_param_.balance_enable))
@@ -1273,27 +1274,27 @@ void WalkingModule::gyroFeedback(const Eigen::Vector3d& gyro_in, const Eigen::Ve
   // Gyro Feedback
   xyz_out[0] = -config_walking_param_.balance_gyro_x_gain * gyro_in[1];
   xyz_out[1] = -config_walking_param_.balance_gyro_y_gain * gyro_in[0];
-  xyz_out[2] = config_walking_param_.balance_gyro_zx_gain * fabs(gyro_in[1]) +
+  xyz_out[2] = -config_walking_param_.balance_gyro_zx_gain * fabs(gyro_in[1]) -
                config_walking_param_.balance_gyro_zy_gain * fabs(gyro_in[0]);
   rpy_out[0] = config_walking_param_.balance_gyro_roll_gain * gyro_in[0];
   rpy_out[1] = -config_walking_param_.balance_gyro_pitch_gain * gyro_in[1];
   rpy_out[2] = 0;
-  // Acc Feedback
-  xyz_out[0] += config_walking_param_.balance_acc_x_gain * acc_in[0];
-  xyz_out[1] += config_walking_param_.balance_acc_y_gain * acc_in[1];
-  xyz_out[2] += config_walking_param_.balance_acc_zx_gain * fabs(acc_in[0]) +
-                config_walking_param_.balance_acc_zy_gain * fabs(acc_in[1]);
-  rpy_out[0] += config_walking_param_.balance_acc_roll_gain * acc_in[1];
-  rpy_out[1] += -config_walking_param_.balance_acc_pitch_gain * acc_in[0];
+  // Euler Feedback
+  xyz_out[0] += -config_walking_param_.balance_euler_x_gain * euler_in[1];
+  xyz_out[1] += -config_walking_param_.balance_euler_y_gain * euler_in[0];
+  xyz_out[2] += -config_walking_param_.balance_euler_zx_gain * fabs(euler_in[1]) -
+                config_walking_param_.balance_euler_zy_gain * fabs(euler_in[0]);
+  rpy_out[0] += config_walking_param_.balance_euler_roll_gain * euler_in[0];
+  rpy_out[1] += -config_walking_param_.balance_euler_pitch_gain * euler_in[1];
   rpy_out[2] = 0;
 
   // Limit feedback
   double feedback_xyz_norm = xyz_out.norm();
-  if (feedback_xyz_norm > feedback_rpy_max_ && feedback_xyz_norm > 0.001)
-  {
-    xyz_out *= (feedback_rpy_max_ / feedback_xyz_norm);
-  }
   double feedback_rpy_norm = rpy_out.norm();
+  if (feedback_xyz_norm > feedback_xyz_max_ && feedback_xyz_norm > 0.001)
+  {
+    xyz_out *= (feedback_xyz_max_ / feedback_xyz_norm);
+  }
   if (feedback_rpy_norm > feedback_rpy_max_ && feedback_rpy_norm > 0.001)
   {
     rpy_out *= (feedback_rpy_max_ / feedback_rpy_norm);
@@ -1345,12 +1346,12 @@ void WalkingModule::loadWalkingParam(const std::string& path)
   config_walking_param_.balance_gyro_zy_gain = doc["balance_gyro_zy_gain"].as<double>();
   config_walking_param_.balance_gyro_roll_gain = doc["balance_gyro_roll_gain"].as<double>();
   config_walking_param_.balance_gyro_pitch_gain = doc["balance_gyro_pitch_gain"].as<double>();
-  config_walking_param_.balance_acc_x_gain = doc["balance_acc_x_gain"].as<double>();
-  config_walking_param_.balance_acc_y_gain = doc["balance_acc_y_gain"].as<double>();
-  config_walking_param_.balance_acc_zx_gain = doc["balance_acc_zx_gain"].as<double>();
-  config_walking_param_.balance_acc_zy_gain = doc["balance_acc_zy_gain"].as<double>();
-  config_walking_param_.balance_acc_roll_gain = doc["balance_acc_roll_gain"].as<double>();
-  config_walking_param_.balance_acc_pitch_gain = doc["balance_acc_pitch_gain"].as<double>();
+  config_walking_param_.balance_euler_x_gain = doc["balance_euler_x_gain"].as<double>();
+  config_walking_param_.balance_euler_y_gain = doc["balance_euler_y_gain"].as<double>();
+  config_walking_param_.balance_euler_zx_gain = doc["balance_euler_zx_gain"].as<double>();
+  config_walking_param_.balance_euler_zy_gain = doc["balance_euler_zy_gain"].as<double>();
+  config_walking_param_.balance_euler_roll_gain = doc["balance_euler_roll_gain"].as<double>();
+  config_walking_param_.balance_euler_pitch_gain = doc["balance_euler_pitch_gain"].as<double>();
 }
 
 void WalkingModule::saveWalkingParam(std::string& path)
@@ -1391,12 +1392,13 @@ void WalkingModule::saveWalkingParam(std::string& path)
   out_emitter << YAML::Key << "balance_gyro_zy_gain" << YAML::Value << config_walking_param_.balance_gyro_zy_gain;
   out_emitter << YAML::Key << "balance_gyro_roll_gain" << YAML::Value << config_walking_param_.balance_gyro_roll_gain;
   out_emitter << YAML::Key << "balance_gyro_pitch_gain" << YAML::Value << config_walking_param_.balance_gyro_pitch_gain;
-  out_emitter << YAML::Key << "balance_acc_x_gain" << YAML::Value << config_walking_param_.balance_acc_x_gain;
-  out_emitter << YAML::Key << "balance_acc_y_gain" << YAML::Value << config_walking_param_.balance_acc_y_gain;
-  out_emitter << YAML::Key << "balance_acc_zx_gain" << YAML::Value << config_walking_param_.balance_acc_zx_gain;
-  out_emitter << YAML::Key << "balance_acc_zy_gain" << YAML::Value << config_walking_param_.balance_acc_zy_gain;
-  out_emitter << YAML::Key << "balance_acc_roll_gain" << YAML::Value << config_walking_param_.balance_acc_roll_gain;
-  out_emitter << YAML::Key << "balance_acc_pitch_gain" << YAML::Value << config_walking_param_.balance_acc_pitch_gain;
+  out_emitter << YAML::Key << "balance_euler_x_gain" << YAML::Value << config_walking_param_.balance_euler_x_gain;
+  out_emitter << YAML::Key << "balance_euler_y_gain" << YAML::Value << config_walking_param_.balance_euler_y_gain;
+  out_emitter << YAML::Key << "balance_euler_zx_gain" << YAML::Value << config_walking_param_.balance_euler_zx_gain;
+  out_emitter << YAML::Key << "balance_euler_zy_gain" << YAML::Value << config_walking_param_.balance_euler_zy_gain;
+  out_emitter << YAML::Key << "balance_euler_roll_gain" << YAML::Value << config_walking_param_.balance_euler_roll_gain;
+  out_emitter << YAML::Key << "balance_euler_pitch_gain" << YAML::Value
+              << config_walking_param_.balance_euler_pitch_gain;
   out_emitter << YAML::EndMap;
 
   // output to file

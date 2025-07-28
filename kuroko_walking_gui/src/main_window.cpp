@@ -397,12 +397,12 @@ void MainWindow::updateWalkingParams(kuroko_walking_module_msgs::WalkingParam pa
   ui_.dSpinBox_balance_gyro_zy_gain->setValue(params.balance_gyro_zy_gain);
   ui_.dSpinBox_balance_gyro_roll_gain->setValue(params.balance_gyro_roll_gain);
   ui_.dSpinBox_balance_gyro_pitch_gain->setValue(params.balance_gyro_pitch_gain);
-  ui_.dSpinBox_balance_acc_x_gain->setValue(params.balance_acc_x_gain);
-  ui_.dSpinBox_balance_acc_y_gain->setValue(params.balance_acc_y_gain);
-  ui_.dSpinBox_balance_acc_zx_gain->setValue(params.balance_acc_zx_gain);
-  ui_.dSpinBox_balance_acc_zy_gain->setValue(params.balance_acc_zy_gain);
-  ui_.dSpinBox_balance_acc_roll_gain->setValue(params.balance_acc_roll_gain);
-  ui_.dSpinBox_balance_acc_pitch_gain->setValue(params.balance_acc_pitch_gain);
+  ui_.dSpinBox_balance_euler_x_gain->setValue(params.balance_euler_x_gain);
+  ui_.dSpinBox_balance_euler_y_gain->setValue(params.balance_euler_y_gain);
+  ui_.dSpinBox_balance_euler_zx_gain->setValue(params.balance_euler_zx_gain);
+  ui_.dSpinBox_balance_euler_zy_gain->setValue(params.balance_euler_zy_gain);
+  ui_.dSpinBox_balance_euler_roll_gain->setValue(params.balance_euler_roll_gain);
+  ui_.dSpinBox_balance_euler_pitch_gain->setValue(params.balance_euler_pitch_gain);
 
   ui_.dSpinBox_y_swing_amplitude->setValue(params.y_swing_amplitude);
   ui_.dSpinBox_z_swing_amplitude->setValue(params.z_swing_amplitude);
@@ -441,12 +441,12 @@ void MainWindow::applyWalkingParams()
   walking_param.balance_gyro_zy_gain = ui_.dSpinBox_balance_gyro_zy_gain->value();
   walking_param.balance_gyro_roll_gain = ui_.dSpinBox_balance_gyro_roll_gain->value();
   walking_param.balance_gyro_pitch_gain = ui_.dSpinBox_balance_gyro_pitch_gain->value();
-  walking_param.balance_acc_x_gain = ui_.dSpinBox_balance_acc_x_gain->value();
-  walking_param.balance_acc_y_gain = ui_.dSpinBox_balance_acc_y_gain->value();
-  walking_param.balance_acc_zx_gain = ui_.dSpinBox_balance_acc_zx_gain->value();
-  walking_param.balance_acc_zy_gain = ui_.dSpinBox_balance_acc_zy_gain->value();
-  walking_param.balance_acc_roll_gain = ui_.dSpinBox_balance_acc_roll_gain->value();
-  walking_param.balance_acc_pitch_gain = ui_.dSpinBox_balance_acc_pitch_gain->value();
+  walking_param.balance_euler_x_gain = ui_.dSpinBox_balance_euler_x_gain->value();
+  walking_param.balance_euler_y_gain = ui_.dSpinBox_balance_euler_y_gain->value();
+  walking_param.balance_euler_zx_gain = ui_.dSpinBox_balance_euler_zx_gain->value();
+  walking_param.balance_euler_zy_gain = ui_.dSpinBox_balance_euler_zy_gain->value();
+  walking_param.balance_euler_roll_gain = ui_.dSpinBox_balance_euler_roll_gain->value();
+  walking_param.balance_euler_pitch_gain = ui_.dSpinBox_balance_euler_pitch_gain->value();
 
   walking_param.y_swing_amplitude = ui_.dSpinBox_y_swing_amplitude->value();
   walking_param.z_swing_amplitude = ui_.dSpinBox_z_swing_amplitude->value();

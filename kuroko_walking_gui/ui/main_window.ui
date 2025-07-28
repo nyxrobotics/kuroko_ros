@@ -842,7 +842,7 @@
               <item row="4" column="0">
                <widget class="QLabel" name="label_26">
                 <property name="text">
-                 <string>Acc X</string>
+                 <string>Euler X</string>
                 </property>
                </widget>
               </item>
@@ -874,7 +874,7 @@
               <item row="4" column="2">
                <widget class="QLabel" name="label_35">
                 <property name="text">
-                 <string>Acc Roll</string>
+                 <string>Euler Roll</string>
                 </property>
                </widget>
               </item>
@@ -913,7 +913,7 @@
               <item row="5" column="2">
                <widget class="QLabel" name="label_37">
                 <property name="text">
-                 <string>Acc Pitch</string>
+                 <string>Euler Pitch</string>
                 </property>
                </widget>
               </item>
@@ -927,7 +927,7 @@
               <item row="5" column="0">
                <widget class="QLabel" name="label_36">
                 <property name="text">
-                 <string>Acc Y</string>
+                 <string>Euler Y</string>
                 </property>
                </widget>
               </item>
@@ -959,7 +959,7 @@
               <item row="6" column="0">
                <widget class="QLabel" name="label_38">
                 <property name="text">
-                 <string>Acc Zx</string>
+                 <string>Euler Zx</string>
                 </property>
                </widget>
               </item>
@@ -1012,7 +1012,7 @@
               <item row="6" column="2">
                <widget class="QLabel" name="label_39">
                 <property name="text">
-                 <string>Acc Zy</string>
+                 <string>Euler Zy</string>
                 </property>
                </widget>
               </item>
@@ -1062,9 +1062,9 @@
                </widget>
               </item>
               <item row="4" column="1">
-               <widget class="QDoubleSpinBox" name="dSpinBox_balance_acc_x_gain">
+               <widget class="QDoubleSpinBox" name="dSpinBox_balance_euler_x_gain">
                 <property name="decimals">
-                 <number>4</number>
+                 <number>3</number>
                 </property>
                 <property name="minimum">
                  <double>-31.000000000000000</double>
@@ -1078,9 +1078,9 @@
                </widget>
               </item>
               <item row="4" column="3">
-               <widget class="QDoubleSpinBox" name="dSpinBox_balance_acc_roll_gain">
+               <widget class="QDoubleSpinBox" name="dSpinBox_balance_euler_roll_gain">
                 <property name="decimals">
-                 <number>4</number>
+                 <number>3</number>
                 </property>
                 <property name="minimum">
                  <double>-31.000000000000000</double>
@@ -1097,9 +1097,9 @@
                </widget>
               </item>
               <item row="5" column="1">
-               <widget class="QDoubleSpinBox" name="dSpinBox_balance_acc_y_gain">
+               <widget class="QDoubleSpinBox" name="dSpinBox_balance_euler_y_gain">
                 <property name="decimals">
-                 <number>4</number>
+                 <number>3</number>
                 </property>
                 <property name="minimum">
                  <double>-31.000000000000000</double>
@@ -1113,9 +1113,9 @@
                </widget>
               </item>
               <item row="5" column="3">
-               <widget class="QDoubleSpinBox" name="dSpinBox_balance_acc_pitch_gain">
+               <widget class="QDoubleSpinBox" name="dSpinBox_balance_euler_pitch_gain">
                 <property name="decimals">
-                 <number>4</number>
+                 <number>3</number>
                 </property>
                 <property name="minimum">
                  <double>-31.000000000000000</double>
@@ -1129,9 +1129,9 @@
                </widget>
               </item>
               <item row="6" column="1">
-               <widget class="QDoubleSpinBox" name="dSpinBox_balance_acc_zx_gain">
+               <widget class="QDoubleSpinBox" name="dSpinBox_balance_euler_zx_gain">
                 <property name="decimals">
-                 <number>4</number>
+                 <number>3</number>
                 </property>
                 <property name="minimum">
                  <double>-10.000000000000000</double>
@@ -1145,9 +1145,9 @@
                </widget>
               </item>
               <item row="6" column="3">
-               <widget class="QDoubleSpinBox" name="dSpinBox_balance_acc_zy_gain">
+               <widget class="QDoubleSpinBox" name="dSpinBox_balance_euler_zy_gain">
                 <property name="decimals">
-                 <number>4</number>
+                 <number>3</number>
                 </property>
                 <property name="minimum">
                  <double>-10.000000000000000</double>

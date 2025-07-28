@@ -40,6 +40,7 @@ private:
   /* subscriber & publisher */
   ros::Subscriber imu_sub_;
   void imuDataCallback(const sensor_msgs::Imu::ConstPtr& msg);
+  Eigen::Vector3d quaterionToRpy(const Eigen::Quaterniond& q);
 };
 
 }  // namespace motion_control

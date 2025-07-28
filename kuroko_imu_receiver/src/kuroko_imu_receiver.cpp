@@ -75,7 +75,7 @@ void KurokoImuReceiver::process(std::map<std::string, robotis_framework::Dynamix
 
   // Get RPY from quaternion
   Eigen::Quaterniond q(imu_msg_.orientation.w, imu_msg_.orientation.x, imu_msg_.orientation.y, imu_msg_.orientation.z);
-  Eigen::Vector3d euler = q.toRotationMatrix().eulerAngles(0, 1, 2);
+  Eigen::Vector3d euler = quaterionToRpy(q);
   result_["euler_roll"] = euler[0];
   result_["euler_pitch"] = euler[1];
   result_["euler_yaw"] = euler[2];
@@ -98,6 +98,31 @@ void KurokoImuReceiver::process(std::map<std::string, robotis_framework::Dynamix
 void KurokoImuReceiver::imuDataCallback(const sensor_msgs::Imu::ConstPtr& msg)
 {
   imu_msg_ = *msg;
+}
+
+Eigen::Vector3d KurokoImuReceiver::quaterionToRpy(const Eigen::Quaterniond& q)
+{
+  Eigen::Vector3d angles;  // roll pitch yaw
+  double x = q.x(), y = q.y(), z = q.z(), w = q.w();
+
+  // yaw (z-axis rotation)
+  double siny_cosp = 2 * (w * z + x * y);
+  double cosy_cosp = 1 - 2 * (y * y + z * z);
+  angles[2] = std::atan2(siny_cosp, cosy_cosp);
+
+  // pitch (y-axis rotation)
+  double sinp = 2 * (w * y - z * x);
+  if (std::abs(sinp) >= 1)
+    angles[1] = std::copysign(M_PI / 2, sinp);  // use 90 degrees if out of range
+  else
+    angles[1] = std::asin(sinp);
+
+  // roll (x-axis rotation)
+  double sinr_cosp = 2 * (w * x + y * z);
+  double cosr_cosp = 1 - 2 * (x * x + y * y);
+  angles[0] = std::atan2(sinr_cosp, cosr_cosp);
+
+  return angles;
 }
 
 }  // namespace motion_control

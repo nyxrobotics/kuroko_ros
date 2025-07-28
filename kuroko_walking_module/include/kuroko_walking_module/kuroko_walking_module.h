@@ -95,7 +95,7 @@ private:
   /* ROS Service Callback Functions */
   void processPhase(const double& time_unit);
   bool updateLegTargetAngles(std::vector<double>& leg_joints);
-  void gyroFeedback(const Eigen::Vector3d& gyro_in, const Eigen::Vector3d& acc_in, Eigen::Vector3d& xyz_out,
+  void gyroFeedback(const Eigen::Vector3d& gyro_in, const Eigen::Vector3d& euler_in, Eigen::Vector3d& xyz_out,
                     Eigen::Vector3d& rpy_out);
 
   void publishStatusMsg(unsigned int type, std::string msg);

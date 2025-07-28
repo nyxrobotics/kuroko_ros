@@ -17,7 +17,15 @@ chest_swing_amplitude: 0
 shoulder_swing_amplitude: 0
 hip_swing_up_amplitude: 1.999999984507266
 hip_swing_down_amplitude: -1.999999984507266
+balance_gyro_x_gain: 0
+balance_gyro_y_gain: 0
+balance_gyro_zx_gain: 0
+balance_gyro_zy_gain: 0
 balance_gyro_roll_gain: 0
 balance_gyro_pitch_gain: 0
-balance_gyro_y_gain: 0
-balance_gyro_x_gain: 0
+balance_acc_x_gain: 0
+balance_acc_y_gain: 0
+balance_acc_zx_gain: 0
+balance_acc_zy_gain: 0
+balance_acc_roll_gain: 0
+balance_acc_pitch_gain: 0

@@ -101,13 +101,8 @@ void WalkingModule::initialize(const int control_cycle_msec, robotis_framework::
   config_walking_param_.x_step = 0;
   config_walking_param_.y_step = 0;
   config_walking_param_.yaw_step = 0;
-  config_walking_param_.foot_height = 0;  // foot height
-  // balance
-  config_walking_param_.balance_enable = false;
-  config_walking_param_.balance_gyro_roll_gain = 0;
-  config_walking_param_.balance_gyro_pitch_gain = 0;
-  config_walking_param_.balance_gyro_y_gain = 0;
-  config_walking_param_.balance_gyro_x_gain = 0;
+  config_walking_param_.foot_height = 0;
+  // Swing
   config_walking_param_.y_swing_amplitude = 0;
   config_walking_param_.z_swing_amplitude = 0;
   config_walking_param_.roll_swing_amplitude = 0;
@@ -116,6 +111,20 @@ void WalkingModule::initialize(const int control_cycle_msec, robotis_framework::
   config_walking_param_.hip_swing_down_amplitude = 0;
   config_walking_param_.chest_swing_amplitude = 0;
   config_walking_param_.shoulder_swing_amplitude = 0;
+  // balance
+  config_walking_param_.balance_enable = false;
+  config_walking_param_.balance_gyro_x_gain = 0;
+  config_walking_param_.balance_gyro_y_gain = 0;
+  config_walking_param_.balance_gyro_zx_gain = 0;
+  config_walking_param_.balance_gyro_zy_gain = 0;
+  config_walking_param_.balance_gyro_roll_gain = 0;
+  config_walking_param_.balance_gyro_pitch_gain = 0;
+  config_walking_param_.balance_acc_x_gain = 0;
+  config_walking_param_.balance_acc_y_gain = 0;
+  config_walking_param_.balance_acc_zx_gain = 0;
+  config_walking_param_.balance_acc_zy_gain = 0;
+  config_walking_param_.balance_acc_roll_gain = 0;
+  config_walking_param_.balance_acc_pitch_gain = 0;
 
   // member variable
   body_swing_y_ = 0;
@@ -845,11 +854,20 @@ void WalkingModule::process(std::map<std::string, robotis_framework::Dynamixel*>
       ROS_INFO_STREAM_COND(debug_, "hip_swing_down_amplitude: " << config_walking_param_.hip_swing_down_amplitude *
                                                                        RADIAN2DEGREE);
       ROS_INFO_STREAM_COND(debug_, "shoulder_swing_amplitude: " << config_walking_param_.shoulder_swing_amplitude);
+
+      ROS_INFO_STREAM_COND(debug_, "balance : " << (config_walking_param_.balance_enable ? "TRUE" : "FALSE"));
+      ROS_INFO_STREAM_COND(debug_, "balance_gyro_x_gain: " << config_walking_param_.balance_gyro_x_gain);
+      ROS_INFO_STREAM_COND(debug_, "balance_gyro_y_gain: " << config_walking_param_.balance_gyro_y_gain);
+      ROS_INFO_STREAM_COND(debug_, "balance_gyro_zx_gain: " << config_walking_param_.balance_gyro_zx_gain);
+      ROS_INFO_STREAM_COND(debug_, "balance_gyro_zy_gain: " << config_walking_param_.balance_gyro_zy_gain);
       ROS_INFO_STREAM_COND(debug_, "balance_gyro_roll_gain: " << config_walking_param_.balance_gyro_roll_gain);
       ROS_INFO_STREAM_COND(debug_, "balance_gyro_pitch_gain: " << config_walking_param_.balance_gyro_pitch_gain);
-      ROS_INFO_STREAM_COND(debug_, "balance_gyro_y_gain: " << config_walking_param_.balance_gyro_y_gain);
-      ROS_INFO_STREAM_COND(debug_, "balance_gyro_x_gain: " << config_walking_param_.balance_gyro_x_gain);
-      ROS_INFO_STREAM_COND(debug_, "balance : " << (config_walking_param_.balance_enable ? "TRUE" : "FALSE"));
+      ROS_INFO_STREAM_COND(debug_, "balance_acc_x_gain: " << config_walking_param_.balance_acc_x_gain);
+      ROS_INFO_STREAM_COND(debug_, "balance_acc_y_gain: " << config_walking_param_.balance_acc_y_gain);
+      ROS_INFO_STREAM_COND(debug_, "balance_acc_zx_gain: " << config_walking_param_.balance_acc_zx_gain);
+      ROS_INFO_STREAM_COND(debug_, "balance_acc_zy_gain: " << config_walking_param_.balance_acc_zy_gain);
+      ROS_INFO_STREAM_COND(debug_, "balance_acc_roll_gain: " << config_walking_param_.balance_acc_roll_gain);
+      ROS_INFO_STREAM_COND(debug_, "balance_acc_pitch_gain: " << config_walking_param_.balance_acc_pitch_gain);
     }
     else
     {
@@ -1296,10 +1314,18 @@ void WalkingModule::loadWalkingParam(const std::string& path)
   config_walking_param_.chest_swing_amplitude = doc["chest_swing_amplitude"].as<double>() * DEGREE2RADIAN;
   config_walking_param_.shoulder_swing_amplitude = doc["shoulder_swing_amplitude"].as<double>() * DEGREE2RADIAN;
   // Feedback parameters
+  config_walking_param_.balance_gyro_x_gain = doc["balance_gyro_x_gain"].as<double>();
+  config_walking_param_.balance_gyro_y_gain = doc["balance_gyro_y_gain"].as<double>();
+  config_walking_param_.balance_gyro_zx_gain = doc["balance_gyro_zx_gain"].as<double>();
+  config_walking_param_.balance_gyro_zy_gain = doc["balance_gyro_zy_gain"].as<double>();
   config_walking_param_.balance_gyro_roll_gain = doc["balance_gyro_roll_gain"].as<double>();
   config_walking_param_.balance_gyro_pitch_gain = doc["balance_gyro_pitch_gain"].as<double>();
-  config_walking_param_.balance_gyro_y_gain = doc["balance_gyro_y_gain"].as<double>();
-  config_walking_param_.balance_gyro_x_gain = doc["balance_gyro_x_gain"].as<double>();
+  config_walking_param_.balance_acc_x_gain = doc["balance_acc_x_gain"].as<double>();
+  config_walking_param_.balance_acc_y_gain = doc["balance_acc_y_gain"].as<double>();
+  config_walking_param_.balance_acc_zx_gain = doc["balance_acc_zx_gain"].as<double>();
+  config_walking_param_.balance_acc_zy_gain = doc["balance_acc_zy_gain"].as<double>();
+  config_walking_param_.balance_acc_roll_gain = doc["balance_acc_roll_gain"].as<double>();
+  config_walking_param_.balance_acc_pitch_gain = doc["balance_acc_pitch_gain"].as<double>();
 }
 
 void WalkingModule::saveWalkingParam(std::string& path)
@@ -1334,10 +1360,18 @@ void WalkingModule::saveWalkingParam(std::string& path)
               << config_walking_param_.hip_swing_up_amplitude * RADIAN2DEGREE;
   out_emitter << YAML::Key << "hip_swing_down_amplitude" << YAML::Value
               << config_walking_param_.hip_swing_down_amplitude * RADIAN2DEGREE;
+  out_emitter << YAML::Key << "balance_gyro_x_gain" << YAML::Value << config_walking_param_.balance_gyro_x_gain;
+  out_emitter << YAML::Key << "balance_gyro_y_gain" << YAML::Value << config_walking_param_.balance_gyro_y_gain;
+  out_emitter << YAML::Key << "balance_gyro_zx_gain" << YAML::Value << config_walking_param_.balance_gyro_zx_gain;
+  out_emitter << YAML::Key << "balance_gyro_zy_gain" << YAML::Value << config_walking_param_.balance_gyro_zy_gain;
   out_emitter << YAML::Key << "balance_gyro_roll_gain" << YAML::Value << config_walking_param_.balance_gyro_roll_gain;
   out_emitter << YAML::Key << "balance_gyro_pitch_gain" << YAML::Value << config_walking_param_.balance_gyro_pitch_gain;
-  out_emitter << YAML::Key << "balance_gyro_y_gain" << YAML::Value << config_walking_param_.balance_gyro_y_gain;
-  out_emitter << YAML::Key << "balance_gyro_x_gain" << YAML::Value << config_walking_param_.balance_gyro_x_gain;
+  out_emitter << YAML::Key << "balance_acc_x_gain" << YAML::Value << config_walking_param_.balance_acc_x_gain;
+  out_emitter << YAML::Key << "balance_acc_y_gain" << YAML::Value << config_walking_param_.balance_acc_y_gain;
+  out_emitter << YAML::Key << "balance_acc_zx_gain" << YAML::Value << config_walking_param_.balance_acc_zx_gain;
+  out_emitter << YAML::Key << "balance_acc_zy_gain" << YAML::Value << config_walking_param_.balance_acc_zy_gain;
+  out_emitter << YAML::Key << "balance_acc_roll_gain" << YAML::Value << config_walking_param_.balance_acc_roll_gain;
+  out_emitter << YAML::Key << "balance_acc_pitch_gain" << YAML::Value << config_walking_param_.balance_acc_pitch_gain;
   out_emitter << YAML::EndMap;
 
   // output to file

@@ -739,11 +739,11 @@ void WalkingModule::resetTargetStepConfig()
   target_walking_param_.yaw_step = 0;
   target_walking_param_.y_swing_amplitude = 0;
   target_walking_param_.z_swing_amplitude = 0;
-  // target_walking_param_.roll_swing_amplitude = 0;
-  target_walking_param_.roll_swing_phase = 0;
+  target_walking_param_.roll_swing_amplitude = 0;
+  // target_walking_param_.roll_swing_phase = 0;
   // target_walking_param_.foot_height = 0;
-  // target_walking_param_.hip_swing_up_amplitude = 0;
-  // target_walking_param_.hip_swing_down_amplitude = 0;
+  target_walking_param_.hip_swing_up_amplitude = 0;
+  target_walking_param_.hip_swing_down_amplitude = 0;
   target_walking_param_.chest_swing_amplitude = 0;
   target_walking_param_.shoulder_swing_amplitude = 0;
   target_walking_param_.init_roll_offset = 0;

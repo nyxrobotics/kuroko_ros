@@ -24,6 +24,14 @@ float32 balance_gyro_x_gain
 float32 balance_gyro_y_gain
 float32 balance_gyro_pitch_gain
 float32 balance_gyro_roll_gain
+float32 balance_gyro_zx_gain
+float32 balance_gyro_zy_gain
+float32 balance_acc_x_gain
+float32 balance_acc_y_gain
+float32 balance_acc_pitch_gain
+float32 balance_acc_roll_gain
+float32 balance_acc_zx_gain
+float32 balance_acc_zy_gain
 
 ########## swing parameter ##########
 float32 y_swing_amplitude

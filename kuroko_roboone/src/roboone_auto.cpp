@@ -303,6 +303,7 @@ void RobooneAuto::handleAttack()
     return;
   }
   bool roboone_found = false;
+  int roboone_count = 0;
   jsk_recognition_msgs::Rect largest_rect;
 
   // robooneラベルを持つrectを探し、その中で一番大きいものを見つける
@@ -310,13 +311,16 @@ void RobooneAuto::handleAttack()
   {
     if (last_class_.label_names[i] == "roboone")
     {
-      if (largest_rect.width * largest_rect.height < last_rects_.rects[i].width * last_rects_.rects[i].height &&
-          last_rects_.rects[i].width > 10 && last_rects_.rects[i].height > 10)
+      if (last_rects_.rects[i].width > 10 && last_rects_.rects[i].height > 10)
       {
-        roboone_found = true;
-        robot_detected_time_ = ros::Time::now();  // robooneが見つかった時刻を記録
-        largest_rect = last_rects_.rects[i];
-        robot_detected_rect_ = largest_rect;
+        roboone_count++;
+        if (largest_rect.width * largest_rect.height < last_rects_.rects[i].width * last_rects_.rects[i].height)
+        {
+          roboone_found = true;
+          robot_detected_time_ = ros::Time::now();  // robooneが見つかった時刻を記録
+          largest_rect = last_rects_.rects[i];
+          robot_detected_rect_ = largest_rect;
+        }
       }
     }
   }
@@ -333,8 +337,19 @@ void RobooneAuto::handleAttack()
     double x_offset = (rect_center_x - image_center_x) / image_center_x;
     double y_offset = (rect_center_y - image_center_y) / image_center_y;
     last_target_detected_direction_ = x_offset > 0 ? -1 : 1;
-    if (robot_detected_rect_.y > last_camera_info_.height * 0.2 &&
-        robot_detected_rect_.width > robot_detected_rect_.height && (ros::Time::now() - attacked_time_).toSec() > 3.0)
+    if ((robot_detected_rect_.y > last_camera_info_.height * 0.5 && rect_area > atk_rects_size_ * 0.3 &&
+         rect_area < atk_rects_size_ && (ros::Time::now() - attacked_time_).toSec() > 3.0) ||
+        roboone_count > 2)
+    {
+      // 相手ロボットが画面のした半分にしか入っていたいときはなにかおかしいので後退
+      ROS_INFO("Target is too low, retreating.");
+      double x_step = -0.03;
+      setWalkingParams(x_step, 0.0, 0.0);
+      startWalking();
+    }
+    else if (robot_detected_rect_.y > last_camera_info_.height * 0.2 &&
+             robot_detected_rect_.width > robot_detected_rect_.height &&
+             (ros::Time::now() - attacked_time_).toSec() > 3.0)
     {
       // 相手が倒れている場合、その場旋回のみ
       ROS_INFO("Target is in fall state, rotating in place.");
@@ -343,25 +358,6 @@ void RobooneAuto::handleAttack()
       if (fabs(yaw_step) > (3.0 * M_PI / 180.0))
       {
         setWalkingParams(0.0, 0.0, yaw_step);
-        startWalking();
-      }
-      else
-      {
-        setWalkingParams(0.0, 0.0, 0.0);
-        stopWalking();
-      }
-    }
-    else if (robot_detected_rect_.y > last_camera_info_.height * 0.5 && rect_area > atk_rects_size_ * 0.5 &&
-             (ros::Time::now() - attacked_time_).toSec() > 3.0)
-    {
-      // 相手ロボットが画面のした半分にしか入っていたいときはなにかおかしいので後退
-      ROS_INFO("Target is too low, retreating.");
-      double target_angle_factor = -x_offset;
-      double yaw_step = target_angle_factor * (10.0 * M_PI / 180.0);  // 最大10度の旋回
-      double x_step = -0.03 * (1.0 - fabs(target_angle_factor));      // 最大0.04mの前進
-      if (fabs(yaw_step) > (3.0 * M_PI / 180.0))
-      {
-        setWalkingParams(x_step, 0.0, yaw_step);
         startWalking();
       }
       else

@@ -93,14 +93,16 @@ void RobooneAuto::setWalkingParams(double x_step, double y_step, double yaw_step
   }
 
   // Initial values from the provided topic output
-  params.init_x_offset = 0.0;
+  params.init_x_offset = 0.018;
   params.init_y_offset = 0.06;
-  params.init_z_offset = 0.08;
-  params.init_roll_offset = -0.0349;
+  params.init_z_offset = 0.05;
+  params.init_roll_offset = 0.1396;
   params.init_pitch_offset = 0.0;
   params.init_yaw_offset = 0.0;
-  params.period_time = 0.47;
-  params.dsp_ratio = 0.35;
+  params.init_hip_pitch_offset = 0;
+
+  params.period_time = 0.43;
+  params.dsp_ratio = 0.1;
   params.step_forward_back_ratio = 0.0;
 
   // Move amplitudes set dynamically
@@ -109,17 +111,22 @@ void RobooneAuto::setWalkingParams(double x_step, double y_step, double yaw_step
   params.yaw_step = yaw_step;
 
   // Fixed initial values for other fields
-  params.foot_height = 0.12;
-  params.balance_enable = false;
-  params.balance_gyro_roll_gain = 0.3499999940395355;
-  params.balance_gyro_pitch_gain = 0.30000001192092896;
-  params.balance_gyro_y_gain = 0.699999988079071;
-  params.balance_gyro_x_gain = 0.8999999761581421;
+  params.foot_height = 0.08;
   params.y_swing_amplitude = 0.016;
-  params.z_swing_amplitude = 0.003;
-  params.shoulder_swing_amplitude = 1.5;
-  params.hip_swing_up_amplitude = 0.008726646192371845;
-  params.init_hip_pitch_offset = 0;
+  params.z_swing_amplitude = 0.004;
+  params.roll_swing_amplitude = -0.05236;
+  params.roll_swing_phase = 0.3491;
+  params.hip_swing_up_amplitude = 0.03491;
+  params.hip_swing_down_amplitude = -0.03491;
+
+  params.shoulder_swing_amplitude = 0;
+  params.chest_swing_amplitude = 0;
+
+  params.balance_enable = false;
+  params.balance_gyro_roll_gain = 0;
+  params.balance_gyro_pitch_gain = 0;
+  params.balance_gyro_y_gain = 0;
+  params.balance_gyro_x_gain = 0;
 
   // PID gains
   params.p_gain = 0;
@@ -257,11 +264,11 @@ void RobooneAuto::handleFall()
   double pitch = quaternionToPitch(last_imu_.orientation);
   if (pitch > 0)
   {
-    executeAction(0);  // 前起き上がりモーション
+    executeAction(2);  // 前起き上がりモーション
   }
   else
   {
-    executeAction(1);  // 後起き上がりモーション
+    executeAction(3);  // 後起き上がりモーション
   }
 
   ros::Duration(1.0).sleep();
@@ -311,39 +318,79 @@ void RobooneAuto::handleAttack()
         (largest_rect.width * largest_rect.height) / double(last_camera_info_.width * last_camera_info_.height);
     ROS_INFO("Largest roboone rect found with area: %f", rect_area);
     double rect_center_x = largest_rect.x + largest_rect.width / 2.0;
+    double rect_center_y = largest_rect.y + largest_rect.height / 2.0;
     double image_center_x = last_camera_info_.width / 2.0;
+    double image_center_y = last_camera_info_.height / 2.0;
     double x_offset = (rect_center_x - image_center_x) / image_center_x;
+    double y_offset = (rect_center_y - image_center_y) / image_center_y;
     last_target_detected_direction_ = x_offset > 0 ? -1 : 1;
     if (rect_area > atk_rects_size_ && (ros::Time::now() - attacked_time_).toSec() > 5.0)
     {
-      // 相手が倒れている場合、attacked_time_を9秒前にリセット
-      if (largest_rect.y > last_camera_info_.height * 0.2)
+      // 相手が倒れている場合、その場旋回のみ
+      if (largest_rect.y > last_camera_info_.height * 0.2 && largest_rect.width > largest_rect.height)
       {
-        ROS_INFO("Target is in fall state, resetting attacked_time_ to 9 seconds ago.");
-        attacked_time_ = ros::Time::now() - ros::Duration(9.0);
+        ROS_INFO("Target is in fall state, rotating in place.");
+        // 中央からのずれに基づいて旋回角を計算
+        double target_direction = (x_offset > 0) ? -1.0 : 1.0;  // 右なら-1、左なら1
+        double target_angle_factor = -x_offset;
+        double yaw_step = target_angle_factor * (10.0 * M_PI / 180.0);  // 最大15度の旋回
+        if (fabs(yaw_step) > (3.0 * M_PI / 180.0))
+        {
+          setWalkingParams(0.0, 0.0, yaw_step);
+          startWalking();
+        }
+        else
+        {
+          setWalkingParams(0.0, 0.0, 0.0);
+          stopWalking();
+        }
       }
       else
       {
         ROS_INFO("Attack triggered! Rect area is larger than threshold and detected within 5 seconds.");
         // 歩行を停止し攻撃を開始
         stopWalking();
-        executeAction(2);
+        int action_id = 4;
+        if (x_offset > 0)
+        {
+          ROS_INFO("Target is on the right side, executing action based on vertical position.");
+          if (largest_rect.y < last_camera_info_.height * 0.4)
+            action_id = 8;  // r_grip_front
+          else if (largest_rect.y < last_camera_info_.height * 0.6)
+            action_id = 11;  // r_punch_low
+          else if (largest_rect.y < last_camera_info_.height * 0.8)
+            action_id = 10;  // r_punch_high
+          else
+            action_id = 9;  // r_hook_front
+        }
+        else
+        {
+          ROS_INFO("Target is on the left side, executing action based on vertical position.");
+          if (largest_rect.y < last_camera_info_.height * 0.4)
+            action_id = 4;  // l_grip_front
+          else if (largest_rect.y < last_camera_info_.height * 0.6)
+            action_id = 7;  // l_punch_low
+          else if (largest_rect.y < last_camera_info_.height * 0.8)
+            action_id = 6;  // l_punch_high
+          else
+            action_id = 5;  // l_hook_front
+        }
+        setWalkingParams(0.0, 0.0, 0.0);
+        stopWalking();
+        ros::Duration(0.2).sleep();
+        setCtrlModule("action_module");
+        ros::Duration(0.2).sleep();
+        executeAction(action_id);
+        ros::Duration(2.0).sleep();
+        setCtrlModule("walking_module");
         attacked_time_ = ros::Time::now();  // 攻撃実行時刻を記録
       }
     }
     else
     {
       ROS_INFO("Target detected but too small for attack or detected over 2 seconds ago (area: %f)", rect_area);
-
-      // 攻撃後の1秒間は歩行停止
-      if ((ros::Time::now() - attacked_time_).toSec() < 1.0)
-      {
-        stopWalking();
-        robot_detected_time_ = ros::Time(0);
-        setWalkingParams(0.0, 0.0, 0.0);
-      }
       // 攻撃後の2秒間は後退のみ許可
-      else if ((ros::Time::now() - attacked_time_).toSec() < 3.0)
+      if ((ros::Time::now() - attacked_time_).toSec() < 2.0)
       {
         setWalkingParams(-0.02, 0.0, 0.0);
         startWalking();
@@ -352,23 +399,35 @@ void RobooneAuto::handleAttack()
       else if ((ros::Time::now() - attacked_time_).toSec() < 8.0)
       {
         // 中央からのずれに基づいて旋回角を計算
-        double yaw_step = -x_offset * (10.0 * M_PI / 180.0);  // 最大15度の旋回
+        double target_direction = (x_offset > 0) ? -1.0 : 1.0;  // 右なら-1、左なら1
+        double target_angle_factor = -x_offset;
+        double yaw_step = target_angle_factor * (10.0 * M_PI / 180.0);  // 最大15度の旋回
         ROS_INFO("Calculated angle move for rotation only (radians): %f", yaw_step);
-
         // 前後左右の移動は0で、旋回のみ許可
-        setWalkingParams(0.0, 0.0, yaw_step);
-        ROS_INFO("Rotating in place with yaw_step (radians): %f", yaw_step);
-        startWalking();
+        if (fabs(yaw_step) > (3.0 * M_PI / 180.0))
+        {
+          setWalkingParams(0.0, 0.0, yaw_step);
+          startWalking();
+        }
+        else
+        {
+          setWalkingParams(0.0, 0.0, 0.0);
+          stopWalking();
+        }
       }
       else
       {
         // 相手の方に向かって歩行処理
         // 中央からのずれに基づいて旋回角を計算
-        double yaw_step = -x_offset * (10.0 * M_PI / 180.0);  // 最大15度の旋回
+        double target_direction = (x_offset > 0) ? -1.0 : 1.0;  // 右なら-1、左なら1
+        double target_angle_factor = -x_offset;
+        double target_distance_factor = 1.0 - rect_area / atk_rects_size_;
+        double yaw_step = target_angle_factor * (10.0 * M_PI / 180.0);  // 最大10度の旋回
         ROS_INFO("Calculated angle move (radians): %f", yaw_step);
-
-        // 0.04m前進しつつ旋回
-        setWalkingParams(0.04, 0.0, yaw_step);
+        double y_step_factor = (1.0 - fabs(target_angle_factor)) * fabs(target_angle_factor);
+        double y_step = 0.03 * y_step_factor * target_direction;  // 最大0.03mの横移動
+        double x_step = 0.04 * (1.0 - y_step_factor);             // 最大0.04mの前進
+        setWalkingParams(x_step, 0.0, yaw_step);
         ROS_INFO("Moving towards target with x_step: 0.02, yaw_step (radians): %f", yaw_step);
         startWalking();
       }

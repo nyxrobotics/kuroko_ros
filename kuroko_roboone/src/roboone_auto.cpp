@@ -303,88 +303,104 @@ void RobooneAuto::handleAttack()
   {
     if (last_class_.label_names[i] == "roboone")
     {
-      roboone_found = true;
-      robot_detected_time_ = ros::Time::now();  // robooneが見つかった時刻を記録
-      if (largest_rect.width * largest_rect.height < last_rects_.rects[i].width * last_rects_.rects[i].height)
+      if (largest_rect.width * largest_rect.height < last_rects_.rects[i].width * last_rects_.rects[i].height &&
+          last_rects_.rects[i].width > 10 && last_rects_.rects[i].height > 10)
       {
+        roboone_found = true;
+        robot_detected_time_ = ros::Time::now();  // robooneが見つかった時刻を記録
         largest_rect = last_rects_.rects[i];
+        robot_detected_rect_ = largest_rect;
       }
     }
   }
 
-  if ((ros::Time::now() - robot_detected_time_).toSec() < 2.0)
+  if (roboone_found || (ros::Time::now() - robot_detected_time_).toSec() < 2.0)
   {
-    double rect_area =
-        (largest_rect.width * largest_rect.height) / double(last_camera_info_.width * last_camera_info_.height);
+    double rect_area = (robot_detected_rect_.width * robot_detected_rect_.height) /
+                       double(last_camera_info_.width * last_camera_info_.height);
     ROS_INFO("Largest roboone rect found with area: %f", rect_area);
-    double rect_center_x = largest_rect.x + largest_rect.width / 2.0;
-    double rect_center_y = largest_rect.y + largest_rect.height / 2.0;
+    double rect_center_x = robot_detected_rect_.x + robot_detected_rect_.width / 2.0;
+    double rect_center_y = robot_detected_rect_.y + robot_detected_rect_.height / 2.0;
     double image_center_x = last_camera_info_.width / 2.0;
     double image_center_y = last_camera_info_.height / 2.0;
     double x_offset = (rect_center_x - image_center_x) / image_center_x;
     double y_offset = (rect_center_y - image_center_y) / image_center_y;
     last_target_detected_direction_ = x_offset > 0 ? -1 : 1;
-    if (rect_area > atk_rects_size_ && (ros::Time::now() - attacked_time_).toSec() > 5.0)
+    if (robot_detected_rect_.y > last_camera_info_.height * 0.2 &&
+        robot_detected_rect_.width > robot_detected_rect_.height)
     {
       // 相手が倒れている場合、その場旋回のみ
-      if (largest_rect.y > last_camera_info_.height * 0.2 && largest_rect.width > largest_rect.height)
+      ROS_INFO("Target is in fall state, rotating in place.");
+      double target_angle_factor = -x_offset;
+      double yaw_step = target_angle_factor * (10.0 * M_PI / 180.0);  // 最大15度の旋回
+      if (fabs(yaw_step) > (3.0 * M_PI / 180.0))
       {
-        ROS_INFO("Target is in fall state, rotating in place.");
-        // 中央からのずれに基づいて旋回角を計算
-        double target_direction = (x_offset > 0) ? -1.0 : 1.0;  // 右なら-1、左なら1
-        double target_angle_factor = -x_offset;
-        double yaw_step = target_angle_factor * (10.0 * M_PI / 180.0);  // 最大15度の旋回
-        if (fabs(yaw_step) > (3.0 * M_PI / 180.0))
-        {
-          setWalkingParams(0.0, 0.0, yaw_step);
-          startWalking();
-        }
-        else
-        {
-          setWalkingParams(0.0, 0.0, 0.0);
-          stopWalking();
-        }
+        setWalkingParams(0.0, 0.0, yaw_step);
+        startWalking();
       }
       else
       {
-        ROS_INFO("Attack triggered! Rect area is larger than threshold and detected within 5 seconds.");
-        // 歩行を停止し攻撃を開始
-        stopWalking();
-        int action_id = 4;
-        if (x_offset > 0)
-        {
-          ROS_INFO("Target is on the right side, executing action based on vertical position.");
-          if (largest_rect.y < last_camera_info_.height * 0.4)
-            action_id = 8;  // r_grip_front
-          else if (largest_rect.y < last_camera_info_.height * 0.6)
-            action_id = 11;  // r_punch_low
-          else if (largest_rect.y < last_camera_info_.height * 0.8)
-            action_id = 10;  // r_punch_high
-          else
-            action_id = 9;  // r_hook_front
-        }
-        else
-        {
-          ROS_INFO("Target is on the left side, executing action based on vertical position.");
-          if (largest_rect.y < last_camera_info_.height * 0.4)
-            action_id = 4;  // l_grip_front
-          else if (largest_rect.y < last_camera_info_.height * 0.6)
-            action_id = 7;  // l_punch_low
-          else if (largest_rect.y < last_camera_info_.height * 0.8)
-            action_id = 6;  // l_punch_high
-          else
-            action_id = 5;  // l_hook_front
-        }
         setWalkingParams(0.0, 0.0, 0.0);
         stopWalking();
-        ros::Duration(0.2).sleep();
-        setCtrlModule("action_module");
-        ros::Duration(0.2).sleep();
-        executeAction(action_id);
-        ros::Duration(2.0).sleep();
-        setCtrlModule("walking_module");
-        attacked_time_ = ros::Time::now();  // 攻撃実行時刻を記録
       }
+    }
+    else if (robot_detected_rect_.y > last_camera_info_.height * 0.5 && rect_area > atk_rects_size_ * 0.5)
+    {
+      // 相手ロボットが画面のした半分にしか入っていたいときはなにかおかしいので後退
+      ROS_INFO("Target is too low, retreating.");
+      double target_angle_factor = -x_offset;
+      double yaw_step = target_angle_factor * (10.0 * M_PI / 180.0);  // 最大10度の旋回
+      double x_step = -0.03 * (1.0 - fabs(target_angle_factor));      // 最大0.04mの前進
+      if (fabs(yaw_step) > (3.0 * M_PI / 180.0))
+      {
+        setWalkingParams(x_step, 0.0, yaw_step);
+        startWalking();
+      }
+      else
+      {
+        setWalkingParams(0.0, 0.0, 0.0);
+        stopWalking();
+      }
+    }
+    else if (rect_area > atk_rects_size_ && (ros::Time::now() - attacked_time_).toSec() > 5.0)
+    {
+      ROS_INFO("Attack triggered! Rect area is larger than threshold and detected within 5 seconds.");
+      // 歩行を停止し攻撃を開始
+      stopWalking();
+      int action_id = 4;
+      if (x_offset > 0)
+      {
+        ROS_INFO("Target is on the right side, executing action based on vertical position.");
+        if (largest_rect.y < last_camera_info_.height * 0.4)
+          action_id = 8;  // r_grip_front
+        else if (largest_rect.y < last_camera_info_.height * 0.6)
+          action_id = 11;  // r_punch_low
+        else if (largest_rect.y < last_camera_info_.height * 0.8)
+          action_id = 10;  // r_punch_high
+        else
+          action_id = 9;  // r_hook_front
+      }
+      else
+      {
+        ROS_INFO("Target is on the left side, executing action based on vertical position.");
+        if (largest_rect.y < last_camera_info_.height * 0.4)
+          action_id = 4;  // l_grip_front
+        else if (largest_rect.y < last_camera_info_.height * 0.6)
+          action_id = 7;  // l_punch_low
+        else if (largest_rect.y < last_camera_info_.height * 0.8)
+          action_id = 6;  // l_punch_high
+        else
+          action_id = 5;  // l_hook_front
+      }
+      setWalkingParams(0.0, 0.0, 0.0);
+      stopWalking();
+      ros::Duration(0.2).sleep();
+      setCtrlModule("action_module");
+      ros::Duration(0.2).sleep();
+      executeAction(action_id);
+      ros::Duration(1.0).sleep();
+      setCtrlModule("walking_module");
+      attacked_time_ = ros::Time::now();  // 攻撃実行時刻を記録
     }
     else
     {
@@ -421,14 +437,17 @@ void RobooneAuto::handleAttack()
         // 中央からのずれに基づいて旋回角を計算
         double target_direction = (x_offset > 0) ? -1.0 : 1.0;  // 右なら-1、左なら1
         double target_angle_factor = -x_offset;
-        double target_distance_factor = 1.0 - rect_area / atk_rects_size_;
+        if (target_angle_factor > 0.5)
+          target_angle_factor = 1.0;
+        else if (target_angle_factor < -0.5)
+          target_angle_factor = -1.0;
         double yaw_step = target_angle_factor * (10.0 * M_PI / 180.0);  // 最大10度の旋回
-        ROS_INFO("Calculated angle move (radians): %f", yaw_step);
-        double y_step_factor = (1.0 - fabs(target_angle_factor)) * fabs(target_angle_factor);
-        double y_step = 0.03 * y_step_factor * target_direction;  // 最大0.03mの横移動
-        double x_step = 0.04 * (1.0 - y_step_factor);             // 最大0.04mの前進
+        ROS_INFO("target x: %f, y: %f, width: %d, height: %d", rect_center_x, rect_center_y, largest_rect.width,
+                 largest_rect.height);
+        ROS_INFO("target x offset (pixels): %f, angle move (radians): %f", x_offset, yaw_step);
+        double x_step = 0.04 * (1.0 - fabs(target_angle_factor));  // 最大0.04mの前進
         setWalkingParams(x_step, 0.0, yaw_step);
-        ROS_INFO("Moving towards target with x_step: 0.02, yaw_step (radians): %f", yaw_step);
+        ROS_INFO("Moving towards target with x_step: %f, yaw_step: %f", x_step, yaw_step);
         startWalking();
       }
     }

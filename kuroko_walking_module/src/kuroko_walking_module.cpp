@@ -28,6 +28,9 @@ WalkingModule::WalkingModule() : control_cycle_msec_(8), debug_(false)
   roll_swing_brake_max_ = roll_swing_accel_max_ * 2.0;
   foot_lift_brake_max_ = foot_lift_accel_max_ * 2.0;
 
+  feedback_xyz_max_ = 0.05;
+  feedback_rpy_max_ = 1.0;
+
   kuroko_kinematics_ = new KurokoKinematics(WHOLE_BODY);
 
   // Robot is in initial posture with legs extended directly below
@@ -802,17 +805,28 @@ void WalkingModule::process(std::map<std::string, robotis_framework::Dynamixel*>
       goal_position_.coeffRef(0, joint_index) = dxl->dxl_state_->goal_position_;
     }
 
-    processPhase(time_unit);
+    // Update Feedback
+    feedback_xyz_ = Eigen::Vector3d::Zero();
+    feedback_rpy_ = Eigen::Vector3d::Zero();
+    if (static_cast<bool>(config_walking_param_.balance_enable))
+    {
+      Eigen::Vector3d gyro = Eigen::Vector3d::Zero();
+      Eigen::Vector3d acc = Eigen::Vector3d::Zero();
+      gyro.x() = sensors["gyro_x"];
+      gyro.y() = sensors["gyro_y"];
+      gyro.z() = sensors["gyro_z"];
+      acc.x() = sensors["acc_x"];
+      acc.y() = sensors["acc_y"];
+      acc.z() = sensors["acc_z"];
+      gyroFeedback(gyro, acc, feedback_xyz_, feedback_rpy_);
+    }
 
+    // Walk
+    processPhase(time_unit);
     bool get_current_angle = updateLegTargetAngles(current_angle);
 
-    double rl_gyro_err = 0.0 - sensors["gyro_x"];
-    double fb_gyro_err = 0.0 - sensors["gyro_y"];
-
-    gyroFeedback(rl_gyro_err, fb_gyro_err, balance_angle);
-
-    double err_total = 0.0, err_max = 0.0;
     // set goal position
+    double err_total = 0.0, err_max = 0.0;
     for (int idx = 0; idx < 12; idx++)
     {
       double goal_position = (!get_current_angle) ?
@@ -913,9 +927,6 @@ void WalkingModule::processPhase(const double& time_unit)
              (time_ > r_ssp_start_time_ && time_ <= r_ssp_end_time_))
       synchronized_walking_param_.y_step = y_step_before;
     applyStepParam();
-
-    // ROS_INFO("target height: %f, previous height: %f, synchronized height: %f", config_walking_param_.foot_height,
-    //          previouos_walking_param_.foot_height, synchronized_walking_param_.foot_height);
   }
   else
   {
@@ -987,6 +998,16 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
     body_rpy[0] = 0;  // No roll swing if no movement
   body_rpy[1] = 0;
   body_rpy[2] = 0;
+  // Feedback
+  if (static_cast<bool>(config_walking_param_.balance_enable))
+  {
+    body_pos.x() += feedback_xyz_.x();
+    body_pos.y() += feedback_xyz_.y();
+    body_pos.z() += feedback_xyz_.z();
+    body_rpy[0] += feedback_rpy_.x();
+    body_rpy[1] += feedback_rpy_.y();
+    body_rpy[2] += feedback_rpy_.z();
+  }
 
   if (time_ <= l_ssp_start_time_)
   {
@@ -1244,35 +1265,39 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
   return true;
 }
 
-void WalkingModule::gyroFeedback(const double& roll_gyro_err, const double& pitch_gyro_err,
-                                 std::vector<double>& balance_angle)
+void WalkingModule::gyroFeedback(const Eigen::Vector3d& gyro_in, const Eigen::Vector3d& acc_in,
+                                 Eigen::Vector3d& xyz_out, Eigen::Vector3d& rpy_out)
 {
   if (!static_cast<bool>(config_walking_param_.balance_enable))
     return;
+  // Gyro Feedback
+  xyz_out[0] = -config_walking_param_.balance_gyro_x_gain * gyro_in[1];
+  xyz_out[1] = -config_walking_param_.balance_gyro_y_gain * gyro_in[0];
+  xyz_out[2] = config_walking_param_.balance_gyro_zx_gain * fabs(gyro_in[1]) +
+               config_walking_param_.balance_gyro_zy_gain * fabs(gyro_in[0]);
+  rpy_out[0] = config_walking_param_.balance_gyro_roll_gain * gyro_in[0];
+  rpy_out[1] = -config_walking_param_.balance_gyro_pitch_gain * gyro_in[1];
+  rpy_out[2] = 0;
+  // Acc Feedback
+  xyz_out[0] += config_walking_param_.balance_acc_x_gain * acc_in[0];
+  xyz_out[1] += config_walking_param_.balance_acc_y_gain * acc_in[1];
+  xyz_out[2] += config_walking_param_.balance_acc_zx_gain * fabs(acc_in[0]) +
+                config_walking_param_.balance_acc_zy_gain * fabs(acc_in[1]);
+  rpy_out[0] += config_walking_param_.balance_acc_roll_gain * acc_in[1];
+  rpy_out[1] += -config_walking_param_.balance_acc_pitch_gain * acc_in[0];
+  rpy_out[2] = 0;
 
-  // Roll joints
-  balance_angle[joint_table_["hip_r_roll"]] =
-      kuroko_kinematics_->getJointDirection("hip_r_roll") * roll_gyro_err *
-      (config_walking_param_.balance_gyro_y_gain + config_walking_param_.balance_gyro_roll_gain);
-  balance_angle[joint_table_["hip_l_roll"]] =
-      kuroko_kinematics_->getJointDirection("hip_l_roll") * roll_gyro_err *
-      (config_walking_param_.balance_gyro_y_gain + config_walking_param_.balance_gyro_roll_gain);
-  balance_angle[joint_table_["ankle_r_roll"]] = -kuroko_kinematics_->getJointDirection("ankle_r_roll") * roll_gyro_err *
-                                                config_walking_param_.balance_gyro_y_gain;
-  balance_angle[joint_table_["ankle_l_roll"]] = -kuroko_kinematics_->getJointDirection("ankle_l_roll") * roll_gyro_err *
-                                                config_walking_param_.balance_gyro_y_gain;
-
-  // Pitch joints
-  balance_angle[joint_table_["hip_r_pitch"]] =
-      kuroko_kinematics_->getJointDirection("hip_r_pitch") * pitch_gyro_err *
-      (config_walking_param_.balance_gyro_x_gain + config_walking_param_.balance_gyro_pitch_gain);
-  balance_angle[joint_table_["hip_l_pitch"]] =
-      kuroko_kinematics_->getJointDirection("hip_l_pitch") * pitch_gyro_err *
-      (config_walking_param_.balance_gyro_x_gain + config_walking_param_.balance_gyro_pitch_gain);
-  balance_angle[joint_table_["ankle_r_pitch"]] = -kuroko_kinematics_->getJointDirection("ankle_r_pitch") *
-                                                 roll_gyro_err * config_walking_param_.balance_gyro_x_gain;
-  balance_angle[joint_table_["ankle_l_pitch"]] = -kuroko_kinematics_->getJointDirection("ankle_l_pitch") *
-                                                 roll_gyro_err * config_walking_param_.balance_gyro_x_gain;
+  // Limit feedback
+  double feedback_xyz_norm = xyz_out.norm();
+  if (feedback_xyz_norm > feedback_rpy_max_ && feedback_xyz_norm > 0.001)
+  {
+    xyz_out *= (feedback_rpy_max_ / feedback_xyz_norm);
+  }
+  double feedback_rpy_norm = rpy_out.norm();
+  if (feedback_rpy_norm > feedback_rpy_max_ && feedback_rpy_norm > 0.001)
+  {
+    rpy_out *= (feedback_rpy_max_ / feedback_rpy_norm);
+  }
 }
 
 void WalkingModule::loadWalkingParam(const std::string& path)

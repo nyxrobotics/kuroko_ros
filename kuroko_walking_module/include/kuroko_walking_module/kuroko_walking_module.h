@@ -95,7 +95,8 @@ private:
   /* ROS Service Callback Functions */
   void processPhase(const double& time_unit);
   bool updateLegTargetAngles(std::vector<double>& leg_joints);
-  void gyroFeedback(const double& roll_gyro_err, const double& pitch_gyro_err, std::vector<double>& balance_angle);
+  void gyroFeedback(const Eigen::Vector3d& gyro_in, const Eigen::Vector3d& acc_in, Eigen::Vector3d& xyz_out,
+                    Eigen::Vector3d& rpy_out);
 
   void publishStatusMsg(unsigned int type, std::string msg);
   double wSin(double time, double period, double period_shift, double mag, double mag_shift);
@@ -200,6 +201,11 @@ private:
   int phase_;
   double body_swing_y_;
   double body_swing_z_;
+
+  Eigen::Vector3d feedback_xyz_;
+  Eigen::Vector3d feedback_rpy_;
+  double feedback_xyz_max_;
+  double feedback_rpy_max_;
 };
 
 }  // namespace motion_control

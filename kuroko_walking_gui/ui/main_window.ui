@@ -854,6 +854,9 @@
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="decimals">
+                 <number>3</number>
+                </property>
                 <property name="minimum">
                  <double>-10.000000000000000</double>
                 </property>
@@ -882,6 +885,9 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="decimals">
+                 <number>3</number>
                 </property>
                 <property name="minimum">
                  <double>-10.000000000000000</double>
@@ -933,6 +939,9 @@
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="decimals">
+                 <number>3</number>
+                </property>
                 <property name="minimum">
                  <double>-10.000000000000000</double>
                 </property>
@@ -983,6 +992,9 @@
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="decimals">
+                 <number>3</number>
+                </property>
                 <property name="minimum">
                  <double>-10.000000000000000</double>
                 </property>
@@ -1019,6 +1031,9 @@
               </item>
               <item row="3" column="1">
                <widget class="QDoubleSpinBox" name="dSpinBox_balance_gyro_zx_gain">
+                <property name="decimals">
+                 <number>3</number>
+                </property>
                 <property name="minimum">
                  <double>-10.000000000000000</double>
                 </property>
@@ -1032,6 +1047,9 @@
               </item>
               <item row="3" column="3">
                <widget class="QDoubleSpinBox" name="dSpinBox_balance_gyro_zy_gain">
+                <property name="decimals">
+                 <number>3</number>
+                </property>
                 <property name="minimum">
                  <double>-10.000000000000000</double>
                 </property>
@@ -1045,6 +1063,9 @@
               </item>
               <item row="4" column="1">
                <widget class="QDoubleSpinBox" name="dSpinBox_balance_acc_x_gain">
+                <property name="decimals">
+                 <number>4</number>
+                </property>
                 <property name="minimum">
                  <double>-31.000000000000000</double>
                 </property>
@@ -1058,6 +1079,9 @@
               </item>
               <item row="4" column="3">
                <widget class="QDoubleSpinBox" name="dSpinBox_balance_acc_roll_gain">
+                <property name="decimals">
+                 <number>4</number>
+                </property>
                 <property name="minimum">
                  <double>-31.000000000000000</double>
                 </property>
@@ -1074,6 +1098,9 @@
               </item>
               <item row="5" column="1">
                <widget class="QDoubleSpinBox" name="dSpinBox_balance_acc_y_gain">
+                <property name="decimals">
+                 <number>4</number>
+                </property>
                 <property name="minimum">
                  <double>-31.000000000000000</double>
                 </property>
@@ -1087,6 +1114,9 @@
               </item>
               <item row="5" column="3">
                <widget class="QDoubleSpinBox" name="dSpinBox_balance_acc_pitch_gain">
+                <property name="decimals">
+                 <number>4</number>
+                </property>
                 <property name="minimum">
                  <double>-31.000000000000000</double>
                 </property>
@@ -1100,6 +1130,9 @@
               </item>
               <item row="6" column="1">
                <widget class="QDoubleSpinBox" name="dSpinBox_balance_acc_zx_gain">
+                <property name="decimals">
+                 <number>4</number>
+                </property>
                 <property name="minimum">
                  <double>-10.000000000000000</double>
                 </property>
@@ -1113,6 +1146,9 @@
               </item>
               <item row="6" column="3">
                <widget class="QDoubleSpinBox" name="dSpinBox_balance_acc_zy_gain">
+                <property name="decimals">
+                 <number>4</number>
+                </property>
                 <property name="minimum">
                  <double>-10.000000000000000</double>
                 </property>
@@ -1409,8 +1445,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>411</width>
-                <height>811</height>
+                <width>98</width>
+                <height>28</height>
                </rect>
               </property>
              </widget>

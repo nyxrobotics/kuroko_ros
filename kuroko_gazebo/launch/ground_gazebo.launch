@@ -9,9 +9,9 @@
   <arg name="debug" default="false"/>
   <arg name="robot_name" default="kuroko"/>
   <arg name="use_trajectory_control" default="false"/>
-  <arg name="spawn_enemy" default="true"/>
+  <arg name="spawn_enemy" default="false"/>
   <arg name="enemy_name" default="enemy"/>
-  <arg name="wait_after_spawn" default="1.0"/>
+  <arg name="wait_after_spawn" default="3.0"/>
 
   <!-- expected_models: robot_name ring_model [enemy_name] -->
   <arg name="base_models" default="$(arg robot_name) ground_plane"/>

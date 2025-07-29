@@ -769,13 +769,8 @@ void WalkingModule::abortWalking()
   request_walk_ = false;
   resetTargetStepConfig();
   previouos_walking_param_ = target_walking_param_;
-  if (is_walking_)
-  {
-    is_walking_ = false;
-    walking_state_ = WALK_INITIAL_POSE;
-    init_pose_count_ = 0;
-    time_ = 0;
-  }
+  synchronized_walking_param_ = target_walking_param_;
+  time_ = 0;
   publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_INFO, "Abort walking");
 }
 

@@ -90,10 +90,12 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   hold_angle_threshold_ = 0.16;
   stable_angle_threshold_ = 0.08;
 
-  x_forward_step_max_ = 0.04;
-  x_backward_step_max_ = -0.04;
-  y_step_max_ = 0.03;
-  yaw_step_max_ = 0.26;
+  x_forward_step_max_ = 0.03;
+  x_backward_step_max_ = -0.03;
+  y_step_max_ = 0.02;
+  yaw_step_max_ = 0.2;
+
+  action_start_time_ = ros::Time(0);
 
   walk_status_ = "stop";
   ROS_INFO("RobooneAuto initialized.");
@@ -169,7 +171,7 @@ void RobooneAuto::setWalkSteps(double x_step, double y_step, double yaw_step)
   double x_scale = fabs(x_step / ((x_step > 0) ? (x_forward_step_max_) : (x_backward_step_max_)));
   double y_scale = fabs(y_step / y_step_max_);
   double yaw_scale = fabs(yaw_step / yaw_step_max_);
-  double normalization_factor = x_scale + y_scale + yaw_scale;
+  double normalization_factor = sqrt(x_scale * x_scale + y_scale * y_scale + yaw_scale * yaw_scale);
 
   if (normalization_factor > 1.0)
   {
@@ -193,7 +195,7 @@ void RobooneAuto::setHoldSteps(double x_step, double y_step, double yaw_step)
   double x_scale = fabs(x_step / ((x_step > 0) ? (x_forward_step_max_) : (x_backward_step_max_)));
   double y_scale = fabs(y_step / y_step_max_);
   double yaw_scale = fabs(yaw_step / yaw_step_max_);
-  double normalization_factor = x_scale + y_scale + yaw_scale;
+  double normalization_factor = sqrt(x_scale * x_scale + y_scale * y_scale + yaw_scale * yaw_scale);
 
   if (normalization_factor > 1.0)
   {
@@ -334,8 +336,9 @@ void RobooneAuto::manageState()
       setWalkSteps(0, 0, 0);
       ros::Duration(0.1).sleep();
       abortWalking();
-      ros::Duration(0.1).sleep();
+      ros::Duration(0.2).sleep();
       handleFall();
+      action_start_time_ = ros::Time::now();
       transitionToPauseWalkingState();
     }
   }
@@ -373,9 +376,9 @@ void RobooneAuto::transitionToPauseWalkingState()
     return;
   current_state_ = "PAUSE_WALKING";
   ROS_INFO("Transitioning to PAUSE_WALKING state due to excessive tilt.");
-  stopWalking();  // 歩行を停止
-  ros::Duration(0.1).sleep();
   setWalkSteps(0, 0, 0);
+  ros::Duration(0.1).sleep();
+  stopWalking();  // 歩行を停止
   ros::Duration(0.1).sleep();
 }
 
@@ -383,6 +386,15 @@ void RobooneAuto::transitionToPauseWalkingState()
 void RobooneAuto::transitionToHoldState()
 {
   attacked_time_ = ros::Time::now();  // しゃがんだ後は歩行が必須
+  if (ros::Time::now() - action_start_time_ < ros::Duration(5.0))
+  {
+    setWalkSteps(0, 0, 0);
+    ros::Duration(0.1).sleep();
+    abortWalking();  // 歩行を停止
+    ros::Duration(0.1).sleep();
+    current_state_ = "PAUSE_WALKING";
+    return;
+  }
   if (current_state_ == "HOLD")
     return;
   current_state_ = "HOLD";
@@ -404,11 +416,9 @@ void RobooneAuto::transitionToFallState()
     setHoldSteps(0, 0, 0);
     ros::Duration(0.1).sleep();
     abortWalking();
-    ros::Duration(0.1).sleep();
   }
   current_state_ = "FALL";
   ROS_INFO("Transitioning to FALL state.");
-  ros::Duration(0.1).sleep();
 }
 
 // 転倒状態の処理
@@ -419,6 +429,8 @@ void RobooneAuto::handleFall()
   Eigen::Vector2d imu_rp = quaternionToRollPitch(imy_orientation);
   double pitch_angle = imu_rp[1];
   ROS_INFO("Handling FALL state with IMU RPY: roll=%f, pitch=%f", imu_rp[0], imu_rp[1]);
+  setWalkSteps(0, 0, 0);
+  abortWalking();
   setCtrlModule("action_module");
   ros::Duration(0.1).sleep();
   if (imu_rp[1] > 0)
@@ -430,7 +442,7 @@ void RobooneAuto::handleFall()
     executeAction(3);  // 後起き上がりモーション
   }
 
-  ros::Duration(5.0).sleep();
+  ros::Duration(1.0).sleep();
   // モーション再生完了後、一時停止状態に遷移、1秒待機
   setCtrlModule("walking_module");
   current_state_ = "PAUSE_WALKING";
@@ -586,18 +598,18 @@ void RobooneAuto::handleAttack()
     {
       ROS_INFO_THROTTLE(1.0, "Target detected but too small(area: %f), delay: %f, rect area: %f", rect_area,
                         (ros::Time::now() - robot_detected_time_).toSec(), atk_rects_size_);
-      if ((ros::Time::now() - attacked_time_).toSec() < 0.5)
+      if ((ros::Time::now() - attacked_time_).toSec() < 1.0)
       {
-        // 攻撃後の1秒間は転倒復帰のみ許可
+        // 攻撃後の1.0秒間は転倒復帰のみ許可
         stopWalking();
       }
-      else if ((ros::Time::now() - attacked_time_).toSec() < 3.0)
+      else if ((ros::Time::now() - attacked_time_).toSec() < 4.0)
       {
-        // 攻撃後の2秒間は後退のみ許可
+        // 攻撃後の3秒間は後退のみ許可
         setWalkSteps(-0.04, 0.0, 0.0);
         startWalking();
       }
-      else if ((ros::Time::now() - attacked_time_).toSec() < 8.0)
+      else if ((ros::Time::now() - attacked_time_).toSec() < 10.0)
       {
         // 攻撃後の6秒間旋回のみ許可（前後左右移動は0）
         // 中央からのずれに基づいて旋回角を計算
@@ -606,15 +618,15 @@ void RobooneAuto::handleAttack()
         double yaw_step = target_angle_factor * (10.0 * M_PI / 180.0);  // 最大15度の旋回
         ROS_INFO_THROTTLE(1.0, "Calculated angle move for rotation only (radians): %f", yaw_step);
         // 前後左右の移動は0で、旋回のみ許可
-        if (fabs(yaw_step) > (3.0 * M_PI / 180.0))
-        {
-          setWalkSteps(0.0, 0.0, yaw_step);
-          startWalking();
-        }
-        else
+        if (fabs(yaw_step) < (3.0 * M_PI / 180.0) && (ros::Time::now() - attacked_time_).toSec() > 6.0)
         {
           setWalkSteps(0.0, 0.0, 0.0);
           stopWalking();
+        }
+        else
+        {
+          setWalkSteps(0.0, 0.0, yaw_step);
+          startWalking();
         }
       }
       else

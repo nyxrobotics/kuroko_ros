@@ -79,7 +79,6 @@ private:
 
   // 内部状態変数
   std::string current_state_, previous_state_, next_state_;
-  ros::Time action_start_time_;
   sensor_msgs::Joy last_joy_;
   sensor_msgs::Imu last_imu_;
   jsk_recognition_msgs::ClassificationResult last_class_;
@@ -100,6 +99,7 @@ private:
   double x_forward_step_max_, x_backward_step_max_;
   double y_step_max_, yaw_step_max_;
   std::string walk_status_;
+  ros::Time action_start_time_;
   ;
 };
 

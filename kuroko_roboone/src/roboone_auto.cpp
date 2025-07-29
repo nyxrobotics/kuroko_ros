@@ -31,6 +31,60 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   attacked_time_ = ros::Time(0);
   last_target_detected_direction_ = 1;
   last_attack_id_ = 0;
+  // Set walking params
+  walk_param_.init_x_offset = 0.018;
+  walk_param_.init_y_offset = 0.06;
+  walk_param_.init_z_offset = 0.05;
+  walk_param_.init_roll_offset = 0.1396;
+  walk_param_.init_pitch_offset = 0.0;
+  walk_param_.init_yaw_offset = 0.0;
+  walk_param_.init_hip_pitch_offset = 0;
+  walk_param_.period_time = 0.43;
+  walk_param_.dsp_ratio = 0.1;
+  walk_param_.step_forward_back_ratio = 0.0;
+  walk_param_.foot_height = 0.08;
+  walk_param_.y_swing_amplitude = 0.016;
+  walk_param_.z_swing_amplitude = 0.004;
+  walk_param_.roll_swing_amplitude = -0.05236;
+  walk_param_.roll_swing_phase = 0.3491;
+  walk_param_.hip_swing_up_amplitude = 0.03491;
+  walk_param_.hip_swing_down_amplitude = -0.03491;
+  walk_param_.shoulder_swing_amplitude = 0;
+  walk_param_.chest_swing_amplitude = 0;
+  walk_param_.balance_enable = true;
+  walk_param_.balance_gyro_x_gain = 0.008;
+  walk_param_.balance_gyro_y_gain = -0.004;
+  walk_param_.balance_gyro_zx_gain = 0.004;
+  walk_param_.balance_gyro_zy_gain = 0.008;
+  walk_param_.balance_gyro_roll_gain = -0.01;
+  walk_param_.balance_gyro_pitch_gain = 0.04;
+  walk_param_.balance_euler_x_gain = 0.04;
+  walk_param_.balance_euler_y_gain = -0.02;
+  walk_param_.balance_euler_zx_gain = 0.004;
+  walk_param_.balance_euler_zy_gain = 0.008;
+  walk_param_.balance_euler_roll_gain = -0.01;
+  walk_param_.balance_euler_pitch_gain = 0.04;
+  walk_param_.p_gain = 0;
+  walk_param_.i_gain = 0;
+  walk_param_.d_gain = 0;
+  hold_param_ = walk_param_;
+  hold_param_.init_z_offset = 0.12;
+  hold_param_.balance_gyro_x_gain = 0.004;
+  hold_param_.balance_gyro_y_gain = 0.0;
+  hold_param_.balance_gyro_zx_gain = 0.004;
+  hold_param_.balance_gyro_zy_gain = 0.0;
+  hold_param_.balance_gyro_roll_gain = 0.0;
+  hold_param_.balance_gyro_pitch_gain = 0.02;
+  hold_param_.balance_euler_x_gain = 0.06;
+  hold_param_.balance_euler_y_gain = 0.0;
+  hold_param_.balance_euler_zx_gain = 0.01;
+  hold_param_.balance_euler_zy_gain = 0.0;
+  hold_param_.balance_euler_roll_gain = 0.0;
+  hold_param_.balance_euler_pitch_gain = 0.8;
+
+  fall_angle_threshold_ = 0.26;
+  hold_angle_threshold_ = 0.16;
+  stable_angle_threshold_ = 0.08;
   ROS_INFO("RobooneAuto initialized.");
 }
 
@@ -91,7 +145,7 @@ void RobooneAuto::abortWalking()
 // Set walking parameters with specified initial values
 void RobooneAuto::setWalkingParams(double x_step, double y_step, double yaw_step)
 {
-  kuroko_walking_module_msgs::WalkingParam params;
+  kuroko_walking_module_msgs::WalkingParam params = walk_param_;
   double normalization_factor = std::abs(yaw_step / 0.26) + std::abs(x_step / 0.02) + std::abs(y_step / 0.015);
 
   if (normalization_factor > 1.0)
@@ -101,54 +155,10 @@ void RobooneAuto::setWalkingParams(double x_step, double y_step, double yaw_step
     yaw_step /= normalization_factor;
   }
 
-  // Initial values from the provided topic output
-  params.init_x_offset = 0.018;
-  params.init_y_offset = 0.06;
-  params.init_z_offset = 0.05;
-  params.init_roll_offset = 0.1396;
-  params.init_pitch_offset = 0.0;
-  params.init_yaw_offset = 0.0;
-  params.init_hip_pitch_offset = 0;
-
-  params.period_time = 0.43;
-  params.dsp_ratio = 0.1;
-  params.step_forward_back_ratio = 0.0;
-
   // Move amplitudes set dynamically
   params.x_step = x_step;
   params.y_step = y_step;
   params.yaw_step = yaw_step;
-
-  // Fixed initial values for other fields
-  params.foot_height = 0.08;
-  params.y_swing_amplitude = 0.016;
-  params.z_swing_amplitude = 0.004;
-  params.roll_swing_amplitude = -0.05236;
-  params.roll_swing_phase = 0.3491;
-  params.hip_swing_up_amplitude = 0.03491;
-  params.hip_swing_down_amplitude = -0.03491;
-
-  params.shoulder_swing_amplitude = 0;
-  params.chest_swing_amplitude = 0;
-
-  params.balance_enable = true;
-  params.balance_gyro_x_gain = 0.008;
-  params.balance_gyro_y_gain = -0.004;
-  params.balance_gyro_zx_gain = 0.004;
-  params.balance_gyro_zy_gain = 0.008;
-  params.balance_gyro_roll_gain = -0.01;
-  params.balance_gyro_pitch_gain = 0.04;
-  params.balance_euler_x_gain = 0.04;
-  params.balance_euler_y_gain = -0.02;
-  params.balance_euler_zx_gain = 0.004;
-  params.balance_euler_zy_gain = 0.008;
-  params.balance_euler_roll_gain = -0.01;
-  params.balance_euler_pitch_gain = 0.04;
-
-  // PID gains
-  params.p_gain = 0;
-  params.i_gain = 0;
-  params.d_gain = 0;
 
   // Publish the walking parameters
   walking_params_pub_.publish(params);
@@ -213,7 +223,7 @@ void RobooneAuto::manageState()
     double pitch = quaternionToPitch(last_imu_.orientation);
     double roll = quaternionToRoll(last_imu_.orientation);
 
-    if (std::abs(pitch) < 0.26 && std::abs(roll) < 0.26)
+    if (std::abs(pitch) < fall_angle_threshold_ && std::abs(roll) < fall_angle_threshold_)
     {
       ROS_INFO("IMU stabilized. Returning to WALKING state.");
       startWalking();
@@ -252,7 +262,7 @@ void RobooneAuto::transitionToInitPose()
 // 自律移動への遷移
 void RobooneAuto::transitionToAutoMoveState()
 {
-  ROS_INFO("Transitioning to AUTO_MOVE state.");
+  ROS_INFO("Transitioning to WALKING state.");
   current_state_ = "WALKING";
   startWalking();
 }
@@ -264,6 +274,14 @@ void RobooneAuto::transitionToPauseWalkingState()
   abortWalking();  // 歩行を停止
   current_state_ = "PAUSE_WALKING";
   fall_detected_time_ = ros::Time::now();
+}
+
+// こらえ状態への遷移
+void RobooneAuto::transitionToHoldState()
+{
+  ROS_INFO("Transitioning to HOLD state.");
+  abortWalking();  // 歩行を停止
+  current_state_ = "HOLD";
 }
 
 // 転倒状態への遷移

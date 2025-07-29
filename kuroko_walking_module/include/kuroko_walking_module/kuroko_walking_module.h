@@ -209,6 +209,7 @@ private:
   double feedback_xyz_max_;
   double feedback_rpy_max_;
   double init_pose_time_;
+  double body_offset_time_;
 };
 
 }  // namespace motion_control

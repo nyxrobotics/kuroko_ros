@@ -53,6 +53,7 @@ private:
   void transitionToIdleState();      // 脱力状態への遷移
   void transitionToAutoMoveState();  // 自律移動状態への遷移
   void transitionToPauseWalkingState();
+  void transitionToHoldState();
   void handleFall();
 
   double quaternionToYaw(const geometry_msgs::Quaternion& q);
@@ -89,6 +90,11 @@ private:
   int last_attack_id_;
 
   double atk_rects_size_;
+  kuroko_walking_module_msgs::WalkingParam walk_param_;
+  kuroko_walking_module_msgs::WalkingParam hold_param_;
+  double fall_angle_threshold_;    // 転倒判定の角度閾値
+  double hold_angle_threshold_;    // ホールド状態の角度閾値
+  double stable_angle_threshold_;  // 安定状態の角度閾値
 };
 
 #endif  // ROBOONE_AUTO_H_

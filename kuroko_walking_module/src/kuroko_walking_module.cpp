@@ -32,6 +32,7 @@ WalkingModule::WalkingModule() : control_cycle_msec_(8), debug_(false)
   feedback_rpy_max_ = 1.0;
 
   init_pose_time_ = 0.2;
+  body_offset_time_ = 0.2;
 
   kuroko_kinematics_ = new KurokoKinematics(WHOLE_BODY);
 
@@ -229,10 +230,9 @@ void WalkingModule::walkingParameterCallback(const kuroko_walking_module_msgs::W
   }
   else
   {
+    previouos_walking_param_ = synchronized_walking_param_;
     setTargetStepConfig();
     resetTargetStepConfig();
-    previouos_walking_param_ = target_walking_param_;
-    synchronized_walking_param_ = target_walking_param_;
   }
 }
 
@@ -630,8 +630,7 @@ void WalkingModule::synchronizePoseParam()
   else
   {
     // 1 second to change pose parameters
-    double steps_to_change = 4.0;
-    double time_to_change = target_walking_param_.period_time * target_walking_param_.dsp_ratio * 0.5 * steps_to_change;
+    double time_to_change = body_offset_time_;
     double x_offset_diff = target_walking_param_.init_x_offset - previouos_walking_param_.init_x_offset;
     double y_offset_diff = target_walking_param_.init_y_offset - previouos_walking_param_.init_y_offset;
     double z_offset_diff = target_walking_param_.init_z_offset - previouos_walking_param_.init_z_offset;
@@ -962,6 +961,8 @@ void WalkingModule::processPhase(const double& time_unit)
 {
   if (!is_walking_)
   {
+    synchronizePoseParam();
+    applyPoseParam();
     return;
   }
   bool can_stop = false;

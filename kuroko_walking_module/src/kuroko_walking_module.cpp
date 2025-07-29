@@ -331,6 +331,33 @@ void WalkingModule::synchronizeStepParam()
   {
     // 4 spteps to change step parameters
     double steps_to_change = 4.0;
+    if (fabs(target_walking_param_.x_step) > fabs(target_walking_param_.y_step) &&
+        fabs(target_walking_param_.x_step) > fabs(target_walking_param_.yaw_step))
+    {
+      if (target_walking_param_.x_step * synchronized_walking_param_.x_step < 0 ||
+          fabs(target_walking_param_.x_step) < fabs(synchronized_walking_param_.x_step))
+      {
+        steps_to_change = 1.0;
+      }
+    }
+    else if (fabs(target_walking_param_.y_step) > fabs(target_walking_param_.x_step) &&
+             fabs(target_walking_param_.y_step) > fabs(target_walking_param_.yaw_step))
+    {
+      if (target_walking_param_.y_step * synchronized_walking_param_.y_step < 0 ||
+          fabs(target_walking_param_.y_step) < fabs(synchronized_walking_param_.y_step))
+      {
+        steps_to_change = 1.0;
+      }
+    }
+    else if (fabs(target_walking_param_.yaw_step) > fabs(target_walking_param_.x_step) &&
+             fabs(target_walking_param_.yaw_step) > fabs(target_walking_param_.y_step))
+    {
+      if (target_walking_param_.yaw_step * synchronized_walking_param_.yaw_step < 0 ||
+          fabs(target_walking_param_.yaw_step) < fabs(synchronized_walking_param_.yaw_step))
+      {
+        steps_to_change = 1.0;
+      }
+    }
     double time_to_change =
         target_walking_param_.period_time * (1.0 - target_walking_param_.dsp_ratio) * 0.5 * steps_to_change;
     double x_step_step = (target_walking_param_.x_step - previouos_walking_param_.x_step) /

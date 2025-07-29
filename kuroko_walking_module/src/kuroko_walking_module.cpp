@@ -31,6 +31,8 @@ WalkingModule::WalkingModule() : control_cycle_msec_(8), debug_(false)
   feedback_xyz_max_ = 0.05;
   feedback_rpy_max_ = 1.0;
 
+  init_pose_time_ = 0.2;
+
   kuroko_kinematics_ = new KurokoKinematics(WHOLE_BODY);
 
   // Robot is in initial posture with legs extended directly below
@@ -897,8 +899,8 @@ void WalkingModule::process(std::map<std::string, robotis_framework::Dynamixel*>
     {
       if (debug_)
         std::cout << "Check Err : " << err_max << std::endl;
-      double mov_time = err_max / 30.0;
-      iniPoseTraGene(mov_time < 1.0 ? 1.0 : mov_time);
+      double mov_time = std::max(init_pose_time_, err_max / 30.0);
+      iniPoseTraGene(mov_time);
       target_position_ = goal_position_;
       walking_state_ = WALK_INITIAL_POSE;
       ROS_INFO_STREAM_COND(debug_, "x_offset: " << config_walking_param_.init_x_offset);
@@ -1475,23 +1477,39 @@ void WalkingModule::onModuleDisable()
 void WalkingModule::iniPoseTraGene(double mov_time)
 {
   double smp_time = control_cycle_msec_ * 0.001;
-  int all_time_steps = int(mov_time / smp_time) + 1;
-  calc_joint_trajectory_.resize(all_time_steps, result_.size() + 1);
 
-  for (int id = 0; id < result_.size(); id++)
+  // Generate trajectory for the first joint to determine time steps
+  Eigen::MatrixXd first_tra = robotis_framework::calcMinimumJerkTra(
+      goal_position_.coeff(0, 0), 0.0, 0.0, target_position_.coeff(0, 0), 0.0, 0.0, smp_time, mov_time);
+
+  int all_time_steps = first_tra.rows();
+  int num_joints = result_.size();
+
+  // Resize trajectory matrix
+  calc_joint_trajectory_.resize(all_time_steps, num_joints + 1);
+  calc_joint_trajectory_.block(0, 1, all_time_steps, 1) = first_tra;
+
+  // Time column
+  for (int t = 0; t < all_time_steps; ++t)
+    calc_joint_trajectory_.coeffRef(t, 0) = t * smp_time;
+
+  // Generate for the rest of joints
+  for (int id = 1; id < num_joints; ++id)
   {
-    double ini_value = goal_position_.coeff(0, id);
-    double tar_value = target_position_.coeff(0, id);
+    Eigen::MatrixXd tra = robotis_framework::calcMinimumJerkTra(
+        goal_position_.coeff(0, id), 0.0, 0.0, target_position_.coeff(0, id), 0.0, 0.0, smp_time, mov_time);
 
-    Eigen::MatrixXd tra;
-
-    tra = robotis_framework::calcMinimumJerkTra(ini_value, 0.0, 0.0, tar_value, 0.0, 0.0, smp_time, mov_time);
+    if (tra.rows() != all_time_steps)
+    {
+      ROS_ERROR("Mismatch in trajectory step size at joint %d: got %ld, expected %d", id, tra.rows(), all_time_steps);
+      return;
+    }
 
     calc_joint_trajectory_.block(0, id + 1, all_time_steps, 1) = tra;
   }
 
   if (debug_)
-    std::cout << "Generate Trajecotry : " << mov_time << "s [" << all_time_steps << "]" << std::endl;
+    std::cout << "Generate Trajectory: " << mov_time << "s [" << all_time_steps << " steps]" << std::endl;
 
   init_pose_count_ = 0;
 }

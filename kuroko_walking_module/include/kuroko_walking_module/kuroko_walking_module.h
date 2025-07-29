@@ -208,6 +208,7 @@ private:
   Eigen::Vector3d feedback_rpy_;
   double feedback_xyz_max_;
   double feedback_rpy_max_;
+  double init_pose_time_;
 };
 
 }  // namespace motion_control

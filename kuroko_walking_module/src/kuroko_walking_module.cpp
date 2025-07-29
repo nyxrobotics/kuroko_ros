@@ -747,6 +747,8 @@ void WalkingModule::resetTargetStepConfig()
   target_walking_param_.chest_swing_amplitude = 0;
   target_walking_param_.shoulder_swing_amplitude = 0;
   target_walking_param_.init_roll_offset = 0;
+  double ssp_ratio = (1.0 - config_walking_param_.dsp_ratio) * 0.25;
+  target_walking_param_.dsp_ratio = 1.0 - ssp_ratio;
 }
 
 void WalkingModule::stop()

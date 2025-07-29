@@ -338,7 +338,6 @@ void RobooneAuto::manageState()
       abortWalking();
       ros::Duration(0.2).sleep();
       handleFall();
-      action_start_time_ = ros::Time::now();
       transitionToPauseWalkingState();
     }
   }
@@ -437,18 +436,20 @@ void RobooneAuto::handleFall()
   if (imu_rp[1] > 0)
   {
     executeAction(2);  // 前起き上がりモーション
+    ros::Duration(4.0).sleep();
   }
   else
   {
     executeAction(3);  // 後起き上がりモーション
+    ros::Duration(6.0).sleep();
   }
-
-  ros::Duration(1.0).sleep();
   // モーション再生完了後、一時停止状態に遷移、1秒待機
   setCtrlModule("walking_module");
   current_state_ = "PAUSE_WALKING";
   fall_detected_time_ = ros::Time::now() + ros::Duration(1.0);
   robot_detected_time_ = ros::Time(0);
+  last_rects_.rects.clear();
+  action_start_time_ = ros::Time::now();
 }
 
 // 脱力状態への遷移
@@ -513,7 +514,7 @@ void RobooneAuto::handleAttack()
       startWalking();
     }
     else if (robot_detected_rect_.y > last_camera_info_.height * 0.2 &&
-             robot_detected_rect_.width > robot_detected_rect_.height &&
+             robot_detected_rect_.width > robot_detected_rect_.height * 1.2 &&
              (ros::Time::now() - attacked_time_).toSec() > 3.0)
     {
       // 相手が倒れている場合、その場旋回のみ

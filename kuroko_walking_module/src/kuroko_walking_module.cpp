@@ -770,6 +770,9 @@ void WalkingModule::abortWalking()
   resetTargetStepConfig();
   previouos_walking_param_ = target_walking_param_;
   synchronized_walking_param_ = target_walking_param_;
+  applyTimeParam();
+  applyStepParam();
+  applyPoseParam();
   time_ = 0;
   publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_INFO, "Abort walking");
 }

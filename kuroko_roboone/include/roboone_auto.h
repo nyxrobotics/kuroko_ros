@@ -18,6 +18,7 @@
 #include <mutex>
 #include <thread>
 #include <tf/transform_datatypes.h>
+#include <eigen3/Eigen/Eigen>
 #include <vector>
 
 class RobooneAuto
@@ -57,9 +58,9 @@ private:
   void transitionToHoldState();
   void handleFall();
 
-  double quaternionToYaw(const geometry_msgs::Quaternion& q);
-  double quaternionToRoll(const geometry_msgs::Quaternion& q);
-  double quaternionToPitch(const geometry_msgs::Quaternion& q);
+  Eigen::Vector3d quaterionToRpy(const Eigen::Quaterniond& q);
+  Eigen::Vector3d quaterionToYpr(const Eigen::Quaterniond& q);
+  Eigen::Vector2d quaternionToRollPitch(const Eigen::Quaterniond& q);
 
   ros::Subscriber joy_sub_, imu_sub_, camera_info_sub_;
   ros::Publisher walking_command_pub_, walking_params_pub_, action_page_pub_;
@@ -98,7 +99,8 @@ private:
   double stable_angle_threshold_;  // 安定状態の角度閾値
   double x_forward_step_max_, x_backward_step_max_;
   double y_step_max_, yaw_step_max_;
-  bool is_walking_;
+  std::string walk_status_;
+  ;
 };
 
 #endif  // ROBOONE_AUTO_H_

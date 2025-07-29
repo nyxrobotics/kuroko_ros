@@ -385,7 +385,6 @@ void RobooneAuto::transitionToPauseWalkingState()
 // こらえ状態への遷移
 void RobooneAuto::transitionToHoldState()
 {
-  attacked_time_ = ros::Time::now();  // しゃがんだ後は歩行が必須
   if (ros::Time::now() - action_start_time_ < ros::Duration(5.0))
   {
     setWalkSteps(0, 0, 0);
@@ -403,6 +402,8 @@ void RobooneAuto::transitionToHoldState()
   ros::Duration(0.1).sleep();
   abortWalking();
   ros::Duration(0.1).sleep();
+  attacked_time_ = ros::Time::now();      // しゃがんだ後は歩行が必須
+  action_start_time_ = ros::Time::now();  // しゃがんだ後は歩行が必須
 }
 
 // 転倒状態への遷移

@@ -359,7 +359,7 @@ void RobooneAuto::handleAttack()
     {
       // 相手ロボットが画面のした半分にしか入っていたいときはなにかおかしいので後退
       ROS_INFO("Target is too low, retreating.");
-      double x_step = -0.03;
+      double x_step = -0.04;
       setWalkingParams(x_step, 0.0, 0.0);
       startWalking();
     }
@@ -456,10 +456,10 @@ void RobooneAuto::handleAttack()
         // 攻撃後の1秒間は転倒復帰のみ許可
         stopWalking();
       }
-      else if ((ros::Time::now() - attacked_time_).toSec() < 2.0)
+      else if ((ros::Time::now() - attacked_time_).toSec() < 3.0)
       {
         // 攻撃後の2秒間は後退のみ許可
-        setWalkingParams(-0.03, 0.0, 0.0);
+        setWalkingParams(-0.04, 0.0, 0.0);
         startWalking();
       }
       else if ((ros::Time::now() - attacked_time_).toSec() < 8.0)

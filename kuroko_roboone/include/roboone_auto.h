@@ -28,6 +28,7 @@ public:
 
   void startWalking();
   void stopWalking();
+  void abortWalking();
   void setWalkingParams(double x_step, double y_step, double yaw_step);
   void executeAction(int action_id);
   void manageState();  // 状態管理関数

@@ -206,7 +206,9 @@ void WalkingModule::walkingCommandCallback(const std_msgs::String::ConstPtr& msg
   if (msg->data == "start")
     startWalking();
   else if (msg->data == "stop")
-    stop();
+    stopWalking();
+  else if (msg->data == "abort")
+    abortWalking();
   else if (msg->data == "balance on")
     config_walking_param_.balance_enable = true;
   else if (msg->data == "balance off")
@@ -754,6 +756,28 @@ void WalkingModule::startWalking()
   publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_INFO, "Start walking");
 }
 
+void WalkingModule::stopWalking()
+{
+  request_walk_ = false;
+  previouos_walking_param_ = synchronized_walking_param_;
+  publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_INFO, "Stop walking");
+}
+
+void WalkingModule::abortWalking()
+{
+  request_walk_ = false;
+  resetTargetStepConfig();
+  previouos_walking_param_ = target_walking_param_;
+  if (is_walking_)
+  {
+    is_walking_ = false;
+    walking_state_ = WALK_INITIAL_POSE;
+    init_pose_count_ = 0;
+    time_ = 0;
+  }
+  publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_INFO, "Abort walking");
+}
+
 void WalkingModule::setTargetStepConfig()
 {
   target_walking_param_ = config_walking_param_;
@@ -780,9 +804,7 @@ void WalkingModule::resetTargetStepConfig()
 
 void WalkingModule::stop()
 {
-  request_walk_ = false;
-  previouos_walking_param_ = synchronized_walking_param_;
-  publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_INFO, "Stop walking");
+  stopWalking();
 }
 
 bool WalkingModule::isRunning()

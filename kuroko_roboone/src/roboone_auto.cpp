@@ -65,7 +65,6 @@ bool RobooneAuto::setCtrlModule(const std::string& module_name)
 void RobooneAuto::startWalking()
 {
   ROS_INFO("Starting Walking...");
-
   std_msgs::String msg;
   msg.data = "start";
   walking_command_pub_.publish(msg);
@@ -75,11 +74,20 @@ void RobooneAuto::startWalking()
 void RobooneAuto::stopWalking()
 {
   ROS_INFO("Stopping Walking...");
-
   std_msgs::String msg;
   msg.data = "stop";
   walking_command_pub_.publish(msg);
 }
+
+// Abort walking
+void RobooneAuto::abortWalking()
+{
+  ROS_INFO("Aborting Walking...");
+  std_msgs::String msg;
+  msg.data = "abort";
+  walking_command_pub_.publish(msg);
+}
+
 // Set walking parameters with specified initial values
 void RobooneAuto::setWalkingParams(double x_step, double y_step, double yaw_step)
 {
@@ -253,7 +261,7 @@ void RobooneAuto::transitionToAutoMoveState()
 void RobooneAuto::transitionToPauseWalkingState()
 {
   ROS_INFO("Transitioning to PAUSE_WALKING state due to excessive tilt.");
-  stopWalking();  // 歩行を停止
+  abortWalking();  // 歩行を停止
   current_state_ = "PAUSE_WALKING";
   fall_detected_time_ = ros::Time::now();
 }

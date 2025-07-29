@@ -109,6 +109,8 @@ private:
   void applyPoseParam();
 
   void startWalking();
+  void stopWalking();
+  void abortWalking();
   void setTargetStepConfig();
   void resetTargetStepConfig();
   void loadWalkingParam(const std::string& path);

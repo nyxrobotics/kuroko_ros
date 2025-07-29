@@ -29,7 +29,8 @@ public:
   void startWalking();
   void stopWalking();
   void abortWalking();
-  void setWalkingParams(double x_step, double y_step, double yaw_step);
+  void setWalkSteps(double x_step, double y_step, double yaw_step);
+  void setHoldSteps(double x_step, double y_step, double yaw_step);
   void executeAction(int action_id);
   void manageState();  // 状態管理関数
   bool setCtrlModule(const std::string& module_name);
@@ -95,6 +96,9 @@ private:
   double fall_angle_threshold_;    // 転倒判定の角度閾値
   double hold_angle_threshold_;    // ホールド状態の角度閾値
   double stable_angle_threshold_;  // 安定状態の角度閾値
+  double x_forward_step_max_, x_backward_step_max_;
+  double y_step_max_, yaw_step_max_;
+  bool is_walking_;
 };
 
 #endif  // ROBOONE_AUTO_H_

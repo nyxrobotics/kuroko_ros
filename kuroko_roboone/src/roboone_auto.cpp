@@ -67,6 +67,9 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   walk_param_.p_gain = 0;
   walk_param_.i_gain = 0;
   walk_param_.d_gain = 0;
+  walk_param_.x_step = 0;
+  walk_param_.y_step = 0;
+  walk_param_.yaw_step = 0;
   hold_param_ = walk_param_;
   hold_param_.init_z_offset = 0.12;
   hold_param_.balance_gyro_x_gain = 0.004;
@@ -85,6 +88,11 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   fall_angle_threshold_ = 0.26;
   hold_angle_threshold_ = 0.16;
   stable_angle_threshold_ = 0.08;
+
+  x_forward_step_max_ = 0.04;
+  x_backward_step_max_ = -0.04;
+  y_step_max_ = 0.03;
+  yaw_step_max_ = 0.26;
   ROS_INFO("RobooneAuto initialized.");
 }
 
@@ -143,10 +151,37 @@ void RobooneAuto::abortWalking()
 }
 
 // Set walking parameters with specified initial values
-void RobooneAuto::setWalkingParams(double x_step, double y_step, double yaw_step)
+void RobooneAuto::setWalkSteps(double x_step, double y_step, double yaw_step)
 {
   kuroko_walking_module_msgs::WalkingParam params = walk_param_;
-  double normalization_factor = std::abs(yaw_step / 0.26) + std::abs(x_step / 0.02) + std::abs(y_step / 0.015);
+  double x_scale = fabs(x_step / ((x_step > 0) ? (x_forward_step_max_) : (x_backward_step_max_)));
+  double y_scale = fabs(y_step / y_step_max_);
+  double yaw_scale = fabs(yaw_step / yaw_step_max_);
+  double normalization_factor = sqrt(x_scale * x_scale + y_scale * y_scale + yaw_scale * yaw_scale);
+
+  if (normalization_factor > 1.0)
+  {
+    x_step /= normalization_factor;
+    y_step /= normalization_factor;
+    yaw_step /= normalization_factor;
+  }
+
+  // Move amplitudes set dynamically
+  params.x_step = x_step;
+  params.y_step = y_step;
+  params.yaw_step = yaw_step;
+
+  // Publish the walking parameters
+  walking_params_pub_.publish(params);
+}
+
+void RobooneAuto::setHoldSteps(double x_step, double y_step, double yaw_step)
+{
+  kuroko_walking_module_msgs::WalkingParam params = hold_param_;
+  double x_scale = fabs(x_step / ((x_step > 0) ? (x_forward_step_max_) : (x_backward_step_max_)));
+  double y_scale = fabs(y_step / y_step_max_);
+  double yaw_scale = fabs(yaw_step / yaw_step_max_);
+  double normalization_factor = sqrt(x_scale * x_scale + y_scale * y_scale + yaw_scale * yaw_scale);
 
   if (normalization_factor > 1.0)
   {
@@ -378,7 +413,7 @@ void RobooneAuto::handleAttack()
       // 相手ロボットが画面のした半分にしか入っていたいときはなにかおかしいので後退
       ROS_INFO("Target is too low, retreating.");
       double x_step = -0.04;
-      setWalkingParams(x_step, 0.0, 0.0);
+      setWalkSteps(x_step, 0.0, 0.0);
       startWalking();
     }
     else if (robot_detected_rect_.y > last_camera_info_.height * 0.2 &&
@@ -391,12 +426,12 @@ void RobooneAuto::handleAttack()
       double yaw_step = target_angle_factor * (10.0 * M_PI / 180.0);  // 最大15度の旋回
       if (fabs(yaw_step) > (3.0 * M_PI / 180.0))
       {
-        setWalkingParams(0.0, 0.0, yaw_step);
+        setWalkSteps(0.0, 0.0, yaw_step);
         startWalking();
       }
       else
       {
-        setWalkingParams(0.0, 0.0, 0.0);
+        setWalkSteps(0.0, 0.0, 0.0);
         stopWalking();
       }
     }
@@ -455,7 +490,7 @@ void RobooneAuto::handleAttack()
           action_id = 4;
       }
       last_attack_id_ = action_id;
-      setWalkingParams(0.0, 0.0, 0.0);
+      setWalkSteps(0.0, 0.0, 0.0);
       stopWalking();
       ros::Duration(0.2).sleep();
       setCtrlModule("action_module");
@@ -477,7 +512,7 @@ void RobooneAuto::handleAttack()
       else if ((ros::Time::now() - attacked_time_).toSec() < 3.0)
       {
         // 攻撃後の2秒間は後退のみ許可
-        setWalkingParams(-0.04, 0.0, 0.0);
+        setWalkSteps(-0.04, 0.0, 0.0);
         startWalking();
       }
       else if ((ros::Time::now() - attacked_time_).toSec() < 8.0)
@@ -491,12 +526,12 @@ void RobooneAuto::handleAttack()
         // 前後左右の移動は0で、旋回のみ許可
         if (fabs(yaw_step) > (3.0 * M_PI / 180.0))
         {
-          setWalkingParams(0.0, 0.0, yaw_step);
+          setWalkSteps(0.0, 0.0, yaw_step);
           startWalking();
         }
         else
         {
-          setWalkingParams(0.0, 0.0, 0.0);
+          setWalkSteps(0.0, 0.0, 0.0);
           stopWalking();
         }
       }
@@ -515,7 +550,7 @@ void RobooneAuto::handleAttack()
                  largest_rect.height);
         ROS_INFO("target x offset (pixels): %f, angle move (radians): %f", x_offset, yaw_step);
         double x_step = 0.04 * (1.0 - fabs(target_angle_factor));  // 最大0.04mの前進
-        setWalkingParams(x_step, 0.0, yaw_step);
+        setWalkSteps(x_step, 0.0, yaw_step);
         ROS_INFO("Moving towards target with x_step: %f, yaw_step: %f", x_step, yaw_step);
         startWalking();
       }
@@ -525,7 +560,7 @@ void RobooneAuto::handleAttack()
   {
     ROS_WARN("No roboone label found.");
     double yaw_step = last_target_detected_direction_ * (10.0 * M_PI / 180.0);  // 最大15度の旋回
-    setWalkingParams(0.0, 0.0, yaw_step);
+    setWalkSteps(0.0, 0.0, yaw_step);
     ROS_INFO("Rotating in place with yaw_step (radians): %f", yaw_step);
     startWalking();
   }

@@ -520,13 +520,13 @@ void RobooneAuto::handleAttack()
     double x_offset = (rect_center_x - image_center_x) / image_center_x;
     double y_offset = (rect_center_y - image_center_y) / image_center_y;
     last_target_detected_direction_ = x_offset > 0 ? -1 : 1;
-    if ((robot_detected_rect_.y > last_camera_info_.height * 0.5 && rect_area > atk_rects_size_ * 0.3 &&
+    if ((robot_detected_rect_.y > last_camera_info_.height * 0.6 && rect_area > atk_rects_size_ * 0.3 &&
          rect_area < atk_rects_size_ && (ros::Time::now() - attacked_time_).toSec() > 3.0) ||
         roboone_count > 2)
     {
       // 相手ロボットが画面のした半分にしか入っていたいときはなにかおかしいので後退
       ROS_INFO_THROTTLE(1.0, "Target is too low, retreating.");
-      double x_step = -0.04;
+      double x_step = -fabs(x_backward_step_max_);
       setWalkSteps(x_step, 0.0, 0.0);
       startWalking();
     }
@@ -537,10 +537,15 @@ void RobooneAuto::handleAttack()
       // 相手が倒れている場合、その場旋回のみ
       ROS_INFO_THROTTLE(1.0, "Target is in fall state, rotating in place.");
       double target_angle_factor = -x_offset;
-      double yaw_step = target_angle_factor * (10.0 * M_PI / 180.0);  // 最大15度の旋回
-      if (fabs(yaw_step) > (3.0 * M_PI / 180.0))
+      double yaw_step = target_angle_factor * fabs(yaw_step_max_);  // 最大15度の旋回
+      double x_step = 0.0;
+      if (rect_area > atk_rects_size_ * 0.6)
       {
-        setWalkSteps(0.0, 0.0, yaw_step);
+        x_step = -fabs(x_backward_step_max_);
+      }
+      if (fabs(yaw_step) > (3.0 * M_PI / 180.0) || fabs(x_step) > 0.01)
+      {
+        setWalkSteps(x_step, 0.0, yaw_step);
         startWalking();
       }
       else
@@ -625,7 +630,7 @@ void RobooneAuto::handleAttack()
       else if ((ros::Time::now() - attacked_time_).toSec() < 4.0)
       {
         // 攻撃後の3秒間は後退のみ許可
-        setWalkSteps(-0.04, 0.0, 0.0);
+        setWalkSteps(-fabs(x_backward_step_max_), 0.0, 0.0);
         startWalking();
       }
       else if ((ros::Time::now() - attacked_time_).toSec() < 10.0)
@@ -634,7 +639,7 @@ void RobooneAuto::handleAttack()
         // 中央からのずれに基づいて旋回角を計算
         double target_direction = (x_offset > 0) ? -1.0 : 1.0;  // 右なら-1、左なら1
         double target_angle_factor = -x_offset;
-        double yaw_step = target_angle_factor * (10.0 * M_PI / 180.0);  // 最大15度の旋回
+        double yaw_step = target_angle_factor * fabs(yaw_step_max_);  // 最大15度の旋回
         ROS_INFO_THROTTLE(1.0, "Calculated angle move for rotation only (radians): %f", yaw_step);
         // 前後左右の移動は0で、旋回のみ許可
         if (fabs(yaw_step) < (3.0 * M_PI / 180.0) && (ros::Time::now() - attacked_time_).toSec() > 6.0)
@@ -658,7 +663,7 @@ void RobooneAuto::handleAttack()
           target_angle_factor = 1.0;
         else if (target_angle_factor < -0.5)
           target_angle_factor = -1.0;
-        double yaw_step = target_angle_factor * (10.0 * M_PI / 180.0);  // 最大10度の旋回
+        double yaw_step = target_angle_factor * fabs(yaw_step_max_);  // 最大10度の旋回
         // ROS_INFO("target x: %f, y: %f, width: %d, height: %d", rect_center_x, rect_center_y, largest_rect.width,
         //          largest_rect.height);
         // ROS_INFO("target x offset (pixels): %f, angle move (radians): %f", x_offset, yaw_step);
@@ -672,7 +677,7 @@ void RobooneAuto::handleAttack()
   else
   {
     ROS_WARN_THROTTLE(1.0, "No roboone label found.");
-    double yaw_step = last_target_detected_direction_ * (10.0 * M_PI / 180.0);  // 最大15度の旋回
+    double yaw_step = last_target_detected_direction_ * fabs(yaw_step_max_);  // 最大15度の旋回
     setWalkSteps(0.0, 0.0, yaw_step);
     ROS_INFO_THROTTLE(1.0, "Rotating in place with yaw_step (radians): %f", yaw_step);
     startWalking();

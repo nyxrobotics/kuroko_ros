@@ -254,9 +254,9 @@ void RobooneAuto::stateThread()
 void RobooneAuto::manageState()
 {
   std::lock_guard<std::mutex> lock(state_mutex_);
-  Eigen::Quaterniond imy_orientation(last_imu_.orientation.x, last_imu_.orientation.y, last_imu_.orientation.z,
-                                     last_imu_.orientation.w);
-  Eigen::Vector3d imu_rpy = quaterionToYpr(imy_orientation);
+  Eigen::Quaterniond imy_orientation(last_imu_.orientation.w, last_imu_.orientation.x, last_imu_.orientation.y,
+                                     last_imu_.orientation.z);
+  Eigen::Vector3d imu_rpy = imuQuaternionToRollPitchYaw(imy_orientation);
   bool over_fall_angle = fabs(imu_rpy[1]) > fall_angle_threshold_;
   bool over_hold_angle = fabs(imu_rpy[1]) > hold_angle_threshold_;
   bool within_stable_angle = fabs(imu_rpy[1]) < stable_angle_threshold_;
@@ -441,16 +441,16 @@ void RobooneAuto::transitionToFallState()
 // 転倒状態の処理
 void RobooneAuto::handleFall()
 {
-  Eigen::Quaterniond imy_orientation(last_imu_.orientation.x, last_imu_.orientation.y, last_imu_.orientation.z,
-                                     last_imu_.orientation.w);
-  Eigen::Vector2d imu_rp = quaternionToRollPitch(imy_orientation);
-  double pitch_angle = imu_rp[1];
-  ROS_INFO("Handling FALL state with IMU RPY: roll=%f, pitch=%f", imu_rp[0], imu_rp[1]);
+  Eigen::Quaterniond imy_orientation(last_imu_.orientation.w, last_imu_.orientation.x, last_imu_.orientation.y,
+                                     last_imu_.orientation.z);
+  Eigen::Vector3d imu_rpy = imuQuaternionToRollPitchYaw(imy_orientation);
+  double pitch_angle = imu_rpy[1];
+  ROS_INFO("Handling FALL state with IMU RPY: roll=%f, pitch=%f", imu_rpy[0], imu_rpy[1]);
   setWalkSteps(0, 0, 0);
   abortWalking();
   setCtrlModule("action_module");
   ros::Duration(0.1).sleep();
-  if (imu_rp[1] > 0)
+  if (imu_rpy[1] > 0)
   {
     executeAction(2);  // 前起き上がりモーション
     ros::Duration(4.0).sleep();
@@ -745,29 +745,52 @@ Eigen::Vector3d RobooneAuto::quaterionToYpr(const Eigen::Quaterniond& q)
   return angles;
 }
 
-Eigen::Vector2d RobooneAuto::quaternionToRollPitch(const Eigen::Quaterniond& q)
+Eigen::Vector3d RobooneAuto::imuQuaternionToRollPitchYaw(const Eigen::Quaterniond& q)
 {
-  // 各基準ベクトルを「回転前の姿勢」と見なす
-  Eigen::Vector3d ref_x = Eigen::Vector3d::UnitX();  // 前方
-  Eigen::Vector3d ref_y = Eigen::Vector3d::UnitY();  // 左
-  Eigen::Vector3d ref_z = Eigen::Vector3d::UnitZ();  // 上
+  // ジンバルロックを防ぐため、ベクトルの相対的な変位を使用して角度を求める
+  // 解はXYZオイラー角と異なる
+  Eigen::Vector3d x_origin = Eigen::Vector3d::UnitX();  // Front
+  Eigen::Vector3d y_origin = Eigen::Vector3d::UnitY();  // Left
+  Eigen::Vector3d z_origin = Eigen::Vector3d::UnitZ();  // Up
 
-  // 回転後の座標系から見た、これら基準ベクトルの向き
-  // → 回転前ベクトルを逆回転する（＝q.inverse()で回転後座標系に投影）
-  Eigen::Vector3d x_local = q.inverse() * ref_x;
-  Eigen::Vector3d y_local = q.inverse() * ref_y;
-  Eigen::Vector3d z_local = q.inverse() * ref_z;
+  Eigen::Vector3d x_robot = q * x_origin;
+  Eigen::Vector3d y_robot = q * y_origin;
+  Eigen::Vector3d z_robot = q * z_origin;
 
-  // roll（横方向の傾き）: z_local が y-z 平面でどれだけ傾いているか
-  double roll = -std::atan2(z_local.y(), z_local.z());
+  double roll = 0, pitch = 0, yaw = 0;
+  // pitch: 原点のxy平面から見てロボットのx軸がどれだけ傾いているか
+  pitch = std::atan2(-x_robot.z(), std::sqrt(x_robot.x() * x_robot.x() + x_robot.y() * x_robot.y()));
+  if (z_robot.z() < 0.0)
+    pitch = M_PI - pitch;  // 逆立ち補正
+  // roll: 原点のxy平面から見てロボットのy軸がどれだけ傾いているか
+  roll = std::atan2(y_robot.z(), std::sqrt(y_robot.x() * y_robot.x() + y_robot.y() * y_robot.y()));
+  // yaw: 原点のz軸周りにロボットがどれだけ回転しているか
+  if (fabs(x_robot.z()) < fabs(y_robot.z()))
+  {
+    // x軸の傾きがy軸の傾きより小さい場合、x軸を使用してyawを計算
+    yaw = std::atan2(x_robot.y(), x_robot.x());
+    if (z_robot.z() < 0.0)
+      yaw = yaw + M_PI;  // 逆立ち補正
+  }
+  else
+  {
+    // y軸の傾きがx軸の傾きより小さい場合、y軸を使用してyawを計算
+    yaw = std::atan2(y_robot.y(), y_robot.x()) - M_PI / 2.0;
+  }
 
-  // pitch（前後方向の傾き）: z_local が x-z 平面でどれだけ傾いているか
-  double pitch = -std::atan2(-z_local.x(), std::sqrt(z_local.y() * z_local.y() + z_local.z() * z_local.z()));
+  // 最後に-M_PIから+M_PIに変換する
+  roll = wrapToPi(roll);
+  pitch = wrapToPi(pitch);
+  yaw = wrapToPi(yaw);
+  return Eigen::Vector3d(roll, pitch, yaw);
+}
 
-  // yaw（方位）: x_local が x-y 平面でどれだけ回転しているか
-  double yaw = -std::atan2(x_local.y(), x_local.x());
-
-  return Eigen::Vector2d(roll, pitch);
+double RobooneAuto::wrapToPi(double angle)
+{
+  angle = std::fmod(angle + M_PI, 2.0 * M_PI);
+  if (angle < 0)
+    angle += 2.0 * M_PI;
+  return angle - M_PI;
 }
 
 // Joyコールバック

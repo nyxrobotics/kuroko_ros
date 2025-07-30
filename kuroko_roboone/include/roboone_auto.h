@@ -60,7 +60,8 @@ private:
 
   Eigen::Vector3d quaterionToRpy(const Eigen::Quaterniond& q);
   Eigen::Vector3d quaterionToYpr(const Eigen::Quaterniond& q);
-  Eigen::Vector2d quaternionToRollPitch(const Eigen::Quaterniond& q);
+  Eigen::Vector3d imuQuaternionToRollPitchYaw(const Eigen::Quaterniond& q);
+  double wrapToPi(double angle);
 
   ros::Subscriber joy_sub_, imu_sub_, camera_info_sub_;
   ros::Publisher walking_command_pub_, walking_params_pub_, action_page_pub_;

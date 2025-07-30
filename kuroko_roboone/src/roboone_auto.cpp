@@ -71,7 +71,9 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   walk_param_.x_step = 0;
   walk_param_.y_step = 0;
   walk_param_.yaw_step = 0;
+
   hold_param_ = walk_param_;
+  hold_param_.init_x_offset = 0;
   hold_param_.init_z_offset = 0.12;
   hold_param_.balance_gyro_x_gain = 0.004;
   hold_param_.balance_gyro_y_gain = 0.0;
@@ -85,6 +87,21 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   hold_param_.balance_euler_zy_gain = 0.0;
   hold_param_.balance_euler_roll_gain = 0.0;
   hold_param_.balance_euler_pitch_gain = 0.8;
+
+  jump_param_ = hold_param_;
+  jump_param_.init_z_offset = 0.13;
+  jump_param_.balance_gyro_x_gain = 0.01;
+  jump_param_.balance_gyro_y_gain = 0.0;
+  jump_param_.balance_gyro_zx_gain = -0.01;
+  jump_param_.balance_gyro_zy_gain = 0.0;
+  jump_param_.balance_gyro_roll_gain = 0.0;
+  jump_param_.balance_gyro_pitch_gain = 0.1;
+  jump_param_.balance_euler_x_gain = 0.2;
+  jump_param_.balance_euler_y_gain = 0.0;
+  jump_param_.balance_euler_zx_gain = -0.04;
+  jump_param_.balance_euler_zy_gain = 0.0;
+  jump_param_.balance_euler_roll_gain = 0.0;
+  jump_param_.balance_euler_pitch_gain = 0.1;
 
   fall_angle_threshold_ = 0.26;
   hold_angle_threshold_ = 0.16;

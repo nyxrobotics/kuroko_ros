@@ -93,9 +93,11 @@ private:
   double atk_rects_size_;
   kuroko_walking_module_msgs::WalkingParam walk_param_;
   kuroko_walking_module_msgs::WalkingParam hold_param_;
-  double fall_angle_threshold_;    // 転倒判定の角度閾値
-  double hold_angle_threshold_;    // ホールド状態の角度閾値
+  kuroko_walking_module_msgs::WalkingParam jump_param_;
   double stable_angle_threshold_;  // 安定状態の角度閾値
+  double hold_angle_threshold_;    // ホールド状態の角度閾値
+  double jump_angle_threshold_;    // ジャンピングホールド状態の角度閾値
+  double fall_angle_threshold_;    // 転倒判定の角度閾値
   double x_forward_step_max_, x_backward_step_max_;
   double y_step_max_, yaw_step_max_;
   std::string walk_status_;

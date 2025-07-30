@@ -28,7 +28,7 @@ WalkingModule::WalkingModule() : control_cycle_msec_(8), debug_(false)
   roll_swing_brake_max_ = roll_swing_accel_max_ * 2.0;
   foot_lift_brake_max_ = foot_lift_accel_max_ * 2.0;
 
-  feedback_xyz_max_ = 0.05;
+  feedback_xyz_max_ = 0.1;
   feedback_rpy_max_ = 1.0;
 
   init_pose_time_ = 0.2;
@@ -1323,6 +1323,9 @@ void WalkingModule::gyroFeedback(const Eigen::Vector3d& gyro_in, const Eigen::Ve
 {
   if (!static_cast<bool>(config_walking_param_.balance_enable))
     return;
+  double euler_roll = euler_in[0];
+  double euler_pitch = euler_in[1] - init_hip_pitch_offset_ + init_pitch_offset_;
+  // ROS_INFO("WalkingModule::gyroFeedback - euler_roll: %f, euler_pitch: %f", euler_roll, euler_pitch);
   // Gyro Feedback
   xyz_out[0] = -config_walking_param_.balance_gyro_x_gain * gyro_in[1];
   xyz_out[1] = -config_walking_param_.balance_gyro_y_gain * gyro_in[0];
@@ -1332,17 +1335,16 @@ void WalkingModule::gyroFeedback(const Eigen::Vector3d& gyro_in, const Eigen::Ve
   rpy_out[1] = -config_walking_param_.balance_gyro_pitch_gain * gyro_in[1];
   rpy_out[2] = 0;
   // Euler Feedback
-  double euler_total = fabs(euler_in[0]) + fabs(euler_in[1]);
-  if (euler_total < M_PI * 0.4)
+  double euler_total = fabs(euler_roll) + fabs(euler_pitch);
+  if (euler_total < M_PI * 0.45)
   {
-    xyz_out[0] += -config_walking_param_.balance_euler_x_gain * euler_in[1];
-    xyz_out[1] += -config_walking_param_.balance_euler_y_gain * euler_in[0];
-    xyz_out[2] += -config_walking_param_.balance_euler_zx_gain * fabs(euler_in[1]) -
-                  config_walking_param_.balance_euler_zy_gain * fabs(euler_in[0]);
-    rpy_out[0] += config_walking_param_.balance_euler_roll_gain * euler_in[0];
-    rpy_out[1] += -config_walking_param_.balance_euler_pitch_gain * euler_in[1];
+    xyz_out[0] += -config_walking_param_.balance_euler_x_gain * euler_pitch;
+    xyz_out[1] += -config_walking_param_.balance_euler_y_gain * euler_roll;
+    xyz_out[2] += -config_walking_param_.balance_euler_zx_gain * fabs(euler_pitch) -
+                  config_walking_param_.balance_euler_zy_gain * fabs(euler_roll);
+    rpy_out[0] += config_walking_param_.balance_euler_roll_gain * euler_roll;
+    rpy_out[1] += -config_walking_param_.balance_euler_pitch_gain * euler_pitch;
   }
-
   // Limit feedback
   double feedback_xyz_norm = xyz_out.norm();
   double feedback_rpy_norm = rpy_out.norm();

@@ -47,3 +47,6 @@ roslaunch kuroko_roboone roboone_auto.launch
 ```bash
 roslaunch kuroko_walking_gui kuroko_walking_gui.launch
 ```
+
+## TODO
+- Using the `--env` argument in `robot_upstart`. However, adding `/etc/ros/setup.bash` may be more versatile. [robot_upstart #44](https://github.com/clearpathrobotics/robot_upstart/pull/44)

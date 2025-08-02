@@ -6,7 +6,7 @@
 
   <!-- Start USB camera node -->
   <!-- The widest viewing angle at this resolution. -->
-  <node name="usb_cam" pkg="usb_cam" type="usb_cam_node" output="screen" ns="camera">
+  <node name="usb_cam" pkg="usb_cam" type="usb_cam_node" output="screen" ns="camera" respawn="true">
     <param name="video_device" value="/dev/video0"/>
     <param name="brightness" value="0"/>
     <param name="contrast" value="20"/>

@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- Define arguments -->
+  <arg name="size" default="5x4"/>
+  <arg name="square" default="0.04"/>
+
+  <!-- Camera calibration node -->
+  <node
+    name="camera_calibration"
+    pkg="camera_calibration"
+    type="cameracalibrator.py"
+    output="screen"
+    args="--size $(arg size) --square $(arg square) image:=/camera/raw/image camera:=usb_cam"
+  />
+</launch>

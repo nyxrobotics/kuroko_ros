@@ -123,6 +123,7 @@ private:
   KurokoKinematics* kuroko_kinematics_;
   int control_cycle_msec_;
   std::string param_path_;
+  std::string initial_pose_path_;
   boost::thread queue_thread_;
   boost::mutex publish_mutex_;
 

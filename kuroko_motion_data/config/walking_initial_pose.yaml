@@ -1,0 +1,64 @@
+joints:
+  ankle_l_roll:
+    enable: true
+    position: -0.1409236955025448
+  ankle_l_yaw:
+    enable: true
+    position: -0
+  ankle_r_roll:
+    enable: true
+    position: 0.1409236955025446
+  ankle_r_yaw:
+    enable: true
+    position: -0
+  chest:
+    enable: true
+    position: -3.811648262644352e-21
+  elbow_l_front:
+    enable: true
+    position: 2.007128639793493
+  elbow_l_rear:
+    enable: true
+    position: -2.007128639793493
+  elbow_r_front:
+    enable: true
+    position: -2.007128639793494
+  elbow_r_rear:
+    enable: true
+    position: 2.007128639793494
+  hip_l_pitch:
+    enable: true
+    position: 0
+  hip_l_roll:
+    enable: true
+    position: -0.1409236955025448
+  hip_r_pitch:
+    enable: true
+    position: -0
+  hip_r_roll:
+    enable: true
+    position: -0.1409236955025446
+  shin_l_active:
+    enable: true
+    position: 0.2628263565708387
+  shin_r_active:
+    enable: true
+    position: -0.2628263565708385
+  shoulder_l_pitch:
+    enable: true
+    position: -1.134464013796322
+  shoulder_l_roll:
+    enable: true
+    position: -1.43116998663536
+  shoulder_r_pitch:
+    enable: true
+    position: 1.134464013796322
+  shoulder_r_roll:
+    enable: true
+    position: 1.43116998663536
+  thigh_l_active:
+    enable: true
+    position: -0.03884820997690153
+  thigh_r_active:
+    enable: true
+    position: 0.03884820997690064

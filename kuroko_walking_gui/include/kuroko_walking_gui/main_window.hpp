@@ -56,6 +56,7 @@ public Q_SLOTS:
   void on_button_param_refresh_clicked(bool check);
   void on_button_param_apply_clicked(bool check);
   void on_button_param_save_clicked(bool check);
+  void on_button_export_initial_pose_clicked(bool check);
 
   void on_checkBox_balance_on_clicked(bool check);
 

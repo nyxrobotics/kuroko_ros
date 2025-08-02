@@ -116,6 +116,10 @@ void MainWindow::on_button_param_save_clicked(bool /*check*/)
 {
   qnode_kuroko_.setWalkingCommand("save");
 }
+void MainWindow::on_button_export_initial_pose_clicked(bool /*check*/)
+{
+  qnode_kuroko_.setWalkingCommand("export_initial_pose");
+}
 
 void MainWindow::on_button_param_apply_clicked(bool /*check*/)
 {

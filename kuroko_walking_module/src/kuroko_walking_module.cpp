@@ -85,10 +85,11 @@ WalkingModule::~WalkingModule()
   queue_thread_.join();
 }
 
-void WalkingModule::initialize(const int control_cycle_msec, robotis_framework::Robot* /*robot*/)
+void WalkingModule::initialize(const int control_cycle_msec, robotis_framework::Robot* robot_ptr)
 {
   queue_thread_ = boost::thread(boost::bind(&WalkingModule::queueThread, this));
   control_cycle_msec_ = control_cycle_msec;
+  robot_ptr_ = robot_ptr;
 
   // m, s, rad
   // init pose
@@ -218,6 +219,8 @@ void WalkingModule::walkingCommandCallback(const std_msgs::String::ConstPtr& msg
     config_walking_param_.balance_enable = false;
   else if (msg->data == "save")
     saveWalkingParam(param_path_);
+  else if (msg->data == "export_initial_pose")
+    exportInitialPose(param_path_);
 }
 
 void WalkingModule::walkingParameterCallback(const kuroko_walking_module_msgs::WalkingParam::ConstPtr& msg)
@@ -1049,7 +1052,7 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
   body_rpy[0] = wSin(time_, walk_period_, roll_swing_phase_, -roll_swing_amplitude_, 0);
   if (!is_walking_)
     body_rpy[0] = 0;  // No roll swing if no movement
-  body_rpy[1] = 0;
+  body_rpy[1] = init_hip_pitch_offset_;
   body_rpy[2] = 0;
   // Feedback
   if (static_cast<bool>(config_walking_param_.balance_enable))
@@ -1304,9 +1307,6 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
   // Hip Roll Offset
   r_leg_joints[0] += kuroko_kinematics_->getJointDirection("hip_r_roll") * r_hip_roll_swing;
   l_leg_joints[0] += kuroko_kinematics_->getJointDirection("hip_l_roll") * l_hip_roll_swing;
-  // Hip Pitch Offset
-  r_leg_joints[1] -= kuroko_kinematics_->getJointDirection("hip_r_pitch") * init_hip_pitch_offset_;
-  l_leg_joints[1] -= kuroko_kinematics_->getJointDirection("hip_l_pitch") * init_hip_pitch_offset_;
 
   leg_joints.resize(12);
   for (int i = 0; i < 6; i++)
@@ -1461,6 +1461,111 @@ void WalkingModule::saveWalkingParam(std::string& path)
   // output to file
   std::ofstream fout(path.c_str());
   fout << out_emitter.c_str();
+}
+
+void WalkingModule::exportInitialPose(std::string& path)
+{
+  Eigen::Vector3d body_pos, r_foot_pos, l_foot_pos;
+  Eigen::Vector3d body_rpy, r_foot_rpy, l_foot_rpy;
+  std::vector<double> r_target_pose(6, 0);
+  std::vector<double> l_target_pose(6, 0);
+  std::vector<double> r_leg_joints(6, 0);
+  std::vector<double> l_leg_joints(6, 0);
+
+  body_pos[0] = body_pos[1] = body_pos[2] = 0.0;
+  body_rpy[0] = body_rpy[1] = body_rpy[2] = 0.0;
+  body_rpy[1] = init_hip_pitch_offset_;
+  r_foot_pos[0] = r_foot_pos[1] = r_foot_pos[2] = 0.0;
+  r_foot_rpy[0] = r_foot_rpy[1] = r_foot_rpy[2] = 0.0;
+  l_foot_pos[0] = l_foot_pos[1] = l_foot_pos[2] = 0.0;
+  l_foot_rpy[0] = l_foot_rpy[1] = l_foot_rpy[2] = 0.0;
+
+  r_foot_pos.x() += init_x_offset_;
+  r_foot_pos.y() -= (init_y_offset_ + leg_default_separaion_) / 2.0;
+  r_foot_pos.z() += init_z_offset_ - leg_default_length_;
+  r_foot_rpy[0] -= init_roll_offset_ / 2.0;
+  r_foot_rpy[1] += init_pitch_offset_;
+  r_foot_rpy[2] -= init_yaw_offset_ / 2.0;
+
+  l_foot_pos.x() += init_x_offset_;
+  l_foot_pos.y() += (init_y_offset_ + leg_default_separaion_) / 2.0;
+  l_foot_pos.z() += init_z_offset_ - leg_default_length_;
+  l_foot_rpy[0] += init_roll_offset_ / 2.0;
+  l_foot_rpy[1] += init_pitch_offset_;
+  l_foot_rpy[2] += init_yaw_offset_ / 2.0;
+
+  Eigen::Quaterniond body_quat = rpyToQuaternion(body_rpy);
+  Eigen::Quaterniond r_foot_quat = rpyToQuaternion(r_foot_rpy);
+  Eigen::Quaterniond l_foot_quat = rpyToQuaternion(l_foot_rpy);
+
+  Eigen::Vector3d body2r_foot_pos = body_quat.inverse() * (r_foot_pos - body_pos);
+  Eigen::Quaterniond body2r_foot_quat = body_quat.inverse() * r_foot_quat;
+  Eigen::Vector3d body2r_foot_rpy = quaterionToRpy(body2r_foot_quat);
+
+  Eigen::Vector3d body2l_foot_pos = body_quat.inverse() * (l_foot_pos - body_pos);
+  Eigen::Quaterniond body2l_foot_quat = body_quat.inverse() * l_foot_quat;
+  Eigen::Vector3d body2l_foot_rpy = quaterionToRpy(body2l_foot_quat);
+
+  // Right leg target point
+  r_target_pose[0] = body2r_foot_pos[0];
+  r_target_pose[1] = body2r_foot_pos[1];
+  r_target_pose[2] = body2r_foot_pos[2];
+  r_target_pose[3] = body2r_foot_rpy[0];
+  r_target_pose[4] = body2r_foot_rpy[1];
+  r_target_pose[5] = body2r_foot_rpy[2];
+
+  // Left leg target point
+  l_target_pose[0] = body2l_foot_pos[0];
+  l_target_pose[1] = body2l_foot_pos[1];
+  l_target_pose[2] = body2l_foot_pos[2];
+  l_target_pose[3] = body2l_foot_rpy[0];
+  l_target_pose[4] = body2l_foot_rpy[1];
+  l_target_pose[5] = body2l_foot_rpy[2];
+
+  // Right leg IK
+  if (!kuroko_kinematics_->solveInverseKinematicsForRightLeg(r_leg_joints, r_target_pose))
+  {
+    printf("IK not Solved EPR : %f %f %f %f %f %f\n", r_target_pose[0], r_target_pose[1], r_target_pose[2],
+           r_target_pose[3], r_target_pose[4], r_target_pose[5]);
+    return;
+  }
+  // Left leg IK
+  if (!kuroko_kinematics_->solveInverseKinematicsForLeftLeg(l_leg_joints, l_target_pose))
+  {
+    printf("IK not Solved EPL : %f %f %f %f %f %f\n", l_target_pose[0], l_target_pose[1], l_target_pose[2],
+           l_target_pose[3], l_target_pose[4], l_target_pose[5]);
+    return;
+  }
+
+  std::vector<double> leg_joints(12, 0);
+  for (int i = 0; i < 6; i++)
+  {
+    leg_joints[i] = r_leg_joints[i];
+    leg_joints[i + 6] = l_leg_joints[i];
+  }
+
+  // Save initial pose
+  std::map<std::string, int> joint_name_to_dxl_id;
+  std::map<std::string, robotis_framework::DynamixelState*> result;
+
+  ROS_INFO("[WalkingModule] Initial Pose Export");
+  for (auto& dxl : robot_ptr_->dxls_)
+  {
+    std::string joint_name = dxl.first;
+    robotis_framework::Dynamixel* dxl_info = dxl.second;
+    joint_name_to_dxl_id[joint_name] = dxl_info->id_;
+    result[joint_name] = new robotis_framework::DynamixelState();
+    // If the joint name is in the `joint_table_`, set the initial position from `leg_joints`
+    if (joint_table_.find(joint_name) != joint_table_.end())
+    {
+      result[joint_name]->goal_position_ = leg_joints[joint_table_[joint_name]];
+    }
+    else
+    {
+      result[joint_name]->goal_position_ = dxl_info->dxl_state_->goal_position_;
+    }
+    ROS_INFO("[WalkingModule] %s: %f", joint_name.c_str(), result[joint_name]->goal_position_);
+  }
 }
 
 void WalkingModule::onModuleEnable()

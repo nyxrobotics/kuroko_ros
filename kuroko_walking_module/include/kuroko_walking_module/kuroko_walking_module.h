@@ -115,6 +115,7 @@ private:
   void resetTargetStepConfig();
   void loadWalkingParam(const std::string& path);
   void saveWalkingParam(std::string& path);
+  void exportInitialPose(std::string& path);
   void iniPoseTraGene(double mov_time);
   Eigen::Vector3d quaterionToRpy(const Eigen::Quaterniond& q);
   Eigen::Quaterniond rpyToQuaternion(const Eigen::Vector3d& rpy);
@@ -210,6 +211,7 @@ private:
   double feedback_rpy_max_;
   double init_pose_time_;
   double body_offset_time_;
+  robotis_framework::Robot* robot_ptr_;
 };
 
 }  // namespace motion_control

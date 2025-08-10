@@ -31,7 +31,15 @@ void ActionModule::initialize(const int control_cycle_msec, robotis_framework::R
   ROS_INFO_STREAM("[ActionModule] Found Animations:");
   for (const auto& animation_name : animation_names)
   {
-    ROS_INFO_STREAM(" - " << animation_name);
+    // fet total time for each animation
+    double total_time = 0;
+    const auto& anim = workspace_.getAnimationData(animation_name);
+    std::vector<animation_system::FrameData> frames = getFrameVector(anim);
+    for (const auto& frame : frames)
+    {
+      total_time += frame.move_duration + frame.wait_duration;
+    }
+    ROS_INFO_STREAM(" - " << animation_name << " (Total Time: " << total_time << " seconds)");
   }
 
   // collect joint names
@@ -75,8 +83,9 @@ void ActionModule::initialize(const int control_cycle_msec, robotis_framework::R
     if (joint_name_to_dxl_id_.find(joint_name) == joint_name_to_dxl_id_.end())
     {
       ROS_WARN_STREAM("[ActionModule] Joint '" << joint_name << "' not found in the robot. Removing from the list.");
-      animation_joint_names_.erase(std::remove(animation_joint_names_.begin(), animation_joint_names_.end(), joint_name),
-                                   animation_joint_names_.end());
+      animation_joint_names_.erase(
+          std::remove(animation_joint_names_.begin(), animation_joint_names_.end(), joint_name),
+          animation_joint_names_.end());
     }
   }
   ROS_INFO_STREAM("[ActionModule] Initialization complete");
@@ -245,13 +254,7 @@ void ActionModule::animationNumberCallback(const std_msgs::Int32::ConstPtr& msg)
     return;
   }
 
-  const auto& initial_frame = anim.getInitialFrameData();
-  std::vector<animation_system::FrameData> frames;
-  frames.push_back(initial_frame);
-
-  auto rest_frames = getFrameVector(anim);
-  frames.insert(frames.end(), rest_frames.begin(), rest_frames.end());
-
+  std::vector<animation_system::FrameData> frames = getFrameVector(anim);
   current_trajectory_ = createJointTrajectory(frames, control_cycle_msec_);
   start_playing_requested_ = true;
 
@@ -343,9 +346,8 @@ void ActionModule::torqueOffAll()
   sync_write_pub_.publish(msg);
   ROS_INFO("Torque disabled for all joints");
 }
-trajectory_msgs::JointTrajectory
-ActionModule::createJointTrajectory(const std::vector<animation_system::FrameData>& frames,
-                                    const double control_cycle_msec)
+trajectory_msgs::JointTrajectory ActionModule::createJointTrajectory(
+    const std::vector<animation_system::FrameData>& frames, const double control_cycle_msec)
 {
   trajectory_msgs::JointTrajectory trajectory;
   trajectory.joint_names = animation_joint_names_;

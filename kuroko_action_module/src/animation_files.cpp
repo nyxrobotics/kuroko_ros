@@ -170,7 +170,7 @@ void Workspace::loadWorkspace(const std::string& workspace_path)
         FrameData pose_frame;
         if (pose_root["time"])
         {
-          pose_frame.move_duration = pose_root["time"]["move_duration"].as<double>(2.0);
+          pose_frame.move_duration = pose_root["time"]["move_duration"].as<double>(0.0);
           pose_frame.wait_duration = pose_root["time"]["wait_duration"].as<double>(0.0);
         }
         for (const auto& joint_pair : pose_root["joints"])
@@ -268,7 +268,7 @@ void Workspace::loadWorkspace(const std::string& workspace_path)
           FrameData init_frame;
           if (frame_root["time"])
           {
-            init_frame.move_duration = frame_root["time"]["move_duration"].as<double>(2.0);
+            init_frame.move_duration = frame_root["time"]["move_duration"].as<double>(0.0);
             init_frame.wait_duration = frame_root["time"]["wait_duration"].as<double>(0.0);
           }
           for (const auto& joint_pair : frame_root["joints"])
@@ -306,14 +306,14 @@ void Workspace::loadWorkspace(const std::string& workspace_path)
           if (block.type == "frame")
           {
             std::string frame_path = (fs::path(frames_dir) / (fname + ".yaml")).string();
-            std::cout << "[Workspace][DEBUG] Looking for frame file: " << frame_path << std::endl;
+            // std::cout << "[Workspace][DEBUG] Looking for frame file: " << frame_path << std::endl;
             if (fs::exists(frame_path))
             {
               YAML::Node node = YAML::LoadFile(frame_path);
               FrameData frame;
               if (node["time"])
               {
-                frame.move_duration = node["time"]["move_duration"].as<double>(1.0);
+                frame.move_duration = node["time"]["move_duration"].as<double>(0.0);
                 frame.wait_duration = node["time"]["wait_duration"].as<double>(0.0);
               }
               if (node["joints"])

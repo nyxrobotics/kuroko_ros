@@ -1038,8 +1038,8 @@ void WalkingModule::processPhase(const double& time_unit)
 
 bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
 {
-  Eigen::Vector3d body_pos, r_foot_pos, l_foot_pos;
-  Eigen::Vector3d body_rpy, r_foot_rpy, l_foot_rpy;
+  Eigen::Vector3d body_pos(0, 0, 0), r_foot_pos(0, 0, 0), l_foot_pos(0, 0, 0);
+  Eigen::Vector3d body_rpy(0, 0, 0), r_foot_rpy(0, 0, 0), l_foot_rpy(0, 0, 0);
   double r_hip_roll_swing = 0, l_hip_roll_swing = 0;
   std::vector<double> r_target_pose(6, 0);
   std::vector<double> l_target_pose(6, 0);

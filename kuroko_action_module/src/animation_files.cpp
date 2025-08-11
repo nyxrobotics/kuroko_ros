@@ -189,7 +189,8 @@ void Workspace::loadWorkspace(const std::string& workspace_path)
           pose_frame.joints[joint_name] = joint;
         }
         initial_pose_data = pose_frame;
-        std::cout << "[Workspace] Loaded initial_pose.yaml\n";
+        if (debug_messages_)
+          std::cout << "[Wor kspace] Loaded initial_pose.yaml\n";
       }
     }
     catch (const std::exception& e)
@@ -254,8 +255,11 @@ void Workspace::loadWorkspace(const std::string& workspace_path)
           }
 
           anim.setAnimationBlock(block.id, block);
-          std::cout << "[Workspace]   Block Loaded: name='" << block_name << "', id=" << block.id
-                    << ", type=" << block.type << ", filename=" << block.filename << "\n";
+          if (debug_messages_)
+          {
+            std::cout << "[Workspace]   Block Loaded: name='" << block_name << "', id=" << block.id
+                      << ", type=" << block.type << ", filename=" << block.filename << "\n";
+          }
         }
       }
 
@@ -287,7 +291,8 @@ void Workspace::loadWorkspace(const std::string& workspace_path)
             init_frame.joints[joint_name] = joint;
           }
           anim.setInitialFrameData(init_frame);
-          std::cout << "[Workspace] Loaded initial_frame.yaml for animation: " << anim_name << "\n";
+          if (debug_messages_)
+            std::cout << "[Workspace] Loaded initial_frame.yaml for animation: " << anim_name << "\n";
         }
       }
 
@@ -335,7 +340,8 @@ void Workspace::loadWorkspace(const std::string& workspace_path)
                 }
               }
               anim.setFrameData(fname, frame);
-              std::cout << "[Workspace]   Loaded frame file: " << fname << "\n";
+              if (debug_messages_)
+                std::cout << "[Workspace]   Loaded frame file: " << fname << "\n";
             }
             else
             {
@@ -352,7 +358,8 @@ void Workspace::loadWorkspace(const std::string& workspace_path)
               ifdata.expression = node["expression"].as<std::string>("");
               ifdata.condition = node["condition"].as<std::string>("");
               anim.setIfData(fname, ifdata);
-              std::cout << "[Workspace]   Loaded if-condition file: " << fname << "\n";
+              if (debug_messages_)
+                std::cout << "[Workspace]   Loaded if-condition file: " << fname << "\n";
             }
           }
           else if (block.type == "switch")
@@ -380,7 +387,8 @@ void Workspace::loadWorkspace(const std::string& workspace_path)
                 }
               }
               anim.setSwitchData(fname, sdata);
-              std::cout << "[Workspace]   Loaded switch-condition file: " << fname << "\n";
+              if (debug_messages_)
+                std::cout << "[Workspace]   Loaded switch-condition file: " << fname << "\n";
             }
           }
         }

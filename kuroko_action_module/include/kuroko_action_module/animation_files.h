@@ -91,6 +91,9 @@ public:
   const AnimationData& getAnimationData(const std::string& name) const;
   FrameData getInitialPoseData();
   void setInitialPoseData(const FrameData& frame_data);
+
+private:
+  bool debug_messages_ = false;
 };
 
 }  // namespace animation_system

@@ -48,6 +48,7 @@ public:
   void onModuleDisable() override;
 
 private:
+  bool debug_messages_ = false;
   std::string current_animation_name_;
   int current_block_id_;
   double time_in_frame_ = 0.0;

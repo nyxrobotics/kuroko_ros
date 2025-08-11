@@ -50,10 +50,13 @@ void ActionModule::initialize(const int control_cycle_msec, robotis_framework::R
     animation_joint_names_.push_back(joint_pair.first);
   }
   std::sort(animation_joint_names_.begin(), animation_joint_names_.end());
-  ROS_INFO_STREAM("[ActionModule] Found Joints:");
-  for (const auto& joint_name : animation_joint_names_)
+  if (debug_messages_)
   {
-    ROS_INFO_STREAM(" - " << joint_name);
+    ROS_INFO_STREAM("[ActionModule] Found Joints:");
+    for (const auto& joint_name : animation_joint_names_)
+    {
+      ROS_INFO_STREAM(" - " << joint_name);
+    }
   }
 
   for (auto& dxl : robot->dxls_)
@@ -68,7 +71,8 @@ void ActionModule::initialize(const int control_cycle_msec, robotis_framework::R
       ROS_WARN_STREAM("[ActionModule] Joint " << joint_name << " not found in the animation joint names. Skipping.");
       continue;
     }
-    ROS_INFO_STREAM("[ActionModule] Loading module for joint: " << joint_name);
+    if (debug_messages_)
+      ROS_INFO_STREAM("[ActionModule] Loading module for joint: " << joint_name);
 
     joint_name_to_dxl_id_[joint_name] = dxl_info->id_;
     dxl_id_to_joint_name_[dxl_info->id_] = joint_name;
@@ -346,6 +350,7 @@ void ActionModule::torqueOffAll()
   sync_write_pub_.publish(msg);
   ROS_INFO("Torque disabled for all joints");
 }
+
 trajectory_msgs::JointTrajectory ActionModule::createJointTrajectory(
     const std::vector<animation_system::FrameData>& frames, const double control_cycle_msec)
 {
@@ -462,8 +467,12 @@ trajectory_msgs::JointTrajectory ActionModule::createJointTrajectory(
     time_from_start += total_frame_duration;
   }
 
-  ROS_INFO("[ActionModule] Trajectory has %lu points", trajectory.points.size());
-  ROS_INFO("[ActionModule] trajectory.joint_names size = %lu", trajectory.joint_names.size());
+  if (debug_messages_)
+  {
+    ROS_INFO("[ActionModule] Trajectory has %lu points", trajectory.points.size());
+    ROS_INFO("[ActionModule] trajectory.joint_names size = %lu", trajectory.joint_names.size());
+  }
+
   for (const auto& name : trajectory.joint_names)
   {
     ROS_INFO("- %s", name.c_str());
@@ -479,14 +488,17 @@ ActionModule::getFrameVector(const animation_system::AnimationData& animation_da
   int current_id = animation_data.getStartBlockId();
   std::set<int> visited_ids;
 
-  ROS_INFO("[ActionModule] Starting frame traversal from block_id %d", current_id);
+  if (debug_messages_)
+    ROS_INFO("[ActionModule] Starting frame traversal from block_id %d", current_id);
 
   while (animation_data.blocks.count(current_id))
   {
-    ROS_INFO("[ActionModule] Processing block_id %d", current_id);
+    if (debug_messages_)
+      ROS_INFO("[ActionModule] Processing block_id %d", current_id);
     if (visited_ids.count(current_id))
     {
-      ROS_WARN("[ActionModule] Detected loop at block_id %d, stopping traversal.", current_id);
+      if (debug_messages_)
+        ROS_WARN("[ActionModule] Detected loop at block_id %d, stopping traversal.", current_id);
       break;
     }
 

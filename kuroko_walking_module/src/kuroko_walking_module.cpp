@@ -471,7 +471,8 @@ void WalkingModule::synchronizeStepParam()
         (time_to_change / (control_cycle_msec_ / 1000.0));
     if (fabs(target_walking_param_.roll_swing_phase - synchronized_walking_param_.roll_swing_phase) <
             fabs(roll_swing_phase_step) ||
-        (target_walking_param_.roll_swing_phase - synchronized_walking_param_.roll_swing_phase) * roll_swing_phase_step <
+        (target_walking_param_.roll_swing_phase - synchronized_walking_param_.roll_swing_phase) *
+                roll_swing_phase_step <
             0)
     {
       synchronized_walking_param_.roll_swing_phase = target_walking_param_.roll_swing_phase;
@@ -548,13 +549,16 @@ void WalkingModule::synchronizeStepParam()
     }
     // Log the synchronized parameters
     // ROS_INFO("Sync step x: %f, config: %f, target: %f, previous: %f, step: %f", synchronized_walking_param_.x_step,
-    //          config_walking_param_.x_step, target_walking_param_.x_step, previouos_walking_param_.x_step, x_step_step);
+    //          config_walking_param_.x_step, target_walking_param_.x_step, previouos_walking_param_.x_step,
+    //          x_step_step);
     // ROS_INFO("Sync step y: %f, config: %f, target: %f, previous: %f, step: %f", synchronized_walking_param_.y_step,
-    //          config_walking_param_.y_step, target_walking_param_.y_step, previouos_walking_param_.y_step, y_step_step);
+    //          config_walking_param_.y_step, target_walking_param_.y_step, previouos_walking_param_.y_step,
+    //          y_step_step);
     // ROS_INFO("Sync foot_height: %f, config: %f, target: %f, previous: %f, step: %f",
     //          synchronized_walking_param_.foot_height, config_walking_param_.foot_height,
     //          target_walking_param_.foot_height, previouos_walking_param_.foot_height, foot_height_step);
-    // ROS_INFO("Sync yaw step: %f, config: %f, target: %f, previous: %f, step: %f", synchronized_walking_param_.yaw_step,
+    // ROS_INFO("Sync yaw step: %f, config: %f, target: %f, previous: %f, step: %f",
+    // synchronized_walking_param_.yaw_step,
     //          config_walking_param_.yaw_step, target_walking_param_.yaw_step, previouos_walking_param_.yaw_step,
     //          yaw_step_step);
     // ROS_INFO("Sync y_swing_amplitude: %f, config: %f, target: %f, previous: %f, step: %f",
@@ -571,7 +575,8 @@ void WalkingModule::synchronizeStepParam()
     //          roll_swing_amplitude_step);
     // ROS_INFO("Sync roll_swing_phase: %f, config: %f, target: %f, previous: %f, step: %f",
     //          synchronized_walking_param_.roll_swing_phase, config_walking_param_.roll_swing_phase,
-    //          target_walking_param_.roll_swing_phase, previouos_walking_param_.roll_swing_phase, roll_swing_phase_step);
+    //          target_walking_param_.roll_swing_phase, previouos_walking_param_.roll_swing_phase,
+    //          roll_swing_phase_step);
     // ROS_INFO("Sync hip_swing_up_amplitude: %f, config: %f, target: %f, previous: %f, step: %f",
     //          synchronized_walking_param_.hip_swing_up_amplitude, config_walking_param_.hip_swing_up_amplitude,
     //          target_walking_param_.hip_swing_up_amplitude, previouos_walking_param_.hip_swing_up_amplitude,
@@ -661,6 +666,7 @@ void WalkingModule::synchronizePoseParam()
     {
       synchronized_walking_param_.init_x_offset += x_offset_step;
     }
+
     if (fabs(target_walking_param_.init_y_offset - synchronized_walking_param_.init_y_offset) < fabs(y_offset_step) ||
         (target_walking_param_.init_y_offset - synchronized_walking_param_.init_y_offset) * y_offset_step < 0)
     {
@@ -671,6 +677,7 @@ void WalkingModule::synchronizePoseParam()
     {
       synchronized_walking_param_.init_y_offset += y_offset_step;
     }
+
     if (fabs(target_walking_param_.init_z_offset - synchronized_walking_param_.init_z_offset) < fabs(z_offset_step) ||
         (target_walking_param_.init_z_offset - synchronized_walking_param_.init_z_offset) * z_offset_step < 0)
     {
@@ -681,6 +688,7 @@ void WalkingModule::synchronizePoseParam()
     {
       synchronized_walking_param_.init_z_offset += z_offset_step;
     }
+
     if (fabs(target_walking_param_.init_roll_offset - synchronized_walking_param_.init_roll_offset) <
             fabs(roll_offset_step) ||
         (target_walking_param_.init_roll_offset - synchronized_walking_param_.init_roll_offset) * roll_offset_step < 0)
@@ -692,6 +700,7 @@ void WalkingModule::synchronizePoseParam()
     {
       synchronized_walking_param_.init_roll_offset += roll_offset_step;
     }
+
     if (fabs(target_walking_param_.init_pitch_offset - synchronized_walking_param_.init_pitch_offset) <
             fabs(pitch_offset_step) ||
         (target_walking_param_.init_pitch_offset - synchronized_walking_param_.init_pitch_offset) * pitch_offset_step <
@@ -704,6 +713,7 @@ void WalkingModule::synchronizePoseParam()
     {
       synchronized_walking_param_.init_pitch_offset += pitch_offset_step;
     }
+
     if (fabs(target_walking_param_.init_yaw_offset - synchronized_walking_param_.init_yaw_offset) <
             fabs(yaw_offset_step) ||
         (target_walking_param_.init_yaw_offset - synchronized_walking_param_.init_yaw_offset) * yaw_offset_step < 0)
@@ -715,6 +725,7 @@ void WalkingModule::synchronizePoseParam()
     {
       synchronized_walking_param_.init_yaw_offset += yaw_offset_step;
     }
+
     if (fabs(target_walking_param_.init_hip_pitch_offset - synchronized_walking_param_.init_hip_pitch_offset) <
             fabs(hip_pitch_offset_step) ||
         (target_walking_param_.init_hip_pitch_offset - synchronized_walking_param_.init_hip_pitch_offset) *
@@ -801,7 +812,7 @@ void WalkingModule::resetTargetStepConfig()
   target_walking_param_.hip_swing_down_amplitude = 0;
   target_walking_param_.chest_swing_amplitude = 0;
   target_walking_param_.shoulder_swing_amplitude = 0;
-  target_walking_param_.init_roll_offset = 0;
+  // target_walking_param_.init_roll_offset = 0;
   double ssp_ratio = (1.0 - config_walking_param_.dsp_ratio) * 0.25;
   target_walking_param_.dsp_ratio = 1.0 - ssp_ratio;
 }
@@ -972,7 +983,8 @@ void WalkingModule::processPhase(const double& time_unit)
   synchronizeTimeParam();
   applyTimeParam();
 
-  if ((time_ > l_ssp_start_time_ && time_ <= l_ssp_end_time_) || (time_ > r_ssp_start_time_ && time_ <= r_ssp_end_time_))
+  if ((time_ > l_ssp_start_time_ && time_ <= l_ssp_end_time_) ||
+      (time_ > r_ssp_start_time_ && time_ <= r_ssp_end_time_))
   {
     // Update the robot's stride length only when one foot is off the ground
     double y_step_before = synchronized_walking_param_.y_step;

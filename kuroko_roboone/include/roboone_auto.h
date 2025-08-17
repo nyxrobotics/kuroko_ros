@@ -98,10 +98,6 @@ private:
   double y_step_max_, yaw_step_max_;
   std::string walk_status_;
   // Manage balance interruption
-  std::string action_name_;
-  ros::Time action_start_time_;
-  ros::Time action_duration_;
-  // Manage balance interruption
   kuroko_walking_module_msgs::WalkingParam walk_param_;
   kuroko_walking_module_msgs::WalkingParam hold_param_;
   kuroko_walking_module_msgs::WalkingParam jump_param_;
@@ -109,6 +105,17 @@ private:
   double hold_angle_threshold_;    // ホールド状態の角度閾値
   double jump_angle_threshold_;    // ジャンピングホールド状態の角度閾値
   double fall_angle_threshold_;    // 転倒判定の角度閾値
+  double stable_duration_;         // 安定状態に復帰するための必要時間
+  double hold_duration_;           // ホールド状態の最低持続時間
+  double jump_duration_;           // ジャンプ状態の最低持続時間
+  double fall_duration_;           // 転倒判定の待機時間
+  // Manage balance interruption
+  std::string action_name_;
+  ros::Time action_start_time_;
+  ros::Time action_duration_;
+  ros::Time hold_time_;
+  ros::Time jump_time_;
+  double min_walk_duration_;
 };
 
 #endif  // ROBOONE_AUTO_H_

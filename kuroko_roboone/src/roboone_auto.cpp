@@ -103,9 +103,15 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   jump_param_.balance_euler_roll_gain = 0.0;
   jump_param_.balance_euler_pitch_gain = 0.1;
 
-  fall_angle_threshold_ = 0.26;
-  hold_angle_threshold_ = 0.16;
   stable_angle_threshold_ = 0.08;
+  hold_angle_threshold_ = 0.16;
+  jump_angle_threshold_ = 0.32;
+  fall_angle_threshold_ = 0.64;
+
+  stable_duration_ = 0.3;
+  hold_duration_ = 1.0;
+  jump_duration_ = 0.2;
+  fall_duration_ = 2.0;
 
   x_forward_step_max_ = 0.03;
   x_backward_step_max_ = -0.03;
@@ -320,9 +326,7 @@ void RobooneAuto::manageState()
     {
       ROS_INFO("Stable angle restored. Transitioning to PAUSE_WALKING.");
       setWalkSteps(0, 0, 0);
-      ros::Duration(0.1).sleep();
       abortWalking();
-      ros::Duration(0.1).sleep();
       transitionToPauseWalkingState();
     }
     else if (over_fall_angle)
@@ -337,9 +341,7 @@ void RobooneAuto::manageState()
     {
       ROS_INFO("Stable angle restored. Transitioning to PAUSE_WALKING.");
       setWalkSteps(0, 0, 0);
-      ros::Duration(0.1).sleep();
       abortWalking();
-      ros::Duration(0.1).sleep();
       transitionToPauseWalkingState();
       fall_detected_time_ = ros::Time::now() + ros::Duration(1.0);
     }
@@ -351,9 +353,7 @@ void RobooneAuto::manageState()
     {
       ROS_INFO("Handling FALL state.");
       setWalkSteps(0, 0, 0);
-      ros::Duration(0.1).sleep();
       abortWalking();
-      ros::Duration(0.2).sleep();
       handleFall();
       transitionToPauseWalkingState();
     }
@@ -367,7 +367,6 @@ void RobooneAuto::transitionToInitPose()
     return;
   current_state_ = "INITIAL_POSE";
   enableAllJoints();
-  ros::Duration(0.1).sleep();
   ROS_INFO("Transitioning to INITIAL_POSE state.");
   setCtrlModule("initial_pose_module");
   setCtrlModule("action_module");
@@ -382,7 +381,6 @@ void RobooneAuto::transitionToAutoMoveState()
   current_state_ = "WALKING";
   ROS_INFO("Transitioning to WALKING state.");
   startWalking();
-  ros::Duration(0.1).sleep();
 }
 
 // 歩行一時停止状態への遷移
@@ -393,9 +391,7 @@ void RobooneAuto::transitionToPauseWalkingState()
   current_state_ = "PAUSE_WALKING";
   ROS_INFO("Transitioning to PAUSE_WALKING state due to excessive tilt.");
   setWalkSteps(0, 0, 0);
-  ros::Duration(0.1).sleep();
-  stopWalking();  // 歩行を停止
-  ros::Duration(0.1).sleep();
+  stopWalking();
 }
 
 // こらえ状態への遷移
@@ -404,9 +400,7 @@ void RobooneAuto::transitionToHoldState()
   if (ros::Time::now() - action_start_time_ < ros::Duration(5.0))
   {
     setWalkSteps(0, 0, 0);
-    ros::Duration(0.1).sleep();
-    abortWalking();  // 歩行を停止
-    ros::Duration(0.1).sleep();
+    abortWalking();
     current_state_ = "PAUSE_WALKING";
     return;
   }
@@ -415,9 +409,7 @@ void RobooneAuto::transitionToHoldState()
   current_state_ = "HOLD";
   ROS_INFO("Transitioning to HOLD state.");
   setHoldSteps(0, 0, 0);
-  ros::Duration(0.1).sleep();
   abortWalking();
-  ros::Duration(0.1).sleep();
   attacked_time_ = ros::Time::now();      // しゃがんだ後は歩行が必須
   action_start_time_ = ros::Time::now();  // しゃがんだ後は歩行が必須
 }

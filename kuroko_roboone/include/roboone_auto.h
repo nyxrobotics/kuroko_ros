@@ -32,7 +32,8 @@ public:
   void abortWalking();
   void setWalkSteps(double x_step, double y_step, double yaw_step);
   void setHoldSteps(double x_step, double y_step, double yaw_step);
-  void executeAction(int action_id);
+  void setJumpSteps(double x_step, double y_step, double yaw_step);
+  void executeAction(std::string action_name);
   void manageState();  // 状態管理関数
   bool setCtrlModule(const std::string& module_name);
   void freeAllJoints();
@@ -89,7 +90,6 @@ private:
   ros::Time last_rects_time_, last_imu_time_, last_joy_time_, fall_detected_time_, robot_detected_time_, attacked_time_;
   char last_target_detected_direction_;
   jsk_recognition_msgs::Rect robot_detected_rect_;
-  int last_attack_id_;
 
   // Manage Attrack
   double atk_rects_size_;
@@ -110,12 +110,16 @@ private:
   double jump_duration_;           // ジャンプ状態の最低持続時間
   double fall_duration_;           // 転倒判定の待機時間
   // Manage balance interruption
+  std::map<std::string, int> action_id_map_;
+  std::map<std::string, double> action_duration_map_;
+  std::string last_attack_name_;
   std::string action_name_;
   ros::Time action_start_time_;
-  ros::Time action_duration_;
+  double action_duration_;
   ros::Time hold_time_;
   ros::Time jump_time_;
   double min_walk_duration_;
+  double walk_stop_duration_;
 };
 
 #endif  // ROBOONE_AUTO_H_

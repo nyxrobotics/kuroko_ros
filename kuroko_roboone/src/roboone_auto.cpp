@@ -31,7 +31,7 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   fall_detected_time_ = ros::Time(0);
   attacked_time_ = ros::Time(0);
   last_target_detected_direction_ = 1;
-  last_attack_id_ = 0;
+  last_attack_name_ = "";
   // Set walking params
   walk_param_.init_x_offset = 0.018;
   walk_param_.init_y_offset = 0.06;
@@ -112,6 +112,7 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   hold_duration_ = 1.0;
   jump_duration_ = 0.2;
   fall_duration_ = 2.0;
+  walk_stop_duration_ = walk_param_.period_time * 2.0;
 
   x_forward_step_max_ = 0.03;
   x_backward_step_max_ = -0.03;
@@ -121,6 +122,37 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   action_start_time_ = ros::Time(0);
 
   walk_status_ = "stop";
+
+  action_id_map_["crouch_down"] = 0;
+  action_id_map_["crouch_up"] = 1;
+  action_id_map_["getup_front"] = 2;
+  action_id_map_["getup_rear"] = 3;
+  action_id_map_["l_grip_front"] = 4;
+  action_id_map_["l_hook_front"] = 5;
+  action_id_map_["l_punch_high"] = 6;
+  action_id_map_["l_punch_low"] = 7;
+  action_id_map_["r_grip_front"] = 8;
+  action_id_map_["r_hook_front"] = 9;
+  action_id_map_["r_punch_high"] = 10;
+  action_id_map_["r_punch_low"] = 11;
+  action_id_map_["disable"] = -2;
+  action_id_map_["enable"] = -1;
+
+  action_duration_map_["crouch_down"] = 0.1;
+  action_duration_map_["crouch_up"] = 0.3;
+  action_duration_map_["getup_front"] = 3.1;
+  action_duration_map_["getup_rear"] = 5.1;
+  action_duration_map_["l_grip_front"] = 2.69;
+  action_duration_map_["l_hook_front"] = 1.4;
+  action_duration_map_["l_punch_high"] = 1.81;
+  action_duration_map_["l_punch_low"] = 1.68;
+  action_duration_map_["r_grip_front"] = 2.69;
+  action_duration_map_["r_hook_front"] = 1.4;
+  action_duration_map_["r_punch_high"] = 1.81;
+  action_duration_map_["r_punch_low"] = 1.68;
+  action_duration_map_["disable"] = 0.1;
+  action_duration_map_["enable"] = 0.1;
+
   ROS_INFO("RobooneAuto initialized.");
 }
 
@@ -236,13 +268,66 @@ void RobooneAuto::setHoldSteps(double x_step, double y_step, double yaw_step)
   walking_params_pub_.publish(params);
 }
 
-// Execute an action by ID
-void RobooneAuto::executeAction(int action_id)
+void RobooneAuto::setJumpSteps(double x_step, double y_step, double yaw_step)
 {
-  ROS_INFO_STREAM("Executing action with ID: " << action_id);
+  kuroko_walking_module_msgs::WalkingParam params = jump_param_;
+  double x_scale = fabs(x_step / ((x_step > 0) ? (x_forward_step_max_) : (x_backward_step_max_)));
+  double y_scale = fabs(y_step / y_step_max_);
+  double yaw_scale = fabs(yaw_step / yaw_step_max_);
+  double normalization_factor = sqrt(x_scale * x_scale + y_scale * y_scale + yaw_scale * yaw_scale);
+
+  if (normalization_factor > 1.0)
+  {
+    x_step /= normalization_factor;
+    y_step /= normalization_factor;
+    yaw_step /= normalization_factor;
+  }
+
+  // Move amplitudes set dynamically
+  params.x_step = x_step;
+  params.y_step = y_step;
+  params.yaw_step = yaw_step;
+
+  // Publish the walking parameters
+  walking_params_pub_.publish(params);
+}
+
+// Execute an action by name
+void RobooneAuto::executeAction(std::string action_name)
+{
+  int action_id = 0;
+  double action_duration = 0;
+
+  auto it_id = action_id_map_.find(action_name);
+  if (it_id != action_id_map_.end())
+  {
+    action_id = it_id->second;
+  }
+  else
+  {
+    ROS_ERROR_STREAM("Action name '" << action_name << "' not found in action ID map.");
+    action_name_ = "";
+    return;
+  }
+
+  auto it_duration = action_duration_map_.find(action_name);
+  if (it_duration != action_duration_map_.end())
+  {
+    action_duration_ = it_duration->second;
+  }
+  else
+  {
+    ROS_ERROR_STREAM("Action name '" << action_name << "' not found in action duration map.");
+    action_name_ = "";
+    return;
+  }
+  ROS_INFO_STREAM("Executing action: " << action_name << " with ID: " << action_id);
   std_msgs::Int32 msg;
   msg.data = action_id;
   action_page_pub_.publish(msg);
+  action_name_ = action_name;
+  action_start_time_ = ros::Time::now();
+  action_duration_ = action_duration;
 }
 
 // 状態管理スレッド
@@ -441,15 +526,14 @@ void RobooneAuto::handleFall()
   setWalkSteps(0, 0, 0);
   abortWalking();
   setCtrlModule("action_module");
-  ros::Duration(0.1).sleep();
   if (imu_rpy[1] > 0)
   {
-    executeAction(2);  // 前起き上がりモーション
+    executeAction("getup_front");  // 前起き上がりモーション
     ros::Duration(4.0).sleep();
   }
   else
   {
-    executeAction(3);  // 後起き上がりモーション
+    executeAction("getup_rear");  // 後起き上がりモーション
     ros::Duration(6.0).sleep();
   }
   // モーション再生完了後、一時停止状態に遷移、1秒待機
@@ -553,59 +637,59 @@ void RobooneAuto::handleAttack()
     {
       ROS_INFO("Attack triggered! Rect area is larger than threshold and detected within 5 seconds.");
       // 歩行を停止し攻撃を開始
-      stopWalking();
-      int action_id = 4;
+      stopWalking();  // TODO: 歩行を停止する必要があるか確認
+      std::string action_name = "l_grip_front";
       if (x_offset > 0)
       {
         ROS_INFO("Target is on the right side, executing action based on vertical position.");
         if (robot_detected_rect_.width * 1.2 < robot_detected_rect_.height)
-          action_id = 9;  // r_hook_front
+          action_name = "r_hook_front";
         else if (robot_detected_rect_.y < last_camera_info_.height * 0.4)
-          action_id = 8;  // r_grip_front
+          action_name = "r_grip_front";
         else if (robot_detected_rect_.y < last_camera_info_.height * 0.6)
-          action_id = 11;  // r_punch_low
+          action_name = "r_punch_low";
         else
-          action_id = 10;  // r_punch_high
+          action_name = "r_punch_high";
       }
       else
       {
         ROS_INFO("Target is on the left side, executing action based on vertical position.");
         if (robot_detected_rect_.width * 1.2 < robot_detected_rect_.height)
-          action_id = 5;  // l_hook_front
+          action_name = "l_hook_front";
         else if (robot_detected_rect_.y < last_camera_info_.height * 0.4)
-          action_id = 4;  // l_grip_front
+          action_name = "l_grip_front";
         else if (robot_detected_rect_.y < last_camera_info_.height * 0.6)
-          action_id = 7;  // l_punch_low
+          action_name = "l_punch_low";
         else
-          action_id = 6;  // l_punch_high
+          action_name = "l_punch_high";
       }
 
-      if (last_attack_id_ == action_id)
+      if (last_attack_name_ == action_name)
       {
-        if (action_id == 8)
-          action_id = 11;
-        else if (action_id == 11)
-          action_id = 9;
-        else if (action_id == 9)
-          action_id = 10;
-        else if (action_id == 10)
-          action_id = 8;
+        if (action_name == "r_grip_front")
+          action_name = "r_punch_low";
+        else if (action_name == "r_punch_low")
+          action_name = "r_hook_front";
+        else if (action_name == "r_hook_front")
+          action_name = "r_punch_high";
+        else if (action_name == "r_punch_high")
+          action_name = "r_grip_front";
 
-        else if (action_id == 4)
-          action_id = 7;
-        else if (action_id == 7)
-          action_id = 5;
-        else if (action_id == 5)
-          action_id = 6;
-        else if (action_id == 6)
-          action_id = 4;
+        else if (action_name == "l_grip_front")
+          action_name = "l_punch_low";
+        else if (action_name == "l_punch_low")
+          action_name = "l_hook_front";
+        else if (action_name == "l_hook_front")
+          action_name = "l_punch_high";
+        else if (action_name == "l_punch_high")
+          action_name = "l_grip_front";
       }
-      last_attack_id_ = action_id;
+      last_attack_name_ = action_name;
       // 攻撃実行時刻を記録
       attacked_time_ = ros::Time::now();
       setCtrlModule("action_module");
       ros::Duration(0.1).sleep();
-      executeAction(action_id);
+      executeAction(action_name);
       ros::Duration(0.1).sleep();
       setCtrlModule("walking_module");
       ros::Duration(0.1).sleep();
@@ -681,7 +765,7 @@ void RobooneAuto::freeAllJoints()
 {
   setCtrlModule("action_module");  // Load the action module
   ROS_INFO("Executing action -2 to free all joints.");
-  executeAction(-2);  // Play motion ID -2 to free the joints
+  executeAction("disable");  // Play motion ID -2 to free the joints
 }
 
 // Enable all joints by loading action module and playing motion ID -1
@@ -689,7 +773,7 @@ void RobooneAuto::enableAllJoints()
 {
   setCtrlModule("action_module");  // Load the action module
   ROS_INFO("Executing action -1 to enable all joints.");
-  executeAction(-1);  // Play motion ID -1 to enable the joints
+  executeAction("enable");  // Play motion ID -1 to enable the joints
 }
 
 // Utility function to convert quaternion to pitch (radians)

@@ -1,6 +1,8 @@
 #include "roboone_auto.h"
 #include <eigen3/Eigen/src/Core/Matrix.h>
 #include <sensor_msgs/CameraInfo.h>
+#include "ros/console.h"
+#include "ros/duration.h"
 
 // コンストラクタ
 RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
@@ -23,7 +25,6 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
 
   current_state_ = "IDLE";
   running_ = true;
-  state_thread_ = std::thread(&RobooneAuto::stateThread, this);
   // Initialize last_joy_ with default size
   last_joy_.axes.resize(2);
   last_joy_.buttons.resize(10);
@@ -122,6 +123,7 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   action_start_time_ = ros::Time(0);
 
   walk_status_ = "stop";
+  current_module_ = "";
 
   action_id_map_["crouch_down"] = 0;
   action_id_map_["crouch_up"] = 1;
@@ -140,7 +142,7 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
 
   action_duration_map_["crouch_down"] = 0.1;
   action_duration_map_["crouch_up"] = 0.3;
-  action_duration_map_["getup_front"] = 3.1;
+  action_duration_map_["getup_front"] = 2.9 + 1.0;
   action_duration_map_["getup_rear"] = 5.1;
   action_duration_map_["l_grip_front"] = 2.69;
   action_duration_map_["l_hook_front"] = 1.4;
@@ -153,6 +155,7 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   action_duration_map_["disable"] = 0.1;
   action_duration_map_["enable"] = 0.1;
 
+  state_thread_ = std::thread(&RobooneAuto::stateThread, this);
   ROS_INFO("RobooneAuto initialized.");
 }
 
@@ -171,14 +174,23 @@ bool RobooneAuto::setCtrlModule(const std::string& module_name)
   robotis_controller_msgs::SetModule srv;
   srv.request.module_name = module_name;
 
+  if (current_module_ == module_name)
+  {
+    // ROS_INFO("Control module is already set to %s", module_name.c_str());
+    return true;
+  }
+
   if (client_.call(srv))
   {
     ROS_INFO("Successfully set control module to %s", module_name.c_str());
+    current_module_ = module_name;
+    ros::Duration(0.1).sleep();  // Wait for module to stabilize
     return true;
   }
   else
   {
     ROS_ERROR("Failed to call service to set control module to %s", module_name.c_str());
+    current_module_ = "";
     return false;
   }
 }
@@ -192,6 +204,7 @@ void RobooneAuto::startWalking()
   ROS_INFO("Starting Walking...");
   std_msgs::String msg;
   msg.data = "start";
+  setCtrlModule("walking_module");
   walking_command_pub_.publish(msg);
 }
 
@@ -200,17 +213,22 @@ void RobooneAuto::stopWalking()
 {
   if (walk_status_ == "stop" || walk_status_ == "abort")
     return;
+  if (current_module_ != "walking_module")
+    return;
   walk_status_ = "stop";
   ROS_INFO("Stopping Walking...");
   std_msgs::String msg;
   msg.data = "stop";
   walking_command_pub_.publish(msg);
+  ros::Duration(walk_stop_duration_).sleep();
 }
 
 // Abort walking
 void RobooneAuto::abortWalking()
 {
   if (walk_status_ == "abort")
+    return;
+  if (current_module_ != "walking_module")
     return;
   walk_status_ = "abort";
   ROS_INFO("Aborting Walking...");
@@ -313,7 +331,7 @@ void RobooneAuto::executeAction(std::string action_name)
   auto it_duration = action_duration_map_.find(action_name);
   if (it_duration != action_duration_map_.end())
   {
-    action_duration_ = it_duration->second;
+    action_duration = it_duration->second;
   }
   else
   {
@@ -321,9 +339,11 @@ void RobooneAuto::executeAction(std::string action_name)
     action_name_ = "";
     return;
   }
-  ROS_INFO_STREAM("Executing action: " << action_name << " with ID: " << action_id);
+  ROS_INFO_STREAM("Executing action: " << action_name << " with ID: " << action_id
+                                       << " for duration: " << action_duration);
   std_msgs::Int32 msg;
   msg.data = action_id;
+
   action_page_pub_.publish(msg);
   action_name_ = action_name;
   action_start_time_ = ros::Time::now();
@@ -333,18 +353,16 @@ void RobooneAuto::executeAction(std::string action_name)
 // 状態管理スレッド
 void RobooneAuto::stateThread()
 {
-  ros::Rate rate(10);
-  while (running_)
+  while (running_ && ros::ok())
   {
+    ROS_INFO_THROTTLE(1.0, "RobooneAuto state management thread running...");
     manageState();
-    rate.sleep();
   }
 }
 
 // 状態管理処理
 void RobooneAuto::manageState()
 {
-  std::lock_guard<std::mutex> lock(state_mutex_);
   Eigen::Quaterniond imy_orientation(last_imu_.orientation.w, last_imu_.orientation.x, last_imu_.orientation.y,
                                      last_imu_.orientation.z);
   Eigen::Vector3d imu_rpy = imuQuaternionToRollPitchYaw(imy_orientation);
@@ -355,29 +373,58 @@ void RobooneAuto::manageState()
   // ボタン検知
   if (current_state_ == "INITIAL_POSE" && last_joy_.buttons[2])
   {
+    ROS_INFO("Transitioning to WALKING state from INITIAL_POSE.");
+    action_name_ = "";
+    setCtrlModule("walking_module");
     transitionToAutoMoveState();
   }
   else if (current_state_ != "IDLE" && last_joy_.buttons[1])
   {
+    ROS_INFO("Transitioning to IDLE state from current state: %s", current_state_.c_str());
+    action_name_ = "";
     transitionToIdleState();
   }
   else if (current_state_ != "INITIAL_POSE" && last_joy_.buttons[0])
   {
+    ROS_INFO("Transitioning to INITIAL_POSE state from current state: %s", current_state_.c_str());
+    action_name_ = "";
     transitionToInitPose();
   }
 
-  // 転倒検知
-  bool is_atk = (ros::Time::now() - attacked_time_).toSec() < 0.4;
-  if (!is_atk && current_state_ != "IDLE" && current_state_ != "INITIAL_POSE")
+  // Sleep
+  if (current_state_ == "IDLE" || current_state_ == "INITIAL_POSE")
   {
-    if (over_fall_angle)
+    ros::Duration(0.1).sleep();
+    return;
+  }
+  if (action_name_ != "")
+  {
+    if ((ros::Time::now() - action_start_time_).toSec() > action_duration_)
     {
-      transitionToFallState();
+      ROS_INFO_STREAM("Action " << action_name_ << " completed"
+                                << " after " << action_duration_ << " seconds.");
+      action_start_time_ = ros::Time::now();
+      action_name_ = "";
     }
-    else if (over_hold_angle)
+    else
     {
-      transitionToHoldState();
+      double remaining_time = action_duration_ - (ros::Time::now() - action_start_time_).toSec();
+      if (remaining_time < 0.1)
+        ros::Duration(remaining_time).sleep();
+      else
+        ros::Duration(0.1).sleep();
+      return;  // Action is still ongoing, skip state management
     }
+  }
+
+  // 転倒検知
+  if (over_fall_angle)
+  {
+    transitionToFallState();
+  }
+  else if (over_hold_angle)
+  {
+    transitionToHoldState();
   }
 
   // 状態遷移
@@ -482,13 +529,6 @@ void RobooneAuto::transitionToPauseWalkingState()
 // こらえ状態への遷移
 void RobooneAuto::transitionToHoldState()
 {
-  if (ros::Time::now() - action_start_time_ < ros::Duration(5.0))
-  {
-    setWalkSteps(0, 0, 0);
-    abortWalking();
-    current_state_ = "PAUSE_WALKING";
-    return;
-  }
   if (current_state_ == "HOLD")
     return;
   current_state_ = "HOLD";
@@ -508,7 +548,6 @@ void RobooneAuto::transitionToFallState()
   if (current_state_ != "HOLD")
   {
     setHoldSteps(0, 0, 0);
-    ros::Duration(0.1).sleep();
     abortWalking();
   }
   current_state_ = "FALL";
@@ -529,20 +568,15 @@ void RobooneAuto::handleFall()
   if (imu_rpy[1] > 0)
   {
     executeAction("getup_front");  // 前起き上がりモーション
-    ros::Duration(4.0).sleep();
   }
   else
   {
     executeAction("getup_rear");  // 後起き上がりモーション
-    ros::Duration(6.0).sleep();
   }
-  // モーション再生完了後、一時停止状態に遷移、1秒待機
-  setCtrlModule("walking_module");
   current_state_ = "PAUSE_WALKING";
-  fall_detected_time_ = ros::Time::now() + ros::Duration(1.0);
+  fall_detected_time_ = ros::Time::now() + ros::Duration(action_duration_) + ros::Duration(1.0);
   robot_detected_time_ = ros::Time(0);
   last_rects_.rects.clear();
-  action_start_time_ = ros::Time::now();
 }
 
 // 脱力状態への遷移
@@ -636,8 +670,6 @@ void RobooneAuto::handleAttack()
              (ros::Time::now() - attacked_time_).toSec() > 5.0)
     {
       ROS_INFO("Attack triggered! Rect area is larger than threshold and detected within 5 seconds.");
-      // 歩行を停止し攻撃を開始
-      stopWalking();  // TODO: 歩行を停止する必要があるか確認
       std::string action_name = "l_grip_front";
       if (x_offset > 0)
       {
@@ -685,19 +717,17 @@ void RobooneAuto::handleAttack()
           action_name = "l_grip_front";
       }
       last_attack_name_ = action_name;
-      // 攻撃実行時刻を記録
-      attacked_time_ = ros::Time::now();
+      // 歩行を停止し攻撃を開始
+      stopWalking();
       setCtrlModule("action_module");
-      ros::Duration(0.1).sleep();
       executeAction(action_name);
-      ros::Duration(0.1).sleep();
-      setCtrlModule("walking_module");
-      ros::Duration(0.1).sleep();
+      attacked_time_ = ros::Time::now() + ros::Duration(action_duration_);
     }
     else
     {
       ROS_INFO_THROTTLE(1.0, "Target detected but too small(area: %f), delay: %f, rect area: %f", rect_area,
                         (ros::Time::now() - robot_detected_time_).toSec(), atk_rects_size_);
+      setCtrlModule("walking_module");
       if ((ros::Time::now() - attacked_time_).toSec() < 1.0)
       {
         // 攻撃後の1.0秒間は転倒復帰のみ許可
@@ -752,6 +782,7 @@ void RobooneAuto::handleAttack()
   }
   else
   {
+    setCtrlModule("walking_module");
     ROS_WARN_THROTTLE(1.0, "No roboone label found.");
     double yaw_step = last_target_detected_direction_ * fabs(yaw_step_max_);  // 最大15度の旋回
     setWalkSteps(0.0, 0.0, yaw_step);
@@ -879,7 +910,6 @@ void RobooneAuto::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
 {
   // ROS_INFO("Joy data received: axes[0]: %f, axes[1]: %f, buttons[0]: %d, buttons[1]: %d", joy->axes[0], joy->axes[1],
   //          joy->buttons[0], joy->buttons[1]);
-  std::lock_guard<std::mutex> lock(state_mutex_);
   last_joy_ = *joy;
   last_joy_time_ = ros::Time::now();
 }
@@ -889,7 +919,6 @@ void RobooneAuto::imuCallback(const sensor_msgs::Imu::ConstPtr& imu)
 {
   // ROS_INFO("IMU data received: orientation (x: %f, y: %f, z: %f, w: %f)", imu->orientation.x, imu->orientation.y,
   //          imu->orientation.z, imu->orientation.w);
-  std::lock_guard<std::mutex> lock(state_mutex_);
   last_imu_ = *imu;
   last_imu_time_ = ros::Time::now();
 }
@@ -898,7 +927,6 @@ void RobooneAuto::imuCallback(const sensor_msgs::Imu::ConstPtr& imu)
 void RobooneAuto::cameraInfoCallback(const sensor_msgs::CameraInfo::ConstPtr& camera_info)
 {
   // ROS_INFO("Camera info received: height: %d, width: %d", camera_info->height, camera_info->width);
-  std::lock_guard<std::mutex> lock(state_mutex_);
   last_camera_info_ = *camera_info;
 }
 
@@ -909,7 +937,6 @@ void RobooneAuto::yoloCallback(const jsk_recognition_msgs::ClassificationResult:
 {
   // ROS_INFO("YOLO data received: class size: %ld, label size: %ld, rects size: %ld", class_msg->label_names.size(),
   //          label_msg->labels.size(), rect_msg->rects.size());
-  std::lock_guard<std::mutex> lock(state_mutex_);
   last_class_ = *class_msg;
   last_rects_ = *rect_msg;
   last_labels_ = *label_msg;

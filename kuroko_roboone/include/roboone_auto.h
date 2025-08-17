@@ -75,12 +75,11 @@ private:
                                                     jsk_recognition_msgs::LabelArray, jsk_recognition_msgs::RectArray>
       SyncPolicy;
   message_filters::Synchronizer<SyncPolicy> sync_;
-  std::mutex state_mutex_;
   std::thread state_thread_;
   bool running_;
 
   // 内部状態変数
-  std::string current_state_, previous_state_, next_state_;
+  std::string current_state_, previous_state_, next_state_, current_module_;
   sensor_msgs::Joy last_joy_;
   sensor_msgs::Imu last_imu_;
   jsk_recognition_msgs::ClassificationResult last_class_;

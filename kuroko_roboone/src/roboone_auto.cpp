@@ -183,6 +183,7 @@ bool RobooneAuto::setCtrlModule(const std::string& module_name)
   if (client_.call(srv))
   {
     ROS_INFO("Successfully set control module to %s", module_name.c_str());
+    walk_status_ = "stop";
     current_module_ = module_name;
     ros::Duration(0.04).sleep();  // Wait for module to stabilize
     return true;
@@ -200,11 +201,11 @@ void RobooneAuto::startWalking()
 {
   if (walk_status_ == "start")
     return;
+  setCtrlModule("walking_module");
   walk_status_ = "start";
   ROS_INFO("Starting Walking...");
   std_msgs::String msg;
   msg.data = "start";
-  setCtrlModule("walking_module");
   walking_command_pub_.publish(msg);
 }
 
@@ -521,6 +522,9 @@ void RobooneAuto::transitionToAutoMoveState()
   setCtrlModule("walking_module");
   setWalkSteps(0, 0, 0);
   startWalking();
+  robot_detected_time_ = ros::Time(0);
+  last_rects_.rects.clear();
+  attacked_time_ = ros::Time(0);
 }
 
 // 歩行一時停止状態への遷移
@@ -546,7 +550,7 @@ void RobooneAuto::transitionToHoldState()
   setHoldSteps(0, 0, 0);
   ros::Duration(0.04).sleep();
   abortWalking();
-  attacked_time_ = ros::Time::now();
+  attacked_time_ = ros::Time(0);
 }
 
 // 転倒状態への遷移

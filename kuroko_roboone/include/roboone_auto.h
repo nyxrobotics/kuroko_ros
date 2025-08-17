@@ -115,8 +115,10 @@ private:
   double action_duration_;
   ros::Time hold_time_;
   ros::Time jump_time_;
+  ros::Time walk_start_time_;
   double min_walk_duration_;
   double walk_stop_duration_;
+  bool force_walk_;
 };
 
 #endif  // ROBOONE_AUTO_H_

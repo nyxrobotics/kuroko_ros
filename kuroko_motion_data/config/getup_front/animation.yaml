@@ -8,10 +8,6 @@ layout:
       info:
         id: 1
       waypoints: []
-    arrow_2:
-      info:
-        id: 2
-      waypoints: []
     arrow_3:
       info:
         id: 3
@@ -32,6 +28,10 @@ layout:
       info:
         id: 7
       waypoints: []
+    arrow_8:
+      info:
+        id: 8
+      waypoints: []
   block:
     frame_0_pose_01:
       connection:
@@ -51,7 +51,7 @@ layout:
       connection:
         output:
           out_0:
-            arrow: arrow_2
+            arrow: arrow_8
             ch: 0
             target: frame_3_pose_03
       info:
@@ -141,8 +141,8 @@ layout:
         id: 8
         type: frame
       place:
-        x: 587.0
-        y: 1415.0
+        x: 586.0
+        y: 1414.0
     start_1:
       connection:
         output:

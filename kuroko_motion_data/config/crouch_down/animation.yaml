@@ -15,8 +15,8 @@ layout:
         id: 1
         type: frame
       place:
-        x: -926.0
-        y: 333.0
+        x: -948.0
+        y: 310.0
     start_0:
       connection:
         output:

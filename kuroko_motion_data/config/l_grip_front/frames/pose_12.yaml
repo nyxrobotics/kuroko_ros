@@ -6,7 +6,7 @@ joints:
     - 0.0
     - 0.0
     - 0.0
-    position: -0.19198621771937624
+    position: -0.158824961931484
   ankle_l_yaw:
     enable: true
     feedback: ''
@@ -22,7 +22,7 @@ joints:
     - 0.0
     - 0.0
     - 0.0
-    position: 0.19198621771937624
+    position: 0.158824961931484
   ankle_r_yaw:
     enable: true
     feedback: ''
@@ -86,7 +86,7 @@ joints:
     - 0.0
     - 0.0
     - 0.0
-    position: -0.17453292519943295
+    position: -0.1413716694115407
   hip_r_pitch:
     enable: true
     feedback: ''
@@ -102,7 +102,7 @@ joints:
     - 0.0
     - 0.0
     - 0.0
-    position: -0.17453292519943295
+    position: -0.1413716694115407
   shin_l_active:
     enable: true
     feedback: ''
@@ -110,7 +110,7 @@ joints:
     - 0.0
     - 0.0
     - 0.0
-    position: 0.3839724354387525
+    position: 0.5602506898901798
   shin_r_active:
     enable: true
     feedback: ''
@@ -118,7 +118,7 @@ joints:
     - 0.0
     - 0.0
     - 0.0
-    position: -0.3839724354387525
+    position: -0.5602506898901798
   shoulder_l_pitch:
     enable: true
     feedback: ''
@@ -126,7 +126,7 @@ joints:
     - 0.0
     - 0.0
     - 0.0
-    position: 0.0
+    position: -0.0
   shoulder_l_roll:
     enable: true
     feedback: ''
@@ -158,7 +158,7 @@ joints:
     - 0.0
     - 0.0
     - 0.0
-    position: 0.12217304763960307
+    position: 0.1710422666954443
   thigh_r_active:
     enable: true
     feedback: ''
@@ -166,7 +166,7 @@ joints:
     - 0.0
     - 0.0
     - 0.0
-    position: -0.12217304763960307
+    position: -0.1710422666954443
 speed_scale:
   ankle_l_roll: 1.0
   ankle_l_yaw: 1.0

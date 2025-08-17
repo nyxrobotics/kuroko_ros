@@ -24,10 +24,6 @@ layout:
       info:
         id: 13
       waypoints: []
-    arrow_14:
-      info:
-        id: 14
-      waypoints: []
     arrow_15:
       info:
         id: 15
@@ -47,10 +43,6 @@ layout:
     arrow_3:
       info:
         id: 3
-      waypoints: []
-    arrow_4:
-      info:
-        id: 4
       waypoints: []
     arrow_5:
       info:

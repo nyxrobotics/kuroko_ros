@@ -571,7 +571,6 @@ void RobooneAuto::handleFall()
   Eigen::Vector3d imu_rpy = imuQuaternionToRollPitchYaw(imy_orientation);
   double pitch_angle = imu_rpy[1];
   ROS_INFO("Handling FALL state with IMU RPY: roll=%f, pitch=%f", imu_rpy[0], imu_rpy[1]);
-  setWalkSteps(0, 0, 0);
   setCtrlModule("action_module");
   if (imu_rpy[1] > 0)
   {
@@ -581,6 +580,7 @@ void RobooneAuto::handleFall()
   {
     executeAction("getup_rear");  // 後起き上がりモーション
   }
+  setWalkSteps(0, 0, 0);
   current_state_ = "PAUSE_WALKING";
   robot_detected_time_ = ros::Time(0);
   last_rects_.rects.clear();
@@ -812,56 +812,6 @@ void RobooneAuto::enableAllJoints()
   setCtrlModule("action_module");  // Load the action module
   ROS_INFO("Executing action -1 to enable all joints.");
   executeAction("enable");  // Play motion ID -1 to enable the joints
-}
-
-// Utility function to convert quaternion to pitch (radians)
-Eigen::Vector3d RobooneAuto::quaterionToRpy(const Eigen::Quaterniond& q)
-{
-  Eigen::Vector3d angles;  // roll pitch yaw
-  double x = q.x(), y = q.y(), z = q.z(), w = q.w();
-
-  // yaw (z-axis rotation)
-  double siny_cosp = 2 * (w * z + x * y);
-  double cosy_cosp = 1 - 2 * (y * y + z * z);
-  angles[2] = std::atan2(siny_cosp, cosy_cosp);
-
-  // pitch (y-axis rotation)
-  double sinp = 2 * (w * y - z * x);
-  if (std::abs(sinp) >= 1)
-    angles[1] = std::copysign(M_PI / 2, sinp);  // use 90 degrees if out of range
-  else
-    angles[1] = std::asin(sinp);
-
-  // roll (x-axis rotation)
-  double sinr_cosp = 2 * (w * x + y * z);
-  double cosr_cosp = 1 - 2 * (x * x + y * y);
-  angles[0] = std::atan2(sinr_cosp, cosr_cosp);
-
-  return angles;
-}
-
-Eigen::Vector3d RobooneAuto::quaterionToYpr(const Eigen::Quaterniond& q)
-{
-  Eigen::Vector3d angles;  // yaw pitch roll
-  double x = q.x(), y = q.y(), z = q.z(), w = q.w();
-
-  // roll (x-axis rotation)
-  double sinr_cosp = 2 * (w * x + y * z);
-  double cosr_cosp = 1 - 2 * (x * x + y * y);
-  angles[2] = std::atan2(sinr_cosp, cosr_cosp);
-
-  // pitch (y-axis rotation)
-  double sinp = 2 * (w * y - z * x);
-  if (std::abs(sinp) >= 1)
-    angles[1] = std::copysign(M_PI / 2, sinp);  // use 90 degrees if out of range
-  else
-    angles[1] = std::asin(sinp);
-
-  // yaw (z-axis rotation)
-  double siny_cosp = 2 * (w * z + x * y);
-  double cosy_cosp = 1 - 2 * (y * y + z * z);
-  angles[0] = std::atan2(siny_cosp, cosy_cosp);
-  return angles;
 }
 
 Eigen::Vector3d RobooneAuto::imuQuaternionToRollPitchYaw(const Eigen::Quaterniond& q)

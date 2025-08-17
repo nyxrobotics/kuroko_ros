@@ -59,8 +59,6 @@ private:
   void transitionToHoldState();
   void handleFall();
 
-  Eigen::Vector3d quaterionToRpy(const Eigen::Quaterniond& q);
-  Eigen::Vector3d quaterionToYpr(const Eigen::Quaterniond& q);
   Eigen::Vector3d imuQuaternionToRollPitchYaw(const Eigen::Quaterniond& q);
   double wrapToPi(double angle);
 

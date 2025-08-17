@@ -344,6 +344,7 @@ void RobooneAuto::executeAction(std::string action_name)
   std_msgs::Int32 msg;
   msg.data = action_id;
 
+  setWalkSteps(0, 0, 0);
   action_page_pub_.publish(msg);
   action_name_ = action_name;
   action_start_time_ = ros::Time::now();
@@ -355,7 +356,6 @@ void RobooneAuto::stateThread()
 {
   while (running_ && ros::ok())
   {
-    ROS_INFO_THROTTLE(1.0, "RobooneAuto state management thread running...");
     manageState();
   }
 }
@@ -375,25 +375,28 @@ void RobooneAuto::manageState()
   {
     ROS_INFO("Transitioning to WALKING state from INITIAL_POSE.");
     action_name_ = "";
-    setCtrlModule("walking_module");
     transitionToAutoMoveState();
+    return;
   }
   else if (current_state_ != "IDLE" && last_joy_.buttons[1])
   {
     ROS_INFO("Transitioning to IDLE state from current state: %s", current_state_.c_str());
     action_name_ = "";
     transitionToIdleState();
+    return;
   }
   else if (current_state_ != "INITIAL_POSE" && last_joy_.buttons[0])
   {
     ROS_INFO("Transitioning to INITIAL_POSE state from current state: %s", current_state_.c_str());
     action_name_ = "";
     transitionToInitPose();
+    return;
   }
 
   // Sleep
   if (current_state_ == "IDLE" || current_state_ == "INITIAL_POSE")
   {
+    action_name_ = "";
     ros::Duration(0.1).sleep();
     return;
   }
@@ -404,7 +407,16 @@ void RobooneAuto::manageState()
       ROS_INFO_STREAM("Action " << action_name_ << " completed"
                                 << " after " << action_duration_ << " seconds.");
       action_start_time_ = ros::Time::now();
+      setWalkSteps(0, 0, 0);
+      setCtrlModule("walking_module");
       action_name_ = "";
+      last_imu_.orientation.x = 0.0;
+      last_imu_.orientation.y = 0.0;
+      last_imu_.orientation.z = 0.0;
+      last_imu_.orientation.w = 1.0;
+      over_fall_angle = false;
+      over_hold_angle = false;
+      within_stable_angle = true;
     }
     else
     {
@@ -457,8 +469,6 @@ void RobooneAuto::manageState()
     if (within_stable_angle)
     {
       ROS_INFO("Stable angle restored. Transitioning to PAUSE_WALKING.");
-      setWalkSteps(0, 0, 0);
-      abortWalking();
       transitionToPauseWalkingState();
     }
     else if (over_fall_angle)
@@ -472,8 +482,6 @@ void RobooneAuto::manageState()
     if (within_stable_angle)
     {
       ROS_INFO("Stable angle restored. Transitioning to PAUSE_WALKING.");
-      setWalkSteps(0, 0, 0);
-      abortWalking();
       transitionToPauseWalkingState();
       fall_detected_time_ = ros::Time::now() + ros::Duration(1.0);
     }
@@ -484,8 +492,6 @@ void RobooneAuto::manageState()
     else if ((ros::Time::now() - fall_detected_time_).toSec() > 1.5)
     {
       ROS_INFO("Handling FALL state.");
-      setWalkSteps(0, 0, 0);
-      abortWalking();
       handleFall();
       transitionToPauseWalkingState();
     }
@@ -512,6 +518,8 @@ void RobooneAuto::transitionToAutoMoveState()
     return;
   current_state_ = "WALKING";
   ROS_INFO("Transitioning to WALKING state.");
+  setCtrlModule("walking_module");
+  setWalkSteps(0, 0, 0);
   startWalking();
 }
 
@@ -522,6 +530,7 @@ void RobooneAuto::transitionToPauseWalkingState()
     return;
   current_state_ = "PAUSE_WALKING";
   ROS_INFO("Transitioning to PAUSE_WALKING state due to excessive tilt.");
+  setCtrlModule("walking_module");
   setWalkSteps(0, 0, 0);
   stopWalking();
 }
@@ -533,10 +542,11 @@ void RobooneAuto::transitionToHoldState()
     return;
   current_state_ = "HOLD";
   ROS_INFO("Transitioning to HOLD state.");
+  setCtrlModule("walking_module");
   setHoldSteps(0, 0, 0);
+  ros::Duration(0.04).sleep();
   abortWalking();
-  attacked_time_ = ros::Time::now();      // しゃがんだ後は歩行が必須
-  action_start_time_ = ros::Time::now();  // しゃがんだ後は歩行が必須
+  attacked_time_ = ros::Time::now();
 }
 
 // 転倒状態への遷移
@@ -544,12 +554,11 @@ void RobooneAuto::transitionToFallState()
 {
   if (current_state_ == "FALL")
     return;
-  fall_detected_time_ = ros::Time::now();
   if (current_state_ != "HOLD")
   {
-    setHoldSteps(0, 0, 0);
-    abortWalking();
+    transitionToHoldState();
   }
+  fall_detected_time_ = ros::Time::now();
   current_state_ = "FALL";
   ROS_INFO("Transitioning to FALL state.");
 }
@@ -563,7 +572,6 @@ void RobooneAuto::handleFall()
   double pitch_angle = imu_rpy[1];
   ROS_INFO("Handling FALL state with IMU RPY: roll=%f, pitch=%f", imu_rpy[0], imu_rpy[1]);
   setWalkSteps(0, 0, 0);
-  abortWalking();
   setCtrlModule("action_module");
   if (imu_rpy[1] > 0)
   {
@@ -574,7 +582,6 @@ void RobooneAuto::handleFall()
     executeAction("getup_rear");  // 後起き上がりモーション
   }
   current_state_ = "PAUSE_WALKING";
-  fall_detected_time_ = ros::Time::now() + ros::Duration(action_duration_) + ros::Duration(1.0);
   robot_detected_time_ = ros::Time(0);
   last_rects_.rects.clear();
 }

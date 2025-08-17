@@ -118,7 +118,7 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   x_forward_step_max_ = 0.03;
   x_backward_step_max_ = -0.03;
   y_step_max_ = 0.02;
-  yaw_step_max_ = 0.2;
+  yaw_step_max_ = 0.1;
 
   action_start_time_ = ros::Time(0);
 
@@ -142,7 +142,7 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
 
   action_duration_map_["crouch_down"] = 0.1;
   action_duration_map_["crouch_up"] = 0.3;
-  action_duration_map_["getup_front"] = 2.9 + 1.0;
+  action_duration_map_["getup_front"] = 2.9;
   action_duration_map_["getup_rear"] = 5.1;
   action_duration_map_["l_grip_front"] = 2.69;
   action_duration_map_["l_hook_front"] = 1.4;
@@ -184,7 +184,7 @@ bool RobooneAuto::setCtrlModule(const std::string& module_name)
   {
     ROS_INFO("Successfully set control module to %s", module_name.c_str());
     current_module_ = module_name;
-    ros::Duration(0.1).sleep();  // Wait for module to stabilize
+    ros::Duration(0.04).sleep();  // Wait for module to stabilize
     return true;
   }
   else
@@ -728,18 +728,18 @@ void RobooneAuto::handleAttack()
       ROS_INFO_THROTTLE(1.0, "Target detected but too small(area: %f), delay: %f, rect area: %f", rect_area,
                         (ros::Time::now() - robot_detected_time_).toSec(), atk_rects_size_);
       setCtrlModule("walking_module");
-      if ((ros::Time::now() - attacked_time_).toSec() < 1.0)
+      if ((ros::Time::now() - attacked_time_).toSec() < 0.2)
       {
         // 攻撃後の1.0秒間は転倒復帰のみ許可
         stopWalking();
       }
-      else if ((ros::Time::now() - attacked_time_).toSec() < 4.0)
+      else if ((ros::Time::now() - attacked_time_).toSec() < 2.2)
       {
         // 攻撃後の3秒間は後退のみ許可
         setWalkSteps(-fabs(x_backward_step_max_), 0.0, 0.0);
         startWalking();
       }
-      else if ((ros::Time::now() - attacked_time_).toSec() < 10.0)
+      else if ((ros::Time::now() - attacked_time_).toSec() < 8.0)
       {
         // 攻撃後の6秒間旋回のみ許可（前後左右移動は0）
         // 中央からのずれに基づいて旋回角を計算

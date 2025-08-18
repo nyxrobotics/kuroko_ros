@@ -31,7 +31,7 @@ public:
   void stopWalking();
   void abortWalking();
   void setWalkSteps(double x_step, double y_step, double yaw_step);
-  void setHoldSteps(double x_step, double y_step, double yaw_step);
+  void setSquatSteps(double x_step, double y_step, double yaw_step);
   void setJumpSteps(double x_step, double y_step, double yaw_step);
   void executeAction(std::string action_name);
   void manageState();  // 状態管理関数
@@ -56,7 +56,7 @@ private:
   void transitionToIdleState();      // 脱力状態への遷移
   void transitionToAutoMoveState();  // 自律移動状態への遷移
   void transitionToPauseWalkingState();
-  void transitionToHoldState();
+  void transitionToSquatState();
   void handleFall();
 
   Eigen::Vector3d imuQuaternionToRollPitchYaw(const Eigen::Quaterniond& q);
@@ -96,14 +96,14 @@ private:
   std::string walk_status_;
   // Manage balance interruption
   kuroko_walking_module_msgs::WalkingParam walk_param_;
-  kuroko_walking_module_msgs::WalkingParam hold_param_;
+  kuroko_walking_module_msgs::WalkingParam squat_param_;
   kuroko_walking_module_msgs::WalkingParam jump_param_;
   double stable_angle_threshold_;  // 安定状態の角度閾値
-  double hold_angle_threshold_;    // ホールド状態の角度閾値
+  double squat_angle_threshold_;   // ホールド状態の角度閾値
   double jump_angle_threshold_;    // ジャンピングホールド状態の角度閾値
   double fall_angle_threshold_;    // 転倒判定の角度閾値
   double stable_duration_;         // 安定状態に復帰するための必要時間
-  double hold_duration_;           // ホールド状態の最低持続時間
+  double squat_duration_;          // ホールド状態の最低持続時間
   double jump_duration_;           // ジャンプ状態の最低持続時間
   double fall_duration_;           // 転倒判定の待機時間
   // Manage balance interruption
@@ -113,7 +113,7 @@ private:
   std::string action_name_;
   ros::Time action_start_time_;
   double action_duration_;
-  ros::Time hold_time_;
+  ros::Time squat_time_;
   ros::Time jump_time_;
   ros::Time walk_start_time_;
   double min_walk_duration_;

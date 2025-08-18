@@ -73,23 +73,23 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   walk_param_.y_step = 0;
   walk_param_.yaw_step = 0;
 
-  hold_param_ = walk_param_;
-  hold_param_.init_x_offset = 0;
-  hold_param_.init_z_offset = 0.12;
-  hold_param_.balance_gyro_x_gain = 0.004;
-  hold_param_.balance_gyro_y_gain = 0.0;
-  hold_param_.balance_gyro_zx_gain = 0.004;
-  hold_param_.balance_gyro_zy_gain = 0.0;
-  hold_param_.balance_gyro_roll_gain = 0.0;
-  hold_param_.balance_gyro_pitch_gain = 0.02;
-  hold_param_.balance_euler_x_gain = 0.06;
-  hold_param_.balance_euler_y_gain = 0.0;
-  hold_param_.balance_euler_zx_gain = 0.01;
-  hold_param_.balance_euler_zy_gain = 0.0;
-  hold_param_.balance_euler_roll_gain = 0.0;
-  hold_param_.balance_euler_pitch_gain = 0.8;
+  squat_param_ = walk_param_;
+  squat_param_.init_x_offset = 0;
+  squat_param_.init_z_offset = 0.12;
+  squat_param_.balance_gyro_x_gain = 0.004;
+  squat_param_.balance_gyro_y_gain = 0.0;
+  squat_param_.balance_gyro_zx_gain = 0.004;
+  squat_param_.balance_gyro_zy_gain = 0.0;
+  squat_param_.balance_gyro_roll_gain = 0.0;
+  squat_param_.balance_gyro_pitch_gain = 0.02;
+  squat_param_.balance_euler_x_gain = 0.06;
+  squat_param_.balance_euler_y_gain = 0.0;
+  squat_param_.balance_euler_zx_gain = 0.01;
+  squat_param_.balance_euler_zy_gain = 0.0;
+  squat_param_.balance_euler_roll_gain = 0.0;
+  squat_param_.balance_euler_pitch_gain = 0.8;
 
-  jump_param_ = hold_param_;
+  jump_param_ = squat_param_;
   jump_param_.init_z_offset = 0.13;
   jump_param_.balance_gyro_x_gain = 0.01;
   jump_param_.balance_gyro_y_gain = 0.0;
@@ -105,12 +105,12 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   jump_param_.balance_euler_pitch_gain = 0.1;
 
   stable_angle_threshold_ = 0.08;
-  hold_angle_threshold_ = 0.16;
+  squat_angle_threshold_ = 0.16;
   jump_angle_threshold_ = 0.32;
   fall_angle_threshold_ = 0.64;
 
   stable_duration_ = 0.3;
-  hold_duration_ = 1.0;
+  squat_duration_ = 1.0;
   jump_duration_ = 0.2;
   fall_duration_ = 2.0;
   walk_stop_duration_ = walk_param_.period_time * 2.0;
@@ -267,9 +267,9 @@ void RobooneAuto::setWalkSteps(double x_step, double y_step, double yaw_step)
   walking_params_pub_.publish(params);
 }
 
-void RobooneAuto::setHoldSteps(double x_step, double y_step, double yaw_step)
+void RobooneAuto::setSquatSteps(double x_step, double y_step, double yaw_step)
 {
-  kuroko_walking_module_msgs::WalkingParam params = hold_param_;
+  kuroko_walking_module_msgs::WalkingParam params = squat_param_;
   double x_scale = fabs(x_step / ((x_step > 0) ? (x_forward_step_max_) : (x_backward_step_max_)));
   double y_scale = fabs(y_step / y_step_max_);
   double yaw_scale = fabs(yaw_step / yaw_step_max_);
@@ -372,7 +372,7 @@ void RobooneAuto::manageState()
                                      last_imu_.orientation.z);
   Eigen::Vector3d imu_rpy = imuQuaternionToRollPitchYaw(imy_orientation);
   bool over_fall_angle = fabs(imu_rpy[1]) > fall_angle_threshold_;
-  bool over_hold_angle = fabs(imu_rpy[1]) > hold_angle_threshold_;
+  bool over_squat_angle = fabs(imu_rpy[1]) > squat_angle_threshold_;
   bool within_stable_angle = fabs(imu_rpy[1]) < stable_angle_threshold_;
 
   // ボタン検知
@@ -420,7 +420,7 @@ void RobooneAuto::manageState()
       last_imu_.orientation.z = 0.0;
       last_imu_.orientation.w = 1.0;
       over_fall_angle = false;
-      over_hold_angle = false;
+      over_squat_angle = false;
       within_stable_angle = true;
       walk_start_time_ = ros::Time::now();
       attacked_time_ = ros::Time(0);
@@ -442,9 +442,9 @@ void RobooneAuto::manageState()
   {
     transitionToFallState();
   }
-  else if (over_hold_angle)
+  else if (over_squat_angle)
   {
-    transitionToHoldState();
+    transitionToSquatState();
   }
 
   // 状態遷移
@@ -458,9 +458,9 @@ void RobooneAuto::manageState()
     {
       transitionToFallState();
     }
-    else if (over_hold_angle)
+    else if (over_squat_angle)
     {
-      transitionToHoldState();
+      transitionToSquatState();
     }
     else if (within_stable_angle)
     {
@@ -472,7 +472,7 @@ void RobooneAuto::manageState()
       ROS_INFO("curent time: %f, last imu time: %f", ros::Time::now().toSec(), last_imu_time_.toSec());
     }
   }
-  else if (current_state_ == "HOLD")
+  else if (current_state_ == "SQUAT")
   {
     if (within_stable_angle)
     {
@@ -481,7 +481,7 @@ void RobooneAuto::manageState()
     }
     else if (over_fall_angle)
     {
-      ROS_INFO("Over fall angle detected in HOLD state. Transitioning to FALL.");
+      ROS_INFO("Over fall angle detected in SQUAT state. Transitioning to FALL.");
       transitionToFallState();
     }
   }
@@ -493,9 +493,9 @@ void RobooneAuto::manageState()
       transitionToPauseWalkingState();
       fall_detected_time_ = ros::Time::now() + ros::Duration(1.0);
     }
-    else if (!over_hold_angle)
+    else if (!over_squat_angle)
     {
-      transitionToHoldState();
+      transitionToSquatState();
     }
     else if ((ros::Time::now() - fall_detected_time_).toSec() > 1.5)
     {
@@ -549,14 +549,14 @@ void RobooneAuto::transitionToPauseWalkingState()
 }
 
 // こらえ状態への遷移
-void RobooneAuto::transitionToHoldState()
+void RobooneAuto::transitionToSquatState()
 {
-  if (current_state_ == "HOLD")
+  if (current_state_ == "SQUAT")
     return;
-  current_state_ = "HOLD";
-  ROS_INFO("Transitioning to HOLD state.");
+  current_state_ = "SQUAT";
+  ROS_INFO("Transitioning to SQUAT state.");
   setCtrlModule("walking_module");
-  setHoldSteps(0, 0, 0);
+  setSquatSteps(0, 0, 0);
   ros::Duration(0.04).sleep();
   abortWalking();
   attacked_time_ = ros::Time(0);
@@ -567,9 +567,9 @@ void RobooneAuto::transitionToFallState()
 {
   if (current_state_ == "FALL")
     return;
-  if (current_state_ != "HOLD")
+  if (current_state_ != "SQUAT")
   {
-    transitionToHoldState();
+    transitionToSquatState();
   }
   fall_detected_time_ = ros::Time::now();
   current_state_ = "FALL";

@@ -113,17 +113,22 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   squat_duration_ = 1.0;
   jump_duration_ = 0.2;
   fall_duration_ = 2.0;
+
   walk_stop_duration_ = walk_param_.period_time * 2.0;
   min_walk_duration_ = walk_param_.period_time * 2.0;
-  walk_start_time_ = ros::Time::now();
+  max_squat_duration_ = 3.0;
+
+  walk_start_time_ = ros::Time(0);
+  action_start_time_ = ros::Time(0);
+  squat_start_time_ = ros::Time(0);
+  jump_start_time_ = ros::Time(0);
+
   force_walk_ = true;
 
-  x_forward_step_max_ = 0.03;
-  x_backward_step_max_ = -0.03;
+  x_forward_step_max_ = 0.02;
+  x_backward_step_max_ = -0.02;
   y_step_max_ = 0.02;
   yaw_step_max_ = 0.1;
-
-  action_start_time_ = ros::Time(0);
 
   walk_status_ = "stop";
   current_module_ = "";

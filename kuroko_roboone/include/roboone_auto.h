@@ -113,9 +113,10 @@ private:
   std::string action_name_;
   ros::Time action_start_time_;
   double action_duration_;
-  ros::Time squat_time_;
-  ros::Time jump_time_;
+  ros::Time squat_start_time_;
+  ros::Time jump_start_time_;
   ros::Time walk_start_time_;
+  double max_squat_duration_;
   double min_walk_duration_;
   double walk_stop_duration_;
   bool force_walk_;

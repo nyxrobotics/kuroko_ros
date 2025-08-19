@@ -87,9 +87,8 @@ void ActionModule::initialize(const int control_cycle_msec, robotis_framework::R
     if (joint_name_to_dxl_id_.find(joint_name) == joint_name_to_dxl_id_.end())
     {
       ROS_WARN_STREAM("[ActionModule] Joint '" << joint_name << "' not found in the robot. Removing from the list.");
-      animation_joint_names_.erase(
-          std::remove(animation_joint_names_.begin(), animation_joint_names_.end(), joint_name),
-          animation_joint_names_.end());
+      animation_joint_names_.erase(std::remove(animation_joint_names_.begin(), animation_joint_names_.end(), joint_name),
+                                   animation_joint_names_.end());
     }
   }
   ROS_INFO_STREAM("[ActionModule] Initialization complete");
@@ -186,6 +185,7 @@ void ActionModule::onModuleEnable()
   std::vector<animation_system::FrameData> frames;
   frames.push_back(init_pose);
   current_trajectory_ = createJointTrajectory(frames, control_cycle_msec_);
+  current_animation_name_ = "initial_pose";
   start_playing_requested_ = true;
   publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_INFO, "Moved to initial pose");
 }
@@ -351,8 +351,9 @@ void ActionModule::torqueOffAll()
   ROS_INFO("Torque disabled for all joints");
 }
 
-trajectory_msgs::JointTrajectory ActionModule::createJointTrajectory(
-    const std::vector<animation_system::FrameData>& frames, const double control_cycle_msec)
+trajectory_msgs::JointTrajectory
+ActionModule::createJointTrajectory(const std::vector<animation_system::FrameData>& frames,
+                                    const double control_cycle_msec)
 {
   trajectory_msgs::JointTrajectory trajectory;
   trajectory.joint_names = animation_joint_names_;

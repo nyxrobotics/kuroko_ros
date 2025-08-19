@@ -707,7 +707,8 @@ void RobooneAuto::handleAttack()
     }
     else if ((rect_area > atk_rects_size_ ||
               robot_detected_rect_.width / double(last_camera_info_.width) > 2.0 * sqrt(atk_rects_size_) ||
-              robot_detected_rect_.height / double(last_camera_info_.height) > 2.0 * sqrt(atk_rects_size_)))
+              robot_detected_rect_.height / double(last_camera_info_.height) > 2.0 * sqrt(atk_rects_size_)) &&
+             ros::Time::now() - attacked_time_ > ros::Duration(1.0))
     {
       if (force_walk_)
       {

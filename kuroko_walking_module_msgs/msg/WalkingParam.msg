@@ -6,6 +6,7 @@ float32 init_roll_offset
 float32 init_pitch_offset
 float32 init_yaw_offset
 float32 init_hip_pitch_offset
+float32 init_pose_duration
 
 ####### time parameter #####
 float32 period_time

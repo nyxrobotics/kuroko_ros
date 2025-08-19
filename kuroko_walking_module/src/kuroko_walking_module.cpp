@@ -31,9 +31,6 @@ WalkingModule::WalkingModule() : control_cycle_msec_(8), debug_(false)
   feedback_xyz_max_ = 0.1;
   feedback_rpy_max_ = 1.0;
 
-  init_pose_time_ = 0.2;
-  body_offset_time_ = 0.2;
-
   kuroko_kinematics_ = new KurokoKinematics(WHOLE_BODY);
 
   // Robot is in initial posture with legs extended directly below
@@ -100,6 +97,7 @@ void WalkingModule::initialize(const int control_cycle_msec, robotis_framework::
   config_walking_param_.init_pitch_offset = 0;
   config_walking_param_.init_yaw_offset = 0;
   config_walking_param_.init_hip_pitch_offset = 0;
+  config_walking_param_.init_pose_duration = 0.1;
   // time
   config_walking_param_.period_time = 0;
   config_walking_param_.dsp_ratio = 0;
@@ -603,7 +601,25 @@ void WalkingModule::synchronizePoseParam()
   else
   {
     // 1 second to change pose parameters
-    double time_to_change = body_offset_time_;
+    double time_to_change = fabs(config_walking_param_.init_pose_duration);
+    if (time_to_change < 0.001)
+    {
+      synchronized_walking_param_.init_x_offset = target_walking_param_.init_x_offset;
+      synchronized_walking_param_.init_y_offset = target_walking_param_.init_y_offset;
+      synchronized_walking_param_.init_z_offset = target_walking_param_.init_z_offset;
+      synchronized_walking_param_.init_roll_offset = target_walking_param_.init_roll_offset;
+      synchronized_walking_param_.init_pitch_offset = target_walking_param_.init_pitch_offset;
+      synchronized_walking_param_.init_yaw_offset = target_walking_param_.init_yaw_offset;
+      synchronized_walking_param_.init_hip_pitch_offset = target_walking_param_.init_hip_pitch_offset;
+      previouos_walking_param_.init_x_offset = target_walking_param_.init_x_offset;
+      previouos_walking_param_.init_y_offset = target_walking_param_.init_y_offset;
+      previouos_walking_param_.init_z_offset = target_walking_param_.init_z_offset;
+      previouos_walking_param_.init_roll_offset = target_walking_param_.init_roll_offset;
+      previouos_walking_param_.init_pitch_offset = target_walking_param_.init_pitch_offset;
+      previouos_walking_param_.init_yaw_offset = target_walking_param_.init_yaw_offset;
+      previouos_walking_param_.init_hip_pitch_offset = target_walking_param_.init_hip_pitch_offset;
+      return;
+    }
     double x_offset_diff = target_walking_param_.init_x_offset - previouos_walking_param_.init_x_offset;
     double y_offset_diff = target_walking_param_.init_y_offset - previouos_walking_param_.init_y_offset;
     double z_offset_diff = target_walking_param_.init_z_offset - previouos_walking_param_.init_z_offset;
@@ -849,7 +865,6 @@ void WalkingModule::process(std::map<std::string, robotis_framework::Dynamixel*>
       euler.x() = sensors["euler_roll"];
       euler.y() = sensors["euler_pitch"];
       euler.z() = sensors["euler_yaw"];
-      // ROS_INFO("gyro: %f, %f, %f, euler: %f, %f, %f", gyro.x(), gyro.y(), gyro.z(), euler.x(), euler.y(), euler.z());
       gyroFeedback(gyro, euler, feedback_xyz_, feedback_rpy_);
     }
 
@@ -877,43 +892,10 @@ void WalkingModule::process(std::map<std::string, robotis_framework::Dynamixel*>
     {
       if (debug_)
         std::cout << "Check Err : " << err_max << std::endl;
-      double mov_time = std::max(init_pose_time_, err_max / 30.0);
+      double mov_time = fabs(config_walking_param_.init_pose_duration);
       iniPoseTraGene(mov_time);
       target_position_ = goal_position_;
       walking_state_ = WALK_INITIAL_POSE;
-      ROS_INFO_STREAM_COND(debug_, "x_offset: " << config_walking_param_.init_x_offset);
-      ROS_INFO_STREAM_COND(debug_, "y_offset: " << config_walking_param_.init_y_offset);
-      ROS_INFO_STREAM_COND(debug_, "z_offset: " << config_walking_param_.init_z_offset);
-      ROS_INFO_STREAM_COND(debug_, "roll_offset: " << config_walking_param_.init_roll_offset * RADIAN2DEGREE);
-      ROS_INFO_STREAM_COND(debug_, "pitch_offset: " << config_walking_param_.init_pitch_offset * RADIAN2DEGREE);
-      ROS_INFO_STREAM_COND(debug_, "yaw_offset: " << config_walking_param_.init_yaw_offset * RADIAN2DEGREE);
-      ROS_INFO_STREAM_COND(debug_,
-                           "init_hip_pitch_offset: " << config_walking_param_.init_hip_pitch_offset * RADIAN2DEGREE);
-      ROS_INFO_STREAM_COND(debug_, "period_time: " << config_walking_param_.period_time * 1000);
-      ROS_INFO_STREAM_COND(debug_, "dsp_ratio: " << config_walking_param_.dsp_ratio);
-      ROS_INFO_STREAM_COND(debug_, "step_forward_back_ratio: " << config_walking_param_.step_forward_back_ratio);
-      ROS_INFO_STREAM_COND(debug_, "foot_height: " << config_walking_param_.foot_height);
-      ROS_INFO_STREAM_COND(debug_, "y_swing_amplitude: " << config_walking_param_.y_swing_amplitude);
-      ROS_INFO_STREAM_COND(debug_, "z_swing_amplitude: " << config_walking_param_.z_swing_amplitude);
-      ROS_INFO_STREAM_COND(debug_,
-                           "hip_swing_up_amplitude: " << config_walking_param_.hip_swing_up_amplitude * RADIAN2DEGREE);
-      ROS_INFO_STREAM_COND(debug_, "hip_swing_down_amplitude: " << config_walking_param_.hip_swing_down_amplitude *
-                                                                       RADIAN2DEGREE);
-      ROS_INFO_STREAM_COND(debug_, "shoulder_swing_amplitude: " << config_walking_param_.shoulder_swing_amplitude);
-
-      ROS_INFO_STREAM_COND(debug_, "balance : " << (config_walking_param_.balance_enable ? "TRUE" : "FALSE"));
-      ROS_INFO_STREAM_COND(debug_, "balance_gyro_x_gain: " << config_walking_param_.balance_gyro_x_gain);
-      ROS_INFO_STREAM_COND(debug_, "balance_gyro_y_gain: " << config_walking_param_.balance_gyro_y_gain);
-      ROS_INFO_STREAM_COND(debug_, "balance_gyro_zx_gain: " << config_walking_param_.balance_gyro_zx_gain);
-      ROS_INFO_STREAM_COND(debug_, "balance_gyro_zy_gain: " << config_walking_param_.balance_gyro_zy_gain);
-      ROS_INFO_STREAM_COND(debug_, "balance_gyro_roll_gain: " << config_walking_param_.balance_gyro_roll_gain);
-      ROS_INFO_STREAM_COND(debug_, "balance_gyro_pitch_gain: " << config_walking_param_.balance_gyro_pitch_gain);
-      ROS_INFO_STREAM_COND(debug_, "balance_euler_x_gain: " << config_walking_param_.balance_euler_x_gain);
-      ROS_INFO_STREAM_COND(debug_, "balance_euler_y_gain: " << config_walking_param_.balance_euler_y_gain);
-      ROS_INFO_STREAM_COND(debug_, "balance_euler_zx_gain: " << config_walking_param_.balance_euler_zx_gain);
-      ROS_INFO_STREAM_COND(debug_, "balance_euler_zy_gain: " << config_walking_param_.balance_euler_zy_gain);
-      ROS_INFO_STREAM_COND(debug_, "balance_euler_roll_gain: " << config_walking_param_.balance_euler_roll_gain);
-      ROS_INFO_STREAM_COND(debug_, "balance_euler_pitch_gain: " << config_walking_param_.balance_euler_pitch_gain);
     }
     else
     {
@@ -1579,14 +1561,36 @@ void WalkingModule::onModuleDisable()
 
 void WalkingModule::iniPoseTraGene(double mov_time)
 {
+  int num_joints = result_.size();
   double smp_time = control_cycle_msec_ * 0.001;
+  if (mov_time <= 0.001)
+  {
+    ROS_INFO("[WalkingModule] Movement time is too short, setting target position directly.");
+    // Create a minimal trajectory with 2 steps: current -> target
+    calc_joint_trajectory_.resize(2, num_joints + 1);
+    calc_joint_trajectory_.row(0).setZero();
+    calc_joint_trajectory_.row(1).setZero();
+
+    calc_joint_trajectory_.coeffRef(0, 0) = 0.0;
+    calc_joint_trajectory_.coeffRef(1, 0) = smp_time;
+
+    for (int i = 0; i < num_joints; ++i)
+    {
+      calc_joint_trajectory_.coeffRef(0, i + 1) = goal_position_.coeff(0, i);
+      calc_joint_trajectory_.coeffRef(1, i + 1) = target_position_.coeff(0, i);
+      // Synchronize goal with target
+      goal_position_.coeffRef(0, i) = target_position_.coeff(0, i);
+    }
+
+    init_pose_count_ = 0;
+    return;
+  }
 
   // Generate trajectory for the first joint to determine time steps
   Eigen::MatrixXd first_tra = robotis_framework::calcMinimumJerkTra(
       goal_position_.coeff(0, 0), 0.0, 0.0, target_position_.coeff(0, 0), 0.0, 0.0, smp_time, mov_time);
 
   int all_time_steps = first_tra.rows();
-  int num_joints = result_.size();
 
   // Resize trajectory matrix
   calc_joint_trajectory_.resize(all_time_steps, num_joints + 1);

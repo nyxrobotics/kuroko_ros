@@ -41,6 +41,7 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   walk_param_.init_pitch_offset = 0.0;
   walk_param_.init_yaw_offset = 0.0;
   walk_param_.init_hip_pitch_offset = 0;
+  walk_param_.init_pose_duration = 0.0;
   walk_param_.period_time = 0.43;
   walk_param_.dsp_ratio = 0.1;
   walk_param_.step_forward_back_ratio = 0.0;
@@ -72,6 +73,9 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   walk_param_.x_step = 0;
   walk_param_.y_step = 0;
   walk_param_.yaw_step = 0;
+
+  idle_param_ = walk_param_;
+  idle_param_.init_pose_duration = 0.1;
 
   squat_param_ = walk_param_;
   squat_param_.init_x_offset = 0;

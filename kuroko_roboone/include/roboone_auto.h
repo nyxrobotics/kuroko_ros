@@ -96,6 +96,7 @@ private:
   std::string walk_status_;
   // Manage balance interruption
   kuroko_walking_module_msgs::WalkingParam walk_param_;
+  kuroko_walking_module_msgs::WalkingParam idle_param_;
   kuroko_walking_module_msgs::WalkingParam squat_param_;
   kuroko_walking_module_msgs::WalkingParam jump_param_;
   double stable_angle_threshold_;  // 安定状態の角度閾値

@@ -59,6 +59,30 @@ void ActionModule::initialize(const int control_cycle_msec, robotis_framework::R
     }
   }
 
+  leg_joint_names_.clear();
+  leg_joint_names_.push_back("hip_r_roll");
+  leg_joint_names_.push_back("hip_r_pitch");
+  leg_joint_names_.push_back("thigh_r_active");
+  leg_joint_names_.push_back("shin_r_active");
+  leg_joint_names_.push_back("ankle_r_roll");
+  leg_joint_names_.push_back("ankle_r_yaw");
+  leg_joint_names_.push_back("hip_l_roll");
+  leg_joint_names_.push_back("hip_l_pitch");
+  leg_joint_names_.push_back("thigh_l_active");
+  leg_joint_names_.push_back("shin_l_active");
+  leg_joint_names_.push_back("ankle_l_roll");
+  leg_joint_names_.push_back("ankle_l_yaw");
+  for (const auto& joint_name : leg_joint_names_)
+  {
+    if (std::find(animation_joint_names_.begin(), animation_joint_names_.end(), joint_name) ==
+        animation_joint_names_.end())
+    {
+      ROS_WARN_STREAM("[ActionModule] Leg joint " << joint_name << " not found in the animation joint names. Removing.");
+      leg_joint_names_.erase(std::remove(leg_joint_names_.begin(), leg_joint_names_.end(), joint_name),
+                             leg_joint_names_.end());
+    }
+  }
+
   for (auto& dxl : robot->dxls_)
   {
     std::string joint_name = dxl.first;
@@ -110,6 +134,10 @@ void ActionModule::queueThread()
       nh.subscribe("/motion_control/action/start_action", 5, &ActionModule::startActionCallback, this);
   ros::ServiceServer is_running_server =
       nh.advertiseService("/motion_control/action/is_running", &ActionModule::isRunningServiceCallback, this);
+  ros::ServiceServer wait_for_stop_server =
+      nh.advertiseService("/motion_control/action/wait_for_stop", &ActionModule::waitForStopServiceCallback, this);
+  ros::ServiceServer wait_for_leg_stop_server = nh.advertiseService("/motion_control/action/wait_for_leg_stop",
+                                                                    &ActionModule::waitForLegStopServiceCallback, this);
 
   ros::WallDuration duration(control_cycle_msec_ / 1000.0);
   while (nh.ok())
@@ -209,7 +237,77 @@ bool ActionModule::isRunning()
 bool ActionModule::isRunningServiceCallback(op3_action_module_msgs::IsRunning::Request& req,
                                             op3_action_module_msgs::IsRunning::Response& res)
 {
-  res.is_running = isRunning();
+  res.is_running = is_running_;
+  return true;
+}
+
+bool ActionModule::waitForStopServiceCallback(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res)
+{
+  double timeout = 5.0;
+  ros::Time start_time = ros::Time::now();
+  while (is_running_ && ros::ok() && (ros::Time::now() - start_time).toSec() < timeout)
+  {
+    ros::Duration(control_cycle_msec_ / 1000.0).sleep();
+  }
+  return true;
+}
+
+bool ActionModule::waitForLegStopServiceCallback(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res)
+{
+  const double timeout = 5.0;
+  const ros::Time start_time = ros::Time::now();
+
+  // すでに停止/完了/点が不足しているなら即時返す
+  if (!is_running_ || trajectory_index_ >= current_trajectory_.points.size() || current_trajectory_.points.size() < 2)
+    return true;
+
+  // 残り軌道を作る補助ラムダ（joint_names も必ずコピー）
+  auto build_remaining_traj = [this]() {
+    trajectory_msgs::JointTrajectory rem;
+    rem.joint_names = current_trajectory_.joint_names;
+    for (size_t i = trajectory_index_; i < current_trajectory_.points.size(); ++i)
+      rem.points.push_back(current_trajectory_.points[i]);
+    return rem;
+  };
+
+  // 残り脚移動量を積算する補助ラムダ（安全な境界でループ）
+  auto compute_leg_remaining = [this](const trajectory_msgs::JointTrajectory& traj) -> double {
+    if (traj.points.size() < 2 || traj.joint_names.empty())
+      return 0.0;
+
+    double acc = 0.0;
+    for (size_t i = 0; i + 1 < traj.points.size(); ++i)
+    {
+      const auto& p1 = traj.points[i];
+      const auto& p2 = traj.points[i + 1];
+      const size_t n = std::min({ p1.positions.size(), p2.positions.size(), traj.joint_names.size() });
+      for (size_t j = 0; j < n; ++j)
+      {
+        const std::string& jname = traj.joint_names[j];
+        if (std::find(leg_joint_names_.begin(), leg_joint_names_.end(), jname) != leg_joint_names_.end())
+          acc += std::abs(p2.positions[j] - p1.positions[j]);
+      }
+    }
+    return acc;
+  };
+
+  trajectory_msgs::JointTrajectory remaining_trajectory = build_remaining_traj();
+  if (remaining_trajectory.points.size() < 2)
+    return true;
+
+  double leg_remaining_movement = compute_leg_remaining(remaining_trajectory);
+
+  // 閾値 0.1 を下回る（実質停止）か、タイムアウトまで待つ
+  while (is_running_ && ros::ok() && (ros::Time::now() - start_time).toSec() < timeout && leg_remaining_movement > 0.1)
+  {
+    remaining_trajectory = build_remaining_traj();
+    if (remaining_trajectory.points.size() < 2)
+      break;
+
+    leg_remaining_movement = compute_leg_remaining(remaining_trajectory);
+    ros::Duration(control_cycle_msec_ / 1000.0).sleep();
+  }
+
   return true;
 }
 

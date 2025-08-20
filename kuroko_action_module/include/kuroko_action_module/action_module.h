@@ -18,6 +18,7 @@ namespace fs = std::experimental::filesystem;
 #include <ros/ros.h>
 #include <ros/package.h>
 #include <ros/callback_queue.h>
+#include <std_srvs/Empty.h>
 #include "robotis_framework_common/motion_module.h"
 #include "robotis_controller_msgs/StatusMsg.h"
 #include "robotis_controller_msgs/SyncWriteItem.h"
@@ -71,12 +72,15 @@ private:
   std::map<int, std::string> dxl_id_to_joint_name_;
   std::map<std::string, bool> action_joints_enable_;
   std::vector<std::string> animation_joint_names_;
+  std::vector<std::string> leg_joint_names_;
 
   animation_system::Workspace workspace_;
 
   // ROS Topic Callback Functions
   bool isRunningServiceCallback(op3_action_module_msgs::IsRunning::Request& req,
                                 op3_action_module_msgs::IsRunning::Response& res);
+  bool waitForStopServiceCallback(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res);
+  bool waitForLegStopServiceCallback(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res);
   void animationNumberCallback(const std_msgs::Int32::ConstPtr& msg);
   void startActionCallback(const op3_action_module_msgs::StartAction::ConstPtr& msg);
 

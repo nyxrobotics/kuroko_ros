@@ -60,6 +60,7 @@ private:
   void handleFall();
 
   Eigen::Vector3d imuQuaternionToRollPitchYaw(const Eigen::Quaterniond& q);
+  Eigen::Quaterniond imuRollPitchYawToQuaternion(const Eigen::Vector3d& rpy);
   double wrapToPi(double angle);
 
   ros::Subscriber joy_sub_, imu_sub_, camera_info_sub_;

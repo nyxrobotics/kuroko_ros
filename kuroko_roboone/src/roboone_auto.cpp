@@ -900,6 +900,53 @@ Eigen::Vector3d RobooneAuto::imuQuaternionToRollPitchYaw(const Eigen::Quaternion
   return Eigen::Vector3d(roll, pitch, yaw);
 }
 
+Eigen::Quaterniond RobooneAuto::imuRollPitchYawToQuaternion(const Eigen::Vector3d& rpy)
+{
+  // rpy = (roll, pitch, yaw) as returned by imuQuaternionToRollPitchYaw
+  const double roll = rpy.x();
+  const double pitch = rpy.y();
+  const double yaw = rpy.z();
+
+  // 1) Build robot-frame axis directions consistent with the forward mapping.
+  //    From the definitions used in imuQuaternionToRollPitchYaw:
+  //    - pitch controls the tilt of the robot x-axis: x_robot.z = -sin(pitch),
+  //      and its XY projection magnitude is cos(pitch) with heading = yaw.
+  //    - roll  controls the tilt of the robot y-axis: y_robot.z =  sin(roll),
+  //      and its XY projection magnitude is cos(roll) with heading = yaw + 90deg.
+  Eigen::Vector3d x_robot(std::cos(yaw) * std::cos(pitch), std::sin(yaw) * std::cos(pitch), -std::sin(pitch));
+
+  Eigen::Vector3d y_robot(std::cos(yaw + M_PI * 0.5) * std::cos(roll), std::sin(yaw + M_PI * 0.5) * std::cos(roll),
+                          std::sin(roll));
+
+  // 2) Orthonormalize to be safe (ensure a right-handed, orthonormal basis).
+  //    z = x × y, then re-derive y = z × x to guarantee orthogonality.
+  Eigen::Vector3d x = x_robot.normalized();
+  Eigen::Vector3d y = y_robot.normalized();
+  Eigen::Vector3d z = x.cross(y);
+  double nz = z.norm();
+  if (nz < 1e-12)
+  {
+    // In the unlikely event x and y became nearly colinear numerically,
+    // pick an arbitrary perpendicular to x for stabilization.
+    Eigen::Vector3d tmp = (std::abs(x.z()) < 0.9) ? Eigen::Vector3d::UnitZ() : Eigen::Vector3d::UnitX();
+    z = x.cross(tmp);
+    nz = z.norm();
+  }
+  z.normalize();
+  y = z.cross(x).normalized();
+
+  // 3) Build rotation matrix whose columns are the images of the origin axes:
+  //    q * [1,0,0] = x, q * [0,1,0] = y, q * [0,0,1] = z.
+  Eigen::Matrix3d r_matrix;
+  r_matrix.col(0) = x;
+  r_matrix.col(1) = y;
+  r_matrix.col(2) = z;
+
+  // 4) Convert to quaternion.
+  Eigen::Quaterniond q(r_matrix);
+  return q.normalized();
+}
+
 double RobooneAuto::wrapToPi(double angle)
 {
   angle = std::fmod(angle + M_PI, 2.0 * M_PI);

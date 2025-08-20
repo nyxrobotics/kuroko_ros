@@ -117,8 +117,9 @@ private:
   void saveWalkingParam(std::string& path);
   void exportInitialPose(std::string& path);
   void iniPoseTraGene(double mov_time);
-  Eigen::Vector3d quaterionToRpy(const Eigen::Quaterniond& q);
-  Eigen::Quaterniond rpyToQuaternion(const Eigen::Vector3d& rpy);
+  Eigen::Vector3d imuQuaternionToRollPitchYaw(const Eigen::Quaterniond& q);
+  Eigen::Quaterniond imuRollPitchYawToQuaternion(const Eigen::Vector3d& rpy);
+  double wrapToPi(double angle);
 
   KurokoKinematics* kuroko_kinematics_;
   int control_cycle_msec_;

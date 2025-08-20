@@ -1209,17 +1209,17 @@ bool WalkingModule::updateLegTargetAngles(std::vector<double>& leg_joints)
   l_foot_rpy[1] += init_pitch_offset_;
   l_foot_rpy[2] += init_yaw_offset_ / 2.0;
 
-  Eigen::Quaterniond body_quat = rpyToQuaternion(body_rpy);
-  Eigen::Quaterniond r_foot_quat = rpyToQuaternion(r_foot_rpy);
-  Eigen::Quaterniond l_foot_quat = rpyToQuaternion(l_foot_rpy);
+  Eigen::Quaterniond body_quat = imuRollPitchYawToQuaternion(body_rpy);
+  Eigen::Quaterniond r_foot_quat = imuRollPitchYawToQuaternion(r_foot_rpy);
+  Eigen::Quaterniond l_foot_quat = imuRollPitchYawToQuaternion(l_foot_rpy);
 
   Eigen::Vector3d body2r_foot_pos = body_quat.inverse() * (r_foot_pos - body_pos);
   Eigen::Quaterniond body2r_foot_quat = body_quat.inverse() * r_foot_quat;
-  Eigen::Vector3d body2r_foot_rpy = quaterionToRpy(body2r_foot_quat);
+  Eigen::Vector3d body2r_foot_rpy = imuQuaternionToRollPitchYaw(body2r_foot_quat);
 
   Eigen::Vector3d body2l_foot_pos = body_quat.inverse() * (l_foot_pos - body_pos);
   Eigen::Quaterniond body2l_foot_quat = body_quat.inverse() * l_foot_quat;
-  Eigen::Vector3d body2l_foot_rpy = quaterionToRpy(body2l_foot_quat);
+  Eigen::Vector3d body2l_foot_rpy = imuQuaternionToRollPitchYaw(body2l_foot_quat);
 
   // Right leg target point
   r_target_pose[0] = body2r_foot_pos[0];
@@ -1456,16 +1456,16 @@ void WalkingModule::exportInitialPose(std::string& path)
   l_foot_rpy[1] += init_pitch_offset_;
   l_foot_rpy[2] += init_yaw_offset_ / 2.0;
 
-  Eigen::Quaterniond body_quat = rpyToQuaternion(body_rpy);
-  Eigen::Quaterniond r_foot_quat = rpyToQuaternion(r_foot_rpy);
-  Eigen::Quaterniond l_foot_quat = rpyToQuaternion(l_foot_rpy);
+  Eigen::Quaterniond body_quat = imuRollPitchYawToQuaternion(body_rpy);
+  Eigen::Quaterniond r_foot_quat = imuRollPitchYawToQuaternion(r_foot_rpy);
+  Eigen::Quaterniond l_foot_quat = imuRollPitchYawToQuaternion(l_foot_rpy);
 
   Eigen::Vector3d body2r_foot_pos = body_quat.inverse() * (r_foot_pos - body_pos);
   Eigen::Vector3d body2l_foot_pos = body_quat.inverse() * (l_foot_pos - body_pos);
   Eigen::Quaterniond body2r_foot_quat = body_quat.inverse() * r_foot_quat;
   Eigen::Quaterniond body2l_foot_quat = body_quat.inverse() * l_foot_quat;
-  Eigen::Vector3d body2r_foot_rpy = quaterionToRpy(body2r_foot_quat);
-  Eigen::Vector3d body2l_foot_rpy = quaterionToRpy(body2l_foot_quat);
+  Eigen::Vector3d body2r_foot_rpy = imuQuaternionToRollPitchYaw(body2r_foot_quat);
+  Eigen::Vector3d body2l_foot_rpy = imuQuaternionToRollPitchYaw(body2l_foot_quat);
 
   for (int i = 0; i < 3; i++)
   {
@@ -1621,37 +1621,99 @@ void WalkingModule::iniPoseTraGene(double mov_time)
   init_pose_count_ = 0;
 }
 
-Eigen::Vector3d WalkingModule::quaterionToRpy(const Eigen::Quaterniond& q)
+Eigen::Vector3d WalkingModule::imuQuaternionToRollPitchYaw(const Eigen::Quaterniond& q)
 {
-  Eigen::Vector3d angles;  // roll pitch yaw
-  double x = q.x(), y = q.y(), z = q.z(), w = q.w();
+  // ジンバルロックを防ぐため、ベクトルの相対的な変位を使用して角度を求める
+  // 解はXYZオイラー角と異なる
+  Eigen::Vector3d x_origin = Eigen::Vector3d::UnitX();  // Front
+  Eigen::Vector3d y_origin = Eigen::Vector3d::UnitY();  // Left
+  Eigen::Vector3d z_origin = Eigen::Vector3d::UnitZ();  // Up
 
-  // yaw (z-axis rotation)
-  double siny_cosp = 2 * (w * z + x * y);
-  double cosy_cosp = 1 - 2 * (y * y + z * z);
-  angles[2] = std::atan2(siny_cosp, cosy_cosp);
+  Eigen::Vector3d x_robot = q * x_origin;
+  Eigen::Vector3d y_robot = q * y_origin;
+  Eigen::Vector3d z_robot = q * z_origin;
 
-  // pitch (y-axis rotation)
-  double sinp = 2 * (w * y - z * x);
-  if (std::abs(sinp) >= 1)
-    angles[1] = std::copysign(M_PI / 2, sinp);  // use 90 degrees if out of range
+  double roll = 0, pitch = 0, yaw = 0;
+  // pitch: 原点のxy平面から見てロボットのx軸がどれだけ傾いているか
+  pitch = std::atan2(-x_robot.z(), std::sqrt(x_robot.x() * x_robot.x() + x_robot.y() * x_robot.y()));
+  if (z_robot.z() < 0.0)
+    pitch = M_PI - pitch;  // 逆立ち補正
+  // roll: 原点のxy平面から見てロボットのy軸がどれだけ傾いているか
+  roll = std::atan2(y_robot.z(), std::sqrt(y_robot.x() * y_robot.x() + y_robot.y() * y_robot.y()));
+  // yaw: 原点のz軸周りにロボットがどれだけ回転しているか
+  if (fabs(x_robot.z()) < fabs(y_robot.z()))
+  {
+    // x軸の傾きがy軸の傾きより小さい場合、x軸を使用してyawを計算
+    yaw = std::atan2(x_robot.y(), x_robot.x());
+    if (z_robot.z() < 0.0)
+      yaw = yaw + M_PI;  // 逆立ち補正
+  }
   else
-    angles[1] = std::asin(sinp);
+  {
+    // y軸の傾きがx軸の傾きより小さい場合、y軸を使用してyawを計算
+    yaw = std::atan2(y_robot.y(), y_robot.x()) - M_PI / 2.0;
+  }
 
-  // roll (x-axis rotation)
-  double sinr_cosp = 2 * (w * x + y * z);
-  double cosr_cosp = 1 - 2 * (x * x + y * y);
-  angles[0] = std::atan2(sinr_cosp, cosr_cosp);
-
-  return angles;
+  // 最後に-M_PIから+M_PIに変換する
+  roll = wrapToPi(roll);
+  pitch = wrapToPi(pitch);
+  yaw = wrapToPi(yaw);
+  return Eigen::Vector3d(roll, pitch, yaw);
 }
 
-Eigen::Quaterniond WalkingModule::rpyToQuaternion(const Eigen::Vector3d& rpy)
+Eigen::Quaterniond WalkingModule::imuRollPitchYawToQuaternion(const Eigen::Vector3d& rpy)
 {
-  Eigen::Quaterniond q;
-  q = Eigen::AngleAxisd(rpy[2], Eigen::Vector3d::UnitZ()) * Eigen::AngleAxisd(rpy[1], Eigen::Vector3d::UnitY()) *
-      Eigen::AngleAxisd(rpy[0], Eigen::Vector3d::UnitX());
-  return q;
+  // rpy = (roll, pitch, yaw) as returned by imuQuaternionToRollPitchYaw
+  const double roll = rpy.x();
+  const double pitch = rpy.y();
+  const double yaw = rpy.z();
+
+  // 1) Build robot-frame axis directions consistent with the forward mapping.
+  //    From the definitions used in imuQuaternionToRollPitchYaw:
+  //    - pitch controls the tilt of the robot x-axis: x_robot.z = -sin(pitch),
+  //      and its XY projection magnitude is cos(pitch) with heading = yaw.
+  //    - roll  controls the tilt of the robot y-axis: y_robot.z =  sin(roll),
+  //      and its XY projection magnitude is cos(roll) with heading = yaw + 90deg.
+  Eigen::Vector3d x_robot(std::cos(yaw) * std::cos(pitch), std::sin(yaw) * std::cos(pitch), -std::sin(pitch));
+
+  Eigen::Vector3d y_robot(std::cos(yaw + M_PI * 0.5) * std::cos(roll), std::sin(yaw + M_PI * 0.5) * std::cos(roll),
+                          std::sin(roll));
+
+  // 2) Orthonormalize to be safe (ensure a right-handed, orthonormal basis).
+  //    z = x × y, then re-derive y = z × x to guarantee orthogonality.
+  Eigen::Vector3d x = x_robot.normalized();
+  Eigen::Vector3d y = y_robot.normalized();
+  Eigen::Vector3d z = x.cross(y);
+  double nz = z.norm();
+  if (nz < 1e-12)
+  {
+    // In the unlikely event x and y became nearly colinear numerically,
+    // pick an arbitrary perpendicular to x for stabilization.
+    Eigen::Vector3d tmp = (std::abs(x.z()) < 0.9) ? Eigen::Vector3d::UnitZ() : Eigen::Vector3d::UnitX();
+    z = x.cross(tmp);
+    nz = z.norm();
+  }
+  z.normalize();
+  y = z.cross(x).normalized();
+
+  // 3) Build rotation matrix whose columns are the images of the origin axes:
+  //    q * [1,0,0] = x, q * [0,1,0] = y, q * [0,0,1] = z.
+  Eigen::Matrix3d r_matrix;
+  r_matrix.col(0) = x;
+  r_matrix.col(1) = y;
+  r_matrix.col(2) = z;
+
+  // 4) Convert to quaternion.
+  Eigen::Quaterniond q(r_matrix);
+  return q.normalized();
+}
+
+double WalkingModule::wrapToPi(double angle)
+{
+  angle = std::fmod(angle + M_PI, 2.0 * M_PI);
+  if (angle < 0)
+    angle += 2.0 * M_PI;
+  return angle - M_PI;
 }
 
 }  // namespace motion_control

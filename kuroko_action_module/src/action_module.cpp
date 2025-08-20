@@ -134,10 +134,10 @@ void ActionModule::queueThread()
       nh.subscribe("/motion_control/action/start_action", 5, &ActionModule::startActionCallback, this);
   ros::ServiceServer is_running_server =
       nh.advertiseService("/motion_control/action/is_running", &ActionModule::isRunningServiceCallback, this);
-  ros::ServiceServer wait_for_stop_server =
-      nh.advertiseService("/motion_control/action/wait_for_stop", &ActionModule::waitForStopServiceCallback, this);
-  ros::ServiceServer wait_for_leg_stop_server = nh.advertiseService("/motion_control/action/wait_for_leg_stop",
-                                                                    &ActionModule::waitForLegStopServiceCallback, this);
+  ros::ServiceServer get_remaining_time_server = nh.advertiseService(
+      "/motion_control/action/get_remaining_time", &ActionModule::getRemainingTimeServiceCallback, this);
+  ros::ServiceServer get_leg_remaining_time_server = nh.advertiseService(
+      "/motion_control/action/get_leg_remaining_time", &ActionModule::getLegRemainingTimeServiceCallback, this);
 
   ros::WallDuration duration(control_cycle_msec_ / 1000.0);
   while (nh.ok())
@@ -152,6 +152,7 @@ void ActionModule::process(std::map<std::string, robotis_framework::Dynamixel*> 
   {
     ROS_INFO("[ActionModule] Start playing triggered");
     is_running_ = true;
+    is_running_leg_ = true;
     trajectory_start_time_ = ros::Time::now();
     trajectory_index_ = 0;
     start_playing_requested_ = false;
@@ -167,7 +168,44 @@ void ActionModule::process(std::map<std::string, robotis_framework::Dynamixel*> 
     publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_INFO, "Finish animation");
     publishDoneMsg(current_animation_name_);
     is_running_ = false;
+    is_running_leg_ = false;
     return;
+  }
+
+  // If leg movements finished
+  if (is_running_leg_)
+  {
+    if (trajectory_index_ < current_trajectory_.points.size() - 1)
+    {
+      // Get movement for legs in remaining trajectory
+      double leg_remaining_movement = 0.0;
+      for (int i = trajectory_index_; i < current_trajectory_.points.size() - 1; ++i)
+      {
+        const auto& start_point = current_trajectory_.points[i];
+        const auto& end_point = current_trajectory_.points[i + 1];
+        for (size_t j = 0; j < current_trajectory_.joint_names.size(); ++j)
+        {
+          const std::string& joint_name = current_trajectory_.joint_names[j];
+          if (std::find(leg_joint_names_.begin(), leg_joint_names_.end(), joint_name) != leg_joint_names_.end())
+          {
+            double movement = fabs(end_point.positions[j] - start_point.positions[j]);
+            leg_remaining_movement += movement;
+          }
+        }
+      }
+      if (leg_remaining_movement < 0.01)
+      {
+        ROS_INFO("[ActionModule] Leg movements finished");
+        is_running_leg_ = false;
+        publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_INFO, "Leg movements finished");
+      }
+    }
+    else
+    {
+      ROS_INFO("[ActionModule] Leg movements finished");
+      is_running_leg_ = false;
+      publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_INFO, "Leg movements finished");
+    }
   }
 
   const auto& traj = current_trajectory_;
@@ -231,7 +269,7 @@ void ActionModule::onModuleDisable()
 
 bool ActionModule::isRunning()
 {
-  return is_running_;
+  return !(!is_running_ || !is_running_leg_);
 }
 
 bool ActionModule::isRunningServiceCallback(op3_action_module_msgs::IsRunning::Request& req,
@@ -241,73 +279,17 @@ bool ActionModule::isRunningServiceCallback(op3_action_module_msgs::IsRunning::R
   return true;
 }
 
-bool ActionModule::waitForStopServiceCallback(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res)
+bool ActionModule::getRemainingTimeServiceCallback(kuroko_walking_module_msgs::GetFloat::Request& req,
+                                                   kuroko_walking_module_msgs::GetFloat::Response& res)
 {
-  double timeout = 5.0;
-  ros::Time start_time = ros::Time::now();
-  while (is_running_ && ros::ok() && (ros::Time::now() - start_time).toSec() < timeout)
-  {
-    ros::Duration(control_cycle_msec_ / 1000.0).sleep();
-  }
+  res.data = 0.0;
   return true;
 }
 
-bool ActionModule::waitForLegStopServiceCallback(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res)
+bool ActionModule::getLegRemainingTimeServiceCallback(kuroko_walking_module_msgs::GetFloat::Request& req,
+                                                      kuroko_walking_module_msgs::GetFloat::Response& res)
 {
-  const double timeout = 5.0;
-  const ros::Time start_time = ros::Time::now();
-
-  // すでに停止/完了/点が不足しているなら即時返す
-  if (!is_running_ || trajectory_index_ >= current_trajectory_.points.size() || current_trajectory_.points.size() < 2)
-    return true;
-
-  // 残り軌道を作る補助ラムダ（joint_names も必ずコピー）
-  auto build_remaining_traj = [this]() {
-    trajectory_msgs::JointTrajectory rem;
-    rem.joint_names = current_trajectory_.joint_names;
-    for (size_t i = trajectory_index_; i < current_trajectory_.points.size(); ++i)
-      rem.points.push_back(current_trajectory_.points[i]);
-    return rem;
-  };
-
-  // 残り脚移動量を積算する補助ラムダ（安全な境界でループ）
-  auto compute_leg_remaining = [this](const trajectory_msgs::JointTrajectory& traj) -> double {
-    if (traj.points.size() < 2 || traj.joint_names.empty())
-      return 0.0;
-
-    double acc = 0.0;
-    for (size_t i = 0; i + 1 < traj.points.size(); ++i)
-    {
-      const auto& p1 = traj.points[i];
-      const auto& p2 = traj.points[i + 1];
-      const size_t n = std::min({ p1.positions.size(), p2.positions.size(), traj.joint_names.size() });
-      for (size_t j = 0; j < n; ++j)
-      {
-        const std::string& jname = traj.joint_names[j];
-        if (std::find(leg_joint_names_.begin(), leg_joint_names_.end(), jname) != leg_joint_names_.end())
-          acc += std::abs(p2.positions[j] - p1.positions[j]);
-      }
-    }
-    return acc;
-  };
-
-  trajectory_msgs::JointTrajectory remaining_trajectory = build_remaining_traj();
-  if (remaining_trajectory.points.size() < 2)
-    return true;
-
-  double leg_remaining_movement = compute_leg_remaining(remaining_trajectory);
-
-  // 閾値 0.1 を下回る（実質停止）か、タイムアウトまで待つ
-  while (is_running_ && ros::ok() && (ros::Time::now() - start_time).toSec() < timeout && leg_remaining_movement > 0.1)
-  {
-    remaining_trajectory = build_remaining_traj();
-    if (remaining_trajectory.points.size() < 2)
-      break;
-
-    leg_remaining_movement = compute_leg_remaining(remaining_trajectory);
-    ros::Duration(control_cycle_msec_ / 1000.0).sleep();
-  }
-
+  res.data = 0.0;
   return true;
 }
 

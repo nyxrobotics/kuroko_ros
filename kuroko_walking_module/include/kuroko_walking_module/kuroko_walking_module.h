@@ -15,10 +15,10 @@
 #include <ros/ros.h>
 #include <sensor_msgs/Imu.h>
 #include <std_msgs/String.h>
-#include <std_srvs/Empty.h>
 
 #include "kuroko_walking_module_msgs/GetWalkingParam.h"
 #include "kuroko_walking_module_msgs/SetWalkingParam.h"
+#include "kuroko_walking_module_msgs/GetFloat.h"
 #include "kuroko_walking_module_msgs/WalkingParam.h"
 #include "robotis_controller_msgs/StatusMsg.h"
 
@@ -92,7 +92,8 @@ private:
   void walkingParameterCallback(const kuroko_walking_module_msgs::WalkingParam::ConstPtr& msg);
   bool getWalkigParameterServiceCallback(kuroko_walking_module_msgs::GetWalkingParam::Request& req,
                                          kuroko_walking_module_msgs::GetWalkingParam::Response& res);
-  bool waitForStopServiceCallback(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res);
+  bool getRemainingTimeServiceCallback(kuroko_walking_module_msgs::GetFloat::Request& req,
+                                       kuroko_walking_module_msgs::GetFloat::Response& res);
 
   /* ROS Service Callback Functions */
   void processPhase(const double& time_unit);

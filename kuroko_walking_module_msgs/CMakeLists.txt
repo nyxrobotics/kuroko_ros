@@ -12,7 +12,7 @@ find_package(catkin REQUIRED COMPONENTS std_msgs message_generation)
 
 add_message_files(FILES WalkingParam.msg)
 
-add_service_files(FILES GetWalkingParam.srv SetWalkingParam.srv)
+add_service_files(FILES GetWalkingParam.srv SetWalkingParam.srv GetFloat.srv)
 
 generate_messages(DEPENDENCIES std_msgs)
 

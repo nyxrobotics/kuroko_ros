@@ -10,6 +10,7 @@ find_package(
              op3_action_module_msgs
              robotis_framework_common
              robotis_device
+             kuroko_walking_module_msgs
 )
 
 find_package(Boost REQUIRED)
@@ -25,6 +26,7 @@ catkin_package(
     op3_action_module_msgs
     robotis_framework_common
     robotis_device
+    kuroko_walking_module_msgs
   DEPENDS Boost
 )
 
@@ -34,11 +36,7 @@ include_directories(
   ${Boost_INCLUDE_DIRS}
 )
 
-add_library(
-  ${PROJECT_NAME}
-  src/action_module.cpp
-  src/animation_files.cpp
-)
+add_library(${PROJECT_NAME} src/action_module.cpp src/animation_files.cpp)
 add_dependencies(
   ${PROJECT_NAME}
   ${${PROJECT_NAME}_EXPORTED_TARGETS}

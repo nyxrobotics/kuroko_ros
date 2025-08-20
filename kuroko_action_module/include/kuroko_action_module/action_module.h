@@ -18,7 +18,6 @@ namespace fs = std::experimental::filesystem;
 #include <ros/ros.h>
 #include <ros/package.h>
 #include <ros/callback_queue.h>
-#include <std_srvs/Empty.h>
 #include "robotis_framework_common/motion_module.h"
 #include "robotis_controller_msgs/StatusMsg.h"
 #include "robotis_controller_msgs/SyncWriteItem.h"
@@ -28,6 +27,7 @@ namespace fs = std::experimental::filesystem;
 #include "op3_action_module_msgs/IsRunning.h"
 #include "op3_action_module_msgs/StartAction.h"
 #include "animation_files.h"
+#include "kuroko_walking_module_msgs/GetFloat.h"
 
 namespace motion_control
 {
@@ -54,6 +54,7 @@ private:
   int current_block_id_;
   double time_in_frame_ = 0.0;
   bool is_running_ = false;
+  bool is_running_leg_ = false;
 
   boost::thread queue_thread_;
   ros::Publisher status_msg_pub_;
@@ -79,8 +80,12 @@ private:
   // ROS Topic Callback Functions
   bool isRunningServiceCallback(op3_action_module_msgs::IsRunning::Request& req,
                                 op3_action_module_msgs::IsRunning::Response& res);
-  bool waitForStopServiceCallback(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res);
-  bool waitForLegStopServiceCallback(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res);
+
+  bool getRemainingTimeServiceCallback(kuroko_walking_module_msgs::GetFloat::Request& req,
+                                       kuroko_walking_module_msgs::GetFloat::Response& res);
+
+  bool getLegRemainingTimeServiceCallback(kuroko_walking_module_msgs::GetFloat::Request& req,
+                                          kuroko_walking_module_msgs::GetFloat::Response& res);
   void animationNumberCallback(const std_msgs::Int32::ConstPtr& msg);
   void startActionCallback(const op3_action_module_msgs::StartAction::ConstPtr& msg);
 

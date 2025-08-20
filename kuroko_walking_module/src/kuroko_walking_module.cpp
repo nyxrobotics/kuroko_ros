@@ -176,8 +176,8 @@ void WalkingModule::queueThread()
   /* ROS Service Callback Functions */
   ros::ServiceServer get_walking_param_server = ros_node.advertiseService(
       "/motion_control/walking/get_params", &WalkingModule::getWalkigParameterServiceCallback, this);
-  ros::ServiceServer wait_for_stop_server = ros_node.advertiseService("/motion_control/walking/wait_for_stop",
-                                                                      &WalkingModule::waitForStopServiceCallback, this);
+  ros::ServiceServer get_remaining_time_server = ros_node.advertiseService(
+      "/motion_control/walking/get_remaining_time", &WalkingModule::getRemainingTimeServiceCallback, this);
 
   /* sensor topic subscribe */
   ros::Subscriber walking_command_sub =
@@ -258,25 +258,10 @@ bool WalkingModule::getWalkigParameterServiceCallback(kuroko_walking_module_msgs
   return true;
 }
 
-bool WalkingModule::waitForStopServiceCallback(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res)
+bool WalkingModule::getRemainingTimeServiceCallback(kuroko_walking_module_msgs::GetFloat::Request& req,
+                                                    kuroko_walking_module_msgs::GetFloat::Response& res)
 {
-  double timeout = 5.0;  // seconds
-  ros::Time start_time = ros::Time::now();
-  if (walking_state_ == WALK_DISABLE)
-  {
-    ROS_INFO("Walking module is not enabled.");
-    return false;
-  }
-
-  if (request_walk_)
-    request_walk_ = false;
-
-  while (is_walking_ && ros::ok() && (ros::Time::now() - start_time).toSec() < timeout)
-  {
-    ros::Duration(control_cycle_msec_ / 1000.0).sleep();
-  }
-
-  ROS_INFO("Walking motion stopped.");
+  res.data = 0.0;
   return true;
 }
 

@@ -13,9 +13,10 @@
   <depend>roscpp</depend>
   <depend>roslib</depend>
   <depend>std_msgs</depend>
-  <depend>robotis_controller_msgs</depend>
+  <depend>kuroko_walking_module_msgs</depend>
   <depend>op3_action_module_msgs</depend>
-  <depend>robotis_framework_common</depend>
+  <depend>robotis_controller_msgs</depend>
   <depend>robotis_device</depend>
+  <depend>robotis_framework_common</depend>
   <depend>boost</depend>
 </package>

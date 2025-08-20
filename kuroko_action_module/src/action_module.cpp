@@ -282,14 +282,70 @@ bool ActionModule::isRunningServiceCallback(op3_action_module_msgs::IsRunning::R
 bool ActionModule::getRemainingTimeServiceCallback(kuroko_walking_module_msgs::GetFloat::Request& req,
                                                    kuroko_walking_module_msgs::GetFloat::Response& res)
 {
-  res.data = 0.0;
+  double remaining_time = 0.0;
+  if (!is_running_ || trajectory_index_ > current_trajectory_.points.size() - 2)
+  {
+    res.data = 0.0;
+    return true;
+  }
+  for (size_t i = trajectory_index_; i < current_trajectory_.points.size() - 2; ++i)
+  {
+    const auto& start_point = current_trajectory_.points[i];
+    const auto& end_point = current_trajectory_.points[i + 1];
+    remaining_time += (end_point.time_from_start - start_point.time_from_start).toSec();
+  }
+  res.data = remaining_time;
   return true;
 }
 
 bool ActionModule::getLegRemainingTimeServiceCallback(kuroko_walking_module_msgs::GetFloat::Request& req,
                                                       kuroko_walking_module_msgs::GetFloat::Response& res)
 {
-  res.data = 0.0;
+  double leg_leg_movement_threshold = 0.01;
+  double leg_movement = 0.0;
+  double leg_finish_index = current_trajectory_.points.size() - 1;
+  if (!is_running_ || !is_running_leg_ || trajectory_index_ >= current_trajectory_.points.size() - 1)
+  {
+    res.data = 0.0;
+    return true;
+  }
+  // search for the last point where total leg movement is greater than the threshold
+  for (int i = current_trajectory_.points.size() - 1; i >= trajectory_index_; --i)
+  {
+    const auto& point = current_trajectory_.points[i];
+    for (const auto& joint_name : leg_joint_names_)
+    {
+      if (point.positions.size() > 0 && point.velocities.size() > 0)
+      {
+        auto it = joint_name_to_dxl_id_.find(joint_name);
+        if (it != joint_name_to_dxl_id_.end())
+        {
+          int dxl_id = it->second;
+          size_t index = std::distance(current_trajectory_.joint_names.begin(),
+                                       std::find(current_trajectory_.joint_names.begin(),
+                                                 current_trajectory_.joint_names.end(), joint_name));
+          leg_movement += fabs(point.positions[index] - result_[joint_name]->goal_position_);
+        }
+      }
+    }
+    if (leg_movement > leg_leg_movement_threshold)
+    {
+      if (i < current_trajectory_.points.size() - 2)
+        leg_finish_index = i + 1;
+      else
+        leg_finish_index = i;
+      break;
+    }
+  }
+  // Get remaining time for the leg movements
+  double remaining_time = 0.0;
+  for (size_t i = trajectory_index_; i < leg_finish_index; ++i)
+  {
+    const auto& start_point = current_trajectory_.points[i];
+    const auto& end_point = current_trajectory_.points[i + 1];
+    remaining_time += (end_point.time_from_start - start_point.time_from_start).toSec();
+  }
+  res.data = remaining_time;
   return true;
 }
 

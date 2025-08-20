@@ -57,6 +57,7 @@ private:
   void transitionToAutoMoveState();  // 自律移動状態への遷移
   void transitionToPauseWalkingState();
   void transitionToSquatState();
+  void transitionToJumpState();
   void handleFall();
 
   Eigen::Vector3d imuQuaternionToRollPitchYaw(const Eigen::Quaterniond& q);

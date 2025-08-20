@@ -2174,13 +2174,13 @@ void KurokoJointController::setCtrlModuleThread(const std::string& ctrl_module)
   }
   else
   {
-    for (auto& m_it : motion_modules_)
+    for (auto& motion_module : motion_modules_)
     {
       // if it exist
-      if (m_it->getModuleName() == ctrl_module)
+      if (motion_module->getModuleName() == ctrl_module)
       {
         // enqueue the module which lost control of joint in order to stop
-        for (auto& result_it : m_it->result_)
+        for (auto& result_it : motion_module->result_)
         {
           auto d_it = robot_->dxls_.find(result_it.first);
 

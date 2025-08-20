@@ -174,14 +174,16 @@ void WalkingModule::queueThread()
   status_msg_pub_ = ros_node.advertise<robotis_controller_msgs::StatusMsg>("motion_control/status", 1);
 
   /* ROS Service Callback Functions */
-  ros::ServiceServer get_walking_param_server =
-      ros_node.advertiseService("/motion_control/walking/get_params", &WalkingModule::getWalkigParameterCallback, this);
+  ros::ServiceServer get_walking_param_server = ros_node.advertiseService(
+      "/motion_control/walking/get_params", &WalkingModule::getWalkigParameterServiceCallback, this);
+  ros::ServiceServer wait_for_stop_server = ros_node.advertiseService("/motion_control/walking/wait_for_stop",
+                                                                      &WalkingModule::waitForStopServiceCallback, this);
 
   /* sensor topic subscribe */
   ros::Subscriber walking_command_sub =
-      ros_node.subscribe("/motion_control/walking/command", 0, &WalkingModule::walkingCommandCallback, this);
+      ros_node.subscribe("/motion_control/walking/command", 5, &WalkingModule::walkingCommandCallback, this);
   ros::Subscriber walking_param_sub =
-      ros_node.subscribe("/motion_control/walking/set_params", 0, &WalkingModule::walkingParameterCallback, this);
+      ros_node.subscribe("/motion_control/walking/set_params", 5, &WalkingModule::walkingParameterCallback, this);
 
   ros::WallDuration duration(control_cycle_msec_ / 1000.0);
   while (ros_node.ok())
@@ -249,10 +251,32 @@ void WalkingModule::walkingParameterCallback(const kuroko_walking_module_msgs::W
   }
 }
 
-bool WalkingModule::getWalkigParameterCallback(kuroko_walking_module_msgs::GetWalkingParam::Request& /*req*/,
-                                               kuroko_walking_module_msgs::GetWalkingParam::Response& res)
+bool WalkingModule::getWalkigParameterServiceCallback(kuroko_walking_module_msgs::GetWalkingParam::Request& /*req*/,
+                                                      kuroko_walking_module_msgs::GetWalkingParam::Response& res)
 {
   res.parameters = config_walking_param_;
+  return true;
+}
+
+bool WalkingModule::waitForStopServiceCallback(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res)
+{
+  double timeout = 5.0;  // seconds
+  ros::Time start_time = ros::Time::now();
+  if (walking_state_ == WALK_DISABLE)
+  {
+    ROS_INFO("Walking module is not enabled.");
+    return false;
+  }
+
+  if (request_walk_)
+    request_walk_ = false;
+
+  while (is_walking_ && ros::ok() && (ros::Time::now() - start_time).toSec() < timeout)
+  {
+    ros::Duration(control_cycle_msec_ / 1000.0).sleep();
+  }
+
+  ROS_INFO("Walking motion stopped.");
   return true;
 }
 
@@ -990,7 +1014,7 @@ void WalkingModule::processPhase(const double& time_unit)
         synchronized_walking_param_ = target_walking_param_;
         previouos_walking_param_ = target_walking_param_;
         is_walking_ = false;
-        publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_INFO, "Stoped walking");
+        publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_INFO, "Walking stopped");
       }
     }
   }

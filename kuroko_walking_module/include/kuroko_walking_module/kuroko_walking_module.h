@@ -15,6 +15,7 @@
 #include <ros/ros.h>
 #include <sensor_msgs/Imu.h>
 #include <std_msgs/String.h>
+#include <std_srvs/Empty.h>
 
 #include "kuroko_walking_module_msgs/GetWalkingParam.h"
 #include "kuroko_walking_module_msgs/SetWalkingParam.h"
@@ -89,8 +90,9 @@ private:
   /* ROS Topic Callback Functions */
   void walkingCommandCallback(const std_msgs::String::ConstPtr& msg);
   void walkingParameterCallback(const kuroko_walking_module_msgs::WalkingParam::ConstPtr& msg);
-  bool getWalkigParameterCallback(kuroko_walking_module_msgs::GetWalkingParam::Request& req,
-                                  kuroko_walking_module_msgs::GetWalkingParam::Response& res);
+  bool getWalkigParameterServiceCallback(kuroko_walking_module_msgs::GetWalkingParam::Request& req,
+                                         kuroko_walking_module_msgs::GetWalkingParam::Response& res);
+  bool waitForStopServiceCallback(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res);
 
   /* ROS Service Callback Functions */
   void processPhase(const double& time_unit);

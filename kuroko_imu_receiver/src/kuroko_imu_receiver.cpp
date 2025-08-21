@@ -66,6 +66,8 @@ void KurokoImuReceiver::process(std::map<std::string, robotis_framework::Dynamix
   //   return;
   // }
 
+  // getBodyTargetQuaternion(dxls);
+
   result_["gyro_x"] = imu_msg_.angular_velocity.x;
   result_["gyro_y"] = imu_msg_.angular_velocity.y;
   result_["gyro_z"] = imu_msg_.angular_velocity.z;
@@ -98,6 +100,82 @@ void KurokoImuReceiver::process(std::map<std::string, robotis_framework::Dynamix
 void KurokoImuReceiver::imuDataCallback(const sensor_msgs::Imu::ConstPtr& msg)
 {
   imu_msg_ = *msg;
+}
+
+Eigen::Quaterniond KurokoImuReceiver::getBodyTargetQuaternion(std::map<std::string, robotis_framework::Dynamixel*> dxls)
+{
+  Eigen::Quaterniond q;
+  double hip_r_roll = 0.0, hip_r_pitch = 0.0, hip_l_roll = 0.0, hip_l_pitch = 0.0;
+  std::map<std::string, robotis_framework::Dynamixel*>::iterator dxl_it = dxls.find("hip_r_roll");
+  if (dxl_it != dxls.end())
+  {
+    robotis_framework::Dynamixel* dxl = dxl_it->second;
+    if (dxl->dxl_state_ != nullptr)
+      hip_r_roll = dxl->dxl_state_->goal_position_;
+  }
+  dxl_it = dxls.find("hip_r_pitch");
+  if (dxl_it != dxls.end())
+  {
+    robotis_framework::Dynamixel* dxl = dxl_it->second;
+    if (dxl->dxl_state_ != nullptr)
+      hip_r_pitch = dxl->dxl_state_->goal_position_;
+  }
+  dxl_it = dxls.find("hip_l_roll");
+  if (dxl_it != dxls.end())
+  {
+    robotis_framework::Dynamixel* dxl = dxl_it->second;
+    if (dxl->dxl_state_ != nullptr)
+      hip_l_roll = dxl->dxl_state_->goal_position_;
+  }
+  dxl_it = dxls.find("hip_l_pitch");
+  if (dxl_it != dxls.end())
+  {
+    robotis_framework::Dynamixel* dxl = dxl_it->second;
+    if (dxl->dxl_state_ != nullptr)
+      hip_l_pitch = dxl->dxl_state_->goal_position_;
+  }
+  double body_roll = (-hip_r_roll + hip_l_roll) / 2.0;
+  double body_pitch = (hip_r_pitch - hip_l_pitch) / 2.0;
+  // ROS_INFO("[KurokoImuReceiver] hip_r_roll: %f, hip_r_pitch: %f, hip_l_roll: %f, hip_l_pitch: %f, body_roll: %f, "
+  //          "body_pitch: %f",
+  //          hip_r_roll, hip_r_pitch, hip_l_roll, hip_l_pitch, body_roll, body_pitch);
+  // Get body quaternion from roll and pitch
+  Eigen::Vector3d body_rpy(body_roll, body_pitch, 0.0);  // Yaw is set to 0.0
+  q = jointRollPitchYawToQuaternion(body_rpy);
+  return q;
+}
+
+Eigen::Vector3d KurokoImuReceiver::jointQuaterionToRollPitchYaw(const Eigen::Quaterniond& q)
+{
+  Eigen::Vector3d angles;  // roll pitch yaw
+  double x = q.x(), y = q.y(), z = q.z(), w = q.w();
+
+  // yaw (z-axis rotation)
+  double siny_cosp = 2 * (w * z + x * y);
+  double cosy_cosp = 1 - 2 * (y * y + z * z);
+  angles[2] = std::atan2(siny_cosp, cosy_cosp);
+
+  // pitch (y-axis rotation)
+  double sinp = 2 * (w * y - z * x);
+  if (std::abs(sinp) >= 1)
+    angles[1] = std::copysign(M_PI / 2, sinp);  // use 90 degrees if out of range
+  else
+    angles[1] = std::asin(sinp);
+
+  // roll (x-axis rotation)
+  double sinr_cosp = 2 * (w * x + y * z);
+  double cosr_cosp = 1 - 2 * (x * x + y * y);
+  angles[0] = std::atan2(sinr_cosp, cosr_cosp);
+
+  return angles;
+}
+
+Eigen::Quaterniond KurokoImuReceiver::jointRollPitchYawToQuaternion(const Eigen::Vector3d& rpy)
+{
+  Eigen::Quaterniond q;
+  q = Eigen::AngleAxisd(rpy[2], Eigen::Vector3d::UnitZ()) * Eigen::AngleAxisd(rpy[1], Eigen::Vector3d::UnitY()) *
+      Eigen::AngleAxisd(rpy[0], Eigen::Vector3d::UnitX());
+  return q;
 }
 
 Eigen::Vector3d KurokoImuReceiver::imuQuaternionToRollPitchYaw(const Eigen::Quaterniond& q)

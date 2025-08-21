@@ -40,7 +40,10 @@ private:
   /* subscriber & publisher */
   ros::Subscriber imu_sub_;
   void imuDataCallback(const sensor_msgs::Imu::ConstPtr& msg);
+  Eigen::Vector3d jointQuaterionToRollPitchYaw(const Eigen::Quaterniond& q);
+  Eigen::Quaterniond jointRollPitchYawToQuaternion(const Eigen::Vector3d& rpy);
   Eigen::Vector3d imuQuaternionToRollPitchYaw(const Eigen::Quaterniond& q);
+  Eigen::Quaterniond getBodyTargetQuaternion(std::map<std::string, robotis_framework::Dynamixel*> dxls);
   double wrapToPi(double angle);
 };
 

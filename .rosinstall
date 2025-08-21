@@ -50,3 +50,7 @@
         local-name: robot_upstart
         uri: git@github.com:nyxrobotics/robot_upstart.git
         version: feature/env
+- git:
+        local-name: imu_tools
+        uri: git@github.com:nyxrobotics/imu_tools.git
+        version: feature/skip_nan

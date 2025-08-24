@@ -18,6 +18,7 @@
   <xacro:include filename="$(find kuroko_description)/xacro/kuroko/parts/leg_l.xacro"/>
   <xacro:include filename="$(find kuroko_description)/xacro/kuroko/transmission/leg_l.gazebo"/>
 
+  <xacro:include filename="$(find kuroko_description)/xacro/sensors/range/tfluna.xacro"/>
   <xacro:include filename="$(find kuroko_description)/xacro/sensors/imu/imu_n100mini.xacro"/>
   <xacro:include filename="$(find kuroko_description)/xacro/sensors/camera/usb_camera.xacro"/>
 
@@ -67,6 +68,9 @@
     <xacro:usb_camera parent="waist_link" name="camera">
       <origin xyz="0.07 0 -0.026" rpy="0 0 0"/>
     </xacro:usb_camera>
+    <xacro:tfluna parent="waist_link" name="tfluna" ros_topic="/kuroko/sensors/ragne">
+      <origin xyz="0.07 0 -0.044" rpy="0 0 0"/>
+    </xacro:tfluna>
   </xacro:macro>
 
   <!-- Load Macros -->

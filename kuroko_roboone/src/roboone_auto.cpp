@@ -108,7 +108,7 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   jump_param_.balance_euler_roll_gain = 0.0;
   jump_param_.balance_euler_pitch_gain = 0.1;
 
-  stable_angle_threshold_ = 0.08;
+  stable_angle_threshold_ = 0.12;
   squat_angle_threshold_ = 0.16;
   jump_angle_threshold_ = 0.32;
   fall_angle_threshold_ = 0.64;

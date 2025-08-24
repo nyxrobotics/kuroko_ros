@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:include filename="tfluna_gazebo.xacro"/>
+  <xacro:macro name="tfluna" params="name parent *origin ros_topic update_rate:=10 minRange:=0.2 maxRange:=8.0 fov:=0.02 ray_count:=5">
+    <xacro:property name="size_depth" value="0.002"/>
+    <xacro:property name="size_width" value="0.01"/>
+    <xacro:property name="size_height" value="0.01"/>
+    <joint name="${name}_joint" type="fixed">
+      <parent link="${parent}"/>
+      <child link="${name}_link"/>
+      <xacro:insert_block name="origin"/>
+    </joint>
+    <link name="${name}_link">
+      <xacro:box_visual xyz="0 0 0" rpy="0 0 0" size="${size_depth} ${size_width} ${size_height}" material_name="gray" color="0.5 0.5 0.5 1"/>
+      <xacro:box_collision xyz="0 0 0" rpy="0 0 0" size="${size_depth} ${size_width} ${size_height}"/>
+      <xacro:box_inertial xyz="0 0 0" rpy="0 0 0" size="${size_depth} ${size_width} ${size_height}" mass="0.01"/>
+    </link>
+    <gazebo reference="${name}_joint">
+      <disableFixedJointLumping>true</disableFixedJointLumping>
+      <preserveFixedJoint>true</preserveFixedJoint>
+    </gazebo>
+    <xacro:tfluna_gazebo name="${name}" ros_topic="${ros_topic}" update_rate="${update_rate}" maxRange="${maxRange}" minRange="${minRange}" fov="${fov}" ray_count="${ray_count}"/>
+  </xacro:macro>
+</robot>

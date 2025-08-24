@@ -5,9 +5,9 @@
   xmlns:xacro="http://www.ros.org/wiki/xacro">
   <xacro:include filename="imu_n100mini_gazebo.xacro"/>
   <xacro:macro name="imu_n100mini" params="name parent:='base_link' update_rate:=400 *origin">
-    <xacro:property name="depth" value="0.0245"/>
-    <xacro:property name="width" value="0.0245"/>
-    <xacro:property name="height" value="0.0145"/>
+    <xacro:property name="depth" value="0.01"/>
+    <xacro:property name="width" value="0.01"/>
+    <xacro:property name="height" value="0.01"/>
     <joint name="${name}_joint" type="fixed">
       <parent link="${parent}"/>
       <child link="${name}_link"/>

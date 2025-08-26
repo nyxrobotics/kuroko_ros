@@ -7,21 +7,22 @@
 // コンストラクタ
 RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   : atk_rects_size_(0.22)
-  , class_sub_(nh, "/object_detection/output/class", 1)
-  , label_sub_(nh, "/object_detection/output/labels", 1)
-  , rect_sub_(nh, "/object_detection/output/rects", 1)
-  , sync_(SyncPolicy(10), class_sub_, label_sub_, rect_sub_)
+  , class_sub_(nh, "/object_detection/output/class", 5)
+  , label_sub_(nh, "/object_detection/output/labels", 5)
+  , rect_sub_(nh, "/object_detection/output/rects", 5)
+  , sync_(SyncPolicy(5), class_sub_, label_sub_, rect_sub_)
   , client_(nh.serviceClient<robotis_controller_msgs::SetModule>("/motion_control/set_present_ctrl_modules"))
 {
-  joy_sub_ = nh.subscribe("/gamepad/joy", 1, &RobooneAuto::joyCallback, this);
-  imu_sub_ = nh.subscribe("/kuroko/sensors/imu/data", 1, &RobooneAuto::imuCallback, this);
-  camera_info_sub_ = nh.subscribe("/camera/resized/camera_info", 1, &RobooneAuto::cameraInfoCallback, this);
+  joy_sub_ = nh.subscribe("/gamepad/joy", 5, &RobooneAuto::joyCallback, this);
+  imu_sub_ = nh.subscribe("/kuroko/sensors/imu/data", 5, &RobooneAuto::imuCallback, this);
+  range_sub_ = nh.subscribe("/kuroko/sensors/range", 5, &RobooneAuto::rangeCallback, this);  // Dummy, not used
+  camera_info_sub_ = nh.subscribe("/camera/resized/camera_info", 5, &RobooneAuto::cameraInfoCallback, this);
 
   sync_.registerCallback(boost::bind(&RobooneAuto::yoloCallback, this, _1, _2, _3));
 
-  walking_command_pub_ = nh.advertise<std_msgs::String>("/motion_control/walking/command", 1);
-  walking_params_pub_ = nh.advertise<kuroko_walking_module_msgs::WalkingParam>("/motion_control/walking/set_params", 1);
-  action_page_pub_ = nh.advertise<std_msgs::Int32>("/motion_control/action/animation_num", 1);
+  walking_command_pub_ = nh.advertise<std_msgs::String>("/motion_control/walking/command", 5);
+  walking_params_pub_ = nh.advertise<kuroko_walking_module_msgs::WalkingParam>("/motion_control/walking/set_params", 5);
+  action_page_pub_ = nh.advertise<std_msgs::Int32>("/motion_control/action/animation_num", 5);
 
   current_state_ = "IDLE";
   running_ = true;
@@ -488,7 +489,7 @@ void RobooneAuto::manageState()
     }
     else
     {
-      ROS_INFO("curent time: %f, last imu time: %f", ros::Time::now().toSec(), last_imu_time_.toSec());
+      ROS_INFO("curent time: %f, last imu time: %f", ros::Time::now().toSec(), last_imu_.header.stamp.toSec());
     }
   }
   else if (current_state_ == "SQUAT")
@@ -695,6 +696,7 @@ void RobooneAuto::handleAttack()
       }
     }
   }
+
   last_rects_.rects.clear();
   if (!roboone_found && (ros::Time::now() - action_start_time_).toSec() < 0.3)
     return;
@@ -1013,7 +1015,7 @@ void RobooneAuto::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
   // ROS_INFO("Joy data received: axes[0]: %f, axes[1]: %f, buttons[0]: %d, buttons[1]: %d", joy->axes[0], joy->axes[1],
   //          joy->buttons[0], joy->buttons[1]);
   last_joy_ = *joy;
-  last_joy_time_ = ros::Time::now();
+  last_joy_.header.stamp = ros::Time::now();
 }
 
 // IMUコールバック
@@ -1022,7 +1024,14 @@ void RobooneAuto::imuCallback(const sensor_msgs::Imu::ConstPtr& imu)
   // ROS_INFO("IMU data received: orientation (x: %f, y: %f, z: %f, w: %f)", imu->orientation.x, imu->orientation.y,
   //          imu->orientation.z, imu->orientation.w);
   last_imu_ = *imu;
-  last_imu_time_ = ros::Time::now();
+  last_imu_.header.stamp = ros::Time::now();
+}
+
+void RobooneAuto::rangeCallback(const sensor_msgs::Range::ConstPtr& range)
+{
+  // ROS_INFO("Range data received: range: %f", range->range);
+  last_range_ = *range;
+  last_range_.header.stamp = ros::Time::now();
 }
 
 // カメラインフォコールバック

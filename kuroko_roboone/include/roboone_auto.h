@@ -2,9 +2,10 @@
 #define ROBOONE_AUTO_H_
 
 #include <ros/ros.h>
+#include <sensor_msgs/CameraInfo.h>
 #include <sensor_msgs/Imu.h>
 #include <sensor_msgs/Joy.h>
-#include <sensor_msgs/CameraInfo.h>
+#include <sensor_msgs/Range.h>
 #include <std_msgs/String.h>
 #include <std_msgs/Int32.h>
 #include <kuroko_walking_module_msgs/WalkingParam.h>
@@ -43,6 +44,7 @@ private:
   void stateThread();
   void joyCallback(const sensor_msgs::Joy::ConstPtr& joy);
   void imuCallback(const sensor_msgs::Imu::ConstPtr& imu);
+  void rangeCallback(const sensor_msgs::Range::ConstPtr& range);
   void cameraInfoCallback(const sensor_msgs::CameraInfo::ConstPtr& camera_info);
   void yoloCallback(const jsk_recognition_msgs::ClassificationResult::ConstPtr& class_msg,
                     const jsk_recognition_msgs::LabelArray::ConstPtr& label_msg,
@@ -64,7 +66,7 @@ private:
   Eigen::Quaterniond imuRollPitchYawToQuaternion(const Eigen::Vector3d& rpy);
   double wrapToPi(double angle);
 
-  ros::Subscriber joy_sub_, imu_sub_, camera_info_sub_;
+  ros::Subscriber joy_sub_, imu_sub_, camera_info_sub_, range_sub_;
   ros::Publisher walking_command_pub_, walking_params_pub_, action_page_pub_;
   ros::ServiceClient client_;
 
@@ -82,11 +84,12 @@ private:
   std::string current_state_, previous_state_, next_state_, current_module_;
   sensor_msgs::Joy last_joy_;
   sensor_msgs::Imu last_imu_;
+  sensor_msgs::Range last_range_;
   jsk_recognition_msgs::ClassificationResult last_class_;
   jsk_recognition_msgs::RectArray last_rects_;
   jsk_recognition_msgs::LabelArray last_labels_;
   sensor_msgs::CameraInfo last_camera_info_;  // 最新のカメラインフォを保持する変数
-  ros::Time last_rects_time_, last_imu_time_, last_joy_time_, fall_detected_time_, robot_detected_time_, attacked_time_;
+  ros::Time last_rects_time_, fall_detected_time_, robot_detected_time_, attacked_time_;
   char last_target_detected_direction_;
   jsk_recognition_msgs::Rect robot_detected_rect_;
 

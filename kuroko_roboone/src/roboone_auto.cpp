@@ -181,6 +181,7 @@ RobooneAuto::~RobooneAuto()
     state_thread_.join();
   }
 }
+
 // Function to set the control module
 bool RobooneAuto::setCtrlModule(const std::string& module_name)
 {
@@ -677,6 +678,7 @@ void RobooneAuto::handleAttack()
   bool roboone_found = false;
   int roboone_count = 0;
   jsk_recognition_msgs::Rect largest_rect;
+  int largest_idx = -1;
 
   // robooneラベルを持つrectを探し、その中で一番大きいものを見つける
   for (size_t i = 0; i < last_rects_.rects.size(); ++i)
@@ -692,13 +694,64 @@ void RobooneAuto::handleAttack()
           robot_detected_time_ = ros::Time::now();  // robooneが見つかった時刻を記録
           largest_rect = last_rects_.rects[i];
           robot_detected_rect_ = largest_rect;
+          largest_idx = i;
         }
       }
     }
   }
 
+  jsk_recognition_msgs::Rect largest_conbined_rect;
+  // 一番大きいrectに重なる部分があるrectを結合する
+  if (roboone_found)
+  {
+    largest_conbined_rect = largest_rect;
+    for (size_t i = 0; i < last_rects_.rects.size(); ++i)
+    {
+      if (i != largest_idx && last_class_.label_names[i] == "roboone")
+      {
+        int x1 = std::max(largest_conbined_rect.x, last_rects_.rects[i].x);
+        int y1 = std::max(largest_conbined_rect.y, last_rects_.rects[i].y);
+        int x2 = std::min(largest_conbined_rect.x + largest_conbined_rect.width,
+                          last_rects_.rects[i].x + last_rects_.rects[i].width);
+        int y2 = std::min(largest_conbined_rect.y + largest_conbined_rect.height,
+                          last_rects_.rects[i].y + last_rects_.rects[i].height);
+        if (x1 < x2 && y1 < y2)
+        {
+          // 重なりあり
+          int new_x = std::min(largest_conbined_rect.x, last_rects_.rects[i].x);
+          int new_y = std::min(largest_conbined_rect.y, last_rects_.rects[i].y);
+          int new_w = std::max(largest_conbined_rect.x + largest_conbined_rect.width,
+                               last_rects_.rects[i].x + last_rects_.rects[i].width) -
+                      new_x;
+          int new_h = std::max(largest_conbined_rect.y + largest_conbined_rect.height,
+                               last_rects_.rects[i].y + last_rects_.rects[i].height) -
+                      new_y;
+          largest_conbined_rect.x = new_x;
+          largest_conbined_rect.y = new_y;
+          largest_conbined_rect.width = new_w;
+          largest_conbined_rect.height = new_h;
+        }
+      }
+    }
+  }
+
+  bool range_available = false;
+  int range_available_area_pixels = 10;
+  // 中心の上下左右10ピクセルがlargest_conbined_rectに内包されている場合は距離センサが有効
+  if (ros::Time::now() - last_range_.header.stamp < ros::Duration(2.0) &&
+      last_camera_info_.height / 2 - range_available_area_pixels > largest_conbined_rect.y &&
+      last_camera_info_.height / 2 + range_available_area_pixels <
+          largest_conbined_rect.y + largest_conbined_rect.height &&
+      last_camera_info_.width / 2 - range_available_area_pixels > largest_conbined_rect.x &&
+      last_camera_info_.width / 2 + range_available_area_pixels < largest_conbined_rect.x + largest_conbined_rect.width)
+  {
+    range_available = true;　
+  }
+
   last_rects_.rects.clear();
-  if (!roboone_found && (ros::Time::now() - action_start_time_).toSec() < 0.3)
+
+  // アクション開始直後は処理をスキップ
+  if (!roboone_found && (ros::Time::now() - action_start_time_).toSec() < 0.3 && !action_name_.empty())
     return;
 
   if (roboone_found || (ros::Time::now() - robot_detected_time_).toSec() < 2.0)
@@ -880,8 +933,8 @@ void RobooneAuto::handleAttack()
           target_angle_factor = 1.0;
         else if (target_angle_factor < -0.5)
           target_angle_factor = -1.0;
-        double yaw_step = target_angle_factor * fabs(yaw_step_max_);                    // 最大10度の旋回
-        double x_step = fabs(x_forward_step_max_) * (1.0 - fabs(target_angle_factor));  // 最大0.04mの前進
+        double yaw_step = target_angle_factor * fabs(yaw_step_max_);
+        double x_step = fabs(x_forward_step_max_) * (1.0 - fabs(target_angle_factor));
         setWalkSteps(x_step, 0.0, yaw_step);
         startWalking();
       }
@@ -891,7 +944,7 @@ void RobooneAuto::handleAttack()
   {
     setCtrlModule("walking_module");
     ROS_WARN_THROTTLE(1.0, "No roboone label found.");
-    double yaw_step = last_target_detected_direction_ * fabs(yaw_step_max_);  // 最大15度の旋回
+    double yaw_step = last_target_detected_direction_ * fabs(yaw_step_max_);
     setWalkSteps(0.0, 0.0, yaw_step);
     ROS_INFO_THROTTLE(1.0, "Rotating in place with yaw_step (radians): %f", yaw_step);
     startWalking();

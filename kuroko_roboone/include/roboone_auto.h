@@ -32,8 +32,9 @@ public:
   void stopWalking();
   void abortWalking();
   void setWalkSteps(double x_step, double y_step, double yaw_step);
-  void setSquatSteps(double x_step, double y_step, double yaw_step);
-  void setJumpSteps(double x_step, double y_step, double yaw_step);
+  void setSquat();
+  void setFrontJump();
+  void setRearJump();
   void executeAction(std::string action_name);
   void manageState();  // 状態管理関数
   bool setCtrlModule(const std::string& module_name);
@@ -49,17 +50,14 @@ private:
   void yoloCallback(const jsk_recognition_msgs::ClassificationResult::ConstPtr& class_msg,
                     const jsk_recognition_msgs::LabelArray::ConstPtr& label_msg,
                     const jsk_recognition_msgs::RectArray::ConstPtr& rect_msg);
-  void handleAttack();               // 攻撃処理
-  void handlePostAttack();           // 攻撃後の処理
-  void allowRotationOnly();          // 旋回のみ許可
-  void transitionToInitPose();       // 初期姿勢への遷移
-  void transitionToWalking();        // 自律移動への遷移
-  void transitionToFallState();      // 転倒状態への遷移
-  void transitionToIdleState();      // 脱力状態への遷移
-  void transitionToAutoMoveState();  // 自律移動状態への遷移
-  void transitionToPauseWalkingState();
-  void transitionToSquatState();
-  void transitionToJumpState();
+  void transitionToInit();  // 初期姿勢への遷移
+  void transitionToRun();   // 自律移動への遷移
+  void transitionToFall();  // 転倒状態への遷移
+  void transitionToFree();  // 脱力状態への遷移
+  void transitionToPause();
+  void transitionToSquat();
+  void transitionToJump();
+  void handleRun();  // 攻撃処理
   void handleFall();
 
   Eigen::Vector3d imuQuaternionToRollPitchYaw(const Eigen::Quaterniond& q);
@@ -93,39 +91,52 @@ private:
   char last_target_detected_direction_;
   jsk_recognition_msgs::Rect robot_detected_rect_;
 
-  // Manage Attrack
-  double atk_rects_size_;
   // Manage walk
   double x_forward_step_max_, x_backward_step_max_;
   double y_step_max_, yaw_step_max_;
   std::string walk_status_;
+
   // Manage balance interruption
+  double stable_detect_angle_;     // 安定状態に復帰する角度
+  double stable_detect_duration_;  // 安定状態に復帰するための必要時間
+  double squat_detect_angle_;      // しゃがみ状態に移行する角度
+  double squat_detect_duration_;   // しゃがみ判定の待機時間
+  double jump_detect_angle_;       // ジャンプ状態に移行する角度
+  double jump_detect_duration_;    // ジャンプ判定の待機時間
+  double fall_detect_angle_;       // 転倒状態に移行する角度
+  double fall_detect_duration_;    // 転倒判定の待機時間
+
+  // Walk
   kuroko_walking_module_msgs::WalkingParam walk_param_;
   kuroko_walking_module_msgs::WalkingParam idle_param_;
+  ros::Time walk_start_time_;
+  double walk_stop_duration_;
+  double min_walk_duration_;
+  bool force_walk_;
+
+  // Squat
   kuroko_walking_module_msgs::WalkingParam squat_param_;
+  ros::Time squat_start_time_;
+  double min_squat_duration_;  // しゃがみ状態の最低持続時間
+  double max_squat_duration_;
+
+  // Front jump
   kuroko_walking_module_msgs::WalkingParam jump_param_;
-  double stable_angle_threshold_;  // 安定状態の角度閾値
-  double squat_angle_threshold_;   // ホールド状態の角度閾値
-  double jump_angle_threshold_;    // ジャンピングホールド状態の角度閾値
-  double fall_angle_threshold_;    // 転倒判定の角度閾値
-  double stable_duration_;         // 安定状態に復帰するための必要時間
-  double squat_duration_;          // ホールド状態の最低持続時間
-  double jump_duration_;           // ジャンプ状態の最低持続時間
-  double fall_duration_;           // 転倒判定の待機時間
-  // Manage balance interruption
+  ros::Time jump_start_time_;
+  double jump_duration_;  // ジャンプ状態の持続時間
+
+  // Manage action
   std::map<std::string, int> action_id_map_;
   std::map<std::string, double> action_duration_map_;
   std::string last_attack_name_;
   std::string action_name_;
   ros::Time action_start_time_;
   double action_duration_;
-  ros::Time squat_start_time_;
-  ros::Time jump_start_time_;
-  ros::Time walk_start_time_;
-  double max_squat_duration_;
-  double min_walk_duration_;
-  double walk_stop_duration_;
-  bool force_walk_;
+
+  // Manage Attrack
+  double atk_min_rect_size_;
+  double attack_distance_;
+  double attack_distance_margin_;
 };
 
 #endif  // ROBOONE_AUTO_H_

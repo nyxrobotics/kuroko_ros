@@ -32,6 +32,7 @@ public:
   void stopWalking();
   void abortWalking();
   void setWalkSteps(double x_step, double y_step, double yaw_step);
+  void setIdle();
   void setSquat();
   void setFrontJump();
   void setRearJump();
@@ -54,11 +55,11 @@ private:
   void transitionToRun();   // 自律移動への遷移
   void transitionToFall();  // 転倒状態への遷移
   void transitionToFree();  // 脱力状態への遷移
-  void transitionToPause();
+  void transitionToHold();
   void transitionToSquat();
   void transitionToJump();
-  void handleRun();  // 攻撃処理
   void handleFall();
+  void handleRun();
 
   Eigen::Vector3d imuQuaternionToRollPitchYaw(const Eigen::Quaterniond& q);
   Eigen::Quaterniond imuRollPitchYawToQuaternion(const Eigen::Vector3d& rpy);

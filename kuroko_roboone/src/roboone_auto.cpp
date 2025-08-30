@@ -289,6 +289,17 @@ void RobooneAuto::setWalkSteps(double x_step, double y_step, double yaw_step)
   walking_params_pub_.publish(params);
 }
 
+void RobooneAuto::setIdle()
+{
+  kuroko_walking_module_msgs::WalkingParam params = idle_param_;
+  params.x_step = 0;
+  params.y_step = 0;
+  params.yaw_step = 0;
+
+  // Publish the walking parameters
+  walking_params_pub_.publish(params);
+}
+
 void RobooneAuto::setSquat()
 {
   kuroko_walking_module_msgs::WalkingParam params = squat_param_;
@@ -458,7 +469,7 @@ void RobooneAuto::manageState()
   {
     handleRun();
   }
-  else if (current_state_ == "PAUSE")
+  else if (current_state_ == "HOLD")
   {
     if (over_fall_angle)
     {
@@ -488,8 +499,8 @@ void RobooneAuto::manageState()
     }
     else if (within_stable_angle)
     {
-      ROS_INFO("Stable angle restored. Transitioning to PAUSE.");
-      transitionToPause();
+      ROS_INFO("Stable angle restored. Transitioning to HOLD.");
+      transitionToHold();
     }
   }
   else if (current_state_ == "JUMP")
@@ -501,8 +512,8 @@ void RobooneAuto::manageState()
     }
     else if (within_stable_angle)
     {
-      ROS_INFO("Stable angle restored. Transitioning to PAUSE.");
-      transitionToPause();
+      ROS_INFO("Stable angle restored. Transitioning to HOLD.");
+      transitionToHold();
     }
     else if (!over_squat_angle)
     {
@@ -514,8 +525,8 @@ void RobooneAuto::manageState()
   {
     if (within_stable_angle)
     {
-      ROS_INFO("Stable angle restored. Transitioning to PAUSE.");
-      transitionToPause();
+      ROS_INFO("Stable angle restored. Transitioning to HOLD.");
+      transitionToHold();
       fall_detected_time_ = ros::Time::now() + ros::Duration(1.0);
     }
     else if (!over_squat_angle)
@@ -526,7 +537,7 @@ void RobooneAuto::manageState()
     {
       ROS_INFO("Handling FALL state.");
       handleFall();
-      transitionToPause();
+      transitionToHold();
     }
   }
 }
@@ -537,6 +548,7 @@ void RobooneAuto::transitionToInit()
   if (current_state_ == "INITIAL")
     return;
   current_state_ = "INITIAL";
+  setIdle();
   enableAllJoints();
   ROS_INFO("Transitioning to INITIAL state.");
   setCtrlModule("initial_pose_module");
@@ -562,12 +574,12 @@ void RobooneAuto::transitionToRun()
 }
 
 // 歩行一時停止状態への遷移
-void RobooneAuto::transitionToPause()
+void RobooneAuto::transitionToHold()
 {
-  if (current_state_ == "PAUSE")
+  if (current_state_ == "HOLD")
     return;
-  current_state_ = "PAUSE";
-  ROS_INFO("Transitioning to PAUSE state due to excessive tilt.");
+  current_state_ = "HOLD";
+  ROS_INFO("Transitioning to HOLD state due to excessive tilt.");
   setCtrlModule("walking_module");
   setWalkSteps(0, 0, 0);
   stopWalking();
@@ -613,6 +625,13 @@ void RobooneAuto::transitionToFall()
   ROS_INFO("Transitioning to FALL state.");
 }
 
+// 脱力状態への遷移
+void RobooneAuto::transitionToFree()
+{
+  freeAllJoints();
+  current_state_ = "FREE";
+}
+
 // 転倒状態の処理
 void RobooneAuto::handleFall()
 {
@@ -631,16 +650,9 @@ void RobooneAuto::handleFall()
     executeAction("getup_rear");  // 後起き上がりモーション
   }
   setWalkSteps(0, 0, 0);
-  current_state_ = "PAUSE";
+  current_state_ = "HOLD";
   robot_detected_time_ = ros::Time(0);
   last_rects_.rects.clear();
-}
-
-// 脱力状態への遷移
-void RobooneAuto::transitionToFree()
-{
-  freeAllJoints();
-  current_state_ = "FREE";
 }
 
 // 攻撃処理

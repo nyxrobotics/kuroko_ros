@@ -3,6 +3,7 @@
 #include <sensor_msgs/CameraInfo.h>
 #include "ros/console.h"
 #include "ros/duration.h"
+#include "ros/time.h"
 
 // コンストラクタ
 RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
@@ -35,7 +36,7 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   attacked_time_ = ros::Time(0);
   last_target_detected_direction_ = 1;
   last_attack_name_ = "";
-  attack_distance_ = 0.25;
+  attack_distance_ = 0.28;
   attack_distance_margin_ = 0.05;
   attack_count_ = 0;
   max_attack_count_ = 2;
@@ -735,20 +736,23 @@ void RobooneAuto::handleRun()
         }
       }
     }
-    robot_detected_rect_ = largest_rect;
+    robot_detected_rect_ = largest_conbined_rect;
   }
+  // ROS_INFO("Roboone detected: %d, robot_detected_rect=(x=%d, y=%d, w=%d, h=%d)", roboone_found, robot_detected_rect_.x,
+  //          robot_detected_rect_.y, robot_detected_rect_.width, robot_detected_rect_.height);
 
   // 中心の上下左右10ピクセルがlargest_conbined_rectに内包されている場合は距離センサが有効
   bool range_available = false;
   int range_available_area_pixels = 10;
-  if (roboone_found && ros::Time::now() - last_range_.header.stamp < ros::Duration(2.0) &&
-      last_camera_info_.height / 2 - range_available_area_pixels > largest_conbined_rect.y &&
+  if (ros::Time::now() - last_range_.header.stamp < ros::Duration(2.0) &&
+      ros::Time::now() - robot_detected_time_ < ros::Duration(2.0) &&
+      last_camera_info_.height / 2 - range_available_area_pixels > robot_detected_rect_.y &&
       last_camera_info_.height / 2 + range_available_area_pixels <
-          largest_conbined_rect.y + largest_conbined_rect.height &&
-      last_camera_info_.width / 2 - range_available_area_pixels > largest_conbined_rect.x &&
-      last_camera_info_.width / 2 + range_available_area_pixels < largest_conbined_rect.x + largest_conbined_rect.width)
+          robot_detected_rect_.y + robot_detected_rect_.height &&
+      last_camera_info_.width / 2 - range_available_area_pixels > robot_detected_rect_.x &&
+      last_camera_info_.width / 2 + range_available_area_pixels < robot_detected_rect_.x + robot_detected_rect_.width)
   {
-    if (last_range_.range < 3.6 && last_range_.range > 0.001)
+    if (last_range_.range < 3.6)
     {
       range_available = true;
     }
@@ -788,11 +792,10 @@ void RobooneAuto::handleRun()
     target_distance = attack_distance_ * sqrt(atk_min_rect_size_ / rect_area);
 
   // 攻撃判定
-  if (!force_walk && (attack_distance_ > target_distance ||
-                      robot_detected_rect_.width / double(last_camera_info_.width) > 2.0 * sqrt(atk_min_rect_size_) ||
-                      robot_detected_rect_.height / double(last_camera_info_.height) > 2.0 * sqrt(atk_min_rect_size_)))
+  if (!force_walk && target_distance < attack_distance_)
   {
-    ROS_INFO("Attack triggered! Rect area is larger than threshold and detected within 5 seconds.");
+    ROS_INFO("Attack triggered. range_available=%d, target_distance=%f, attack_distance=%f", range_available,
+             target_distance, attack_distance_);
     std::string action_name = "l_grip_front";
     if (x_offset > 0)
     {

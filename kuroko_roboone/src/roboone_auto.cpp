@@ -135,8 +135,8 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   jump_duration_ = 0.2;
 
   walk_start_time_ = ros::Time(0);
-  walk_stop_duration_ = walk_param_.period_time * 2.0;
-  min_walk_duration_ = walk_param_.period_time * 2.0;
+  walk_stop_duration_ = walk_param_.period_time * 1.0;
+  min_walk_duration_ = walk_param_.period_time * 1.0;
 
   squat_start_time_ = ros::Time(0);
   min_squat_duration_ = 0.1;
@@ -146,6 +146,9 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   jump_duration_ = 0.1;
 
   action_start_time_ = ros::Time(0);
+
+  run_start_time_ = ros::Time(0);
+  run_startup_duration_ = 0.2;
 
   walk_status_ = "stop";
   current_module_ = "";
@@ -565,11 +568,12 @@ void RobooneAuto::transitionToRun()
   ROS_INFO("Transitioning to RUN state.");
   setCtrlModule("walking_module");
   setWalkSteps(0, 0, 0);
-  startWalking();
+  abortWalking();
   robot_detected_time_ = ros::Time(0);
   last_rects_.rects.clear();
   attacked_time_ = ros::Time(0);
   walk_start_time_ = ros::Time::now();
+  run_start_time_ = ros::Time::now();
 }
 
 // 歩行一時停止状態への遷移
@@ -650,8 +654,6 @@ void RobooneAuto::handleFall()
   }
   setWalkSteps(0, 0, 0);
   current_state_ = "HOLD";
-  robot_detected_time_ = ros::Time(0);
-  last_rects_.rects.clear();
 }
 
 // 攻撃処理
@@ -662,7 +664,11 @@ void RobooneAuto::handleRun()
     ROS_WARN("Camera info is missing.");
     return;
   }
-  if (!action_name_.empty())
+  else if (!action_name_.empty())
+  {
+    return;
+  }
+  else if (ros::Time::now() - run_start_time_ < ros::Duration(run_startup_duration_))
   {
     return;
   }
@@ -847,7 +853,8 @@ void RobooneAuto::handleRun()
   double x_step = 0.0;
   double y_step = 0.0;
   double yaw_step = 0.0;
-  if (!roboone_found && (ros::Time::now() - robot_detected_time_).toSec() > 2.0)
+  if ((!roboone_found && (ros::Time::now() - robot_detected_time_).toSec() > 2.0) ||
+      robot_detected_rect_.y > last_camera_info_.height * 0.8)
   {
     // ターゲットが見つからないときはその場旋回
     ROS_WARN_THROTTLE(3.0, "No roboone label found. Rotate in place.");

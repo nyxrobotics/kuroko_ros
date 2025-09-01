@@ -139,6 +139,10 @@ private:
   double attack_distance_margin_;
   int attack_count_;
   int max_attack_count_;
+
+  // Manage startup
+  ros::Time run_start_time_;
+  double run_startup_duration_;
 };
 
 #endif  // ROBOONE_AUTO_H_

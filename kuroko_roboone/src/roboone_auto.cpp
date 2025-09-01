@@ -895,15 +895,20 @@ void RobooneAuto::handleRun()
       {
         x_step = -fabs(x_backward_step_max_);
       }
-      if (fabs(yaw_step) > (5.0 * M_PI / 180.0) || fabs(x_step) > 0.01)
-      {
-        setWalkSteps(x_step, 0.0, yaw_step);
-        startWalking();
-      }
-      else
+      if (!force_walk && walk_status_ == "start" && fabs(yaw_step) < (5.0 * M_PI / 180.0) && fabs(x_step) < 0.01)
       {
         setWalkSteps(0.0, 0.0, 0.0);
         stopWalking();
+      }
+      else if (!force_walk && walk_status_ == "stop" && fabs(yaw_step) < (10.0 * M_PI / 180.0) && fabs(x_step) < 0.01)
+      {
+        setWalkSteps(0.0, 0.0, 0.0);
+        stopWalking();
+      }
+      else
+      {
+        setWalkSteps(x_step, 0.0, yaw_step);
+        startWalking();
       }
     }
     return;
@@ -1090,6 +1095,8 @@ void RobooneAuto::imuCallback(const sensor_msgs::Imu::ConstPtr& imu)
 void RobooneAuto::rangeCallback(const sensor_msgs::Range::ConstPtr& range)
 {
   // ROS_INFO("Range data received: range: %f", range->range);
+  if (range->range > 3.6)
+    return;  // 異常値は無視
   last_range_ = *range;
   last_range_.header.stamp = ros::Time::now();
 }

@@ -68,7 +68,7 @@
     <xacro:usb_camera parent="waist_link" name="camera">
       <origin xyz="0.07 0 -0.026" rpy="0 0 0"/>
     </xacro:usb_camera>
-    <xacro:tfluna parent="waist_link" name="tfluna" ros_topic="/kuroko/sensors/ragne">
+    <xacro:tfluna parent="waist_link" name="tfluna" ros_topic="/kuroko/sensors/range">
       <origin xyz="0.07 0 -0.044" rpy="0 0 0"/>
     </xacro:tfluna>
   </xacro:macro>

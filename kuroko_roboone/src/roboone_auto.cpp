@@ -6,7 +6,7 @@
 
 // コンストラクタ
 RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
-  : atk_min_rect_size_(0.22)
+  : atk_min_rect_size_(0.24)
   , class_sub_(nh, "/object_detection/output/class", 5)
   , label_sub_(nh, "/object_detection/output/labels", 5)
   , rect_sub_(nh, "/object_detection/output/rects", 5)
@@ -35,7 +35,7 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   attacked_time_ = ros::Time(0);
   last_target_detected_direction_ = 1;
   last_attack_name_ = "";
-  attack_distance_ = 0.45;
+  attack_distance_ = 0.25;
   attack_distance_margin_ = 0.05;
   attack_count_ = 0;
   max_attack_count_ = 2;
@@ -751,7 +751,6 @@ void RobooneAuto::handleRun()
     if (last_range_.range < 3.6 && last_range_.range > 0.001)
     {
       range_available = true;
-      ROS_INFO("Range data is available: %f m", last_range_.range);
     }
   }
   last_rects_.rects.clear();
@@ -782,14 +781,14 @@ void RobooneAuto::handleRun()
   double y_offset = (rect_center_y - image_center_y) / image_center_y;
   if (roboone_found)
     last_target_detected_direction_ = x_offset > 0 ? -1 : 1;
-  double target_distance = 0.0;
+  double target_distance = 1000.0;
   if (range_available)
     target_distance = last_range_.range;
-  else
-    target_distance = 10.0;
+  else if (rect_area > 0.0001)
+    target_distance = attack_distance_ * sqrt(atk_min_rect_size_ / rect_area);
 
   // 攻撃判定
-  if (!force_walk && (rect_area > atk_min_rect_size_ ||
+  if (!force_walk && (attack_distance_ > target_distance ||
                       robot_detected_rect_.width / double(last_camera_info_.width) > 2.0 * sqrt(atk_min_rect_size_) ||
                       robot_detected_rect_.height / double(last_camera_info_.height) > 2.0 * sqrt(atk_min_rect_size_)))
   {

@@ -113,7 +113,6 @@ private:
   ros::Time walk_start_time_;
   double walk_stop_duration_;
   double min_walk_duration_;
-  bool force_walk_;
 
   // Squat
   kuroko_walking_module_msgs::WalkingParam squat_param_;
@@ -138,6 +137,8 @@ private:
   double atk_min_rect_size_;
   double attack_distance_;
   double attack_distance_margin_;
+  int attack_count_;
+  int max_attack_count_;
 };
 
 #endif  // ROBOONE_AUTO_H_

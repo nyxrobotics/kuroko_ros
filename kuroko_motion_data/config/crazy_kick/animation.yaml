@@ -1,0 +1,123 @@
+layout:
+  arrow:
+    arrow_0:
+      info:
+        id: 0
+      waypoints: []
+    arrow_1:
+      info:
+        id: 1
+      waypoints: []
+    arrow_2:
+      info:
+        id: 2
+      waypoints: []
+    arrow_3:
+      info:
+        id: 3
+      waypoints: []
+    arrow_4:
+      info:
+        id: 4
+      waypoints: []
+    arrow_5:
+      info:
+        id: 5
+      waypoints: []
+  block:
+    frame_1_pose_01:
+      connection:
+        output:
+          out_0:
+            arrow: arrow_1
+            ch: 0
+            target: frame_2_pose_02
+      info:
+        filename: pose_01
+        id: 1
+        type: frame
+      place:
+        x: -590.0
+        y: 326.0
+    frame_2_pose_02:
+      connection:
+        output:
+          out_0:
+            arrow: arrow_2
+            ch: 0
+            target: frame_3_pose_03
+      info:
+        filename: pose_02
+        id: 2
+        type: frame
+      place:
+        x: -579.0
+        y: 440.0
+    frame_3_pose_03:
+      connection:
+        output:
+          out_0:
+            arrow: arrow_3
+            ch: 0
+            target: frame_4_pose_04
+      info:
+        filename: pose_03
+        id: 3
+        type: frame
+      place:
+        x: -580.0
+        y: 554.0
+    frame_4_pose_04:
+      connection:
+        output:
+          out_0:
+            arrow: arrow_4
+            ch: 0
+            target: frame_5_pose_05
+      info:
+        filename: pose_04
+        id: 4
+        type: frame
+      place:
+        x: -580.0
+        y: 679.0
+    frame_5_pose_05:
+      connection:
+        output:
+          out_0:
+            arrow: arrow_5
+            ch: 0
+            target: frame_6_pose_06
+      info:
+        filename: pose_05
+        id: 5
+        type: frame
+      place:
+        x: -578.0
+        y: 821.0
+    frame_6_pose_06:
+      connection:
+        output:
+          out_0:
+            ch: 0
+      info:
+        filename: pose_06
+        id: 6
+        type: frame
+      place:
+        x: -566.0
+        y: 973.0
+    start_0:
+      connection:
+        output:
+          out_0:
+            arrow: arrow_0
+            ch: 0
+            target: frame_1_pose_01
+      info:
+        filename: ''
+        id: 0
+        type: start
+      place:
+        x: -516.0
+        y: 215.0

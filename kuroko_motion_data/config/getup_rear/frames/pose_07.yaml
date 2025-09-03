@@ -38,7 +38,7 @@ joints:
     - 0.0
     - 0.0
     - 0.0
-    position: -0.0
+    position: 0.0
   elbow_l_front:
     enable: true
     feedback: ''
@@ -46,7 +46,7 @@ joints:
     - 0.0
     - 0.0
     - 0.0
-    position: -1.7802358370342162
+    position: -1.3962634015954636
   elbow_l_rear:
     enable: true
     feedback: ''
@@ -54,7 +54,7 @@ joints:
     - 0.0
     - 0.0
     - 0.0
-    position: 1.9198621771937625
+    position: 1.5707963267948966
   elbow_r_front:
     enable: true
     feedback: ''
@@ -62,7 +62,7 @@ joints:
     - 0.0
     - 0.0
     - 0.0
-    position: 1.7802358370342162
+    position: 1.3962634015954636
   elbow_r_rear:
     enable: true
     feedback: ''
@@ -70,7 +70,7 @@ joints:
     - 0.0
     - 0.0
     - 0.0
-    position: -1.9198621771937625
+    position: -1.5707963267948966
   hip_l_pitch:
     enable: true
     feedback: ''
@@ -126,7 +126,7 @@ joints:
     - 0.0
     - 0.0
     - 0.0
-    position: -0.0
+    position: 0.0
   shoulder_l_roll:
     enable: true
     feedback: ''
@@ -134,7 +134,7 @@ joints:
     - 0.0
     - 0.0
     - 0.0
-    position: -1.4311699866353502
+    position: -1.5707963267948966
   shoulder_r_pitch:
     enable: true
     feedback: ''
@@ -150,7 +150,7 @@ joints:
     - 0.0
     - 0.0
     - 0.0
-    position: 1.4311699866353502
+    position: 1.5707963267948966
   thigh_l_active:
     enable: true
     feedback: ''

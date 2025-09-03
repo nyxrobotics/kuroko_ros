@@ -38,7 +38,7 @@ joints:
     - 0.0
     - 0.0
     - 0.0
-    position: -0.0
+    position: 0.0
   elbow_l_front:
     enable: true
     feedback: ''
@@ -54,7 +54,7 @@ joints:
     - 0.0
     - 0.0
     - 0.0
-    position: -0.0
+    position: 0.0
   elbow_r_front:
     enable: true
     feedback: ''
@@ -62,7 +62,7 @@ joints:
     - 0.0
     - 0.0
     - 0.0
-    position: -0.0
+    position: 0.0
   elbow_r_rear:
     enable: true
     feedback: ''
@@ -191,4 +191,4 @@ speed_scale:
   thigh_r_active: 1.0
 time:
   move_duration: 0.4
-  wait_duration: 0.2
+  wait_duration: 0.0

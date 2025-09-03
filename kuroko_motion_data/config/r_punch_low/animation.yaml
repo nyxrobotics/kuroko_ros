@@ -48,6 +48,10 @@ layout:
       info:
         id: 4
       waypoints: []
+    arrow_5:
+      info:
+        id: 5
+      waypoints: []
     arrow_8:
       info:
         id: 8
@@ -165,8 +169,8 @@ layout:
         id: 17
         type: frame
       place:
-        x: -1378.0
-        y: -464.0
+        x: -1364.0
+        y: -461.0
     frame_19_pose_16:
       connection:
         output:
@@ -179,7 +183,7 @@ layout:
         id: 19
         type: frame
       place:
-        x: -1368.0
+        x: -1373.0
         y: -372.0
     frame_1_pose_01:
       connection:
@@ -223,6 +227,20 @@ layout:
       place:
         x: -809.0
         y: 822.0
+    frame_4_pose_22:
+      connection:
+        output:
+          out_0:
+            arrow: arrow_5
+            ch: 0
+            target: frame_17_pose_15
+      info:
+        filename: pose_22
+        id: 4
+        type: frame
+      place:
+        x: -1365.0
+        y: -542.0
     frame_5_pose_05:
       connection:
         output:
@@ -257,11 +275,11 @@ layout:
           out_0:
             arrow: arrow_0
             ch: 0
-            target: frame_17_pose_15
+            target: frame_4_pose_22
       info:
         filename: ''
         id: 0
         type: start
       place:
-        x: -1348.0
-        y: -590.0
+        x: -1306.0
+        y: -638.0

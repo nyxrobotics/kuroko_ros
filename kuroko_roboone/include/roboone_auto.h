@@ -128,6 +128,7 @@ private:
   // Manage action
   std::map<std::string, int> action_id_map_;
   std::map<std::string, double> action_duration_map_;
+  std::map<std::string, double> action_distance_map_;
   std::string last_attack_name_;
   std::string action_name_;
   ros::Time action_start_time_;

@@ -184,6 +184,21 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   action_duration_map_["disable"] = 0.1;
   action_duration_map_["enable"] = 0.1;
 
+  action_distance_map_["crouch_down"] = 0;
+  action_distance_map_["crouch_up"] = 0;
+  action_distance_map_["getup_front"] = 0;
+  action_distance_map_["getup_rear"] = 0;
+  action_distance_map_["l_grip_front"] = 0.28;
+  action_distance_map_["l_hook_front"] = 0.28;
+  action_distance_map_["l_punch_high"] = 0.28;
+  action_distance_map_["l_punch_low"] = 0.28;
+  action_distance_map_["r_grip_front"] = 0.28;
+  action_distance_map_["r_hook_front"] = 0.28;
+  action_distance_map_["r_punch_high"] = 0.28;
+  action_distance_map_["r_punch_low"] = 0.28;
+  action_distance_map_["disable"] = 0;
+  action_distance_map_["enable"] = 0;
+
   state_thread_ = std::thread(&RobooneAuto::stateThread, this);
   ROS_INFO("RobooneAuto initialized.");
 }

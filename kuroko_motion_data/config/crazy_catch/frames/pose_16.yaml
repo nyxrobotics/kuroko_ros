@@ -1,0 +1,194 @@
+joints:
+  ankle_l_roll:
+    enable: true
+    feedback: ''
+    pid:
+    - 0.0
+    - 0.0
+    - 0.0
+    position: -0.5235987755982988
+  ankle_l_yaw:
+    enable: true
+    feedback: ''
+    pid:
+    - 0.0
+    - 0.0
+    - 0.0
+    position: 0.0
+  ankle_r_roll:
+    enable: true
+    feedback: ''
+    pid:
+    - 0.0
+    - 0.0
+    - 0.0
+    position: 0.5235987755982988
+  ankle_r_yaw:
+    enable: true
+    feedback: ''
+    pid:
+    - 0.0
+    - 0.0
+    - 0.0
+    position: 0.0
+  chest:
+    enable: true
+    feedback: ''
+    pid:
+    - 0.0
+    - 0.0
+    - 0.0
+    position: 0.0
+  elbow_l_front:
+    enable: true
+    feedback: ''
+    pid:
+    - 0.0
+    - 0.0
+    - 0.0
+    position: 0.0
+  elbow_l_rear:
+    enable: true
+    feedback: ''
+    pid:
+    - 0.0
+    - 0.0
+    - 0.0
+    position: 0.0
+  elbow_r_front:
+    enable: true
+    feedback: ''
+    pid:
+    - 0.0
+    - 0.0
+    - 0.0
+    position: 0.0
+  elbow_r_rear:
+    enable: true
+    feedback: ''
+    pid:
+    - 0.0
+    - 0.0
+    - 0.0
+    position: 0.0
+  hip_l_pitch:
+    enable: true
+    feedback: ''
+    pid:
+    - 0.0
+    - 0.0
+    - 0.0
+    position: 0.0
+  hip_l_roll:
+    enable: true
+    feedback: ''
+    pid:
+    - 0.0
+    - 0.0
+    - 0.0
+    position: -0.5235987755982988
+  hip_r_pitch:
+    enable: true
+    feedback: ''
+    pid:
+    - 0.0
+    - 0.0
+    - 0.0
+    position: 0.0
+  hip_r_roll:
+    enable: true
+    feedback: ''
+    pid:
+    - 0.0
+    - 0.0
+    - 0.0
+    position: -0.5235987755982988
+  shin_l_active:
+    enable: true
+    feedback: ''
+    pid:
+    - 0.0
+    - 0.0
+    - 0.0
+    position: -0.4886921905584123
+  shin_r_active:
+    enable: true
+    feedback: ''
+    pid:
+    - 0.0
+    - 0.0
+    - 0.0
+    position: 0.4886921905584123
+  shoulder_l_pitch:
+    enable: true
+    feedback: ''
+    pid:
+    - 0.0
+    - 0.0
+    - 0.0
+    position: 0.6108652381980153
+  shoulder_l_roll:
+    enable: true
+    feedback: ''
+    pid:
+    - 0.0
+    - 0.0
+    - 0.0
+    position: -1.3962634015954636
+  shoulder_r_pitch:
+    enable: true
+    feedback: ''
+    pid:
+    - 0.0
+    - 0.0
+    - 0.0
+    position: -0.6108652381980153
+  shoulder_r_roll:
+    enable: true
+    feedback: ''
+    pid:
+    - 0.0
+    - 0.0
+    - 0.0
+    position: 1.3962634015954636
+  thigh_l_active:
+    enable: true
+    feedback: ''
+    pid:
+    - 0.0
+    - 0.0
+    - 0.0
+    position: 0.4886921905584123
+  thigh_r_active:
+    enable: true
+    feedback: ''
+    pid:
+    - 0.0
+    - 0.0
+    - 0.0
+    position: -0.4886921905584123
+speed_scale:
+  ankle_l_roll: 1.0
+  ankle_l_yaw: 1.0
+  ankle_r_roll: 1.0
+  ankle_r_yaw: 1.0
+  chest: 1.0
+  elbow_l_front: 1.0
+  elbow_l_rear: 1.0
+  elbow_r_front: 1.0
+  elbow_r_rear: 1.0
+  hip_l_pitch: 1.0
+  hip_l_roll: 1.0
+  hip_r_pitch: 1.0
+  hip_r_roll: 1.0
+  shin_l_active: 1.0
+  shin_r_active: 1.0
+  shoulder_l_pitch: 1.0
+  shoulder_l_roll: 1.0
+  shoulder_r_pitch: 1.0
+  shoulder_r_roll: 1.0
+  thigh_l_active: 1.0
+  thigh_r_active: 1.0
+time:
+  move_duration: 0.3
+  wait_duration: 0.3

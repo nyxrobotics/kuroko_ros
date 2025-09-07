@@ -175,7 +175,7 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
 
   action_duration_map_["disable"] = 0;
   action_duration_map_["enable"] = 0;
-  action_duration_map_["crazy_catch"] = 6.7;
+  action_duration_map_["crazy_catch"] = 7.5;
   action_duration_map_["crazy_kick"] = 1.68;
   action_duration_map_["crouch_down"] = 0.1;
   action_duration_map_["crouch_up"] = 0;

@@ -28,14 +28,6 @@ layout:
       info:
         id: 14
       waypoints: []
-    arrow_15:
-      info:
-        id: 15
-      waypoints: []
-    arrow_16:
-      info:
-        id: 16
-      waypoints: []
     arrow_17:
       info:
         id: 17
@@ -44,9 +36,25 @@ layout:
       info:
         id: 18
       waypoints: []
+    arrow_19:
+      info:
+        id: 19
+      waypoints: []
     arrow_2:
       info:
         id: 2
+      waypoints: []
+    arrow_20:
+      info:
+        id: 20
+      waypoints: []
+    arrow_21:
+      info:
+        id: 21
+      waypoints: []
+    arrow_22:
+      info:
+        id: 22
       waypoints: []
     arrow_3:
       info:
@@ -60,17 +68,9 @@ layout:
       info:
         id: 5
       waypoints: []
-    arrow_6:
-      info:
-        id: 6
-      waypoints: []
     arrow_7:
       info:
         id: 7
-      waypoints: []
-    arrow_8:
-      info:
-        id: 8
       waypoints: []
     arrow_9:
       info:
@@ -81,9 +81,9 @@ layout:
       connection:
         output:
           out_0:
-            arrow: arrow_15
+            arrow: arrow_22
             ch: 0
-            target: frame_15_pose_14\
+            target: frame_9_pose_14
       info:
         filename: pose_09
         id: 10
@@ -147,20 +147,6 @@ layout:
       place:
         x: 58.0
         y: 364.0
-    frame_15_pose_14\:
-      connection:
-        output:
-          out_0:
-            arrow: arrow_16
-            ch: 0
-            target: frame_16_pose_15
-      info:
-        filename: pose_14\
-        id: 15
-        type: frame
-      place:
-        x: 63.0
-        y: 596.0
     frame_16_pose_15:
       connection:
         output:
@@ -229,6 +215,20 @@ layout:
       place:
         x: -589.0
         y: 343.0
+    frame_20_pose_08:
+      connection:
+        output:
+          out_0:
+            arrow: arrow_20
+            ch: 0
+            target: frame_7_pose_07
+      info:
+        filename: pose_08
+        id: 20
+        type: frame
+      place:
+        x: -576.0
+        y: 1070.0
     frame_2_pose_02:
       connection:
         output:
@@ -289,9 +289,9 @@ layout:
       connection:
         output:
           out_0:
-            arrow: arrow_6
+            arrow: arrow_19
             ch: 0
-            target: frame_9_pose_087
+            target: frame_20_pose_08
       info:
         filename: pose_06
         id: 6
@@ -327,20 +327,20 @@ layout:
       place:
         x: -573.0
         y: 160.0
-    frame_9_pose_087:
+    frame_9_pose_14:
       connection:
         output:
           out_0:
-            arrow: arrow_8
+            arrow: arrow_21
             ch: 0
-            target: frame_7_pose_07
+            target: frame_16_pose_15
       info:
-        filename: pose_087
+        filename: pose_14
         id: 9
         type: frame
       place:
-        x: -582.0
-        y: 1082.0
+        x: 77.0
+        y: 591.0
     start_0:
       connection:
         output:

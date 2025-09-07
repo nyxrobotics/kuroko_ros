@@ -128,10 +128,10 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   jump_detect_angle_ = 0.32;
   fall_detect_angle_ = 0.64;
 
-  stable_detect_duration_ = 0.3;
+  stable_detect_duration_ = 0.2;
   squat_detect_duration_ = 0.1;
   jump_detect_duration_ = 0.1;
-  fall_detect_duration_ = 1.0;
+  fall_detect_duration_ = 0.2;
 
   jump_duration_ = 0.2;
 
@@ -140,7 +140,7 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   min_walk_duration_ = walk_param_.period_time * 1.0;
 
   squat_start_time_ = ros::Time(0);
-  min_squat_duration_ = 0.1;
+  min_squat_duration_ = 0.2;
   max_squat_duration_ = 2.5;
 
   jump_start_time_ = ros::Time(0);

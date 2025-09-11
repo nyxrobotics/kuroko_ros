@@ -27,6 +27,7 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
 
   current_state_ = "INITIAL";
   running_ = true;
+  force_walk_ = false;
 
   // Initialize last_joy_ with default size
   last_joy_.axes.resize(2);
@@ -419,6 +420,7 @@ void RobooneAuto::manageState()
   // ボタン検知
   if (current_state_ == "INITIAL" && last_joy_.buttons[2])
   {
+    force_walk_ = false;
     ROS_INFO("Transitioning to RUN state from INITIAL.");
     action_name_ = "";
     transitionToRun();
@@ -426,6 +428,7 @@ void RobooneAuto::manageState()
   }
   else if (current_state_ != "FREE" && last_joy_.buttons[1])
   {
+    force_walk_ = false;
     ROS_INFO("Transitioning to FREE state from current state: %s", current_state_.c_str());
     action_name_ = "";
     transitionToFree();
@@ -433,6 +436,7 @@ void RobooneAuto::manageState()
   }
   else if (current_state_ != "INITIAL" && last_joy_.buttons[0])
   {
+    force_walk_ = false;
     ROS_INFO("Transitioning to INITIAL state from current state: %s", current_state_.c_str());
     action_name_ = "";
     transitionToInit();
@@ -502,7 +506,7 @@ void RobooneAuto::manageState()
     {
       transitionToFall();
     }
-    else if (over_squat_angle)
+    else if (over_squat_angle && force_walk_ == false)
     {
       transitionToSquat();
     }
@@ -514,6 +518,7 @@ void RobooneAuto::manageState()
   }
   else if (current_state_ == "SQUAT")
   {
+    force_walk_ = true;
     squat_duration_ = (ros::Time::now() - squat_start_time_).toSec();
     if (squat_duration_ > min_squat_duration_)
     {
@@ -541,6 +546,7 @@ void RobooneAuto::manageState()
   }
   else if (current_state_ == "JUMP")
   {
+    force_walk_ = true;
     double jump_duration = (ros::Time::now() - jump_start_time_).toSec();
     if (jump_duration > jump_duration_)
     {
@@ -563,6 +569,7 @@ void RobooneAuto::manageState()
   }
   else if (current_state_ == "FALL")
   {
+    force_walk_ = false;
     if (within_stable_angle)
     {
       ROS_INFO("Stable angle restored. Transitioning to HOLD.");
@@ -796,7 +803,6 @@ void RobooneAuto::handleRun()
   last_rects_.rects.clear();
 
   // Walk force flag
-  bool force_walk = false;
   if (attack_count_ > max_attack_count_)
   {
     walk_start_time_ = ros::Time::now();
@@ -804,11 +810,11 @@ void RobooneAuto::handleRun()
     squat_duration_ = 0;
     attack_count_ = 0;
   }
-  if (ros::Time::now() - walk_start_time_ < ros::Duration(min_walk_duration_) ||
-      ros::Time::now() - squat_start_time_ < ros::Duration(min_walk_duration_ + squat_duration_) ||
-      ros::Time::now() - robot_detected_time_ > ros::Duration(2.0))
+  if (ros::Time::now() - walk_start_time_ > ros::Duration(min_walk_duration_) &&
+      ros::Time::now() - squat_start_time_ > ros::Duration(min_walk_duration_ + squat_duration_) &&
+      ros::Time::now() - robot_detected_time_ < ros::Duration(2.0))
   {
-    force_walk = true;
+    force_walk_ = false;
   }
 
   // 相手ロボットの位置を算出
@@ -829,7 +835,7 @@ void RobooneAuto::handleRun()
     target_distance = attack_distance_ * sqrt(atk_min_rect_size_ / rect_area);
 
   // 攻撃判定
-  if (!force_walk && target_distance < attack_distance_)
+  if (!force_walk_ && target_distance < attack_distance_)
   {
     ROS_INFO("Attack triggered. range_available=%d, target_distance=%f, attack_distance=%f", range_available,
              target_distance, attack_distance_);
@@ -932,12 +938,12 @@ void RobooneAuto::handleRun()
       {
         x_step = -fabs(x_backward_step_max_);
       }
-      if (!force_walk && walk_status_ == "start" && fabs(yaw_step) < (5.0 * M_PI / 180.0) && fabs(x_step) < 0.01)
+      if (!force_walk_ && walk_status_ == "start" && fabs(yaw_step) < (5.0 * M_PI / 180.0) && fabs(x_step) < 0.01)
       {
         setWalkSteps(0.0, 0.0, 0.0);
         stopWalking();
       }
-      else if (!force_walk && walk_status_ == "stop" && fabs(yaw_step) < (10.0 * M_PI / 180.0) && fabs(x_step) < 0.01)
+      else if (!force_walk_ && walk_status_ == "stop" && fabs(yaw_step) < (10.0 * M_PI / 180.0) && fabs(x_step) < 0.01)
       {
         setWalkSteps(0.0, 0.0, 0.0);
         stopWalking();

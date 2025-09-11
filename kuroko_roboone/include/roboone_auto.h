@@ -113,6 +113,7 @@ private:
   ros::Time walk_start_time_;
   double walk_stop_duration_;
   double min_walk_duration_;
+  bool force_walk_;
 
   // Squat
   kuroko_walking_module_msgs::WalkingParam squat_param_;

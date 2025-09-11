@@ -119,6 +119,7 @@ private:
   ros::Time squat_start_time_;
   double min_squat_duration_;  // しゃがみ状態の最低持続時間
   double max_squat_duration_;
+  double squat_duration_;
 
   // Front jump
   kuroko_walking_module_msgs::WalkingParam jump_param_;

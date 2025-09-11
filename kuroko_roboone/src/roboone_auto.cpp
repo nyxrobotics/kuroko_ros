@@ -109,7 +109,7 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   squat_param_.balance_euler_pitch_gain = 0.8;
 
   jump_param_ = squat_param_;
-  jump_param_.init_z_offset = 0.04;
+  jump_param_.init_z_offset = 0.08;
   jump_param_.balance_gyro_x_gain = 0.01;
   jump_param_.balance_gyro_y_gain = 0.0;
   jump_param_.balance_gyro_zx_gain = -0.01;
@@ -131,7 +131,7 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   stable_detect_duration_ = 0.2;
   squat_detect_duration_ = 0.1;
   jump_detect_duration_ = 0.1;
-  fall_detect_duration_ = 0.2;
+  fall_detect_duration_ = 0.4;
 
   jump_duration_ = 0.2;
 
@@ -142,6 +142,7 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   squat_start_time_ = ros::Time(0);
   min_squat_duration_ = 0.2;
   max_squat_duration_ = 2.5;
+  squat_duration_ = 0;
 
   jump_start_time_ = ros::Time(0);
   jump_duration_ = 0.1;
@@ -179,8 +180,8 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   action_duration_map_["crazy_kick"] = 1.68;
   action_duration_map_["crouch_down"] = 0.1;
   action_duration_map_["crouch_up"] = 0;
-  action_duration_map_["getup_front"] = 3.1;
-  action_duration_map_["getup_rear"] = 4.9;
+  action_duration_map_["getup_front"] = 3.1 + 0.5;
+  action_duration_map_["getup_rear"] = 4.9 + 0.5;
   action_duration_map_["l_crazy_spin"] = 3.94;
   action_duration_map_["l_grip_front"] = 1.94;
   action_duration_map_["l_hook_front"] = 1.3;
@@ -194,7 +195,7 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
 
   action_distance_map_["disable"] = 0;
   action_distance_map_["enable"] = 0;
-  action_duration_map_["crazy_catch"] = 0.2;
+  action_distance_map_["crazy_catch"] = 0.2;
   action_distance_map_["crazy_kick"] = 0.9;
   action_distance_map_["crouch_down"] = 0;
   action_distance_map_["crouch_up"] = 0;
@@ -469,6 +470,7 @@ void RobooneAuto::manageState()
       within_stable_angle = true;
       walk_start_time_ = ros::Time::now();
       attacked_time_ = ros::Time(0);
+      transitionToHold();
     }
     else
     {
@@ -481,24 +483,18 @@ void RobooneAuto::manageState()
     }
   }
 
-  // 転倒検知
-  if (over_fall_angle)
-  {
-    transitionToFall();
-  }
-  else if (over_jump_angle)
-  {
-    transitionToJump();
-  }
-  else if (over_squat_angle)
-  {
-    transitionToSquat();
-  }
-
   // 状態遷移
   if (current_state_ == "RUN")
   {
-    handleRun();
+    if (over_squat_angle)
+    {
+      // 転倒検知
+      transitionToHold();
+    }
+    else
+    {
+      handleRun();
+    }
   }
   else if (current_state_ == "HOLD")
   {
@@ -518,38 +514,51 @@ void RobooneAuto::manageState()
   }
   else if (current_state_ == "SQUAT")
   {
-    if (over_fall_angle)
+    squat_duration_ = (ros::Time::now() - squat_start_time_).toSec();
+    if (squat_duration_ > min_squat_duration_)
     {
-      ROS_INFO("Over fall angle detected in SQUAT state. Transitioning to FALL.");
-      transitionToFall();
+      if (over_fall_angle)
+      {
+        ROS_INFO("Over fall angle detected in SQUAT state. Transitioning to FALL.");
+        transitionToFall();
+      }
+      else if (over_jump_angle)
+      {
+        ROS_INFO("Over jump angle detected in SQUAT state. Transitioning to JUMP.");
+        transitionToJump();
+      }
+      else if (within_stable_angle)
+      {
+        ROS_INFO("Stable angle restored. Transitioning to HOLD.");
+        transitionToHold();
+      }
     }
-    else if (over_jump_angle)
+    else if (squat_duration_ > max_squat_duration_)
     {
-      ROS_INFO("Over jump angle detected in SQUAT state. Transitioning to JUMP.");
-      transitionToJump();
-    }
-    else if (within_stable_angle)
-    {
-      ROS_INFO("Stable angle restored. Transitioning to HOLD.");
+      ROS_INFO("Max squat duration exceeded. Transitioning to HOLD.");
       transitionToHold();
     }
   }
   else if (current_state_ == "JUMP")
   {
-    if (over_fall_angle)
+    double jump_duration = (ros::Time::now() - jump_start_time_).toSec();
+    if (jump_duration > jump_duration_)
     {
-      ROS_INFO("Over fall angle detected in JUMP state. Transitioning to FALL.");
-      transitionToFall();
-    }
-    else if (within_stable_angle)
-    {
-      ROS_INFO("Stable angle restored. Transitioning to HOLD.");
-      transitionToHold();
-    }
-    else if (!over_squat_angle)
-    {
-      ROS_INFO("Under squat angle detected in JUMP state. Transitioning to SQUAT.");
-      transitionToSquat();
+      if (over_fall_angle)
+      {
+        ROS_INFO("Over fall angle detected in JUMP state. Transitioning to FALL.");
+        transitionToFall();
+      }
+      else if (within_stable_angle)
+      {
+        ROS_INFO("Stable angle restored. Transitioning to HOLD.");
+        transitionToHold();
+      }
+      else if (!over_squat_angle)
+      {
+        ROS_INFO("Under squat angle detected in JUMP state. Transitioning to SQUAT.");
+        transitionToSquat();
+      }
     }
   }
   else if (current_state_ == "FALL")
@@ -564,7 +573,7 @@ void RobooneAuto::manageState()
     {
       transitionToSquat();
     }
-    else if ((ros::Time::now() - fall_detected_time_).toSec() > 1.5)
+    else if ((ros::Time::now() - fall_detected_time_).toSec() > fall_detect_duration_)
     {
       ROS_INFO("Handling FALL state.");
       handleFall();
@@ -792,10 +801,11 @@ void RobooneAuto::handleRun()
   {
     walk_start_time_ = ros::Time::now();
     squat_start_time_ = ros::Time::now();
+    squat_duration_ = 0;
     attack_count_ = 0;
   }
   if (ros::Time::now() - walk_start_time_ < ros::Duration(min_walk_duration_) ||
-      ros::Time::now() - squat_start_time_ < ros::Duration(min_walk_duration_) ||
+      ros::Time::now() - squat_start_time_ < ros::Duration(min_walk_duration_ + squat_duration_) ||
       ros::Time::now() - robot_detected_time_ > ros::Duration(2.0))
   {
     force_walk = true;

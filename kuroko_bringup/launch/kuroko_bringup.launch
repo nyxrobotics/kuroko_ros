@@ -2,7 +2,7 @@
 <launch>
   <include file="$(find kuroko_bringup)/launch/include/usb_camera.launch"/>
   <include file="$(find kuroko_bringup)/launch/include/imu_n100mini.launch"/>
-
+  <include file="$(find kuroko_bringup)/launch/include/range_tfluna.launch"/>
   <include file="$(find kuroko_module_loader)/launch/kuroko_module_loader.launch"/>
   <include file="$(find kuroko_bringup)/launch/include/gamepad.launch"/>
   <include file="$(find kuroko_image_recognition)/launch/yolov8.launch"/>

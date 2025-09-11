@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<launch>
+  <node pkg="tfluna_ros" type="tfluna_ros_node" name="tfluna_ros_node" respawn="true">
+    <param name="serial_port" type="string" value="/dev/ttyRange"/>
+    <param name="baud_rate" type="int" value="115200"/>
+    <remap from="~range" to="/kuroko/sensors/rage"/>
+  </node>
+</launch>

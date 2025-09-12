@@ -259,6 +259,9 @@ void ActionModule::onModuleEnable()
 void ActionModule::onModuleDisable()
 {
   ROS_INFO("[ActionModule] Module Disabled");
+  is_running_ = false;
+  is_running_leg_ = false;
+  start_playing_requested_ = false;
   action_module_initialized_ = false;
   // Disable all joints
   for (const auto& joint : action_joints_enable_)
@@ -351,6 +354,8 @@ bool ActionModule::getLegRemainingTimeServiceCallback(kuroko_walking_module_msgs
 
 void ActionModule::animationNumberCallback(const std_msgs::Int32::ConstPtr& msg)
 {
+  start_playing_requested_ = false;
+  is_running_ = false;
   ROS_INFO("[ActionModule] Animation number received: %d", msg->data);
   if (!enable_)
   {

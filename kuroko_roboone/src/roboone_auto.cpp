@@ -466,6 +466,7 @@ void RobooneAuto::manageState()
   // ボタン検知
   if (current_state_ == "INITIAL" && last_joy_.buttons[2])
   {
+    // Triangle
     force_walk_ = false;
     ROS_INFO("Transitioning to RUN state from INITIAL.");
     action_name_ = "";
@@ -474,6 +475,7 @@ void RobooneAuto::manageState()
   }
   else if (current_state_ != "FREE" && last_joy_.buttons[1])
   {
+    // Circle
     force_walk_ = false;
     ROS_INFO("Transitioning to FREE state from current state: %s", current_state_.c_str());
     action_name_ = "";
@@ -482,6 +484,7 @@ void RobooneAuto::manageState()
   }
   else if (current_state_ != "INITIAL" && last_joy_.buttons[0])
   {
+    // Cross
     force_walk_ = false;
     ROS_INFO("Transitioning to INITIAL state from current state: %s", current_state_.c_str());
     action_name_ = "";
@@ -644,6 +647,7 @@ void RobooneAuto::transitionToInit()
   setIdle();
   enableAllJoints();
   ROS_INFO("Transitioning to INITIAL state.");
+  setCtrlModule("none");
   setCtrlModule("initial_pose_module");
   setCtrlModule("action_module");
   setCtrlModule("walking_module");
@@ -768,6 +772,8 @@ void RobooneAuto::handleRun()
   jsk_recognition_msgs::Rect largest_rect;
   jsk_recognition_msgs::Rect largest_conbined_rect;
   int largest_idx = -1;
+  largest_rect.width = 0;
+  largest_rect.height = 0;
 
   // robooneラベルを持つrectを探し、その中で一番大きいものを見つける
   if (ros::Time::now() - last_class_.header.stamp < ros::Duration(2.0) &&
@@ -917,10 +923,10 @@ void RobooneAuto::handleRun()
     startWalking();
     return;
   }
-  else if (robot_detected_rect_.y > last_camera_info_.height * 0.6)
+  else if (robot_detected_rect_.y > last_camera_info_.height * 0.55)
   {
     // 相手ロボット転倒時
-    if (rect_area > atk_min_rect_size_ * 0.66 || (range_available && last_range_.range > attack_rect_distance_ * 1.5))
+    if (rect_area > atk_min_rect_size_ * 0.5 || (range_available && last_range_.range > attack_rect_distance_ * 1.5))
     {
       // 相手が転倒していて至近距離の場合、後退
       ROS_INFO_THROTTLE(3.0, "The target is down and close. Move back.");
@@ -946,12 +952,14 @@ void RobooneAuto::handleRun()
       {
         x_step = -fabs(x_backward_step_max_);
       }
-      if (!force_walk_ && walk_status_ == "start" && fabs(yaw_step) < (5.0 * M_PI / 180.0) && fabs(x_step) < 0.01)
+      if (!force_walk_ && walk_status_ == "start" && fabs(yaw_step) < (5.0 * M_PI / 180.0) && fabs(x_step) < 0.01 &&
+          (ros::Time::now() - walk_start_time_).toSec() > 1.0)
       {
         setWalkSteps(0.0, 0.0, 0.0);
         stopWalking();
       }
-      else if (!force_walk_ && walk_status_ == "stop" && fabs(yaw_step) < (10.0 * M_PI / 180.0) && fabs(x_step) < 0.01)
+      else if (!force_walk_ && walk_status_ == "stop" && fabs(yaw_step) < (10.0 * M_PI / 180.0) &&
+               fabs(x_step) < 0.01 && (ros::Time::now() - walk_start_time_).toSec() > 1.0)
       {
         setWalkSteps(0.0, 0.0, 0.0);
         stopWalking();

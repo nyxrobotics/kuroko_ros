@@ -705,10 +705,12 @@ void RobooneAuto::transitionToRun()
   setCtrlModule("walking_module");
   setWalkSteps(0, 0, 0);
   abortWalking();
-  robot_detected_time_ = ros::Time(0);
-  attacked_time_ = ros::Time(0);
   walk_start_time_ = ros::Time::now();
-  run_start_time_ = ros::Time::now();
+  last_rects_time_ = ros::Time(0);
+  robot_detected_time_ = ros::Time(0);
+  last_rects_.rects.clear();
+  last_labels_.labels.clear();
+  last_class_.labels.clear();
 }
 
 // 歩行一時停止状態への遷移
@@ -902,9 +904,13 @@ void RobooneAuto::handleRun()
     squat_duration_ = 0;
     attack_count_ = 0;
   }
-  if (ros::Time::now() - walk_start_time_ > ros::Duration(min_walk_duration_) &&
-      ros::Time::now() - squat_start_time_ > ros::Duration(min_walk_duration_ + squat_duration_) &&
-      ros::Time::now() - robot_detected_time_ < ros::Duration(rects_timeout_duration_))
+  if ((ros::Time::now() - attacked_time_).toSec() < 0.3)
+  {
+    force_walk_ = true;
+  }
+  else if (ros::Time::now() - walk_start_time_ > ros::Duration(min_walk_duration_) &&
+           ros::Time::now() - squat_start_time_ > ros::Duration(min_walk_duration_ + squat_duration_) &&
+           ros::Time::now() - robot_detected_time_ < ros::Duration(rects_timeout_duration_))
   {
     force_walk_ = false;
   }

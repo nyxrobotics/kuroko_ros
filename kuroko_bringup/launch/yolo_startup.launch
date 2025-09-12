@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<launch>
+  <include file="$(find kuroko_image_recognition)/launch/yolov8.launch"/>
+</launch>

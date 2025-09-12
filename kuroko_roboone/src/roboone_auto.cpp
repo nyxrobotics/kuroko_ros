@@ -225,8 +225,8 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   attack_data.current_count = 0;
   attack_data.force_aim = false;
   attack_data.name = "l_grip_front";
-  attack_data.min_distance = 0.23;
-  attack_data.max_distance = 0.33;
+  attack_data.min_distance = 0.2;
+  attack_data.max_distance = 0.3;
   attack_actions_.push_back(attack_data);
   attack_data.name = "l_hook_front";
   attack_data.min_distance = 0.23;
@@ -237,12 +237,12 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   attack_data.max_distance = 0.33;
   attack_actions_.push_back(attack_data);
   attack_data.name = "l_punch_low";
-  attack_data.min_distance = 0.23;
-  attack_data.max_distance = 0.33;
+  attack_data.min_distance = 0.17;
+  attack_data.max_distance = 0.27;
   attack_actions_.push_back(attack_data);
   attack_data.name = "r_grip_front";
-  attack_data.min_distance = 0.23;
-  attack_data.max_distance = 0.33;
+  attack_data.min_distance = 0.2;
+  attack_data.max_distance = 0.3;
   attack_actions_.push_back(attack_data);
   attack_data.name = "r_hook_front";
   attack_data.min_distance = 0.23;
@@ -253,8 +253,8 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   attack_data.max_distance = 0.33;
   attack_actions_.push_back(attack_data);
   attack_data.name = "r_punch_low";
-  attack_data.min_distance = 0.23;
-  attack_data.max_distance = 0.33;
+  attack_data.min_distance = 0.17;
+  attack_data.max_distance = 0.27;
   attack_actions_.push_back(attack_data);
 
   ultimate_mode_ = false;
@@ -1043,7 +1043,12 @@ void RobooneAuto::handleRun()
       else if (target_angle_factor < -0.5)
         target_angle_factor = -1.0;
       yaw_step = target_angle_factor * fabs(yaw_step_max_);
-      x_step = fabs(x_forward_step_max_) * (1.0 - fabs(target_angle_factor));
+      if (selected_attack_name == "back")
+        x_step = -fabs(x_backward_step_max_) * (1.0 - fabs(target_angle_factor));
+      else if (selected_attack_name == "front")
+        x_step = fabs(x_forward_step_max_) * (1.0 - fabs(target_angle_factor));
+      else
+        x_step = 0.0;
       setWalkSteps(x_step, 0.0, yaw_step);
       startWalking();
     }

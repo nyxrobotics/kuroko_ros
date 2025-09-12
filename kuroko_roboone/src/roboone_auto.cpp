@@ -37,8 +37,7 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   attacked_time_ = ros::Time(0);
   last_target_detected_direction_ = 1;
   last_attack_name_ = "";
-  attack_distance_ = 0.28;
-  attack_distance_margin_ = 0.05;
+  attack_rect_distance_ = 0.28;
   attack_count_ = 0;
   max_attack_count_ = 2;
 
@@ -122,7 +121,7 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   jump_param_.balance_euler_zx_gain = -0.04;
   jump_param_.balance_euler_zy_gain = 0.0;
   jump_param_.balance_euler_roll_gain = 0.0;
-  jump_param_.balance_euler_pitch_gain = 0.1;
+  jump_param_.balance_euler_pitch_gain = 1.0;
 
   stable_detect_angle_ = 0.12;
   squat_detect_angle_ = 0.16;
@@ -194,24 +193,71 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   action_duration_map_["r_punch_high"] = 1.51;
   action_duration_map_["r_punch_low"] = 1.68;
 
-  action_distance_map_["disable"] = 0;
-  action_distance_map_["enable"] = 0;
-  action_distance_map_["crazy_catch"] = 0.2;
-  action_distance_map_["crazy_kick"] = 0.9;
-  action_distance_map_["crouch_down"] = 0;
-  action_distance_map_["crouch_up"] = 0;
-  action_distance_map_["getup_front"] = 0;
-  action_distance_map_["getup_rear"] = 0;
-  action_distance_map_["l_crazy_spin"] = 0.9;
-  action_distance_map_["l_grip_front"] = 0.28;
-  action_distance_map_["l_hook_front"] = 0.28;
-  action_distance_map_["l_punch_high"] = 0.28;
-  action_distance_map_["l_punch_low"] = 0.28;
-  action_distance_map_["r_crazy_spin"] = 0.9;
-  action_distance_map_["r_grip_front"] = 0.28;
-  action_distance_map_["r_hook_front"] = 0.28;
-  action_distance_map_["r_punch_high"] = 0.28;
-  action_distance_map_["r_punch_low"] = 0.28;
+  attack_actions_.clear();
+  AttackData attack_data;
+  // Crazy attacks
+  attack_data.normal_max_count = 1;
+  attack_data.ultimate_max_count = -1;
+  attack_data.current_count = 0;
+  attack_data.force_aim = true;
+  attack_data.name = "crazy_catch";
+  attack_data.min_distance = 0.15;
+  attack_data.max_distance = 0.25;
+  attack_actions_.push_back(attack_data);
+  attack_data.name = "crazy_kick";
+  attack_data.min_distance = 0.85;
+  attack_data.max_distance = 0.95;
+  attack_actions_.push_back(attack_data);
+  attack_data.name = "l_crazy_spin";
+  attack_data.normal_max_count = 0;
+  attack_data.min_distance = 0.8;
+  attack_data.max_distance = 0.9;
+  attack_actions_.push_back(attack_data);
+  attack_data.name = "r_crazy_spin";
+  attack_data.normal_max_count = 0;
+  attack_data.min_distance = 0.8;
+  attack_data.max_distance = 0.9;
+  attack_actions_.push_back(attack_data);
+  // Normal attacks
+  attack_data.normal_max_count = -1;
+  attack_data.ultimate_max_count = 0;
+  attack_data.current_count = 0;
+  attack_data.force_aim = false;
+  attack_data.name = "l_grip_front";
+  attack_data.min_distance = 0.23;
+  attack_data.max_distance = 0.33;
+  attack_actions_.push_back(attack_data);
+  attack_data.name = "l_hook_front";
+  attack_data.min_distance = 0.23;
+  attack_data.max_distance = 0.33;
+  attack_actions_.push_back(attack_data);
+  attack_data.name = "l_punch_high";
+  attack_data.min_distance = 0.23;
+  attack_data.max_distance = 0.33;
+  attack_actions_.push_back(attack_data);
+  attack_data.name = "l_punch_low";
+  attack_data.min_distance = 0.23;
+  attack_data.max_distance = 0.33;
+  attack_actions_.push_back(attack_data);
+  attack_data.name = "r_grip_front";
+  attack_data.min_distance = 0.23;
+  attack_data.max_distance = 0.33;
+  attack_actions_.push_back(attack_data);
+  attack_data.name = "r_hook_front";
+  attack_data.min_distance = 0.23;
+  attack_data.max_distance = 0.33;
+  attack_actions_.push_back(attack_data);
+  attack_data.name = "r_punch_high";
+  attack_data.min_distance = 0.23;
+  attack_data.max_distance = 0.33;
+  attack_actions_.push_back(attack_data);
+  attack_data.name = "r_punch_low";
+  attack_data.min_distance = 0.23;
+  attack_data.max_distance = 0.33;
+  attack_actions_.push_back(attack_data);
+
+  ultimate_mode_ = false;
+  force_aim_ = false;
 
   state_thread_ = std::thread(&RobooneAuto::stateThread, this);
   ROS_INFO("RobooneAuto initialized.");
@@ -832,66 +878,28 @@ void RobooneAuto::handleRun()
   if (range_available)
     target_distance = last_range_.range;
   else if (rect_area > 0.0001)
-    target_distance = attack_distance_ * sqrt(atk_min_rect_size_ / rect_area);
+    target_distance = attack_rect_distance_ * sqrt(atk_min_rect_size_ / rect_area);
+  int8_t is_left = (x_offset < 0) ? 1 : 0;
 
   // 攻撃判定
-  if (!force_walk_ && target_distance < attack_distance_)
+  std::string selected_attack_name = "";
+  if (!force_walk_)
   {
-    ROS_INFO("Attack triggered. range_available=%d, target_distance=%f, attack_distance=%f", range_available,
-             target_distance, attack_distance_);
-    std::string action_name = "l_grip_front";
-    if (x_offset > 0)
+    selected_attack_name = decideAttack(target_distance, range_available, is_left);
+    if (selected_attack_name != "front" && selected_attack_name != "back" && selected_attack_name != "stop" &&
+        selected_attack_name != "")
     {
-      ROS_INFO("Target is on the right side, executing action based on vertical position.");
-      if (robot_detected_rect_.width * 1.2 < robot_detected_rect_.height)
-        action_name = "r_hook_front";
-      else if (robot_detected_rect_.y < last_camera_info_.height * 0.4)
-        action_name = "r_grip_front";
-      else if (robot_detected_rect_.y < last_camera_info_.height * 0.6)
-        action_name = "r_punch_low";
-      else
-        action_name = "r_punch_high";
+      // 攻撃実行
+      stopWalking();
+      setCtrlModule("action_module");
+      executeAction(selected_attack_name);
+      attacked_time_ = ros::Time::now() + ros::Duration(action_duration_);
+      attack_count_++;
+      ROS_INFO("Attack triggered: %s. range_available=%d, target_distance=%f", selected_attack_name.c_str(),
+               range_available, target_distance);
+      return;
     }
-    else
-    {
-      ROS_INFO("Target is on the left side, executing action based on vertical position.");
-      if (robot_detected_rect_.width * 1.2 < robot_detected_rect_.height)
-        action_name = "l_hook_front";
-      else if (robot_detected_rect_.y < last_camera_info_.height * 0.4)
-        action_name = "l_grip_front";
-      else if (robot_detected_rect_.y < last_camera_info_.height * 0.6)
-        action_name = "l_punch_low";
-      else
-        action_name = "l_punch_high";
-    }
-
-    if (last_attack_name_ == action_name)
-    {
-      if (action_name == "r_grip_front")
-        action_name = "r_punch_low";
-      else if (action_name == "r_punch_low")
-        action_name = "r_hook_front";
-      else if (action_name == "r_hook_front")
-        action_name = "r_punch_high";
-      else if (action_name == "r_punch_high")
-        action_name = "r_grip_front";
-      else if (action_name == "l_grip_front")
-        action_name = "l_punch_low";
-      else if (action_name == "l_punch_low")
-        action_name = "l_hook_front";
-      else if (action_name == "l_hook_front")
-        action_name = "l_punch_high";
-      else if (action_name == "l_punch_high")
-        action_name = "l_grip_front";
-    }
-    last_attack_name_ = action_name;
-    // 歩行を停止し攻撃を開始
-    stopWalking();
-    setCtrlModule("action_module");
-    executeAction(action_name);
-    attacked_time_ = ros::Time::now() + ros::Duration(action_duration_);
-    attack_count_++;
-    return;
+    // TODO: When walking forward or backward, defer processing to the next step.
   }
 
   // 歩行処理
@@ -912,7 +920,7 @@ void RobooneAuto::handleRun()
   else if (robot_detected_rect_.y > last_camera_info_.height * 0.6)
   {
     // 相手ロボット転倒時
-    if (rect_area > atk_min_rect_size_ * 0.66 || (range_available && last_range_.range > attack_distance_ * 1.5))
+    if (rect_area > atk_min_rect_size_ * 0.66 || (range_available && last_range_.range > attack_rect_distance_ * 1.5))
     {
       // 相手が転倒していて至近距離の場合、後退
       ROS_INFO_THROTTLE(3.0, "The target is down and close. Move back.");
@@ -1162,4 +1170,150 @@ void RobooneAuto::yoloCallback(const jsk_recognition_msgs::ClassificationResult:
   last_rects_ = *rect_msg;
   last_labels_ = *label_msg;
   last_rects_time_ = ros::Time::now();
+}
+
+std::string RobooneAuto::decideAttack(double target_distance, bool is_aimed, bool is_left)
+{
+  std::string action_name = "l_grip_front";
+  if (force_aim_ && !is_aimed)
+    return "back";
+
+  // Get min and max attack distances
+  double max_distance = 0.0;
+  double min_distance = 1000.0;
+  for (const auto& attack : attack_actions_)
+  {
+    // Skip if max count reached
+    if (ultimate_mode_ && attack.ultimate_max_count >= 0 && attack.current_count >= attack.ultimate_max_count)
+      continue;
+    if (!ultimate_mode_ && attack.normal_max_count >= 0 && attack.current_count >= attack.normal_max_count)
+      continue;
+    // Skip if same as last attack
+    if (isSameAttack(attack.name, last_attack_name_))
+      continue;
+    // Skip if left/right mismatch
+    if (is_left && getActionDirection(attack.name) == -1)
+      continue;
+    else if (!is_left && getActionDirection(attack.name) == 1)
+      continue;
+    if (attack.force_aim && !is_aimed)
+      continue;
+    if (attack.min_distance < min_distance)
+      min_distance = attack.min_distance;
+    if (attack.max_distance > max_distance)
+      max_distance = attack.max_distance;
+  }
+  if (target_distance < min_distance)
+    return "back";
+  if (target_distance > max_distance)
+    return "front";
+
+  // Get available attacks
+  std::vector<std::string> available_attacks;
+  std::vector<int8_t> attack_usage_count;
+  std::string effective_attack = "l_grip_front";
+  double effective_offset = 1000.0;
+  for (const auto& attack : attack_actions_)
+  {
+    // Skip if max count reached
+    if (ultimate_mode_ && attack.ultimate_max_count >= 0 && attack.current_count >= attack.ultimate_max_count)
+      continue;
+    if (!ultimate_mode_ && attack.normal_max_count >= 0 && attack.current_count >= attack.normal_max_count)
+      continue;
+    // Skip if same as last attack
+    if (isSameAttack(attack.name, last_attack_name_))
+      continue;
+    // Skip if left/right mismatch
+    if (is_left && getActionDirection(attack.name) == -1)
+      continue;
+    else if (!is_left && getActionDirection(attack.name) == 1)
+      continue;
+    if (attack.force_aim && !is_aimed)
+      continue;
+    // Check if within effective range
+    double offset = fabs((attack.min_distance + attack.max_distance) / 2.0 - target_distance);
+    if (offset < effective_offset)
+    {
+      effective_offset = offset;
+      effective_attack = attack.name;
+    }
+    if (attack.min_distance < target_distance && target_distance < attack.max_distance)
+    {
+      available_attacks.push_back(attack.name);
+      attack_usage_count.push_back(attack.current_count);
+    }
+  }
+  // Execute the attack with the lowest number of uses from available_attacks
+  if (!available_attacks.empty())
+  {
+    int min_count = 1000;
+    int min_index = 0;
+    for (size_t i = 0; i < available_attacks.size(); ++i)
+    {
+      if (attack_usage_count[i] < min_count)
+      {
+        min_count = attack_usage_count[i];
+        min_index = i;
+      }
+    }
+    action_name = available_attacks[min_index];
+    last_attack_name_ = action_name;
+    // Increment the usage count
+    for (auto& attack : attack_actions_)
+    {
+      if (attack.name == action_name)
+      {
+        attack.current_count++;
+        break;
+      }
+    }
+  }
+  else if (effective_offset < 0.1 && !force_aim_)
+  {
+    action_name = effective_attack;
+    last_attack_name_ = action_name;
+    // Increment the usage count
+    for (auto& attack : attack_actions_)
+    {
+      if (attack.name == action_name)
+      {
+        attack.current_count++;
+        break;
+      }
+    }
+  }
+  else
+  {
+    return "back";
+  }
+  if (is_aimed)
+    force_aim_ = false;
+  else
+    force_aim_ = true;
+  return action_name;
+}
+
+bool RobooneAuto::isSameAttack(const std::string& action_name, const std::string& last_action_name)
+{
+  if (action_name == last_action_name)
+    return true;
+  // Motions differing only in left and right are considered same
+  const bool a_hand =
+      (action_name.size() >= 2) && (action_name[1] == '_') && (action_name[0] == 'l' || action_name[0] == 'r');
+  const bool b_hand = (last_action_name.size() >= 2) && (last_action_name[1] == '_') &&
+                      (last_action_name[0] == 'l' || last_action_name[0] == 'r');
+  if (a_hand && b_hand)
+  {
+    return action_name.substr(2) == last_action_name.substr(2);
+  }
+  return false;
+}
+
+int8_t RobooneAuto::getActionDirection(const std::string& action_name)
+{
+  if (action_name.size() >= 2 && action_name[1] == '_' && (action_name[0] == 'l' || action_name[0] == 'r'))
+  {
+    return (action_name[0] == 'l') ? 1 : -1;
+  }
+  return 0;
 }

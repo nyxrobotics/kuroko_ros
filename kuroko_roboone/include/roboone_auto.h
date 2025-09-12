@@ -22,6 +22,17 @@
 #include <eigen3/Eigen/Eigen>
 #include <vector>
 
+struct AttackData
+{
+  std::string name;
+  double min_distance;
+  double max_distance;
+  int8_t normal_max_count;
+  int8_t ultimate_max_count;
+  int8_t current_count;
+  bool force_aim;
+};
+
 class RobooneAuto
 {
 public:
@@ -60,6 +71,9 @@ private:
   void transitionToJump();
   void handleFall();
   void handleRun();
+  std::string decideAttack(double target_distance, bool is_aimed, bool is_left);
+  bool isSameAttack(const std::string& action_name, const std::string& last_action_name);
+  int8_t getActionDirection(const std::string& action_name);
 
   Eigen::Vector3d imuQuaternionToRollPitchYaw(const Eigen::Quaterniond& q);
   Eigen::Quaterniond imuRollPitchYawToQuaternion(const Eigen::Vector3d& rpy);
@@ -130,16 +144,17 @@ private:
   // Manage action
   std::map<std::string, int> action_id_map_;
   std::map<std::string, double> action_duration_map_;
-  std::map<std::string, double> action_distance_map_;
+  std::vector<AttackData> attack_actions_;
   std::string last_attack_name_;
   std::string action_name_;
   ros::Time action_start_time_;
   double action_duration_;
+  bool ultimate_mode_;
+  bool force_aim_;
 
   // Manage Attrack
   double atk_min_rect_size_;
-  double attack_distance_;
-  double attack_distance_margin_;
+  double attack_rect_distance_;
   int attack_count_;
   int max_attack_count_;
 

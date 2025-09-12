@@ -126,7 +126,7 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
 
   stable_detect_angle_ = 0.12;
   squat_detect_angle_ = 0.16;
-  jump_detect_angle_ = 0.32;
+  jump_detect_angle_ = 3.32;
   fall_detect_angle_ = 0.64;
 
   stable_detect_duration_ = 0.8;
@@ -491,6 +491,31 @@ void RobooneAuto::manageState()
     action_name_ = "";
     transitionToInit();
     return;
+  }
+  // Ultimate mode
+  if (last_joy_.axes[7] < -0.9)
+  {
+    // Up
+    if (ultimate_mode_)
+      ROS_INFO("Ultimate mode deactivated. Normal attacks only.");
+    ultimate_mode_ = false;
+  }
+  else if (last_joy_.axes[7] > 0.9)
+  {
+    // Down
+    if (!ultimate_mode_)
+      ROS_INFO("Ultimate mode activated. Crazy attacks enabled.");
+    ultimate_mode_ = true;
+  }
+  if (last_joy_.axes[6] > 0.9)
+  {
+    // Left
+    // Resset current attack counts
+    ROS_INFO_THROTTLE(1.0, "Resetting attack counts.");
+    for (auto& attack : attack_actions_)
+    {
+      attack.current_count = 0;
+    }
   }
 
   // Sleep

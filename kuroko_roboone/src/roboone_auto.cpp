@@ -515,7 +515,21 @@ void RobooneAuto::manageState()
       ROS_INFO("Ultimate mode activated. Crazy attacks enabled.");
     ultimate_mode_ = true;
   }
-  if (last_joy_.axes[6] > 0.9)
+  if (last_joy_.axes[6] < -0.9)
+  {
+    // Right
+    // Disable crazy attacks
+    ROS_INFO_THROTTLE(1.0, "Disabling crazy attacks.");
+    ultimate_mode_ = false;
+    for (auto& attack : attack_actions_)
+    {
+      if (attack.name.find("crazy_") != std::string::npos)
+      {
+        attack.current_count = attack.normal_max_count;
+      }
+    }
+  }
+  else if (last_joy_.axes[6] > 0.9)
   {
     // Left
     // Resset current attack counts

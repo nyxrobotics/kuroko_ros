@@ -38,7 +38,7 @@
     <gazebo reference="${name}_frame_link">
       <sensor type="camera" name="camera_camera_cam">
         <camera name="camera">
-          <horizontal_fov>1.93</horizontal_fov>
+          <horizontal_fov>2.20</horizontal_fov>
           <image>
             <width>384</width>
             <height>216</height>

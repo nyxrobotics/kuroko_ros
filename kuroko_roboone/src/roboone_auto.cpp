@@ -30,6 +30,16 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   running_ = true;
   force_walk_ = false;
 
+  // Camera params
+  camera_height_ = 0.3;
+  camera_fov_h_ = 126.0 * M_PI / 180.0;  // in radian
+  camera_fov_v_ = 94.0 * M_PI / 180.0;   // in radian
+  camera_start_time_ = ros::Time::now();
+  camera_startup_duration_ = 0.8;
+  rects_timeout_duration_ = 2.0;
+  run_start_time_ = ros::Time(0);
+  run_startup_duration_ = 0.1;
+
   // Initialize last_joy_ with default size
   last_joy_.axes.resize(2);
   last_joy_.buttons.resize(10);
@@ -149,9 +159,6 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   jump_duration_ = 0.1;
 
   action_start_time_ = ros::Time(0);
-
-  run_start_time_ = ros::Time(0);
-  run_startup_duration_ = 0.2;
 
   walk_status_ = "stop";
   current_module_ = "";
@@ -471,6 +478,7 @@ void RobooneAuto::manageState()
     force_walk_ = false;
     ROS_INFO("Transitioning to RUN state from INITIAL.");
     action_name_ = "";
+    camera_start_time_ = ros::Time::now();
     transitionToRun();
     return;
   }
@@ -692,7 +700,6 @@ void RobooneAuto::transitionToRun()
   setWalkSteps(0, 0, 0);
   abortWalking();
   robot_detected_time_ = ros::Time(0);
-  last_rects_.rects.clear();
   attacked_time_ = ros::Time(0);
   walk_start_time_ = ros::Time::now();
   run_start_time_ = ros::Time::now();
@@ -776,6 +783,8 @@ void RobooneAuto::handleFall()
   }
   setWalkSteps(0, 0, 0);
   current_state_ = "HOLD";
+  last_rects_time_ = ros::Time(0);
+  camera_start_time_ = ros::Time::now();
 }
 
 // 攻撃処理
@@ -804,8 +813,7 @@ void RobooneAuto::handleRun()
   largest_rect.height = 0;
 
   // robooneラベルを持つrectを探し、その中で一番大きいものを見つける
-  if (ros::Time::now() - last_class_.header.stamp < ros::Duration(2.0) &&
-      ros::Time::now() - last_rects_.header.stamp < ros::Duration(2.0))
+  if (ros::Time::now() - last_rects_time_ < ros::Duration(rects_timeout_duration_))
   {
     for (size_t i = 0; i < last_rects_.rects.size(); ++i)
     {
@@ -861,26 +869,24 @@ void RobooneAuto::handleRun()
     }
     robot_detected_rect_ = largest_conbined_rect;
   }
-  // ROS_INFO("Roboone detected: %d, robot_detected_rect=(x=%d, y=%d, w=%d, h=%d)", roboone_found, robot_detected_rect_.x,
-  //          robot_detected_rect_.y, robot_detected_rect_.width, robot_detected_rect_.height);
+  last_rects_time_ = ros::Time(0);
 
   // 中心の上下左右10ピクセルがlargest_conbined_rectに内包されている場合は距離センサが有効
   bool range_available = false;
   int range_available_area_pixels = 10;
-  if (ros::Time::now() - last_range_.header.stamp < ros::Duration(2.0) &&
-      ros::Time::now() - robot_detected_time_ < ros::Duration(2.0) &&
+  if (ros::Time::now() - last_range_.header.stamp < ros::Duration(rects_timeout_duration_) &&
+      ros::Time::now() - robot_detected_time_ < ros::Duration(rects_timeout_duration_) &&
       last_camera_info_.height / 2 - range_available_area_pixels > robot_detected_rect_.y &&
       last_camera_info_.height / 2 + range_available_area_pixels <
           robot_detected_rect_.y + robot_detected_rect_.height &&
       last_camera_info_.width / 2 - range_available_area_pixels > robot_detected_rect_.x &&
       last_camera_info_.width / 2 + range_available_area_pixels < robot_detected_rect_.x + robot_detected_rect_.width)
   {
-    if (last_range_.range < 3.6)
+    if (last_range_.range < 4.0)
     {
       range_available = true;
     }
   }
-  last_rects_.rects.clear();
 
   // Walk force flag
   if (attack_count_ > max_attack_count_)
@@ -892,7 +898,7 @@ void RobooneAuto::handleRun()
   }
   if (ros::Time::now() - walk_start_time_ > ros::Duration(min_walk_duration_) &&
       ros::Time::now() - squat_start_time_ > ros::Duration(min_walk_duration_ + squat_duration_) &&
-      ros::Time::now() - robot_detected_time_ < ros::Duration(2.0))
+      ros::Time::now() - robot_detected_time_ < ros::Duration(rects_timeout_duration_))
   {
     force_walk_ = false;
   }
@@ -906,20 +912,31 @@ void RobooneAuto::handleRun()
   double image_center_y = last_camera_info_.height / 2.0;
   double x_offset = (rect_center_x - image_center_x) / image_center_x;
   double y_offset = (rect_center_y - image_center_y) / image_center_y;
+  double target_buttom_pixel = robot_detected_rect_.y + robot_detected_rect_.height;
+  double target_buttom_distance = 10.0;
+  if (target_buttom_pixel > last_camera_info_.height * 0.5 + 10.0)
+  {
+    double max_floor_project_angle = camera_fov_v_ * 0.5;
+    double min_floor_project_distance = camera_height_ / tan(max_floor_project_angle);
+    double target_buttom_project_angle = atan2(camera_height_ * (target_buttom_pixel - last_camera_info_.height * 0.5) /
+                                                   (last_camera_info_.height * 0.5),
+                                               min_floor_project_distance);
+    target_buttom_distance = camera_height_ / tan(target_buttom_project_angle);
+  }
   if (roboone_found)
     last_target_detected_direction_ = x_offset > 0 ? -1 : 1;
   double target_distance = 1000.0;
   if (range_available)
     target_distance = last_range_.range;
   else if (rect_area > 0.0001)
-    target_distance = attack_rect_distance_ * sqrt(atk_min_rect_size_ / rect_area);
+    target_distance = target_buttom_distance;
   int8_t is_left = (x_offset < 0) ? 1 : 0;
 
   // 攻撃判定
   std::string selected_attack_name = "";
+  selected_attack_name = decideAttack(target_distance, range_available, is_left);
   if (!force_walk_)
   {
-    selected_attack_name = decideAttack(target_distance, range_available, is_left);
     if (selected_attack_name != "front" && selected_attack_name != "back" && selected_attack_name != "stop" &&
         selected_attack_name != "")
     {
@@ -940,21 +957,30 @@ void RobooneAuto::handleRun()
   double x_step = 0.0;
   double y_step = 0.0;
   double yaw_step = 0.0;
-  if ((!roboone_found && (ros::Time::now() - robot_detected_time_).toSec() > 2.0) ||
+  if ((!roboone_found && ros::Time::now() - robot_detected_time_ > ros::Duration(rects_timeout_duration_)) ||
       robot_detected_rect_.y > last_camera_info_.height * 0.8)
   {
     // ターゲットが見つからないときはその場旋回
-    ROS_WARN_THROTTLE(3.0, "No roboone label found. Rotate in place.");
-    yaw_step = last_target_detected_direction_ * fabs(yaw_step_max_);
-    setCtrlModule("walking_module");
-    setWalkSteps(0.0, 0.0, yaw_step);
-    startWalking();
+    if (ros::Time::now() - camera_start_time_ > ros::Duration(camera_startup_duration_))
+    {
+      ROS_WARN_THROTTLE(3.0, "No roboone label found. Rotate in place.");
+      yaw_step = last_target_detected_direction_ * fabs(yaw_step_max_);
+      setCtrlModule("walking_module");
+      setWalkSteps(0.0, 0.0, yaw_step);
+      startWalking();
+    }
+    else
+    {
+      setCtrlModule("walking_module");
+      setWalkSteps(0.0, 0.0, 0.0);
+      startWalking();
+    }
     return;
   }
   else if (robot_detected_rect_.y > last_camera_info_.height * 0.55)
   {
     // 相手ロボット転倒時
-    if (rect_area > atk_min_rect_size_ * 0.5 || (range_available && last_range_.range > attack_rect_distance_ * 1.5))
+    if (target_distance < 0.4)
     {
       // 相手が転倒していて至近距離の場合、後退
       ROS_INFO_THROTTLE(3.0, "The target is down and close. Move back.");
@@ -1003,8 +1029,8 @@ void RobooneAuto::handleRun()
   else
   {
     // 通常の歩行処理
-    ROS_INFO_THROTTLE(3.0, "Target detected but too small(area: %f), delay: %f, rect area: %f", rect_area,
-                      (ros::Time::now() - robot_detected_time_).toSec(), atk_min_rect_size_);
+    ROS_INFO_THROTTLE(3.0, "Target detected but too far(area: %f), delay: %f, distance: %f", rect_area,
+                      (ros::Time::now() - robot_detected_time_).toSec(), target_distance);
     setCtrlModule("walking_module");
     if ((ros::Time::now() - attacked_time_).toSec() < 2.0)
     {
@@ -1043,10 +1069,10 @@ void RobooneAuto::handleRun()
       else if (target_angle_factor < -0.5)
         target_angle_factor = -1.0;
       yaw_step = target_angle_factor * fabs(yaw_step_max_);
-      if (selected_attack_name == "back")
-        x_step = -fabs(x_backward_step_max_) * (1.0 - fabs(target_angle_factor));
-      else if (selected_attack_name == "front")
+      if (selected_attack_name == "front" || target_distance > 1.0)
         x_step = fabs(x_forward_step_max_) * (1.0 - fabs(target_angle_factor));
+      else if (selected_attack_name == "back")
+        x_step = -fabs(x_backward_step_max_) * (1.0 - fabs(target_angle_factor));
       else
         x_step = 0.0;
       setWalkSteps(x_step, 0.0, yaw_step);
@@ -1207,6 +1233,8 @@ void RobooneAuto::yoloCallback(const jsk_recognition_msgs::ClassificationResult:
 {
   // ROS_INFO("YOLO data received: class size: %ld, label size: %ld, rects size: %ld", class_msg->label_names.size(),
   //          label_msg->labels.size(), rect_msg->rects.size());
+  if (label_msg->labels.empty() || class_msg->label_names.empty() || rect_msg->rects.empty())
+    return;
   last_class_ = *class_msg;
   last_rects_ = *rect_msg;
   last_labels_ = *label_msg;

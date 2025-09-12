@@ -2,6 +2,7 @@
 <launch>
   <include file="$(find kuroko_gazebo)/launch/roboone_gazebo.launch"/>
   <include file="$(find kuroko_bringup)/launch/include/gamepad.launch"/>
+  <include file="$(find kuroko_module_loader)/launch/kuroko_module_loader_gazebo.launch"/>
   <include file="$(find kuroko_image_recognition)/launch/yolov8.launch">
     <arg name="is_gazebo" value="true"/>
   </include>

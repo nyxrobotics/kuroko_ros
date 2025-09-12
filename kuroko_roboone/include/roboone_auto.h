@@ -93,6 +93,13 @@ private:
   std::thread state_thread_;
   bool running_;
 
+  // Camera params
+  double camera_height_;
+  double camera_fov_h_, camera_fov_v_;
+  ros::Time camera_start_time_;
+  double camera_startup_duration_;
+  double rects_timeout_duration_;
+
   // 内部状態変数
   std::string current_state_, previous_state_, next_state_, current_module_;
   sensor_msgs::Joy last_joy_;

@@ -965,7 +965,7 @@ void RobooneAuto::handleRun()
       else if (target_angle_factor < -1.0)
         target_angle_factor = -1.0;
       yaw_step = target_angle_factor * fabs(yaw_step_max_);
-      x_step = -fabs(x_backward_step_max_) * (1.0 - fabs(target_angle_factor));
+      x_step = -fabs(x_backward_step_max_ * 0.5) * (1.0 - fabs(target_angle_factor));
       setWalkSteps(x_step, 0.0, yaw_step);
       startWalking();
     }

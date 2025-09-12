@@ -206,18 +206,18 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   attack_data.max_distance = 0.25;
   attack_actions_.push_back(attack_data);
   attack_data.name = "crazy_kick";
-  attack_data.min_distance = 0.85;
-  attack_data.max_distance = 0.95;
+  attack_data.min_distance = 0.8;
+  attack_data.max_distance = 0.9;
   attack_actions_.push_back(attack_data);
   attack_data.name = "l_crazy_spin";
   attack_data.normal_max_count = 0;
-  attack_data.min_distance = 0.8;
-  attack_data.max_distance = 0.9;
+  attack_data.min_distance = 0.75;
+  attack_data.max_distance = 0.85;
   attack_actions_.push_back(attack_data);
   attack_data.name = "r_crazy_spin";
   attack_data.normal_max_count = 0;
-  attack_data.min_distance = 0.8;
-  attack_data.max_distance = 0.9;
+  attack_data.min_distance = 0.75;
+  attack_data.max_distance = 0.85;
   attack_actions_.push_back(attack_data);
   // Normal attacks
   attack_data.normal_max_count = -1;

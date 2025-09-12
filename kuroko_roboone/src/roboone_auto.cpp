@@ -555,9 +555,15 @@ void RobooneAuto::manageState()
       over_fall_angle = false;
       over_squat_angle = false;
       within_stable_angle = true;
-      walk_start_time_ = ros::Time::now();
-      attacked_time_ = ros::Time(0);
       transitionToHold();
+      walk_start_time_ = ros::Time::now();
+      attacked_time_ = ros::Time::now();
+      last_rects_time_ = ros::Time(0);
+      robot_detected_time_ = ros::Time(0);
+      last_rects_.rects.clear();
+      last_labels_.labels.clear();
+      last_class_.labels.clear();
+      robot_detected_rect_ = jsk_recognition_msgs::Rect();
     }
     else
     {
@@ -1032,15 +1038,15 @@ void RobooneAuto::handleRun()
     ROS_INFO_THROTTLE(3.0, "Target detected but too far(area: %f), delay: %f, distance: %f", rect_area,
                       (ros::Time::now() - robot_detected_time_).toSec(), target_distance);
     setCtrlModule("walking_module");
-    if ((ros::Time::now() - attacked_time_).toSec() < 2.0)
+    if ((ros::Time::now() - attacked_time_).toSec() < 1.0)
     {
-      // 攻撃後の2秒間は後退のみ許可
+      // 攻撃後の1秒間は後退のみ許可
       setWalkSteps(-fabs(x_backward_step_max_), 0.0, 0.0);
       startWalking();
     }
-    else if ((ros::Time::now() - attacked_time_).toSec() < 8.0)
+    else if ((ros::Time::now() - attacked_time_).toSec() < 9.0)
     {
-      // 攻撃後の6秒間旋回のみ許可（前後左右移動は0）
+      // 攻撃後の10秒間旋回のみ許可（前後左右移動は0）
       // 中央からのずれに基づいて旋回角を計算
       double target_direction = (x_offset > 0) ? -1.0 : 1.0;  // 右なら-1、左なら1
       double target_angle_factor = -x_offset;
@@ -1063,10 +1069,10 @@ void RobooneAuto::handleRun()
       // 相手の方に向かって歩行処理
       // 中央からのずれに基づいて旋回角を計算
       double target_direction = (x_offset > 0) ? -1.0 : 1.0;  // 右なら-1、左なら1
-      double target_angle_factor = -x_offset;
-      if (target_angle_factor > 0.5)
+      double target_angle_factor = -x_offset * 2.0;
+      if (target_angle_factor > 1.0)
         target_angle_factor = 1.0;
-      else if (target_angle_factor < -0.5)
+      else if (target_angle_factor < -1.0)
         target_angle_factor = -1.0;
       yaw_step = target_angle_factor * fabs(yaw_step_max_);
       if (selected_attack_name == "front" || target_distance > 1.0)

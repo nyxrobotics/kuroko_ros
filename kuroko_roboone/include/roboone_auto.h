@@ -80,7 +80,7 @@ private:
   double wrapToPi(double angle);
 
   ros::Subscriber joy_sub_, imu_sub_, camera_info_sub_, range_sub_;
-  ros::Publisher walking_command_pub_, walking_params_pub_, action_page_pub_;
+  ros::Publisher walking_command_pub_, walking_params_pub_, action_page_pub_, init_pose_pub_;
   ros::ServiceClient client_;
 
   message_filters::Subscriber<jsk_recognition_msgs::ClassificationResult> class_sub_;

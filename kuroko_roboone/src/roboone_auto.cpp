@@ -24,6 +24,7 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   walking_command_pub_ = nh.advertise<std_msgs::String>("/motion_control/walking/command", 5);
   walking_params_pub_ = nh.advertise<kuroko_walking_module_msgs::WalkingParam>("/motion_control/walking/set_params", 5);
   action_page_pub_ = nh.advertise<std_msgs::Int32>("/motion_control/action/animation_num", 5);
+  init_pose_pub_ = nh.advertise<std_msgs::String>("/motion_control/base/ini_pose", 5);
 
   current_state_ = "INITIAL";
   running_ = true;
@@ -647,7 +648,9 @@ void RobooneAuto::transitionToInit()
   setIdle();
   enableAllJoints();
   ROS_INFO("Transitioning to INITIAL state.");
-  setCtrlModule("none");
+  std_msgs::String init_msg;
+  init_msg.data = "ini_pose";
+  init_pose_pub_.publish(init_msg);
   setCtrlModule("initial_pose_module");
   setCtrlModule("action_module");
   setCtrlModule("walking_module");

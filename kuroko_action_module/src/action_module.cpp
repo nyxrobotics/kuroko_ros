@@ -476,6 +476,10 @@ void ActionModule::torqueOnAll()
     msg.value.push_back(1);
   }
   sync_write_pub_.publish(msg);
+  is_running_ = false;
+  is_running_leg_ = false;
+  publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_INFO, "Finish animation");
+  publishDoneMsg("torque_enable");
   ROS_INFO("Torque enabled for all joints");
 }
 
@@ -489,6 +493,10 @@ void ActionModule::torqueOffAll()
     msg.value.push_back(0);
   }
   sync_write_pub_.publish(msg);
+  is_running_ = false;
+  is_running_leg_ = false;
+  publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_INFO, "Finish animation");
+  publishDoneMsg("torque_disable");
   ROS_INFO("Torque disabled for all joints");
 }
 

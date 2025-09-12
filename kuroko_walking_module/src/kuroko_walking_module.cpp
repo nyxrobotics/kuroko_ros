@@ -157,6 +157,7 @@ void WalkingModule::initialize(const int control_cycle_msec, robotis_framework::
   resetTargetStepConfig();
   previouos_walking_param_ = target_walking_param_;
   synchronized_walking_param_ = target_walking_param_;
+  synchronized_walking_param_.init_roll_offset = 0;
 
   applyTimeParam();
   applyStepParam();
@@ -932,6 +933,7 @@ void WalkingModule::processPhase(const double& time_unit)
   if (!is_walking_)
   {
     synchronizePoseParam();
+    synchronized_walking_param_.init_roll_offset = 0;
     applyPoseParam();
     synchronizeStepParam();
     applyStepParam();

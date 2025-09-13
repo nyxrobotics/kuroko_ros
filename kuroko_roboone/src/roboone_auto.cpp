@@ -141,8 +141,8 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   jump_param_.balance_euler_roll_gain = 0.0;
   jump_param_.balance_euler_pitch_gain = 1.0;
 
-  stable_detect_angle_ = 0.12;
-  squat_detect_angle_ = 0.16;
+  stable_detect_angle_ = 0.08;
+  squat_detect_angle_ = 0.12;
   jump_detect_angle_ = 3.32;
   fall_detect_angle_ = 0.64;
 
@@ -1359,6 +1359,7 @@ std::string RobooneAuto::decideAttack(double target_distance, bool is_aimed, boo
   // Get available attacks
   std::vector<std::string> available_attacks;
   std::vector<int8_t> attack_usage_count;
+  std::vector<double> attack_duration;
   std::string effective_attack = "l_grip_front";
   double effective_offset = 1000.0;
   for (const auto& attack : attack_actions_)
@@ -1389,6 +1390,11 @@ std::string RobooneAuto::decideAttack(double target_distance, bool is_aimed, boo
     {
       available_attacks.push_back(attack.name);
       attack_usage_count.push_back(attack.current_count);
+      // Get duration from action_duration_map_
+      double duration = 10.0;
+      if (action_duration_map_.find(attack.name) != action_duration_map_.end())
+        duration = action_duration_map_[attack.name];
+      attack_duration.push_back(duration);
     }
   }
 
@@ -1397,11 +1403,18 @@ std::string RobooneAuto::decideAttack(double target_distance, bool is_aimed, boo
   {
     int min_count = 1000;
     int min_index = 0;
+    double min_duration = 10.0;
     for (size_t i = 0; i < available_attacks.size(); ++i)
     {
       if (attack_usage_count[i] < min_count)
       {
         min_count = attack_usage_count[i];
+        min_index = i;
+        min_duration = attack_duration[i];
+      }
+      else if (attack_usage_count[i] == min_count && attack_duration[i] < min_duration)
+      {
+        min_duration = attack_duration[i];
         min_index = i;
       }
     }

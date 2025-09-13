@@ -60,10 +60,10 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   max_attack_count_ = 2;
 
   // Set max step sizes
-  x_forward_step_max_ = 0.02;
-  x_backward_step_max_ = -0.02;
+  x_forward_step_max_ = 0.03;
+  x_backward_step_max_ = -0.03;
   y_step_max_ = 0.02;
-  yaw_step_max_ = 0.1;
+  yaw_step_max_ = 0.2;
 
   // Set walking params
   walk_param_.init_x_offset = 0.018;
@@ -76,8 +76,8 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   walk_param_.init_pose_duration = 0.0;
   walk_param_.period_time = 0.43;
   walk_param_.dsp_ratio = 0.1;
-  walk_param_.step_forward_back_ratio = 0.0;
-  walk_param_.foot_height = 0.08;
+  walk_param_.step_forward_back_ratio = 0.1;
+  walk_param_.foot_height = 0.07;
   walk_param_.y_swing_amplitude = 0.016;
   walk_param_.z_swing_amplitude = 0.004;
   walk_param_.roll_swing_amplitude = -0.05236;
@@ -89,15 +89,15 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   walk_param_.balance_enable = true;
   walk_param_.balance_gyro_x_gain = 0.008;
   walk_param_.balance_gyro_y_gain = -0.004;
-  walk_param_.balance_gyro_zx_gain = 0.004;
+  walk_param_.balance_gyro_zx_gain = 0.000;
   walk_param_.balance_gyro_zy_gain = 0.008;
   walk_param_.balance_gyro_roll_gain = -0.01;
   walk_param_.balance_gyro_pitch_gain = 0.04;
-  walk_param_.balance_euler_x_gain = 0.04;
-  walk_param_.balance_euler_y_gain = -0.02;
-  walk_param_.balance_euler_zx_gain = 0.004;
-  walk_param_.balance_euler_zy_gain = 0.008;
-  walk_param_.balance_euler_roll_gain = -0.01;
+  walk_param_.balance_euler_x_gain = 0.06;
+  walk_param_.balance_euler_y_gain = -0.04;
+  walk_param_.balance_euler_zx_gain = -0.04;
+  walk_param_.balance_euler_zy_gain = -0.008;
+  walk_param_.balance_euler_roll_gain = 0.0;
   walk_param_.balance_euler_pitch_gain = 0.04;
   walk_param_.p_gain = 0;
   walk_param_.i_gain = 0;

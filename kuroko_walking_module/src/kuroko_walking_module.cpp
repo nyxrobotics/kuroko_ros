@@ -229,6 +229,8 @@ void WalkingModule::walkingCommandCallback(const std_msgs::String::ConstPtr& msg
 void WalkingModule::walkingParameterCallback(const kuroko_walking_module_msgs::WalkingParam::ConstPtr& msg)
 {
   config_walking_param_ = *msg;
+  synchronized_walking_param_.step_forward_back_ratio = config_walking_param_.step_forward_back_ratio;
+  previouos_walking_param_.step_forward_back_ratio = config_walking_param_.step_forward_back_ratio;
   if (walking_state_ == WALK_DISABLE)
   {
     setTargetStepConfig();

@@ -32,7 +32,7 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   force_walk_ = false;
   force_front_walk_ = true;
   min_front_walk_duration_ = 2.0;
-  max_back_walk_duration_ = 2.0;
+  max_back_walk_duration_ = 1.0;
   front_walk_start_time_ = ros::Time::now();
   back_walk_start_time_ = ros::Time::now();
   walk_direction_ = 0;
@@ -141,8 +141,8 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   jump_param_.balance_euler_roll_gain = 0.0;
   jump_param_.balance_euler_pitch_gain = 1.0;
 
-  stable_detect_angle_ = 0.08;
-  squat_detect_angle_ = 0.12;
+  stable_detect_angle_ = 0.12;
+  squat_detect_angle_ = 0.14;
   jump_detect_angle_ = 3.32;
   fall_detect_angle_ = 0.64;
 

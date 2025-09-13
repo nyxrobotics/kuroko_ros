@@ -135,6 +135,12 @@ private:
   double walk_stop_duration_;
   double min_walk_duration_;
   bool force_walk_;
+  bool force_front_walk_;
+  ros::Time front_walk_start_time_;
+  ros::Time back_walk_start_time_;
+  double min_front_walk_duration_;
+  double max_back_walk_duration_;
+  int8_t walk_direction_;  // -1: back, 0: stop, 1: front
 
   // Squat
   kuroko_walking_module_msgs::WalkingParam squat_param_;

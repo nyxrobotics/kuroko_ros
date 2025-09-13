@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
   <xacro:include filename="tfluna_gazebo.xacro"/>
-  <xacro:macro name="tfluna" params="name parent *origin ros_topic update_rate:=10 minRange:=0.1 maxRange:=8.0 fov:=0.02 ray_count:=5">
+  <xacro:macro name="tfluna" params="name parent *origin ros_topic update_rate:=10 minRange:=0.03 maxRange:=8.0 fov:=0.02 ray_count:=5">
     <xacro:property name="size_depth" value="0.002"/>
     <xacro:property name="size_width" value="0.01"/>
     <xacro:property name="size_height" value="0.01"/>

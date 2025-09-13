@@ -1,6 +1,7 @@
 #include "roboone_auto.h"
 #include <eigen3/Eigen/src/Core/Matrix.h>
 #include <sensor_msgs/CameraInfo.h>
+#include <algorithm>
 #include "ros/console.h"
 #include "ros/duration.h"
 #include "ros/time.h"
@@ -29,6 +30,12 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   current_state_ = "INITIAL";
   running_ = true;
   force_walk_ = false;
+  force_front_walk_ = true;
+  min_front_walk_duration_ = 2.0;
+  max_back_walk_duration_ = 2.0;
+  front_walk_start_time_ = ros::Time::now();
+  back_walk_start_time_ = ros::Time::now();
+  walk_direction_ = 0;
 
   // Camera params
   camera_height_ = 0.3;
@@ -209,7 +216,7 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   attack_data.current_count = 0;
   attack_data.force_aim = true;
   attack_data.name = "crazy_catch";
-  attack_data.min_distance = 0.15;
+  attack_data.min_distance = 0.0;
   attack_data.max_distance = 0.25;
   attack_actions_.push_back(attack_data);
   attack_data.name = "crazy_kick";
@@ -480,6 +487,9 @@ void RobooneAuto::manageState()
     action_name_ = "";
     camera_start_time_ = ros::Time::now();
     transitionToRun();
+    // Force front walk
+    force_front_walk_ = true;
+    walk_direction_ = 0;
     return;
   }
   else if (current_state_ != "FREE" && last_joy_.buttons[1])
@@ -580,9 +590,12 @@ void RobooneAuto::manageState()
       if (action_name_ == "getup_front" || action_name_ == "getup_rear" || action_name_ == "enable" ||
           action_name_ == "disable")
       {
-        attacked_time_ = ros::Time();
+        attacked_time_ = ros::Time() + ros::Duration(10.0);
         force_walk_ = false;
         force_aim_ = true;
+        force_front_walk_ = true;
+        walk_direction_ = 0;
+        back_walk_start_time_ = ros::Time(0);
       }
       else
       {
@@ -714,9 +727,9 @@ void RobooneAuto::transitionToInit()
   std_msgs::String init_msg;
   init_msg.data = "ini_pose";
   init_pose_pub_.publish(init_msg);
-  setCtrlModule("initial_pose_module");
-  setCtrlModule("action_module");
-  setCtrlModule("walking_module");
+  // setCtrlModule("initial_pose_module");
+  // setCtrlModule("action_module");
+  // setCtrlModule("walking_module");
 }
 
 // 自律移動への遷移
@@ -970,6 +983,8 @@ void RobooneAuto::handleRun()
 
   // 攻撃判定
   std::string selected_attack_name = "";
+  if (ultimate_mode_)
+    range_available = true;
   selected_attack_name = decideAttack(target_distance, range_available, is_left);
   if (!force_walk_)
   {
@@ -986,7 +1001,6 @@ void RobooneAuto::handleRun()
                range_available, target_distance);
       return;
     }
-    // TODO: When walking forward or backward, defer processing to the next step.
   }
 
   // 歩行処理
@@ -1004,6 +1018,9 @@ void RobooneAuto::handleRun()
       setCtrlModule("walking_module");
       setWalkSteps(0.0, 0.0, yaw_step);
       startWalking();
+      force_front_walk_ = true;
+      walk_direction_ = 0;
+      back_walk_start_time_ = ros::Time(0);
     }
     else
     {
@@ -1013,10 +1030,10 @@ void RobooneAuto::handleRun()
     }
     return;
   }
-  else if (robot_detected_rect_.y > last_camera_info_.height * 0.55)
+  else if (robot_detected_rect_.y > last_camera_info_.height * 0.55 && !ultimate_mode_)
   {
     // 相手ロボット転倒時
-    if (target_distance < 0.4)
+    if (target_distance < 0.3)
     {
       // 相手が転倒していて至近距離の場合、後退
       ROS_INFO_THROTTLE(3.0, "The target is down and close. Move back.");
@@ -1027,7 +1044,7 @@ void RobooneAuto::handleRun()
       else if (target_angle_factor < -1.0)
         target_angle_factor = -1.0;
       yaw_step = target_angle_factor * fabs(yaw_step_max_);
-      x_step = -fabs(x_backward_step_max_ * 0.5) * (1.0 - fabs(target_angle_factor));
+      x_step = -fabs(x_backward_step_max_) * (1.0 - fabs(target_angle_factor));
       setWalkSteps(x_step, 0.0, yaw_step);
       startWalking();
     }
@@ -1038,10 +1055,6 @@ void RobooneAuto::handleRun()
       double target_angle_factor = -x_offset;
       yaw_step = target_angle_factor * fabs(yaw_step_max_);  // 最大15度の旋回
       x_step = 0.0;
-      if (rect_area > atk_min_rect_size_ * 0.6)
-      {
-        x_step = -fabs(x_backward_step_max_);
-      }
       if (!force_walk_ && walk_status_ == "start" && fabs(yaw_step) < (5.0 * M_PI / 180.0) && fabs(x_step) < 0.01 &&
           (ros::Time::now() - walk_start_time_).toSec() > 1.0)
       {
@@ -1068,7 +1081,7 @@ void RobooneAuto::handleRun()
     ROS_INFO_THROTTLE(3.0, "Target detected but too far(area: %f), delay: %f, distance: %f", rect_area,
                       (ros::Time::now() - robot_detected_time_).toSec(), target_distance);
     setCtrlModule("walking_module");
-    if ((ros::Time::now() - attacked_time_).toSec() < 1.5)
+    if ((ros::Time::now() - attacked_time_).toSec() < 1.5 && !force_front_walk_)
     {
       // 攻撃後の1秒間は後退のみ許可
       setWalkSteps(-fabs(x_backward_step_max_), 0.0, 0.0);
@@ -1087,7 +1100,7 @@ void RobooneAuto::handleRun()
       yaw_step = target_angle_factor * fabs(yaw_step_max_);
       if (selected_attack_name == "front" || target_distance > 1.0)
         x_step = fabs(x_forward_step_max_) * (1.0 - fabs(target_angle_factor));
-      else if (selected_attack_name == "back")
+      else if (selected_attack_name == "back" && !force_front_walk_)
         x_step = -fabs(x_backward_step_max_) * (1.0 - fabs(target_angle_factor));
       else
         x_step = 0.0;
@@ -1260,12 +1273,37 @@ void RobooneAuto::yoloCallback(const jsk_recognition_msgs::ClassificationResult:
 std::string RobooneAuto::decideAttack(double target_distance, bool is_aimed, bool is_left)
 {
   std::string action_name = "l_grip_front";
+  // Check front walk flag
+  if (walk_direction_ != 1 && force_front_walk_)
+    front_walk_start_time_ = ros::Time::now();
+  else if (force_front_walk_ && ros::Time::now() - front_walk_start_time_ > ros::Duration(min_front_walk_duration_))
+    force_front_walk_ = false;
+  if (walk_direction_ == -1 && ros::Time::now() - back_walk_start_time_ > ros::Duration(max_back_walk_duration_))
+    force_front_walk_ = true;
+
+  // Check force aim flag
   if (force_aim_ && !is_aimed)
-    return "back";
+  {
+    if (!force_front_walk_)
+    {
+      if (walk_direction_ != -1)
+      {
+        back_walk_start_time_ = ros::Time::now();
+        walk_direction_ = -1;
+      }
+      return "back";
+    }
+    else
+    {
+      walk_direction_ = 0;
+      return "stop";
+    }
+  }
 
   // Get min and max attack distances
   double max_distance = 0.0;
   double min_distance = 1000.0;
+  std::string min_attack_name = "";
   for (const auto& attack : attack_actions_)
   {
     // Skip if max count reached
@@ -1284,14 +1322,39 @@ std::string RobooneAuto::decideAttack(double target_distance, bool is_aimed, boo
     if (attack.force_aim && !is_aimed)
       continue;
     if (attack.min_distance < min_distance)
+    {
       min_distance = attack.min_distance;
+      min_attack_name = attack.name;
+    }
     if (attack.max_distance > max_distance)
       max_distance = attack.max_distance;
   }
-  if (target_distance < min_distance)
-    return "back";
-  if (target_distance > max_distance)
+
+  if (target_distance < min_distance && !ultimate_mode_)
+  {
+    if (!force_front_walk_)
+    {
+      if (walk_direction_ != -1)
+      {
+        back_walk_start_time_ = ros::Time::now();
+        walk_direction_ = -1;
+      }
+      return "back";
+    }
+    else
+    {
+      return min_attack_name;
+    }
+  }
+  else if (target_distance > max_distance)
+  {
+    if (walk_direction_ != 1)
+    {
+      front_walk_start_time_ = ros::Time::now();
+      walk_direction_ = 1;
+    }
     return "front";
+  }
 
   // Get available attacks
   std::vector<std::string> available_attacks;
@@ -1328,6 +1391,7 @@ std::string RobooneAuto::decideAttack(double target_distance, bool is_aimed, boo
       attack_usage_count.push_back(attack.current_count);
     }
   }
+
   // Execute the attack with the lowest number of uses from available_attacks
   if (!available_attacks.empty())
   {
@@ -1353,7 +1417,7 @@ std::string RobooneAuto::decideAttack(double target_distance, bool is_aimed, boo
       }
     }
   }
-  else if (effective_offset < 0.1 && !force_aim_)
+  else if (effective_offset < 0.1 && (!force_aim_ || ultimate_mode_))
   {
     action_name = effective_attack;
     last_attack_name_ = action_name;
@@ -1369,12 +1433,21 @@ std::string RobooneAuto::decideAttack(double target_distance, bool is_aimed, boo
   }
   else
   {
-    return "back";
+    if (!force_front_walk_)
+    {
+      if (walk_direction_ != -1)
+      {
+        back_walk_start_time_ = ros::Time::now();
+        walk_direction_ = -1;
+      }
+      return "back";
+    }
+    else
+    {
+      return effective_attack;
+    }
   }
-  if (is_aimed)
-    force_aim_ = false;
-  else
-    force_aim_ = true;
+  force_aim_ = !is_aimed;
   return action_name;
 }
 

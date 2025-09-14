@@ -52,6 +52,7 @@ public:
   bool setCtrlModule(const std::string& module_name);
   void freeAllJoints();
   void enableAllJoints();
+  void initialPose();
 
 private:
   void stateThread();

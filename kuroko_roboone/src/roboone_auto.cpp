@@ -170,6 +170,7 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   walk_status_ = "stop";
   current_module_ = "";
 
+  action_id_map_["initial_pose"] = -3;
   action_id_map_["disable"] = -2;
   action_id_map_["enable"] = -1;
   action_id_map_["crazy_catch"] = 0;
@@ -189,6 +190,7 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   action_id_map_["r_punch_high"] = 14;
   action_id_map_["r_punch_low"] = 15;
 
+  action_duration_map_["initial_pose"] = 0;
   action_duration_map_["disable"] = 0;
   action_duration_map_["enable"] = 0;
   action_duration_map_["crazy_catch"] = 7.5;
@@ -721,15 +723,14 @@ void RobooneAuto::transitionToInit()
   if (current_state_ == "INITIAL")
     return;
   current_state_ = "INITIAL";
+  ROS_INFO("Transitioning to INITIAL state.");
   setIdle();
   enableAllJoints();
-  ROS_INFO("Transitioning to INITIAL state.");
-  std_msgs::String init_msg;
-  init_msg.data = "ini_pose";
-  init_pose_pub_.publish(init_msg);
+  initialPose();
+  // std_msgs::String init_msg;
+  // init_msg.data = "ini_pose";
+  // init_pose_pub_.publish(init_msg);
   // setCtrlModule("initial_pose_module");
-  // setCtrlModule("action_module");
-  // setCtrlModule("walking_module");
 }
 
 // 自律移動への遷移
@@ -1124,6 +1125,14 @@ void RobooneAuto::enableAllJoints()
   setCtrlModule("action_module");  // Load the action module
   ROS_INFO("Executing action -1 to enable all joints.");
   executeAction("enable");  // Play motion ID -1 to enable the joints
+}
+
+// Initial Pose
+void RobooneAuto::initialPose()
+{
+  setCtrlModule("action_module");  // Load the action module
+  ROS_INFO("Executing action -3 to set initial pose.");
+  executeAction("initial_pose");  // Play motion ID -3 to enable the joints
 }
 
 Eigen::Vector3d RobooneAuto::imuQuaternionToRollPitchYaw(const Eigen::Quaterniond& q)

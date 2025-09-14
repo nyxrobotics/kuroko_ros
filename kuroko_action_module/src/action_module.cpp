@@ -19,6 +19,7 @@ ActionModule::~ActionModule()
 
 void ActionModule::initialize(const int control_cycle_msec, robotis_framework::Robot* robot)
 {
+  robot_ptr_ = robot;
   control_cycle_msec_ = control_cycle_msec;
   queue_thread_ = boost::thread([this] { queueThread(); });
   ROS_INFO_STREAM("[ActionModule] Initializing");
@@ -376,6 +377,12 @@ void ActionModule::animationNumberCallback(const std_msgs::Int32::ConstPtr& msg)
     torqueOffAll();
     return;
   }
+  else if (msg->data == -3)
+  {
+    ROS_INFO("[ActionModule] Home position");
+    initialPose();
+    return;
+  }
 
   std::vector<std::string> anim_names = workspace_.getAnimationNames();
   if (msg->data < 0 || msg->data >= anim_names.size())
@@ -498,6 +505,46 @@ void ActionModule::torqueOffAll()
   publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_INFO, "Finish animation");
   publishDoneMsg("torque_disable");
   ROS_INFO("Torque disabled for all joints");
+}
+
+void ActionModule::initialPose()
+{
+  // Get current joint angles and freate trajectory for initial pose with 1.5 second duration
+  is_running_ = false;
+  is_running_leg_ = false;
+  robotis_controller_msgs::SyncWriteItem msg;
+  msg.item_name = "initial_pose";
+  animation_system::FrameData start_pose;
+  animation_system::FrameData target_pose = workspace_.getInitialPoseData();
+  start_pose.move_duration = 0.0;
+  start_pose.wait_duration = 0.0;
+  target_pose.move_duration = 1.5;
+  target_pose.wait_duration = 0.0;
+  for (auto& dxl : robot_ptr_->dxls_)
+  {
+    std::string joint_name = dxl.first;
+    robotis_framework::Dynamixel* dxl_info = dxl.second;
+    auto* state = new robotis_framework::DynamixelState();
+    // Check if the joint exists in the animation joints
+    if (std::find(animation_joint_names_.begin(), animation_joint_names_.end(), joint_name) ==
+        animation_joint_names_.end())
+    {
+      continue;
+    }
+    else
+    {
+      state->goal_position_ = dxl_info->dxl_state_->present_position_;
+      start_pose.joints[joint_name] = animation_system::JointData();
+      start_pose.joints[joint_name].position = state->goal_position_;
+    }
+  }
+  std::vector<animation_system::FrameData> frames;
+  frames.push_back(start_pose);
+  frames.push_back(target_pose);
+  current_trajectory_ = createJointTrajectory(frames, control_cycle_msec_);
+  start_playing_requested_ = true;
+  publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_INFO, "Moved to initial pose");
+  ROS_INFO("Moving to initial pose");
 }
 
 trajectory_msgs::JointTrajectory

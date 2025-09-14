@@ -49,6 +49,7 @@ public:
   void onModuleDisable() override;
 
 private:
+  robotis_framework::Robot* robot_ptr_;
   bool debug_messages_ = false;
   std::string current_animation_name_;
   int current_block_id_;
@@ -96,6 +97,7 @@ private:
   void getJointNames();
   void torqueOnAll();
   void torqueOffAll();
+  void initialPose();
   trajectory_msgs::JointTrajectory createJointTrajectory(const std::vector<animation_system::FrameData>& frames,
                                                          const double control_cycle_msec);
   std::vector<animation_system::FrameData> getFrameVector(const animation_system::AnimationData& animation_data);

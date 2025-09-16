@@ -3,6 +3,7 @@
   <arg name="camera_info_url"
     default="file://$(find kuroko_bringup)/config/usb_camera_info.yaml"/>
   <arg name="use_rectify" default="false"/>
+  <arg name="image_hz" default="5.0"/>
 
   <!-- Start USB camera node -->
   <!-- The widest viewing angle at this resolution. -->
@@ -22,11 +23,15 @@
     <remap from="~image_raw" to="/camera/raw/image"/>
     <remap from="~camera_info" to="/camera/raw/camera_info"/>
   </node>
+
+  <!-- Throttle Image -->
+  <node name="image_throttle" pkg="topic_tools" type="throttle" ns="camera" args="messages /camera/raw/image $(arg image_hz) /camera/raw/image_throttle"/>
+
   <!-- Resize images to 384*216 -->
   <node name="image_resizer" pkg="nodelet" type="nodelet" args="standalone image_proc/resize" ns="camera">
     <param name="scale_width" type="double" value="0.3"/>
     <param name="scale_height" type="double" value="0.3"/>
-    <remap from="image" to="/camera/raw/image"/>
+    <remap from="image" to="/camera/raw/image_throttle"/>
     <remap from="camera_info" to="/camera/raw/camera_info"/>
     <remap from="~image" to="/camera/resized/image"/>
     <remap from="~camera_info" to="/camera/resized/camera_info"/>

@@ -41,6 +41,7 @@
     <param name="iou_thresh" value="$(arg iou_threshold)"/>
     <param name="verbose" value="$(arg verbose)"/>
     <param name="max_detection" value="$(arg max_detection)"/>
+    <param name="always_subscribe" value="true"/>
     <remap from="~input" to="$(arg input_topic)"/>
   </node>
 </launch>

@@ -58,3 +58,7 @@
           local-name: tfluna_ros
           uri: git@github.com:nyxrobotics/tfluna_ros.git
           version: feature/serial
+- git:
+          local-name: usb_cam
+          uri: git@github.com:nyxrobotics/usb_cam.git
+          version: params

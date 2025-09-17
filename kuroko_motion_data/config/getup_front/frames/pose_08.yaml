@@ -190,5 +190,5 @@ speed_scale:
   thigh_l_active: 1.0
   thigh_r_active: 1.0
 time:
-  move_duration: 0.6
+  move_duration: 0.3
   wait_duration: 0.0

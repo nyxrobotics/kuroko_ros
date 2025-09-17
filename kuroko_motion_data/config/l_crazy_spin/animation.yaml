@@ -32,6 +32,10 @@ layout:
       info:
         id: 7
       waypoints: []
+    arrow_8:
+      info:
+        id: 8
+      waypoints: []
   block:
     frame_1_pose_01:
       connection:
@@ -143,17 +147,31 @@ layout:
       place:
         x: -522.0
         y: 932.0
+    frame_9_pose_09:
+      connection:
+        output:
+          out_0:
+            arrow: arrow_8
+            ch: 0
+            target: frame_1_pose_01
+      info:
+        filename: pose_09
+        id: 9
+        type: frame
+      place:
+        x: -598.0
+        y: 198.0
     start_0:
       connection:
         output:
           out_0:
             arrow: arrow_0
             ch: 0
-            target: frame_1_pose_01
+            target: frame_9_pose_09
       info:
         filename: ''
         id: 0
         type: start
       place:
-        x: -516.0
-        y: 215.0
+        x: -530.0
+        y: 80.0

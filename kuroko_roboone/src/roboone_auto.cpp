@@ -59,7 +59,7 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   last_attack_name_ = "";
   attack_rect_distance_ = 0.28;
   attack_count_ = 0;
-  max_attack_count_ = 2;
+  max_attack_count_ = 3;
 
   // Set max step sizes
   x_forward_step_max_ = 0.03;
@@ -237,11 +237,11 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   attack_data.force_aim = false;
   attack_data.name = "l_grip_front";
   attack_data.min_distance = 0.2;
-  attack_data.max_distance = 0.3;
+  attack_data.max_distance = 0.33;
   attack_actions_.push_back(attack_data);
   attack_data.name = "l_hook_front";
   attack_data.min_distance = 0.23;
-  attack_data.max_distance = 0.33;
+  attack_data.max_distance = 0.37;
   attack_actions_.push_back(attack_data);
   attack_data.name = "l_punch_high";
   attack_data.min_distance = 0.23;
@@ -253,11 +253,11 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   attack_actions_.push_back(attack_data);
   attack_data.name = "r_grip_front";
   attack_data.min_distance = 0.2;
-  attack_data.max_distance = 0.3;
+  attack_data.max_distance = 0.33;
   attack_actions_.push_back(attack_data);
   attack_data.name = "r_hook_front";
   attack_data.min_distance = 0.23;
-  attack_data.max_distance = 0.33;
+  attack_data.max_distance = 0.37;
   attack_actions_.push_back(attack_data);
   attack_data.name = "r_punch_high";
   attack_data.min_distance = 0.23;
@@ -762,6 +762,7 @@ void RobooneAuto::transitionToSquat()
   setSquat();
   abortWalking();
   squat_start_time_ = ros::Time::now();
+  attack_count_ = 0;
 }
 
 // 転倒状態への遷移
@@ -776,6 +777,7 @@ void RobooneAuto::transitionToFall()
   fall_detected_time_ = ros::Time::now();
   current_state_ = "FALL";
   ROS_INFO("Transitioning to FALL state.");
+  attack_count_ = 0;
 }
 
 // 脱力状態への遷移
@@ -926,6 +928,7 @@ void RobooneAuto::handleRun()
            ros::Time::now() - robot_detected_time_ < ros::Duration(rects_timeout_duration_))
   {
     force_walk_ = false;
+    attack_count_ = 0;
   }
 
   // 相手ロボットの転倒を検知

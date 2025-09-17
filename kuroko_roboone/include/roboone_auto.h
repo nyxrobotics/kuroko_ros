@@ -45,8 +45,6 @@ public:
   void setWalkSteps(double x_step, double y_step, double yaw_step);
   void setIdle();
   void setSquat();
-  void setFrontJump();
-  void setRearJump();
   void executeAction(std::string action_name);
   void manageState();  // 状態管理関数
   bool setCtrlModule(const std::string& module_name);
@@ -63,13 +61,13 @@ private:
   void yoloCallback(const jsk_recognition_msgs::ClassificationResult::ConstPtr& class_msg,
                     const jsk_recognition_msgs::LabelArray::ConstPtr& label_msg,
                     const jsk_recognition_msgs::RectArray::ConstPtr& rect_msg);
+  void transitionToIdle();  // 待機状態への遷移
   void transitionToInit();  // 初期姿勢への遷移
   void transitionToRun();   // 自律移動への遷移
   void transitionToFall();  // 転倒状態への遷移
   void transitionToFree();  // 脱力状態への遷移
   void transitionToHold();
   void transitionToSquat();
-  void transitionToJump();
   void handleFall();
   void handleRun();
   std::string decideAttack(double target_distance, bool is_aimed, bool is_left);
@@ -120,14 +118,31 @@ private:
   std::string walk_status_;
 
   // Manage balance interruption
+  // 安定状態
+  bool stable_detected_;
   double stable_detect_angle_;     // 安定状態に復帰する角度
+  double stable_detect_gyro_;      // 安定状態に復帰する角度
   double stable_detect_duration_;  // 安定状態に復帰するための必要時間
-  double squat_detect_angle_;      // しゃがみ状態に移行する角度
-  double squat_detect_duration_;   // しゃがみ判定の待機時間
-  double jump_detect_angle_;       // ジャンプ状態に移行する角度
-  double jump_detect_duration_;    // ジャンプ判定の待機時間
-  double fall_detect_angle_;       // 転倒状態に移行する角度
-  double fall_detect_duration_;    // 転倒判定の待機時間
+
+  // 直立状態
+  bool hold_detected_;
+  double hold_detect_angle_;
+  double hold_detect_gyro_;
+  double hold_detect_duration_;
+  double hold_max_duration_;
+
+  // しゃがみ状態
+  bool squat_detected_;
+  double squat_detect_angle_;  // しゃがみ状態に移行する角度
+  double squat_detect_gyro_;
+  double squat_detect_duration_;  // しゃがみ判定の待機時間
+  double squat_min_duration_;     // しゃがみ状態の最低持続時間
+  double squat_max_duration_;
+
+  // 転倒状態
+  bool fall_detected_;
+  double fall_detect_angle_;     // 転倒状態に移行する角度
+  double fall_detect_duration_;  // 転倒判定の待機時間
 
   // Walk
   kuroko_walking_module_msgs::WalkingParam walk_param_;
@@ -143,17 +158,16 @@ private:
   double max_back_walk_duration_;
   int8_t walk_direction_;  // -1: back, 0: stop, 1: front
 
+  // Stable
+  ros::Time stable_start_time_;
+  // Hold
+  ros::Time hold_start_time_;
   // Squat
   kuroko_walking_module_msgs::WalkingParam squat_param_;
   ros::Time squat_start_time_;
-  double min_squat_duration_;  // しゃがみ状態の最低持続時間
-  double max_squat_duration_;
   double squat_duration_;
-
-  // Front jump
-  kuroko_walking_module_msgs::WalkingParam jump_param_;
-  ros::Time jump_start_time_;
-  double jump_duration_;  // ジャンプ状態の持続時間
+  // Fall
+  ros::Time fall_start_time_;
 
   // Manage action
   std::map<std::string, int> action_id_map_;

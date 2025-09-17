@@ -43,7 +43,7 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   camera_fov_v_ = 94.0 * M_PI / 180.0;   // in radian
   camera_start_time_ = ros::Time::now();
   camera_startup_duration_ = 0.8;
-  rects_timeout_duration_ = 2.0;
+  rects_timeout_duration_ = 0.5;
   run_start_time_ = ros::Time(0);
   run_startup_duration_ = 0.1;
 
@@ -107,7 +107,7 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   walk_param_.yaw_step = 0;
 
   idle_param_ = walk_param_;
-  idle_param_.init_pose_duration = 0.1;
+  idle_param_.init_pose_duration = 1.0;
   idle_param_.balance_enable = false;
 
   squat_param_ = walk_param_;
@@ -126,44 +126,37 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   squat_param_.balance_euler_roll_gain = 0.0;
   squat_param_.balance_euler_pitch_gain = 0.8;
 
-  jump_param_ = squat_param_;
-  jump_param_.init_z_offset = 0.08;
-  jump_param_.balance_gyro_x_gain = 0.01;
-  jump_param_.balance_gyro_y_gain = 0.0;
-  jump_param_.balance_gyro_zx_gain = -0.01;
-  jump_param_.balance_gyro_zy_gain = 0.0;
-  jump_param_.balance_gyro_roll_gain = 0.0;
-  jump_param_.balance_gyro_pitch_gain = 0.1;
-  jump_param_.balance_euler_x_gain = 0.2;
-  jump_param_.balance_euler_y_gain = 0.0;
-  jump_param_.balance_euler_zx_gain = -0.04;
-  jump_param_.balance_euler_zy_gain = 0.0;
-  jump_param_.balance_euler_roll_gain = 0.0;
-  jump_param_.balance_euler_pitch_gain = 1.0;
-
-  stable_detect_angle_ = 0.12;
-  squat_detect_angle_ = 0.14;
-  jump_detect_angle_ = 3.32;
-  fall_detect_angle_ = 0.64;
-
+  stable_detected_ = false;
+  stable_detect_angle_ = 0.16;
+  stable_detect_gyro_ = 0.3;
   stable_detect_duration_ = 0.8;
-  squat_detect_duration_ = 0.1;
-  jump_detect_duration_ = 0.1;
-  fall_detect_duration_ = 0.4;
 
-  jump_duration_ = 0.2;
+  hold_detected_ = false;
+  hold_detect_angle_ = 0.18;
+  hold_detect_gyro_ = 3.0;
+  hold_detect_duration_ = 0.1;
+  hold_max_duration_ = 3.0;
+
+  squat_detected_ = false;
+  squat_detect_angle_ = 0.24;
+  squat_detect_gyro_ = 6.0;
+  squat_detect_duration_ = 0.1;
+  squat_min_duration_ = 0.2;
+  squat_max_duration_ = 2.8;
+
+  fall_detected_ = false;
+  fall_detect_angle_ = 0.64;
+  fall_detect_duration_ = 0.4;
 
   walk_start_time_ = ros::Time(0);
   walk_stop_duration_ = walk_param_.period_time * 1.0;
   min_walk_duration_ = walk_param_.period_time * 1.0;
 
-  squat_start_time_ = ros::Time(0);
-  min_squat_duration_ = 0.2;
-  max_squat_duration_ = 2.8;
-  squat_duration_ = 0;
+  hold_max_duration_ = 2.0;
+  hold_start_time_ = ros::Time(0);
 
-  jump_start_time_ = ros::Time(0);
-  jump_duration_ = 0.1;
+  squat_start_time_ = ros::Time(0);
+  squat_duration_ = 0;
 
   action_start_time_ = ros::Time(0);
 
@@ -408,17 +401,6 @@ void RobooneAuto::setSquat()
   walking_params_pub_.publish(params);
 }
 
-void RobooneAuto::setFrontJump()
-{
-  kuroko_walking_module_msgs::WalkingParam params = jump_param_;
-  params.x_step = 0;
-  params.y_step = 0;
-  params.yaw_step = 0;
-
-  // Publish the walking parameters
-  walking_params_pub_.publish(params);
-}
-
 // Execute an action by name
 void RobooneAuto::executeAction(std::string action_name)
 {
@@ -472,13 +454,33 @@ void RobooneAuto::stateThread()
 // 状態管理処理
 void RobooneAuto::manageState()
 {
+  ros::Time now = ros::Time::now();
   Eigen::Quaterniond imy_orientation(last_imu_.orientation.w, last_imu_.orientation.x, last_imu_.orientation.y,
                                      last_imu_.orientation.z);
   Eigen::Vector3d imu_rpy = imuQuaternionToRollPitchYaw(imy_orientation);
-  bool over_fall_angle = fabs(imu_rpy[1]) > fall_detect_angle_;
-  bool over_jump_angle = fabs(imu_rpy[1]) > jump_detect_angle_;
-  bool over_squat_angle = fabs(imu_rpy[1]) > squat_detect_angle_;
-  bool within_stable_angle = fabs(imu_rpy[1]) < stable_detect_angle_;
+  bool detect_stable =
+      fabs(imu_rpy[1]) < stable_detect_angle_ && fabs(last_imu_.angular_velocity.y) < stable_detect_gyro_;
+  bool detect_hold = fabs(imu_rpy[1]) > hold_detect_angle_ || fabs(last_imu_.angular_velocity.y) > hold_detect_gyro_;
+  bool detect_squat = fabs(imu_rpy[1]) > squat_detect_angle_ || fabs(last_imu_.angular_velocity.y) > squat_detect_gyro_;
+  bool detect_fall = fabs(imu_rpy[1]) > fall_detect_angle_;
+  if (!stable_detected_ && detect_stable)
+    stable_start_time_ = now;
+  if (!hold_detected_ && detect_hold)
+    hold_start_time_ = now;
+  if (!squat_detected_ && detect_squat)
+    squat_start_time_ = now;
+  if (!fall_detected_ && detect_fall)
+    fall_start_time_ = now;
+
+  stable_detected_ = detect_stable;
+  hold_detected_ = detect_hold;
+  squat_detected_ = detect_squat;
+  fall_detected_ = detect_fall;
+
+  detect_stable = detect_stable && (now - stable_start_time_).toSec() > stable_detect_duration_;
+  detect_hold = detect_hold && (now - hold_start_time_).toSec() > hold_detect_duration_;
+  detect_squat = detect_squat && (now - squat_start_time_).toSec() > squat_detect_duration_;
+  detect_fall = detect_fall && (now - fall_start_time_).toSec() > fall_detect_duration_;
 
   // ボタン検知
   if (current_state_ == "INITIAL" && last_joy_.buttons[2])
@@ -487,7 +489,7 @@ void RobooneAuto::manageState()
     force_walk_ = false;
     ROS_INFO("Transitioning to RUN state from INITIAL.");
     action_name_ = "";
-    camera_start_time_ = ros::Time::now();
+    camera_start_time_ = now;
     transitionToRun();
     // Force front walk
     force_front_walk_ = true;
@@ -559,17 +561,15 @@ void RobooneAuto::manageState()
     ros::Duration(0.1).sleep();
     return;
   }
-  if (action_name_ != "")
+  if (!action_name_.empty())
   {
-    if ((ros::Time::now() - action_start_time_).toSec() > action_duration_)
+    if ((now - action_start_time_).toSec() > action_duration_)
     {
       ROS_INFO_STREAM("Action " << action_name_ << " completed"
                                 << " after " << action_duration_ << " seconds.");
-      action_start_time_ = ros::Time::now();
+      action_start_time_ = now;
       action_name_ = "";
-      if (over_jump_angle)
-        setFrontJump();
-      else if (over_squat_angle)
+      if (detect_squat)
         setSquat();
       else
         setWalkSteps(0, 0, 0);
@@ -578,11 +578,11 @@ void RobooneAuto::manageState()
       last_imu_.orientation.y = 0.0;
       last_imu_.orientation.z = 0.0;
       last_imu_.orientation.w = 1.0;
-      over_fall_angle = false;
-      over_squat_angle = false;
-      within_stable_angle = true;
+      detect_fall = false;
+      detect_squat = false;
+      detect_stable = true;
       transitionToHold();
-      walk_start_time_ = ros::Time::now();
+      walk_start_time_ = now;
       last_rects_time_ = ros::Time(0);
       robot_detected_time_ = ros::Time(0);
       last_rects_.rects.clear();
@@ -592,7 +592,7 @@ void RobooneAuto::manageState()
       if (action_name_ == "getup_front" || action_name_ == "getup_rear" || action_name_ == "enable" ||
           action_name_ == "disable")
       {
-        attacked_time_ = ros::Time() + ros::Duration(10.0);
+        attacked_time_ = now + ros::Duration(10.0);
         force_walk_ = false;
         force_aim_ = true;
         force_front_walk_ = true;
@@ -601,12 +601,12 @@ void RobooneAuto::manageState()
       }
       else
       {
-        attacked_time_ = ros::Time::now();
+        attacked_time_ = now;
       }
     }
     else
     {
-      double remaining_time = action_duration_ - (ros::Time::now() - action_start_time_).toSec();
+      double remaining_time = action_duration_ - (now - action_start_time_).toSec();
       if (remaining_time < 0.1)
         ros::Duration(remaining_time).sleep();
       else
@@ -618,27 +618,22 @@ void RobooneAuto::manageState()
   // 状態遷移
   if (current_state_ == "RUN")
   {
-    if (over_squat_angle)
-    {
-      // 転倒検知
+    if (detect_fall)
+      transitionToFall();
+    else if (detect_squat && !force_walk_)
+      transitionToSquat();
+    else if (detect_hold)
       transitionToHold();
-    }
     else
-    {
       handleRun();
-    }
   }
   else if (current_state_ == "HOLD")
   {
-    if (over_fall_angle)
-    {
+    if (detect_fall)
       transitionToFall();
-    }
-    else if (over_squat_angle && force_walk_ == false)
-    {
+    else if (detect_squat && !force_walk_)
       transitionToSquat();
-    }
-    else if (within_stable_angle)
+    else if (detect_stable)
     {
       ROS_INFO("IMU stabilized. Returning to RUN state.");
       transitionToRun();
@@ -647,68 +642,40 @@ void RobooneAuto::manageState()
   else if (current_state_ == "SQUAT")
   {
     force_walk_ = true;
-    squat_duration_ = (ros::Time::now() - squat_start_time_).toSec();
-    if (squat_duration_ > min_squat_duration_)
+    squat_duration_ = (now - squat_start_time_).toSec();
+    if (squat_duration_ > squat_min_duration_)
     {
-      if (over_fall_angle)
+      if (detect_fall)
       {
         ROS_INFO("Over fall angle detected in SQUAT state. Transitioning to FALL.");
         transitionToFall();
       }
-      else if (over_jump_angle)
-      {
-        ROS_INFO("Over jump angle detected in SQUAT state. Transitioning to JUMP.");
-        transitionToJump();
-      }
-      else if (within_stable_angle && squat_duration_ > stable_detect_duration_)
+      else if (detect_stable && squat_duration_ > stable_detect_duration_)
       {
         ROS_INFO("Stable angle restored. Transitioning to HOLD.");
         transitionToHold();
       }
     }
-    if (squat_duration_ > max_squat_duration_)
+    if (squat_duration_ > squat_max_duration_)
     {
       ROS_INFO("Max squat duration exceeded. Transitioning to HOLD.");
       transitionToHold();
     }
   }
-  else if (current_state_ == "JUMP")
-  {
-    force_walk_ = true;
-    double jump_duration = (ros::Time::now() - jump_start_time_).toSec();
-    if (jump_duration > jump_duration_)
-    {
-      if (over_fall_angle)
-      {
-        ROS_INFO("Over fall angle detected in JUMP state. Transitioning to FALL.");
-        transitionToFall();
-      }
-      else if (within_stable_angle && jump_duration > stable_detect_duration_)
-      {
-        ROS_INFO("Stable angle restored. Transitioning to HOLD.");
-        transitionToHold();
-      }
-      else if (!over_squat_angle)
-      {
-        ROS_INFO("Under squat angle detected in JUMP state. Transitioning to SQUAT.");
-        transitionToSquat();
-      }
-    }
-  }
   else if (current_state_ == "FALL")
   {
     force_walk_ = false;
-    if (within_stable_angle)
+    if (detect_stable)
     {
       ROS_INFO("Stable angle restored. Transitioning to HOLD.");
       transitionToHold();
-      fall_detected_time_ = ros::Time::now() + ros::Duration(1.0);
+      fall_detected_time_ = now + ros::Duration(1.0);
     }
-    else if (!over_squat_angle)
+    else if (!detect_squat)
     {
       transitionToSquat();
     }
-    else if ((ros::Time::now() - fall_detected_time_).toSec() > fall_detect_duration_)
+    else if ((now - fall_detected_time_).toSec() > fall_detect_duration_)
     {
       ROS_INFO("Handling FALL state.");
       handleFall();
@@ -718,19 +685,27 @@ void RobooneAuto::manageState()
 }
 
 // 初期姿勢への遷移
+void RobooneAuto::transitionToIdle()
+{
+  if (current_state_ == "INITIAL")
+    return;
+  current_state_ = "INITIAL";
+  ROS_INFO("Transitioning to INITIAL state.");
+  abortWalking();
+  enableAllJoints();
+  setCtrlModule("walking_module");
+  setIdle();
+}
+
+// 初期姿勢への遷移
 void RobooneAuto::transitionToInit()
 {
   if (current_state_ == "INITIAL")
     return;
   current_state_ = "INITIAL";
   ROS_INFO("Transitioning to INITIAL state.");
-  setIdle();
   enableAllJoints();
   initialPose();
-  // std_msgs::String init_msg;
-  // init_msg.data = "ini_pose";
-  // init_pose_pub_.publish(init_msg);
-  // setCtrlModule("initial_pose_module");
 }
 
 // 自律移動への遷移
@@ -756,7 +731,9 @@ void RobooneAuto::transitionToHold()
 {
   if (current_state_ == "HOLD")
     return;
+
   current_state_ = "HOLD";
+  squat_start_time_ = ros::Time::now();
   ROS_INFO("Transitioning to HOLD state due to excessive tilt.");
   setCtrlModule("walking_module");
   setWalkSteps(0, 0, 0);
@@ -774,19 +751,6 @@ void RobooneAuto::transitionToSquat()
   setSquat();
   abortWalking();
   squat_start_time_ = ros::Time::now();
-}
-
-// ジャンプ状態への遷移
-void RobooneAuto::transitionToJump()
-{
-  if (current_state_ == "JUMP")
-    return;
-  current_state_ = "JUMP";
-  ROS_INFO("Transitioning to JUMP state.");
-  setCtrlModule("walking_module");
-  setFrontJump();
-  abortWalking();
-  jump_start_time_ = ros::Time::now();
 }
 
 // 転倒状態への遷移
@@ -990,7 +954,7 @@ void RobooneAuto::handleRun()
   if (!force_walk_)
   {
     if (selected_attack_name != "front" && selected_attack_name != "back" && selected_attack_name != "stop" &&
-        selected_attack_name != "")
+        !selected_attack_name.empty())
     {
       // 攻撃実行
       stopWalking();
@@ -1428,7 +1392,6 @@ std::string RobooneAuto::decideAttack(double target_distance, bool is_aimed, boo
       }
     }
     action_name = available_attacks[min_index];
-    last_attack_name_ = action_name;
     // Increment the usage count
     for (auto& attack : attack_actions_)
     {
@@ -1442,7 +1405,6 @@ std::string RobooneAuto::decideAttack(double target_distance, bool is_aimed, boo
   else if (effective_offset < 0.1 && (!force_aim_ || ultimate_mode_))
   {
     action_name = effective_attack;
-    last_attack_name_ = action_name;
     // Increment the usage count
     for (auto& attack : attack_actions_)
     {
@@ -1466,10 +1428,12 @@ std::string RobooneAuto::decideAttack(double target_distance, bool is_aimed, boo
     }
     else
     {
-      return effective_attack;
+      action_name = effective_attack;
     }
   }
-  force_aim_ = !is_aimed;
+  if (force_aim_ && is_aimed)
+    force_aim_ = false;
+  last_attack_name_ = action_name;
   return action_name;
 }
 

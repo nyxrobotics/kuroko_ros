@@ -36,6 +36,8 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   front_walk_start_time_ = ros::Time::now();
   back_walk_start_time_ = ros::Time::now();
   walk_direction_ = 0;
+  target_fall_keep_duration_ = 0.3;
+  target_fall_detect_time_ = ros::Time(0);
 
   // Camera params
   camera_height_ = 0.3;
@@ -480,6 +482,12 @@ void RobooneAuto::manageState()
   detect_stable = detect_stable && (now - stable_start_time_).toSec() > stable_detect_duration_;
   detect_hold = detect_hold && (now - hold_start_time_).toSec() > hold_detect_duration_;
   detect_squat = detect_squat && (now - squat_start_time_).toSec() > squat_detect_duration_;
+  if (detect_fall)
+  {
+    detect_stable = false;
+    detect_squat = true;
+    detect_hold = true;
+  }
   detect_fall = detect_fall && (now - fall_start_time_).toSec() > fall_detect_duration_;
 
   // ボタン検知
@@ -563,6 +571,10 @@ void RobooneAuto::manageState()
   }
   if (!action_name_.empty())
   {
+    detect_fall = false;
+    detect_squat = false;
+    detect_hold = false;
+    detect_stable = false;
     if ((now - action_start_time_).toSec() > action_duration_)
     {
       ROS_INFO_STREAM("Action " << action_name_ << " completed"
@@ -578,9 +590,6 @@ void RobooneAuto::manageState()
       last_imu_.orientation.y = 0.0;
       last_imu_.orientation.z = 0.0;
       last_imu_.orientation.w = 1.0;
-      detect_fall = false;
-      detect_squat = false;
-      detect_stable = true;
       transitionToHold();
       walk_start_time_ = now;
       last_rects_time_ = ros::Time(0);
@@ -592,6 +601,7 @@ void RobooneAuto::manageState()
       if (action_name_ == "getup_front" || action_name_ == "getup_rear" || action_name_ == "enable" ||
           action_name_ == "disable")
       {
+        detect_hold = true;
         attacked_time_ = now + ros::Duration(10.0);
         force_walk_ = false;
         force_aim_ = true;
@@ -601,6 +611,7 @@ void RobooneAuto::manageState()
       }
       else
       {
+        detect_stable = true;
         attacked_time_ = now;
       }
     }
@@ -917,6 +928,13 @@ void RobooneAuto::handleRun()
     force_walk_ = false;
   }
 
+  // 相手ロボットの転倒を検知
+  bool target_fall_detected = robot_detected_rect_.y > last_camera_info_.height * 0.5;
+  if (target_fall_detected)
+    target_fall_detect_time_ = ros::Time::now();
+  if (!target_fall_detected && (ros::Time::now() - target_fall_detect_time_).toSec() < target_fall_keep_duration_)
+    target_fall_detected = true;
+
   // 相手ロボットの位置を算出
   double rect_area = (robot_detected_rect_.width * robot_detected_rect_.height) /
                      double(last_camera_info_.width * last_camera_info_.height);
@@ -951,7 +969,7 @@ void RobooneAuto::handleRun()
   if (ultimate_mode_)
     range_available = true;
   selected_attack_name = decideAttack(target_distance, range_available, is_left);
-  if (!force_walk_)
+  if (!force_walk_ && (!target_fall_detected || ultimate_mode_))
   {
     if (selected_attack_name != "front" && selected_attack_name != "back" && selected_attack_name != "stop" &&
         !selected_attack_name.empty())
@@ -972,6 +990,7 @@ void RobooneAuto::handleRun()
   double x_step = 0.0;
   double y_step = 0.0;
   double yaw_step = 0.0;
+
   if ((!roboone_found && ros::Time::now() - robot_detected_time_ > ros::Duration(rects_timeout_duration_)) ||
       robot_detected_rect_.y > last_camera_info_.height * 0.8)
   {
@@ -995,7 +1014,7 @@ void RobooneAuto::handleRun()
     }
     return;
   }
-  else if (robot_detected_rect_.y > last_camera_info_.height * 0.55 && !ultimate_mode_)
+  else if (target_fall_detected && !ultimate_mode_)
   {
     // 相手ロボット転倒時
     if (target_distance < 0.3)

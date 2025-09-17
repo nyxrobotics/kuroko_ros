@@ -111,6 +111,8 @@ private:
   ros::Time last_rects_time_, fall_detected_time_, robot_detected_time_, attacked_time_;
   char last_target_detected_direction_;
   jsk_recognition_msgs::Rect robot_detected_rect_;
+  double target_fall_keep_duration_;
+  ros::Time target_fall_detect_time_;
 
   // Manage walk
   double x_forward_step_max_, x_backward_step_max_;

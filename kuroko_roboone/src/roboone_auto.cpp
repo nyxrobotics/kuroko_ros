@@ -136,13 +136,13 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   hold_detected_ = false;
   hold_detect_angle_ = 0.18;
   hold_detect_gyro_ = 3.0;
-  hold_detect_duration_ = 0.1;
+  hold_detect_duration_ = 0.03;
   hold_max_duration_ = 3.0;
 
   squat_detected_ = false;
   squat_detect_angle_ = 0.24;
   squat_detect_gyro_ = 6.0;
-  squat_detect_duration_ = 0.1;
+  squat_detect_duration_ = 0.06;
   squat_min_duration_ = 0.2;
   squat_max_duration_ = 2.8;
 

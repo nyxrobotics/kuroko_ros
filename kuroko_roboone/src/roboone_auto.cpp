@@ -65,7 +65,7 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   x_forward_step_max_ = 0.03;
   x_backward_step_max_ = -0.03;
   y_step_max_ = 0.02;
-  yaw_step_max_ = 0.2;
+  yaw_step_max_ = 0.12;
 
   // Set walking params
   walk_param_.init_x_offset = 0.018;
@@ -131,7 +131,7 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   stable_detected_ = false;
   stable_detect_angle_ = 0.16;
   stable_detect_gyro_ = 0.3;
-  stable_detect_duration_ = 0.8;
+  stable_detect_duration_ = 0.4;
 
   hold_detected_ = false;
   hold_detect_angle_ = 0.18;
@@ -140,15 +140,15 @@ RobooneAuto::RobooneAuto(ros::NodeHandle& nh)
   hold_max_duration_ = 3.0;
 
   squat_detected_ = false;
-  squat_detect_angle_ = 0.24;
+  squat_detect_angle_ = 0.20;
   squat_detect_gyro_ = 6.0;
-  squat_detect_duration_ = 0.06;
+  squat_detect_duration_ = 0.03;
   squat_min_duration_ = 0.2;
   squat_max_duration_ = 2.8;
 
   fall_detected_ = false;
   fall_detect_angle_ = 0.64;
-  fall_detect_duration_ = 0.4;
+  fall_detect_duration_ = 0.2;
 
   walk_start_time_ = ros::Time(0);
   walk_stop_duration_ = walk_param_.period_time * 1.0;
@@ -408,6 +408,10 @@ void RobooneAuto::executeAction(std::string action_name)
 {
   int action_id = 0;
   double action_duration = 0;
+  if (!action_name.empty() && action_name == action_name_)
+    return;
+  else if (action_name.empty())
+    return;
 
   auto it_id = action_id_map_.find(action_name);
   if (it_id != action_id_map_.end())
@@ -434,14 +438,12 @@ void RobooneAuto::executeAction(std::string action_name)
   }
   ROS_INFO_STREAM("Executing action: " << action_name << " with ID: " << action_id
                                        << " for duration: " << action_duration);
+  action_start_time_ = ros::Time::now();
+  action_name_ = action_name;
+  action_duration_ = action_duration;
   std_msgs::Int32 msg;
   msg.data = action_id;
-
-  setWalkSteps(0, 0, 0);
   action_page_pub_.publish(msg);
-  action_name_ = action_name;
-  action_start_time_ = ros::Time::now();
-  action_duration_ = action_duration;
 }
 
 // 状態管理スレッド
@@ -894,6 +896,9 @@ void RobooneAuto::handleRun()
   }
   last_rects_time_ = ros::Time(0);
 
+  bool camera_aimed = (last_camera_info_.width / 2 > robot_detected_rect_.x &&
+                       last_camera_info_.width / 2 < robot_detected_rect_.x + robot_detected_rect_.width);
+
   // 中心の上下左右10ピクセルがlargest_conbined_rectに内包されている場合は距離センサが有効
   bool range_available = false;
   int range_available_area_pixels = 10;
@@ -969,9 +974,10 @@ void RobooneAuto::handleRun()
 
   // 攻撃判定
   std::string selected_attack_name = "";
+  bool aimed = range_available;
   if (ultimate_mode_)
-    range_available = true;
-  selected_attack_name = decideAttack(target_distance, range_available, is_left);
+    aimed = range_available || camera_aimed;
+  selected_attack_name = decideAttack(target_distance, aimed, is_left);
   if (!force_walk_ && (!target_fall_detected || ultimate_mode_))
   {
     if (selected_attack_name != "front" && selected_attack_name != "back" && selected_attack_name != "stop" &&
@@ -983,8 +989,8 @@ void RobooneAuto::handleRun()
       executeAction(selected_attack_name);
       attacked_time_ = ros::Time::now() + ros::Duration(action_duration_);
       attack_count_++;
-      ROS_INFO("Attack triggered: %s. range_available=%d, target_distance=%f", selected_attack_name.c_str(),
-               range_available, target_distance);
+      ROS_INFO("Attack triggered: %s. aimed=%d, target_distance=%f", selected_attack_name.c_str(), aimed,
+               target_distance);
       return;
     }
   }

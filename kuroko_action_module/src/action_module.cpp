@@ -533,7 +533,7 @@ void ActionModule::initialPose()
     }
     else
     {
-      state->goal_position_ = dxl_info->dxl_state_->present_position_;
+      state->goal_position_ = dxl_info->dxl_state_->goal_position_;
       start_pose.joints[joint_name] = animation_system::JointData();
       start_pose.joints[joint_name].position = state->goal_position_;
     }

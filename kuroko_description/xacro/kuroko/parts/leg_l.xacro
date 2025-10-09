@@ -14,7 +14,7 @@
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="${MESH_DIR}/kuroko/obj/hip_l_roll.obj"/>
+          <mesh filename="${MESH_DIR}/kuroko/stl/hip_l_roll.stl"/>
         </geometry>
       </visual>
       <xacro:box_collision xyz="0.00125 0.0065 -0.004125" rpy="0 0 0" size="0.092 0.041 0.03625"/>
@@ -33,7 +33,7 @@
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="${MESH_DIR}/kuroko/obj/hip_l_pitch.obj"/>
+          <mesh filename="${MESH_DIR}/kuroko/stl/hip_l_pitch.stl"/>
         </geometry>
       </visual>
       <xacro:box_collision xyz="-0.00175 0.049 -0.015" rpy="0 0 0" size="0.067 0.098 0.0585"/>
@@ -52,7 +52,7 @@
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="${MESH_DIR}/kuroko/obj/thigh_l_active.obj"/>
+          <mesh filename="${MESH_DIR}/kuroko/stl/thigh_l_active.stl"/>
         </geometry>
       </visual>
       <xacro:box_collision xyz="0 0 -0.05" rpy="0 0 0" size="0.014 0.0445 0.114"/>
@@ -70,7 +70,7 @@
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="${MESH_DIR}/kuroko/obj/shin_l_active.obj"/>
+          <mesh filename="${MESH_DIR}/kuroko/stl/shin_l_active.stl"/>
         </geometry>
       </visual>
       <xacro:box_collision xyz="-0.004745 0 -0.015" rpy="0 0 0" size="0.02349 0.0445 0.044"/>
@@ -95,7 +95,7 @@
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="${MESH_DIR}/kuroko/obj/thigh_r_middle_passive.obj"/>
+          <mesh filename="${MESH_DIR}/kuroko/stl/thigh_r_middle_passive.stl"/>
         </geometry>
       </visual>
       <xacro:box_collision xyz="0 0 -0.05" rpy="0 0 0" size="0.014 0.0345 0.114"/>
@@ -139,7 +139,7 @@
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="${MESH_DIR}/kuroko/obj/thigh_r_rear_passive.obj"/>
+          <mesh filename="${MESH_DIR}/kuroko/stl/thigh_r_rear_passive.stl"/>
         </geometry>
       </visual>
       <xacro:box_collision xyz="0 0 -0.05" rpy="0 0 0" size="0.014 0.0285 0.114"/>
@@ -159,7 +159,7 @@
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="${MESH_DIR}/kuroko/obj/knee_r_passive.obj"/>
+          <mesh filename="${MESH_DIR}/kuroko/stl/knee_r_passive.stl"/>
         </geometry>
       </visual>
       <xacro:box_collision xyz="-0.01675 0 0" rpy="0 0 0" size="0.0475 0.0505 0.014"/>
@@ -178,7 +178,7 @@
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="${MESH_DIR}/kuroko/obj/shin_r_front_passive.obj"/>
+          <mesh filename="${MESH_DIR}/kuroko/stl/shin_r_front_passive.stl"/>
         </geometry>
       </visual>
       <xacro:box_collision xyz="0 0 -0.05" rpy="0 0 0" size="0.014 0.0385 0.114"/>
@@ -201,7 +201,7 @@
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="${MESH_DIR}/kuroko/obj/shin_r_rear_passive.obj"/>
+          <mesh filename="${MESH_DIR}/kuroko/stl/shin_r_rear_passive.stl"/>
         </geometry>
       </visual>
       <xacro:box_collision xyz="0 0 -0.05" rpy="0 0 0" size="0.014 0.0445 0.114"/>
@@ -221,7 +221,7 @@
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="${MESH_DIR}/kuroko/obj/ankle_r_pitch_passive.obj"/>
+          <mesh filename="${MESH_DIR}/kuroko/stl/ankle_r_pitch_passive.stl"/>
         </geometry>
       </visual>
       <xacro:box_collision xyz="-0.0285 0 -0.013" rpy="0 0 0" size="0.0855 0.0325 0.0465"/>
@@ -240,7 +240,7 @@
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="${MESH_DIR}/kuroko/obj/ankle_l_roll.obj"/>
+          <mesh filename="${MESH_DIR}/kuroko/stl/ankle_l_roll.stl"/>
         </geometry>
       </visual>
       <xacro:box_collision xyz="0 0.009375 -0.01175" rpy="0 0 0" size="0.0365 0.05375 0.043"/>
@@ -259,7 +259,7 @@
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="${MESH_DIR}/kuroko/obj/ankle_r_yaw.obj"/>
+          <mesh filename="${MESH_DIR}/kuroko/stl/ankle_r_yaw.stl"/>
         </geometry>
       </visual>
       <xacro:box_collision xyz="0 0 -0.004" rpy="0 0 0" size="0.12 0.075 0.008"/>

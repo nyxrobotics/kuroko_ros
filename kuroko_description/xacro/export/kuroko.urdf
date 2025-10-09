@@ -15,7 +15,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/obj/waist.obj"/>
+        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/stl/waist.stl"/>
       </geometry>
     </visual>
     <collision>
@@ -44,7 +44,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/obj/chest.obj"/>
+        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/stl/chest.stl"/>
       </geometry>
     </visual>
     <collision>
@@ -105,7 +105,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/obj/shoulder_r_pitch.obj"/>
+        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/stl/shoulder_r_pitch.stl"/>
       </geometry>
     </visual>
     <collision>
@@ -132,7 +132,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/obj/shoulder_r_roll.obj"/>
+        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/stl/shoulder_r_roll.stl"/>
       </geometry>
     </visual>
     <collision>
@@ -159,7 +159,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/obj/elbow_r_front.obj"/>
+        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/stl/elbow_r_front.stl"/>
       </geometry>
     </visual>
     <collision>
@@ -192,7 +192,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/obj/elbow_r_rear.obj"/>
+        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/stl/elbow_r_rear.stl"/>
       </geometry>
     </visual>
     <collision>
@@ -318,7 +318,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/obj/shoulder_l_pitch.obj"/>
+        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/stl/shoulder_l_pitch.stl"/>
       </geometry>
     </visual>
     <collision>
@@ -345,7 +345,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/obj/shoulder_l_roll.obj"/>
+        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/stl/shoulder_l_roll.stl"/>
       </geometry>
     </visual>
     <collision>
@@ -372,7 +372,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/obj/elbow_l_front.obj"/>
+        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/stl/elbow_l_front.stl"/>
       </geometry>
     </visual>
     <collision>
@@ -405,7 +405,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/obj/elbow_l_rear.obj"/>
+        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/stl/elbow_l_rear.stl"/>
       </geometry>
     </visual>
     <collision>
@@ -531,7 +531,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/obj/hip_r_roll.obj"/>
+        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/stl/hip_r_roll.stl"/>
       </geometry>
     </visual>
     <collision>
@@ -558,7 +558,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/obj/hip_r_pitch.obj"/>
+        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/stl/hip_r_pitch.stl"/>
       </geometry>
     </visual>
     <collision>
@@ -585,7 +585,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/obj/thigh_r_active.obj"/>
+        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/stl/thigh_r_active.stl"/>
       </geometry>
     </visual>
     <collision>
@@ -612,7 +612,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/obj/shin_r_active.obj"/>
+        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/stl/shin_r_active.stl"/>
       </geometry>
     </visual>
     <collision>
@@ -640,7 +640,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/obj/thigh_r_middle_passive.obj"/>
+        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/stl/thigh_r_middle_passive.stl"/>
       </geometry>
     </visual>
     <collision>
@@ -678,7 +678,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/obj/thigh_r_rear_passive.obj"/>
+        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/stl/thigh_r_rear_passive.stl"/>
       </geometry>
     </visual>
     <collision>
@@ -706,7 +706,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/obj/knee_r_passive.obj"/>
+        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/stl/knee_r_passive.stl"/>
       </geometry>
     </visual>
     <collision>
@@ -734,7 +734,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/obj/shin_r_front_passive.obj"/>
+        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/stl/shin_r_front_passive.stl"/>
       </geometry>
     </visual>
     <collision>
@@ -762,7 +762,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/obj/shin_r_rear_passive.obj"/>
+        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/stl/shin_r_rear_passive.stl"/>
       </geometry>
     </visual>
     <collision>
@@ -790,7 +790,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/obj/ankle_r_pitch_passive.obj"/>
+        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/stl/ankle_r_pitch_passive.stl"/>
       </geometry>
     </visual>
     <collision>
@@ -817,7 +817,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/obj/ankle_r_roll.obj"/>
+        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/stl/ankle_r_roll.stl"/>
       </geometry>
     </visual>
     <collision>
@@ -844,7 +844,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/obj/ankle_r_yaw.obj"/>
+        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/stl/ankle_r_yaw.stl"/>
       </geometry>
     </visual>
     <collision>
@@ -1154,7 +1154,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/obj/hip_l_roll.obj"/>
+        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/stl/hip_l_roll.stl"/>
       </geometry>
     </visual>
     <collision>
@@ -1181,7 +1181,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/obj/hip_l_pitch.obj"/>
+        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/stl/hip_l_pitch.stl"/>
       </geometry>
     </visual>
     <collision>
@@ -1208,7 +1208,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/obj/thigh_l_active.obj"/>
+        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/stl/thigh_l_active.stl"/>
       </geometry>
     </visual>
     <collision>
@@ -1235,7 +1235,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/obj/shin_l_active.obj"/>
+        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/stl/shin_l_active.stl"/>
       </geometry>
     </visual>
     <collision>
@@ -1263,7 +1263,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/obj/thigh_r_middle_passive.obj"/>
+        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/stl/thigh_r_middle_passive.stl"/>
       </geometry>
     </visual>
     <collision>
@@ -1301,7 +1301,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/obj/thigh_r_rear_passive.obj"/>
+        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/stl/thigh_r_rear_passive.stl"/>
       </geometry>
     </visual>
     <collision>
@@ -1329,7 +1329,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/obj/knee_r_passive.obj"/>
+        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/stl/knee_r_passive.stl"/>
       </geometry>
     </visual>
     <collision>
@@ -1357,7 +1357,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/obj/shin_r_front_passive.obj"/>
+        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/stl/shin_r_front_passive.stl"/>
       </geometry>
     </visual>
     <collision>
@@ -1385,7 +1385,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/obj/shin_r_rear_passive.obj"/>
+        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/stl/shin_r_rear_passive.stl"/>
       </geometry>
     </visual>
     <collision>
@@ -1413,7 +1413,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/obj/ankle_r_pitch_passive.obj"/>
+        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/stl/ankle_r_pitch_passive.stl"/>
       </geometry>
     </visual>
     <collision>
@@ -1440,7 +1440,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/obj/ankle_l_roll.obj"/>
+        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/stl/ankle_l_roll.stl"/>
       </geometry>
     </visual>
     <collision>
@@ -1467,7 +1467,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/obj/ankle_r_yaw.obj"/>
+        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/stl/ankle_r_yaw.stl"/>
       </geometry>
     </visual>
     <collision>

@@ -18,8 +18,8 @@
       <child link="chest_link"/>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <axis xyz="0 0 1"/>
-      <limit effort="1000.0" lower="-3.1" upper="3.1" velocity="10.0"/>
-      <dynamics damping="0.0" friction="0.0"/>
+      <limit effort="3.1" lower="-3.1" upper="3.1" velocity="6.5"/>
+      <dynamics damping="0.4769" friction="0.0"/>
     </joint>
     <!-- chest -->
     <link name="chest_link">

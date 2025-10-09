@@ -36,8 +36,8 @@
     <child link="chest_link"/>
     <origin rpy="0 0 0" xyz="0 0 0"/>
     <axis xyz="0 0 1"/>
-    <limit effort="1000.0" lower="-3.1" upper="3.1" velocity="10.0"/>
-    <dynamics damping="0.0" friction="0.0"/>
+    <limit effort="3.1" lower="-3.1" upper="3.1" velocity="6.5"/>
+    <dynamics damping="0.4769" friction="0.0"/>
   </joint>
   <!-- chest -->
   <link name="chest_link">
@@ -98,8 +98,8 @@
     <child link="shoulder_r_pitch_link"/>
     <origin rpy="0 0 0" xyz="0 -0.128 0.01275"/>
     <axis xyz="0 -1 0"/>
-    <limit effort="1000.0" lower="-3.1" upper="3.1" velocity="10.0"/>
-    <dynamics damping="0.0" friction="0.0"/>
+    <limit effort="3.1" lower="-3.1" upper="3.1" velocity="6.5"/>
+    <dynamics damping="0.4769" friction="0.0"/>
   </joint>
   <link name="shoulder_r_pitch_link">
     <visual>
@@ -125,8 +125,8 @@
     <child link="shoulder_r_roll_link"/>
     <origin rpy="-1.5708 0 0" xyz="0 -0.05425 0"/>
     <axis xyz="1 0 0"/>
-    <limit effort="1000.0" lower="-3.1" upper="3.1" velocity="10.0"/>
-    <dynamics damping="0.0" friction="0.0"/>
+    <limit effort="8.9" lower="-3.1" upper="3.1" velocity="6.9"/>
+    <dynamics damping="1.290" friction="0.0"/>
   </joint>
   <link name="shoulder_r_roll_link">
     <visual>
@@ -152,8 +152,8 @@
     <child link="elbow_r_front_link"/>
     <origin rpy="0 0 0" xyz="0 0.023 -0.036"/>
     <axis xyz="0 1 0"/>
-    <limit effort="1000.0" lower="-2.6180" upper="2.6180" velocity="10.0"/>
-    <dynamics damping="0.0" friction="0.0"/>
+    <limit effort="3.1" lower="-2.6180" upper="2.6180" velocity="6.6"/>
+    <dynamics damping="0.4769" friction="0.0"/>
   </joint>
   <link name="elbow_r_front_link">
     <visual>
@@ -185,8 +185,8 @@
     <child link="elbow_r_rear_link"/>
     <origin rpy="0 0 0" xyz="0 0.024 -0.036"/>
     <axis xyz="0 -1 0"/>
-    <limit effort="1000.0" lower="-2.6180" upper="2.6180" velocity="10.0"/>
-    <dynamics damping="0.0" friction="0.0"/>
+    <limit effort="3.1" lower="-2.6180" upper="2.6180" velocity="6.5"/>
+    <dynamics damping="0.4769" friction="0.0"/>
   </joint>
   <link name="elbow_r_rear_link">
     <visual>
@@ -311,8 +311,8 @@
     <child link="shoulder_l_pitch_link"/>
     <origin rpy="0 0 0" xyz="0 0.128 0.01275"/>
     <axis xyz="0 1 0"/>
-    <limit effort="1000.0" lower="-3.1" upper="3.1" velocity="10.0"/>
-    <dynamics damping="0.0" friction="0.0"/>
+    <limit effort="3.1" lower="-3.1" upper="3.1" velocity="6.5"/>
+    <dynamics damping="0.4769" friction="0.0"/>
   </joint>
   <link name="shoulder_l_pitch_link">
     <visual>
@@ -338,8 +338,8 @@
     <child link="shoulder_l_roll_link"/>
     <origin rpy="1.5708 0 0" xyz="0 0.05425 0"/>
     <axis xyz="1 0 0"/>
-    <limit effort="1000.0" lower="-3.1" upper="3.1" velocity="10.0"/>
-    <dynamics damping="0.0" friction="0.0"/>
+    <limit effort="8.9" lower="-3.1" upper="3.1" velocity="6.9"/>
+    <dynamics damping="1.290" friction="0.0"/>
   </joint>
   <link name="shoulder_l_roll_link">
     <visual>
@@ -365,8 +365,8 @@
     <child link="elbow_l_front_link"/>
     <origin rpy="0 0 0" xyz="0 -0.023 -0.036"/>
     <axis xyz="0 -1 0"/>
-    <limit effort="1000.0" lower="-2.6180" upper="2.6180" velocity="10.0"/>
-    <dynamics damping="0.0" friction="0.0"/>
+    <limit effort="3.1" lower="-2.6180" upper="2.6180" velocity="6.5"/>
+    <dynamics damping="0.4769" friction="0.0"/>
   </joint>
   <link name="elbow_l_front_link">
     <visual>
@@ -398,8 +398,8 @@
     <child link="elbow_l_rear_link"/>
     <origin rpy="0 0 0" xyz="0 -0.024 -0.036"/>
     <axis xyz="0 1 0"/>
-    <limit effort="1000.0" lower="-2.6180" upper="2.6180" velocity="10.0"/>
-    <dynamics damping="0.0" friction="0.0"/>
+    <limit effort="3.1" lower="-2.6180" upper="2.6180" velocity="6.5"/>
+    <dynamics damping="0.4769" friction="0.0"/>
   </joint>
   <link name="elbow_l_rear_link">
     <visual>

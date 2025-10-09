@@ -3,7 +3,8 @@
   <xacro:arg name="gazebo" default="false"/>
   <xacro:arg name="gazebo_motor_model" default="dc"/>
   <xacro:arg name="gazebo_hw_interface" default="position"/>
-  <xacro:property name="XACRO_DIR" value="$(cwd)/${xacro.abs_filename('..')}" />
+  <xacro:property name="XACRO_DIR" value="$(cwd)" />
+  <xacro:property name="MESH_DIR" value="$(cwd)/meshes" />
   <xacro:include filename="${XACRO_DIR}/physics/box_physics.xacro"/>
   <xacro:include filename="${XACRO_DIR}/physics/gazebo_passive_joint.xacro"/>
   <xacro:include filename="${XACRO_DIR}/kuroko/parts/body.xacro"/>

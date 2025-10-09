@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-  <xacro:property name="PHYSICS_DIR" value="$(cwd)/../physics" />
-  <xacro:include filename="${PHYSICS_DIR}/default_gazebo_params.xacro"/>
+  <xacro:include filename="${XACRO_DIR}/physics/default_gazebo_params.xacro"/>
   <xacro:macro name="body_gazebo" params="gazebo_hw_interface">
     <xacro:default_motor_transmission joint_name="chest"
       gazebo_hw_interface="$(arg gazebo_hw_interface)"/>

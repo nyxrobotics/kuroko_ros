@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-  <xacro:property name="MESH_DIR" value="$(cwd)/${xacro.abs_filename('../../../meshes')}" />
   <xacro:macro name="leg_r_xacro" params="gazebo:=false">
     <!-- Link conencts from body. Hip first. -->
     <joint name="hip_r_roll" type="revolute">

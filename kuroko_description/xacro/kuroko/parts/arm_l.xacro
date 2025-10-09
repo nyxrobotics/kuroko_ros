@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-  <xacro:property name="MESH_DIR" value="$(cwd)/${xacro.abs_filename('../../../meshes')}" />
   <xacro:macro name="arm_l_xacro">
     <!-- Link conencts from body. Shoulder first. -->
     <joint name="shoulder_l_pitch" type="revolute">

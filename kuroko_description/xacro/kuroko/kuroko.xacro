@@ -3,24 +3,22 @@
   <xacro:arg name="gazebo" default="false"/>
   <xacro:arg name="gazebo_motor_model" default="dc"/>
   <xacro:arg name="gazebo_hw_interface" default="position"/>
-
-  <xacro:include filename="$(find kuroko_description)/xacro/physics/box_physics.xacro"/>
-  <xacro:include filename="$(find kuroko_description)/xacro/physics/gazebo_passive_joint.xacro"/>
-
-  <xacro:include filename="$(find kuroko_description)/xacro/kuroko/parts/body.xacro"/>
-  <xacro:include filename="$(find kuroko_description)/xacro/kuroko/transmission/body.gazebo"/>
-  <xacro:include filename="$(find kuroko_description)/xacro/kuroko/parts/arm_r.xacro"/>
-  <xacro:include filename="$(find kuroko_description)/xacro/kuroko/transmission/arm_r.gazebo"/>
-  <xacro:include filename="$(find kuroko_description)/xacro/kuroko/parts/arm_l.xacro"/>
-  <xacro:include filename="$(find kuroko_description)/xacro/kuroko/transmission/arm_l.gazebo"/>
-  <xacro:include filename="$(find kuroko_description)/xacro/kuroko/parts/leg_r.xacro"/>
-  <xacro:include filename="$(find kuroko_description)/xacro/kuroko/transmission/leg_r.gazebo"/>
-  <xacro:include filename="$(find kuroko_description)/xacro/kuroko/parts/leg_l.xacro"/>
-  <xacro:include filename="$(find kuroko_description)/xacro/kuroko/transmission/leg_l.gazebo"/>
-
-  <xacro:include filename="$(find kuroko_description)/xacro/sensors/range/tfluna.xacro"/>
-  <xacro:include filename="$(find kuroko_description)/xacro/sensors/imu/imu_n100mini.xacro"/>
-  <xacro:include filename="$(find kuroko_description)/xacro/sensors/camera/usb_camera.xacro"/>
+  <xacro:property name="XACRO_DIR" value="$(cwd)/${xacro.abs_filename('..')}" />
+  <xacro:include filename="${XACRO_DIR}/physics/box_physics.xacro"/>
+  <xacro:include filename="${XACRO_DIR}/physics/gazebo_passive_joint.xacro"/>
+  <xacro:include filename="${XACRO_DIR}/kuroko/parts/body.xacro"/>
+  <xacro:include filename="${XACRO_DIR}/kuroko/transmission/body.gazebo"/>
+  <xacro:include filename="${XACRO_DIR}/kuroko/parts/arm_r.xacro"/>
+  <xacro:include filename="${XACRO_DIR}/kuroko/transmission/arm_r.gazebo"/>
+  <xacro:include filename="${XACRO_DIR}/kuroko/parts/arm_l.xacro"/>
+  <xacro:include filename="${XACRO_DIR}/kuroko/transmission/arm_l.gazebo"/>
+  <xacro:include filename="${XACRO_DIR}/kuroko/parts/leg_r.xacro"/>
+  <xacro:include filename="${XACRO_DIR}/kuroko/transmission/leg_r.gazebo"/>
+  <xacro:include filename="${XACRO_DIR}/kuroko/parts/leg_l.xacro"/>
+  <xacro:include filename="${XACRO_DIR}/kuroko/transmission/leg_l.gazebo"/>
+  <xacro:include filename="${XACRO_DIR}/sensors/range/tfluna.xacro"/>
+  <xacro:include filename="${XACRO_DIR}/sensors/imu/imu_n100mini.xacro"/>
+  <xacro:include filename="${XACRO_DIR}/sensors/camera/usb_camera.xacro"/>
 
   <!-- MACRO:Loading Gazebo Controllers for joints -->
   <xacro:macro name="gazebo_plugin_xacro" params="gazebo_motor_model">

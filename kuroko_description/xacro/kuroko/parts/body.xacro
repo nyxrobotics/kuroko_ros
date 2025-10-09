@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
-
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:property name="MESH_DIR" value="$(cwd)/${xacro.abs_filename('../../../meshes')}" />
   <xacro:macro name="body_xacro">
     <!-- waist -->
     <link name="waist_link">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="package://kuroko_description/meshes/kuroko/obj/waist.obj"/>
+          <mesh filename="${MESH_DIR}/kuroko/obj/waist.obj"/>
         </geometry>
       </visual>
       <xacro:box_collision xyz="0.0084 0.0000 -0.0483" rpy="0 0 0" size="0.1247 0.0560 0.0965"/>
@@ -27,7 +27,7 @@
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="package://kuroko_description/meshes/kuroko/obj/chest.obj"/>
+          <mesh filename="${MESH_DIR}/kuroko/obj/chest.obj"/>
         </geometry>
       </visual>
       <xacro:box_collision xyz="0.0120 0.0000 0.0635" rpy="0 0 0" size="0.1480 0.2560 0.1364"/>

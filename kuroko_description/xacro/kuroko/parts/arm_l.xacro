@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:property name="MESH_DIR" value="$(cwd)/${xacro.abs_filename('../../../meshes')}" />
   <xacro:macro name="arm_l_xacro">
     <!-- Link conencts from body. Shoulder first. -->
     <joint name="shoulder_l_pitch" type="revolute">
@@ -14,7 +15,7 @@
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="package://kuroko_description/meshes/kuroko/obj/shoulder_l_pitch.obj"/>
+          <mesh filename="${MESH_DIR}/kuroko/obj/shoulder_l_pitch.obj"/>
         </geometry>
       </visual>
       <xacro:box_collision xyz="-0.0096 0.0340 0.0000" rpy="0 0 0" size="0.0513 0.0680 0.0475"/>
@@ -32,7 +33,7 @@
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="package://kuroko_description/meshes/kuroko/obj/shoulder_l_roll.obj"/>
+          <mesh filename="${MESH_DIR}/kuroko/obj/shoulder_l_roll.obj"/>
         </geometry>
       </visual>
       <xacro:box_collision xyz="-0.0108 0.0000 -0.0186" rpy="0 0 0" size="0.0530 0.0860 0.0633"/>
@@ -50,7 +51,7 @@
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="package://kuroko_description/meshes/kuroko/obj/elbow_l_front.obj"/>
+          <mesh filename="${MESH_DIR}/kuroko/obj/elbow_l_front.obj"/>
         </geometry>
       </visual>
       <xacro:box_collision xyz="0.0043 0 -0.104" rpy="0 0 0" size="0.01085 0.058 0.208"/>
@@ -69,7 +70,7 @@
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="package://kuroko_description/meshes/kuroko/obj/elbow_l_rear.obj"/>
+          <mesh filename="${MESH_DIR}/kuroko/obj/elbow_l_rear.obj"/>
         </geometry>
       </visual>
       <xacro:box_collision xyz="-0.0043 0 -0.1" rpy="0 0 0" size="0.01085 0.044 0.2"/>

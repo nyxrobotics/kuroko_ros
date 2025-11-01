@@ -112,10 +112,9 @@
           <upper>3.1</upper>
           <effort>3.1</effort>
           <velocity>6.5</velocity>
-          <stiffness>24.8</stiffness>
         </limit>
         <dynamics>
-          <damping>0.476923076923077</damping>
+          <damping>4769</damping>
           <friction>0</friction>
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
@@ -196,10 +195,9 @@
           <upper>3.1</upper>
           <effort>3.1</effort>
           <velocity>6.5</velocity>
-          <stiffness>24.8</stiffness>
         </limit>
         <dynamics>
-          <damping>0.476923076923077</damping>
+          <damping>0.4769</damping>
           <friction>0</friction>
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
@@ -280,10 +278,9 @@
           <upper>3.1</upper>
           <effort>8.9</effort>
           <velocity>6.9</velocity>
-          <stiffness>71.2</stiffness>
         </limit>
         <dynamics>
-          <damping>1.28985507246377</damping>
+          <damping>1.29</damping>
           <friction>0</friction>
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
@@ -364,10 +361,9 @@
           <upper>2.618</upper>
           <effort>3.1</effort>
           <velocity>6.5</velocity>
-          <stiffness>24.8</stiffness>
         </limit>
         <dynamics>
-          <damping>0.476923076923077</damping>
+          <damping>0.4769</damping>
           <friction>0</friction>
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
@@ -472,10 +468,9 @@
           <upper>2.618</upper>
           <effort>3.1</effort>
           <velocity>6.5</velocity>
-          <stiffness>24.8</stiffness>
         </limit>
         <dynamics>
-          <damping>0.476923076923077</damping>
+          <damping>0.4769</damping>
           <friction>0</friction>
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
@@ -580,10 +575,9 @@
           <upper>3.1</upper>
           <effort>3.1</effort>
           <velocity>6.5</velocity>
-          <stiffness>24.8</stiffness>
         </limit>
         <dynamics>
-          <damping>0.476923076923077</damping>
+          <damping>0.4769</damping>
           <friction>0</friction>
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
@@ -664,10 +658,9 @@
           <upper>3.1</upper>
           <effort>8.9</effort>
           <velocity>6.9</velocity>
-          <stiffness>71.2</stiffness>
         </limit>
         <dynamics>
-          <damping>1.28985507246377</damping>
+          <damping>1.29</damping>
           <friction>0</friction>
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
@@ -748,10 +741,9 @@
           <upper>2.618</upper>
           <effort>3.1</effort>
           <velocity>6.6</velocity>
-          <stiffness>24.8</stiffness>
         </limit>
         <dynamics>
-          <damping>0.46969696969697</damping>
+          <damping>0.4769</damping>
           <friction>0</friction>
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
@@ -856,10 +848,9 @@
           <upper>2.618</upper>
           <effort>3.1</effort>
           <velocity>6.5</velocity>
-          <stiffness>24.8</stiffness>
         </limit>
         <dynamics>
-          <damping>0.476923076923077</damping>
+          <damping>0.4769</damping>
           <friction>0</friction>
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
@@ -962,12 +953,11 @@
         <limit>
           <lower>-0.555</lower>
           <upper>1.864</upper>
-          <effort>1000</effort>
-          <velocity>10</velocity>
-          <stiffness>8000</stiffness>
+          <effort>3.1</effort>
+          <velocity>6.5</velocity>
         </limit>
         <dynamics>
-          <damping>100</damping>
+          <damping>0.4796</damping>
           <friction>0</friction>
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
@@ -1046,12 +1036,11 @@
         <limit>
           <lower>-3.1</lower>
           <upper>3.1</upper>
-          <effort>1000</effort>
-          <velocity>10</velocity>
-          <stiffness>8000</stiffness>
+          <effort>3.1</effort>
+          <velocity>6.9</velocity>
         </limit>
         <dynamics>
-          <damping>100</damping>
+          <damping>1.29</damping>
           <friction>0</friction>
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
@@ -1130,12 +1119,11 @@
         <limit>
           <lower>-0.4974</lower>
           <upper>1.8588</upper>
-          <effort>1000</effort>
-          <velocity>10</velocity>
-          <stiffness>8000</stiffness>
+          <effort>8.9</effort>
+          <velocity>6.9</velocity>
         </limit>
         <dynamics>
-          <damping>100</damping>
+          <damping>1.29</damping>
           <friction>0</friction>
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
@@ -1205,6 +1193,99 @@
       </velocity_decay>
       <self_collide>0</self_collide>
     </link>
+    <joint name='thigh_l_rear_passive' type='revolute'>
+      <pose relative_to='shin_l_active_link'>0 0 -0.03 3.14159 -1.30899 3.14159</pose>
+      <parent>shin_l_active_link</parent>
+      <child>thigh_l_rear_passive_link</child>
+      <axis>
+        <xyz>0 -1 0</xyz>
+        <limit>
+          <lower>-1.5708</lower>
+          <upper>0.9948</upper>
+          <effort>0</effort>
+          <velocity>100</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+      <physics>
+        <ode>
+          <limit>
+            <cfm>0</cfm>
+            <erp>0.2</erp>
+          </limit>
+        </ode>
+      </physics>
+      <physics>
+        <ode>
+          <implicit_spring_damper>1</implicit_spring_damper>
+          <cfm_damping>0</cfm_damping>
+          <cfm>1e-07</cfm>
+          <erp>0.8</erp>
+          <limit>
+            <cfm>1e-07</cfm>
+            <erp>0.8</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <link name='thigh_l_rear_passive_link'>
+      <pose relative_to='thigh_l_rear_passive'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 0 -0.05 0 -0 0</pose>
+        <mass>0.011</mass>
+        <inertia>
+          <ixx>1.26576e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>1.20927e-05</iyy>
+          <iyz>0</iyz>
+          <izz>1e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name='thigh_l_rear_passive_link_collision'>
+        <pose>0 0 -0.05 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.014 0.0285 0.114</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode>
+              <kp>1e+06</kp>
+              <kd>100</kd>
+              <max_vel>10</max_vel>
+              <min_depth>0.0001</min_depth>
+            </ode>
+          </contact>
+          <friction>
+            <ode>
+              <mu>0</mu>
+            </ode>
+          </friction>
+        </surface>
+        <max_contacts>6</max_contacts>
+      </collision>
+      <visual name='thigh_l_rear_passive_link_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/stl/thigh_r_rear_passive.stl</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <velocity_decay>
+        <linear>0</linear>
+        <angular>0</angular>
+      </velocity_decay>
+      <self_collide>0</self_collide>
+    </link>
     <joint name='thigh_l_active' type='revolute'>
       <pose relative_to='hip_l_pitch_link'>0.015 0.02925 -0.0305 0 -0.785398 0</pose>
       <parent>hip_l_pitch_link</parent>
@@ -1214,12 +1295,11 @@
         <limit>
           <lower>-1.8588</lower>
           <upper>0.4974</upper>
-          <effort>1000</effort>
-          <velocity>10</velocity>
-          <stiffness>8000</stiffness>
+          <effort>8.9</effort>
+          <velocity>6.9</velocity>
         </limit>
         <dynamics>
-          <damping>100</damping>
+          <damping>1.29</damping>
           <friction>0</friction>
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
@@ -1298,12 +1378,11 @@
         <limit>
           <lower>-0.4974</lower>
           <upper>1.8588</upper>
-          <effort>1000</effort>
-          <velocity>10</velocity>
-          <stiffness>8000</stiffness>
+          <effort>0</effort>
+          <velocity>100</velocity>
         </limit>
         <dynamics>
-          <damping>100</damping>
+          <damping>0</damping>
           <friction>0</friction>
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
@@ -1392,12 +1471,11 @@
         <limit>
           <lower>-0.4974</lower>
           <upper>1.8588</upper>
-          <effort>1000</effort>
-          <velocity>10</velocity>
-          <stiffness>8000</stiffness>
+          <effort>0</effort>
+          <velocity>100</velocity>
         </limit>
         <dynamics>
-          <damping>100</damping>
+          <damping>0</damping>
           <friction>0</friction>
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
@@ -1486,12 +1564,11 @@
         <limit>
           <lower>-1.8588</lower>
           <upper>0.4974</upper>
-          <effort>1000</effort>
-          <velocity>10</velocity>
-          <stiffness>8000</stiffness>
+          <effort>0</effort>
+          <velocity>100</velocity>
         </limit>
         <dynamics>
-          <damping>100</damping>
+          <damping>0</damping>
           <friction>0</friction>
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
@@ -1580,12 +1657,11 @@
         <limit>
           <lower>-1.5708</lower>
           <upper>0.3704</upper>
-          <effort>1000</effort>
-          <velocity>10</velocity>
-          <stiffness>8000</stiffness>
+          <effort>3.1</effort>
+          <velocity>6.5</velocity>
         </limit>
         <dynamics>
-          <damping>100</damping>
+          <damping>0.4769</damping>
           <friction>0</friction>
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
@@ -1664,12 +1740,11 @@
         <limit>
           <lower>-3.1</lower>
           <upper>3.1</upper>
-          <effort>1000</effort>
-          <velocity>10</velocity>
-          <stiffness>8000</stiffness>
+          <effort>3.1</effort>
+          <velocity>6.5</velocity>
         </limit>
         <dynamics>
-          <damping>100</damping>
+          <damping>0.4769</damping>
           <friction>0</friction>
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
@@ -1748,12 +1823,11 @@
         <limit>
           <lower>-0.4974</lower>
           <upper>1.8588</upper>
-          <effort>1000</effort>
-          <velocity>10</velocity>
-          <stiffness>8000</stiffness>
+          <effort>0</effort>
+          <velocity>100</velocity>
         </limit>
         <dynamics>
-          <damping>100</damping>
+          <damping>0</damping>
           <friction>0</friction>
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
@@ -1842,12 +1916,11 @@
         <limit>
           <lower>-3.1</lower>
           <upper>3.1</upper>
-          <effort>1000</effort>
+          <effort>0</effort>
           <velocity>10</velocity>
-          <stiffness>8000</stiffness>
         </limit>
         <dynamics>
-          <damping>100</damping>
+          <damping>0</damping>
           <friction>0</friction>
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
@@ -1938,10 +2011,9 @@
           <upper>1.864</upper>
           <effort>1000</effort>
           <velocity>10</velocity>
-          <stiffness>8000</stiffness>
         </limit>
         <dynamics>
-          <damping>100</damping>
+          <damping>0</damping>
           <friction>0</friction>
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
@@ -2022,10 +2094,9 @@
           <upper>3.1</upper>
           <effort>1000</effort>
           <velocity>10</velocity>
-          <stiffness>8000</stiffness>
         </limit>
         <dynamics>
-          <damping>100</damping>
+          <damping>0</damping>
           <friction>0</friction>
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
@@ -2106,10 +2177,9 @@
           <upper>0.4974</upper>
           <effort>1000</effort>
           <velocity>10</velocity>
-          <stiffness>8000</stiffness>
         </limit>
         <dynamics>
-          <damping>100</damping>
+          <damping>0</damping>
           <friction>0</friction>
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
@@ -2179,6 +2249,99 @@
       </velocity_decay>
       <self_collide>0</self_collide>
     </link>
+    <joint name='thigh_r_rear_passive' type='revolute'>
+      <pose relative_to='shin_r_active_link'>0 0 -0.03 3.14159 -1.30899 3.14159</pose>
+      <parent>shin_r_active_link</parent>
+      <child>thigh_r_rear_passive_link</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-0.9948</lower>
+          <upper>1.5708</upper>
+          <effort>1000</effort>
+          <velocity>10</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+      <physics>
+        <ode>
+          <limit>
+            <cfm>0</cfm>
+            <erp>0.2</erp>
+          </limit>
+        </ode>
+      </physics>
+      <physics>
+        <ode>
+          <implicit_spring_damper>1</implicit_spring_damper>
+          <cfm_damping>0</cfm_damping>
+          <cfm>1e-07</cfm>
+          <erp>0.8</erp>
+          <limit>
+            <cfm>1e-07</cfm>
+            <erp>0.8</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <link name='thigh_r_rear_passive_link'>
+      <pose relative_to='thigh_r_rear_passive'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 0 -0.05 0 -0 0</pose>
+        <mass>0.011</mass>
+        <inertia>
+          <ixx>1.26576e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>1.20927e-05</iyy>
+          <iyz>0</iyz>
+          <izz>1e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name='thigh_r_rear_passive_link_collision'>
+        <pose>0 0 -0.05 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.014 0.0285 0.114</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode>
+              <kp>1e+06</kp>
+              <kd>100</kd>
+              <max_vel>10</max_vel>
+              <min_depth>0.0001</min_depth>
+            </ode>
+          </contact>
+          <friction>
+            <ode>
+              <mu>0</mu>
+            </ode>
+          </friction>
+        </surface>
+        <max_contacts>6</max_contacts>
+      </collision>
+      <visual name='thigh_r_rear_passive_link_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/xacro/meshes/kuroko/stl/thigh_r_rear_passive.stl</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <velocity_decay>
+        <linear>0</linear>
+        <angular>0</angular>
+      </velocity_decay>
+      <self_collide>0</self_collide>
+    </link>
     <joint name='thigh_r_active' type='revolute'>
       <pose relative_to='hip_r_pitch_link'>0.015 -0.02925 -0.0305 0 -0.785398 0</pose>
       <parent>hip_r_pitch_link</parent>
@@ -2190,10 +2353,9 @@
           <upper>1.8588</upper>
           <effort>1000</effort>
           <velocity>10</velocity>
-          <stiffness>8000</stiffness>
         </limit>
         <dynamics>
-          <damping>100</damping>
+          <damping>0</damping>
           <friction>0</friction>
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
@@ -2274,10 +2436,9 @@
           <upper>0.4974</upper>
           <effort>1000</effort>
           <velocity>10</velocity>
-          <stiffness>8000</stiffness>
         </limit>
         <dynamics>
-          <damping>100</damping>
+          <damping>0</damping>
           <friction>0</friction>
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
@@ -2368,10 +2529,9 @@
           <upper>0.4974</upper>
           <effort>1000</effort>
           <velocity>10</velocity>
-          <stiffness>8000</stiffness>
         </limit>
         <dynamics>
-          <damping>100</damping>
+          <damping>0</damping>
           <friction>0</friction>
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
@@ -2462,10 +2622,9 @@
           <upper>1.8588</upper>
           <effort>1000</effort>
           <velocity>10</velocity>
-          <stiffness>8000</stiffness>
         </limit>
         <dynamics>
-          <damping>100</damping>
+          <damping>0</damping>
           <friction>0</friction>
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
@@ -2556,10 +2715,9 @@
           <upper>1.5708</upper>
           <effort>1000</effort>
           <velocity>10</velocity>
-          <stiffness>8000</stiffness>
         </limit>
         <dynamics>
-          <damping>100</damping>
+          <damping>0</damping>
           <friction>0</friction>
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
@@ -2640,10 +2798,9 @@
           <upper>3.1</upper>
           <effort>1000</effort>
           <velocity>10</velocity>
-          <stiffness>8000</stiffness>
         </limit>
         <dynamics>
-          <damping>100</damping>
+          <damping>0</damping>
           <friction>0</friction>
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
@@ -2724,10 +2881,9 @@
           <upper>0.4974</upper>
           <effort>1000</effort>
           <velocity>10</velocity>
-          <stiffness>8000</stiffness>
         </limit>
         <dynamics>
-          <damping>100</damping>
+          <damping>0</damping>
           <friction>0</friction>
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
@@ -2818,10 +2974,9 @@
           <upper>3.1</upper>
           <effort>1000</effort>
           <velocity>10</velocity>
-          <stiffness>8000</stiffness>
         </limit>
         <dynamics>
-          <damping>100</damping>
+          <damping>0</damping>
           <friction>0</friction>
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
@@ -3069,6 +3224,180 @@
         </plugin>
       </sensor>
     </link>
+    <joint name='thigh_r_middle_passive_loop' type='revolute'>
+      <parent>thigh_r_middle_passive_link</parent>
+      <child>knee_r_passive_link</child>
+      <pose>-0.0335 0 0 0 -0 0</pose>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-3.1416</lower>
+          <upper>3.1416</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+      <physics>
+        <ode>
+          <implicit_spring_damper>1</implicit_spring_damper>
+          <cfm_damping>0</cfm_damping>
+          <cfm>1e-07</cfm>
+          <erp>0.8</erp>
+          <limit>
+            <cfm>1e-07</cfm>
+            <erp>0.8</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <joint name='thigh_r_rear_passive_loop' type='revolute'>
+      <parent>thigh_r_rear_passive_link</parent>
+      <child>shin_r_rear_passive_link</child>
+      <pose>-0.007655 0 -0.028978 0 -0 0</pose>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-3.1416</lower>
+          <upper>3.1416</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+      <physics>
+        <ode>
+          <implicit_spring_damper>1</implicit_spring_damper>
+          <cfm_damping>0</cfm_damping>
+          <cfm>1e-07</cfm>
+          <erp>0.8</erp>
+          <limit>
+            <cfm>1e-07</cfm>
+            <erp>0.8</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <joint name='shin_r_rear_passive_loop' type='revolute'>
+      <parent>shin_r_rear_passive_link</parent>
+      <child>ankle_r_pitch_passive_link</child>
+      <pose>-0.0335 0 0 0 -0 0</pose>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-3.1416</lower>
+          <upper>3.1416</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+      <physics>
+        <ode>
+          <implicit_spring_damper>1</implicit_spring_damper>
+          <cfm_damping>0</cfm_damping>
+          <cfm>1e-07</cfm>
+          <erp>0.8</erp>
+          <limit>
+            <cfm>1e-07</cfm>
+            <erp>0.8</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <joint name='thigh_l_middle_passive_loop' type='revolute'>
+      <parent>thigh_l_middle_passive_link</parent>
+      <child>knee_l_passive_link</child>
+      <pose>-0.0335 0 0 0 -0 0</pose>
+      <axis>
+        <xyz>0 -1 0</xyz>
+        <limit>
+          <lower>-3.1416</lower>
+          <upper>3.1416</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+      <physics>
+        <ode>
+          <implicit_spring_damper>1</implicit_spring_damper>
+          <cfm_damping>0</cfm_damping>
+          <cfm>1e-07</cfm>
+          <erp>0.8</erp>
+          <limit>
+            <cfm>1e-07</cfm>
+            <erp>0.8</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <joint name='thigh_l_rear_passive_loop' type='revolute'>
+      <parent>thigh_l_rear_passive_link</parent>
+      <child>shin_l_rear_passive_link</child>
+      <pose>-0.007655 0 -0.028978 0 -0 0</pose>
+      <axis>
+        <xyz>0 -1 0</xyz>
+        <limit>
+          <lower>-3.1416</lower>
+          <upper>3.1416</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+      <physics>
+        <ode>
+          <implicit_spring_damper>1</implicit_spring_damper>
+          <cfm_damping>0</cfm_damping>
+          <cfm>1e-07</cfm>
+          <erp>0.8</erp>
+          <limit>
+            <cfm>1e-07</cfm>
+            <erp>0.8</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <joint name='shin_l_rear_passive_loop' type='revolute'>
+      <parent>shin_l_rear_passive_link</parent>
+      <child>ankle_l_pitch_passive_link</child>
+      <pose>-0.0335 0 0 0 -0 0</pose>
+      <axis>
+        <xyz>0 -1 0</xyz>
+        <limit>
+          <lower>-3.1416</lower>
+          <upper>3.1416</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+      <physics>
+        <ode>
+          <implicit_spring_damper>1</implicit_spring_damper>
+          <cfm_damping>0</cfm_damping>
+          <cfm>1e-07</cfm>
+          <erp>0.8</erp>
+          <limit>
+            <cfm>1e-07</cfm>
+            <erp>0.8</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
     <plugin name='imu_controller' filename='libhector_gazebo_ros_imu.so'>
       <alwaysOn>1</alwaysOn>
       <updateRate>400</updateRate>

@@ -131,7 +131,7 @@
       <xacro:box_inertial xyz="0 0 0.05" rpy="0 0 0" size="0.014 0.0385 0.114" mass="0.013"/>
     </link>
     <xacro:if value="$(arg gazebo)">
-      <xacro:gazebo_poassive_joint name="shin_r_front" xyz="0.0335 0 0" parent="knee_r_link" child="shin_r_front" axis="0 1 0"/>
+      <xacro:gazebo_poassive_joint name="shin_r_front" xyz="0.0335 0 0" parent="knee_r_link" child="shin_r_front_link" axis="0 1 0"/>
     </xacro:if>
 
     <joint name="ankle_r_pitch_rear" type="revolute">

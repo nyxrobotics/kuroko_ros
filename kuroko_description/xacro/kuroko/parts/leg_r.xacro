@@ -35,16 +35,37 @@
           <mesh filename="${MESH_DIR}/kuroko/stl/hip_r_pitch.stl"/>
         </geometry>
       </visual>
-      <xacro:box_collision xyz="-0.00175 -0.049 -0.015" rpy="0 0 0" size="0.067 0.098 0.0585"/>
-      <xacro:box_inertial xyz="-0.00175 -0.049 -0.015" rpy="0 0 0" size="0.067 0.098 0.0585" mass="0.478"/>
+      <xacro:box_collision xyz="-0.00175 0.049 -0.015" rpy="0 0 0" size="0.067 0.098 0.0585"/>
+      <xacro:box_inertial xyz="-0.00175 0.049 -0.015" rpy="0 0 0" size="0.067 0.098 0.0585" mass="0.478"/>
     </link>
+
+    <joint name="thigh_r_rear" type="revolute">
+      <parent link="hip_r_pitch_link"/>
+      <child link="thigh_r_rear_link"/>
+      <origin xyz="-0.0185 0.02925 -0.0305" rpy="0 -0.785398163 0"/>
+      <axis xyz="0 1 0"/>
+      <limit effort="0" lower="-0.4974" upper="1.8588" velocity="100"/>
+      <dynamics damping="0" friction="0.0"/>
+    </joint>
+    <link name="thigh_r_rear_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="${MESH_DIR}/kuroko/stl/thigh_r_middle_passive.stl"/>
+        </geometry>
+      </visual>
+      <xacro:box_collision xyz="0 0 -0.05" rpy="0 0 0" size="0.014 0.0345 0.114"/>
+      <xacro:box_inertial xyz="0 0 -0.05" rpy="0 0 0" size="0.014 0.0345 0.114" mass="0.012"/>
+    </link>
+
     <joint name="thigh_r_front" type="revolute">
       <parent link="hip_r_pitch_link"/>
       <child link="thigh_r_front_link"/>
-      <origin xyz="0.015 -0.02925 -0.0305" rpy="0 -0.785398163 0"/>
+      <origin xyz="0.015 0.02925 -0.0305" rpy="0 -0.785398163 0"/>
       <axis xyz="0 1 0"/>
-      <limit effort="8.9" lower="-0.4974" upper="1.8588" velocity="6.9"/>
-      <dynamics damping="1.289855" friction="0.0"/>
+      <limit effort="0" lower="-0.4974" upper="1.8588" velocity="100"/>
+      <dynamics damping="0" friction="0"/>
+      <mimic joint="thigh_r_rear" multiplier="1" offset="0"/>
     </joint>
     <link name="thigh_r_front_link">
       <visual>
@@ -57,79 +78,36 @@
       <xacro:box_inertial xyz="0 0 -0.05" rpy="0 0 0" size="0.014 0.0445 0.114" mass="0.012"/>
     </link>
 
-    <joint name="thigh_r_rear" type="revolute">
-      <parent link="hip_r_pitch_link"/>
-      <child link="thigh_r_rear_link"/>
-      <origin xyz="-0.0185 -0.02925 -0.0305" rpy="0 -0.785398163 0"/>
-      <axis xyz="0 1 0"/>
-      <limit effort="0.0" lower="-3.1" upper="3.1" velocity="100.0"/>
-      <dynamics damping="0" friction="0.0"/>
-      <mimic joint="thigh_r_front" multiplier="1" offset="0"/>
-    </joint>
-    <xacro:if value="$(arg gazebo)">
-      <xacro:gazebo_poassive_joint name="thigh_r_rear_loop" xyz="-0.0335 0 0" parent="knee_r_passive_link" child="thigh_r_rear_link" axis="0 1 0"/>
-    </xacro:if>
-    <link name="thigh_r_rear_link">
-      <visual>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <geometry>
-          <mesh filename="${MESH_DIR}/kuroko/stl/thigh_r_middle_passive.stl"/>
-        </geometry>
-      </visual>
-      <xacro:box_collision xyz="0 0 -0.05" rpy="0 0 0" size="0.014 0.0345 0.114"/>
-      <xacro:box_inertial xyz="0 0 -0.05" rpy="0 0 0" size="0.014 0.0345 0.114" mass="0.012"/>
-    </link>
-
-    <joint name="knee_r_passive" type="revolute">
-      <parent link="thigh_r_front_link"/>
-      <child link="knee_r_passive_link"/>
+    <joint name="knee_r_rear" type="revolute">
+      <parent link="thigh_r_rear_link"/>
+      <child link="knee_r_link"/>
       <origin xyz="0 0 -0.1" rpy="0 0.785398163 0"/>
       <axis xyz="0 1 0"/>
-      <limit effort="0.0" lower="-1.8588" upper="0.4974" velocity="100.0"/>
-      <dynamics damping="0" friction="0.0"/>
-      <mimic joint="thigh_r_front" multiplier="-1" offset="0"/>
+      <limit effort="8.9" lower="-1.8588" upper="0.4974" velocity="6.9"/>
+      <dynamics damping="1.289855" friction="0.0"/>
     </joint>
-    <link name="knee_r_passive_link">
+    <link name="knee_r_link">
       <visual>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <origin xyz="0.0335 0 0" rpy="0 0 0"/>
         <geometry>
           <mesh filename="${MESH_DIR}/kuroko/stl/knee_r_passive.stl"/>
         </geometry>
       </visual>
-      <xacro:box_collision xyz="-0.01675 0 0" rpy="0 0 0" size="0.0475 0.0505 0.014"/>
-      <xacro:box_inertial xyz="-0.01675 0 0" rpy="0 0 0" size="0.0475 0.0505 0.014" mass="0.007"/>
+      <xacro:box_collision xyz="0.01675 0 0" rpy="0 0 0" size="0.0475 0.0505 0.014"/>
+      <xacro:box_inertial xyz="0.01675 0 0" rpy="0 0 0" size="0.0475 0.0505 0.014" mass="0.007"/>
     </link>
-    <joint name="shin_r_front" type="revolute">
-      <parent link="knee_r_passive_link"/>
-      <child link="shin_r_front_link"/>
+    <xacro:if value="$(arg gazebo)">
+      <xacro:gazebo_poassive_joint name="knee_r_front" xyz="0.0335 0 0" parent="knee_r_link" child="thigh_r_front_link" axis="0 1 0"/>
+    </xacro:if>
+
+    <joint name="shin_r_rear" type="revolute">
+      <parent link="knee_r_link"/>
+      <child link="shin_r_rear_link"/>
       <origin xyz="0 0 0" rpy="0 0.785398163 0"/>
       <axis xyz="0 1 0"/>
-      <limit effort="0.0" lower="-1.8588" upper="0.4974" velocity="100.0"/>
-      <dynamics damping="0" friction="0.0"/>
-      <mimic joint="shin_r_active" multiplier="1" offset="0"/>
+      <limit effort="8.9" lower="-1.8588" upper="0.4974" velocity="6.9"/>
+      <dynamics damping="1.289855" friction="0.0"/>
     </joint>
-    <link name="shin_r_front_link">
-      <visual>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <geometry>
-          <mesh filename="${MESH_DIR}/kuroko/stl/shin_r_front_passive.stl"/>
-        </geometry>
-      </visual>
-      <xacro:box_collision xyz="0 0 -0.05" rpy="0 0 0" size="0.014 0.0385 0.114"/>
-      <xacro:box_inertial xyz="0 0 -0.05" rpy="0 0 0" size="0.014 0.0385 0.114" mass="0.013"/>
-    </link>
-    <joint name="shin_r_rear" type="revolute">
-      <parent link="knee_r_passive_link"/>
-      <child link="shin_r_rear_link"/>
-      <origin xyz="-0.0335 0 0" rpy="0 0.785398163 0"/>
-      <axis xyz="0 1 0"/>
-      <limit effort="0.0" lower="-1.8588" upper="0.4974" velocity="100.0"/>
-      <dynamics damping="0" friction="0.0"/>
-      <mimic joint="shin_r_active" multiplier="1" offset="0"/>
-    </joint>
-    <xacro:if value="$(arg gazebo)">
-      <xacro:gazebo_poassive_joint name="shin_r_rear_loop" xyz="-0.0335 0 0" parent="ankle_r_pitch_link" child="shin_r_rear_link" axis="0 1 0"/>
-    </xacro:if>
     <link name="shin_r_rear_link">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -141,31 +119,55 @@
       <xacro:box_inertial xyz="0 0 -0.05" rpy="0 0 0" size="0.014 0.0445 0.114" mass="0.016"/>
     </link>
 
-    <joint name="ankle_r_pitch_front" type="revolute">
-      <parent link="shin_r_front_link"/>
+    <link name="shin_r_front_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="${MESH_DIR}/kuroko/stl/shin_r_front_passive.stl"/>
+        </geometry>
+      </visual>
+      <xacro:box_collision xyz="0 0 -0.05" rpy="0 0 0" size="0.014 0.0385 0.114"/>
+      <xacro:box_inertial xyz="0 0 -0.05" rpy="0 0 0" size="0.014 0.0385 0.114" mass="0.013"/>
+    </link>
+    <xacro:if value="$(arg gazebo)">
+      <xacro:gazebo_poassive_joint name="shin_r_front" xyz="0.0335 0 0" parent="knee_r_link" child="shin_r_front" axis="0 1 0"/>
+    </xacro:if>
+
+    <joint name="ankle_r_pitch_rear" type="revolute">
+      <parent link="shin_r_rear_link"/>
       <child link="ankle_r_pitch_link"/>
       <origin xyz="0 0 -0.1" rpy="0 -0.785398163 0"/>
       <axis xyz="0 1 0"/>
       <limit effort="0.0" lower="-0.4974" upper="1.8588" velocity="100.0"/>
       <dynamics damping="0" friction="0.0"/>
-      <mimic joint="shin_r_active" multiplier="-1" offset="0"/>
+      <mimic joint="shin_r_rear" multiplier="-1" offset="0"/>
     </joint>
     <link name="ankle_r_pitch_link">
       <visual>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <origin xyz="0.0335 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="${MESH_DIR}/kuroko/stl/ankle_r_pitch_front.stl"/>
+          <mesh filename="${MESH_DIR}/kuroko/stl/ankle_r_pitch_passive.stl"/>
         </geometry>
       </visual>
-      <xacro:box_collision xyz="-0.0285 0 -0.013" rpy="0 0 0" size="0.0855 0.0325 0.0465"/>
-      <xacro:box_inertial xyz="-0.0285 0 -0.013" rpy="0 0 0" size="0.0855 0.0325 0.0465" mass="0.104"/>
+      <xacro:box_collision xyz="0.005 0 -0.013" rpy="0 0 0" size="0.0855 0.0325 0.0465"/>
+      <xacro:box_inertial xyz="0.005 0 -0.013" rpy="0 0 0" size="0.0855 0.0325 0.0465" mass="0.104"/>
     </link>
+    <joint name="ankle_r_pitch_front" type="revolute">
+      <parent link="ankle_r_pitch_link"/>
+      <child link="shin_r_front_link"/>
+      <origin xyz="0 0 0.0335" rpy="0 0.785398163 0"/>
+      <axis xyz="0 1 0"/>
+      <limit effort="0.0" lower="-1.8588" upper="0.4974" velocity="100.0"/>
+      <dynamics damping="0" friction="0.0"/>
+      <mimic joint="shin_r_rear" multiplier="1" offset="0"/>
+    </joint>
+
     <joint name="ankle_r_roll" type="revolute">
       <parent link="ankle_r_pitch_link"/>
       <child link="ankle_r_roll_link"/>
       <origin xyz="-0.015 0 -0.027" rpy="0 0 0"/>
       <axis xyz="1 0 0"/>
-      <limit effort="3.1" lower="-0.3704" upper="1.5708" velocity="6.5"/>
+      <limit effort="3.1" lower="-1.5708" upper="0.3704" velocity="6.5"/>
       <dynamics damping="0.476923" friction="0.0"/>
     </joint>
     <link name="ankle_r_roll_link">
@@ -175,8 +177,8 @@
           <mesh filename="${MESH_DIR}/kuroko/stl/ankle_r_roll.stl"/>
         </geometry>
       </visual>
-      <xacro:box_collision xyz="0 -0.009375 -0.01175" rpy="0 0 0" size="0.0365 0.05375 0.043"/>
-      <xacro:box_inertial xyz="0 -0.009375 -0.01175" rpy="0 0 0" size="0.0365 0.05375 0.043" mass="0.136"/>
+      <xacro:box_collision xyz="0 0.009375 -0.01175" rpy="0 0 0" size="0.0365 0.05375 0.043"/>
+      <xacro:box_inertial xyz="0 0.009375 -0.01175" rpy="0 0 0" size="0.0365 0.05375 0.043" mass="0.136"/>
     </link>
     <joint name="ankle_r_yaw" type="revolute">
       <parent link="ankle_r_roll_link"/>

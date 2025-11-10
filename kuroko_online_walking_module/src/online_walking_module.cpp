@@ -45,8 +45,8 @@ OnlineWalkingModule::~OnlineWalkingModule()
 
 void OnlineWalkingModule::initializeLegJointNames()
 {
-  joint_name_ = { "hip_r_roll", "hip_r_pitch", "thigh_r_active", "shin_r_active", "ankle_r_roll", "ankle_r_yaw",
-                  "hip_l_roll", "hip_l_pitch", "thigh_l_active", "shin_l_active", "ankle_l_roll", "ankle_l_yaw" };
+  joint_name_ = { "hip_r_roll", "hip_r_pitch", "knee_r_rear", "shin_r_rear", "ankle_r_roll", "ankle_r_yaw",
+                  "hip_l_roll", "hip_l_pitch", "knee_l_rear", "shin_l_rear", "ankle_l_roll", "ankle_l_yaw" };
 }
 
 void OnlineWalkingModule::loadParametersFromYAML()
@@ -380,29 +380,29 @@ void OnlineWalkingModule::parseJointFeedbackGainData(const std::string& path)
 
   joint_feedback_[getJointIndex("hip_r_roll")].p_gain_ = doc["hip_r_roll_p_gain"].as<double>();
   joint_feedback_[getJointIndex("hip_r_pitch")].p_gain_ = doc["hip_r_pitch_p_gain"].as<double>();
-  joint_feedback_[getJointIndex("thigh_r_active")].p_gain_ = doc["thigh_r_active_p_gain"].as<double>();
-  joint_feedback_[getJointIndex("shin_r_active")].p_gain_ = doc["shin_r_active_p_gain"].as<double>();
+  joint_feedback_[getJointIndex("knee_r_rear")].p_gain_ = doc["knee_r_rear_p_gain"].as<double>();
+  joint_feedback_[getJointIndex("shin_r_rear")].p_gain_ = doc["shin_r_rear_p_gain"].as<double>();
   joint_feedback_[getJointIndex("ankle_r_roll")].p_gain_ = doc["ankle_r_roll_p_gain"].as<double>();
   joint_feedback_[getJointIndex("ankle_r_yaw")].p_gain_ = doc["ankle_r_yaw_p_gain"].as<double>();
 
   joint_feedback_[getJointIndex("hip_r_roll")].d_gain_ = doc["hip_r_roll_d_gain"].as<double>();
   joint_feedback_[getJointIndex("hip_r_pitch")].d_gain_ = doc["hip_r_pitch_d_gain"].as<double>();
-  joint_feedback_[getJointIndex("thigh_r_active")].d_gain_ = doc["thigh_r_active_d_gain"].as<double>();
-  joint_feedback_[getJointIndex("shin_r_active")].d_gain_ = doc["shin_r_active_d_gain"].as<double>();
+  joint_feedback_[getJointIndex("knee_r_rear")].d_gain_ = doc["knee_r_rear_d_gain"].as<double>();
+  joint_feedback_[getJointIndex("shin_r_rear")].d_gain_ = doc["shin_r_rear_d_gain"].as<double>();
   joint_feedback_[getJointIndex("ankle_r_roll")].d_gain_ = doc["ankle_r_roll_d_gain"].as<double>();
   joint_feedback_[getJointIndex("ankle_r_yaw")].d_gain_ = doc["ankle_r_yaw_d_gain"].as<double>();
 
   joint_feedback_[getJointIndex("hip_l_roll")].p_gain_ = doc["hip_l_roll_p_gain"].as<double>();
   joint_feedback_[getJointIndex("hip_l_pitch")].p_gain_ = doc["hip_l_pitch_p_gain"].as<double>();
-  joint_feedback_[getJointIndex("thigh_l_active")].p_gain_ = doc["thigh_l_active_p_gain"].as<double>();
-  joint_feedback_[getJointIndex("shin_l_active")].p_gain_ = doc["shin_l_active_p_gain"].as<double>();
+  joint_feedback_[getJointIndex("knee_l_rear")].p_gain_ = doc["knee_l_rear_p_gain"].as<double>();
+  joint_feedback_[getJointIndex("shin_l_rear")].p_gain_ = doc["shin_l_rear_p_gain"].as<double>();
   joint_feedback_[getJointIndex("ankle_l_roll")].p_gain_ = doc["ankle_l_roll_p_gain"].as<double>();
   joint_feedback_[getJointIndex("ankle_l_yaw")].p_gain_ = doc["ankle_l_yaw_p_gain"].as<double>();
 
   joint_feedback_[getJointIndex("hip_l_roll")].d_gain_ = doc["hip_l_roll_d_gain"].as<double>();
   joint_feedback_[getJointIndex("hip_l_pitch")].d_gain_ = doc["hip_l_pitch_d_gain"].as<double>();
-  joint_feedback_[getJointIndex("thigh_l_active")].d_gain_ = doc["thigh_l_active_d_gain"].as<double>();
-  joint_feedback_[getJointIndex("shin_l_active")].d_gain_ = doc["shin_l_active_d_gain"].as<double>();
+  joint_feedback_[getJointIndex("knee_l_rear")].d_gain_ = doc["knee_l_rear_d_gain"].as<double>();
+  joint_feedback_[getJointIndex("shin_l_rear")].d_gain_ = doc["shin_l_rear_d_gain"].as<double>();
   joint_feedback_[getJointIndex("ankle_l_roll")].d_gain_ = doc["ankle_l_roll_d_gain"].as<double>();
   joint_feedback_[getJointIndex("ankle_l_yaw")].d_gain_ = doc["ankle_l_yaw_d_gain"].as<double>();
 }
@@ -424,15 +424,15 @@ void OnlineWalkingModule::parseJointFeedforwardGainData(const std::string& path)
 
   joint_feedforward_gain_[getJointIndex("hip_r_roll")] = doc["hip_r_roll_gain"].as<double>();
   joint_feedforward_gain_[getJointIndex("hip_r_pitch")] = doc["hip_r_pitch_gain"].as<double>();
-  joint_feedforward_gain_[getJointIndex("thigh_r_active")] = doc["thigh_r_active_gain"].as<double>();
-  joint_feedforward_gain_[getJointIndex("shin_r_active")] = doc["shin_r_active_gain"].as<double>();
+  joint_feedforward_gain_[getJointIndex("knee_r_rear")] = doc["knee_r_rear_gain"].as<double>();
+  joint_feedforward_gain_[getJointIndex("shin_r_rear")] = doc["shin_r_rear_gain"].as<double>();
   joint_feedforward_gain_[getJointIndex("ankle_r_roll")] = doc["ankle_r_roll_gain"].as<double>();
   joint_feedforward_gain_[getJointIndex("ankle_r_yaw")] = doc["ankle_r_yaw_gain"].as<double>();
 
   joint_feedforward_gain_[getJointIndex("hip_l_roll")] = doc["hip_l_roll_gain"].as<double>();
   joint_feedforward_gain_[getJointIndex("hip_l_pitch")] = doc["hip_l_pitch_gain"].as<double>();
-  joint_feedforward_gain_[getJointIndex("thigh_l_active")] = doc["thigh_l_active_gain"].as<double>();
-  joint_feedforward_gain_[getJointIndex("shin_l_active")] = doc["shin_l_active_gain"].as<double>();
+  joint_feedforward_gain_[getJointIndex("knee_l_rear")] = doc["knee_l_rear_gain"].as<double>();
+  joint_feedforward_gain_[getJointIndex("shin_l_rear")] = doc["shin_l_rear_gain"].as<double>();
   joint_feedforward_gain_[getJointIndex("ankle_l_roll")] = doc["ankle_l_roll_gain"].as<double>();
   joint_feedforward_gain_[getJointIndex("ankle_l_yaw")] = doc["ankle_l_yaw_gain"].as<double>();
 }
@@ -445,14 +445,16 @@ void OnlineWalkingModule::setWholebodyBalanceMsgCallback(const std_msgs::String:
   std::string balance_gain_path = ros::package::getPath("kuroko_online_walking_module") + "/config/balance_gain.yaml";
   parseBalanceGainData(balance_gain_path);
 
-  std::string joint_feedback_gain_path = ros::package::getPath("kuroko_online_walking_module") + "/config/"
-                                                                                                 "joint_feedback_gain."
-                                                                                                 "yaml";
+  std::string joint_feedback_gain_path = ros::package::getPath("kuroko_online_walking_module") +
+                                         "/config/"
+                                         "joint_feedback_gain."
+                                         "yaml";
   parseJointFeedbackGainData(joint_feedback_gain_path);
 
-  std::string joint_feedforward_gain_path = ros::package::getPath("kuroko_online_walking_module") + "/config/"
-                                                                                                    "joint_feedforward_"
-                                                                                                    "gain.yaml";
+  std::string joint_feedforward_gain_path = ros::package::getPath("kuroko_online_walking_module") +
+                                            "/config/"
+                                            "joint_feedforward_"
+                                            "gain.yaml";
   parseJointFeedforwardGainData(joint_feedforward_gain_path);
 
   if (msg->data == "balance_on")
@@ -1186,10 +1188,9 @@ void OnlineWalkingModule::initFeedforwardControl()
   double via_time = 0.5 * (init_time + fin_time);
   double dsp_ratio = online_walking_param_.dsp_ratio;
 
-  feed_forward_trajectory_ =
-      new robotis_framework::MinimumJerkViaPoint(init_time, fin_time, via_time, dsp_ratio, zero_vector, zero_vector,
-                                                 zero_vector, zero_vector, zero_vector, zero_vector, via_pos,
-                                                 zero_vector, zero_vector);
+  feed_forward_trajectory_ = new robotis_framework::MinimumJerkViaPoint(
+      init_time, fin_time, via_time, dsp_ratio, zero_vector, zero_vector, zero_vector, zero_vector, zero_vector,
+      zero_vector, via_pos, zero_vector, zero_vector);
 }
 
 void OnlineWalkingModule::setTargetForceTorque()
@@ -1386,11 +1387,10 @@ bool OnlineWalkingModule::setBalanceControl()
 
   balance_control_.setDesiredCOBGyro(0.0, 0.0);
   balance_control_.setDesiredCOBOrientation(body_target_rpy_[0], body_target_rpy_[1]);
-  balance_control_.setDesiredFootForceTorque(balance_r_foot_force_x_, balance_r_foot_force_y_, balance_r_foot_force_z_,
-                                             balance_r_foot_torque_x_, balance_r_foot_torque_y_,
-                                             balance_r_foot_torque_z_, balance_l_foot_force_x_, balance_l_foot_force_y_,
-                                             balance_l_foot_force_z_, balance_l_foot_torque_x_,
-                                             balance_l_foot_torque_y_, balance_l_foot_torque_z_);
+  balance_control_.setDesiredFootForceTorque(
+      balance_r_foot_force_x_, balance_r_foot_force_y_, balance_r_foot_force_z_, balance_r_foot_torque_x_,
+      balance_r_foot_torque_y_, balance_r_foot_torque_z_, balance_l_foot_force_x_, balance_l_foot_force_y_,
+      balance_l_foot_force_z_, balance_l_foot_torque_x_, balance_l_foot_torque_y_, balance_l_foot_torque_z_);
   balance_control_.setDesiredPose(robot_to_body, robot_to_r_foot, robot_to_l_foot);
 
   int error;
@@ -1452,15 +1452,15 @@ bool OnlineWalkingModule::setBalanceControl()
   {
     motor_target_pos_[getJointIndex("hip_r_roll")] = r_leg_joint_target_pos[0];
     motor_target_pos_[getJointIndex("hip_r_pitch")] = r_leg_joint_target_pos[1];
-    motor_target_pos_[getJointIndex("thigh_r_active")] = r_leg_joint_target_pos[2];
-    motor_target_pos_[getJointIndex("shin_r_active")] = r_leg_joint_target_pos[3];
+    motor_target_pos_[getJointIndex("knee_r_rear")] = r_leg_joint_target_pos[2];
+    motor_target_pos_[getJointIndex("shin_r_rear")] = r_leg_joint_target_pos[3];
     motor_target_pos_[getJointIndex("ankle_r_roll")] = r_leg_joint_target_pos[4];
     motor_target_pos_[getJointIndex("ankle_r_yaw")] = r_leg_joint_target_pos[5];
 
     motor_target_pos_[getJointIndex("hip_l_roll")] = l_leg_joint_target_pos[0];
     motor_target_pos_[getJointIndex("hip_l_pitch")] = l_leg_joint_target_pos[1];
-    motor_target_pos_[getJointIndex("thigh_l_active")] = l_leg_joint_target_pos[2];
-    motor_target_pos_[getJointIndex("shin_l_active")] = l_leg_joint_target_pos[3];
+    motor_target_pos_[getJointIndex("knee_l_rear")] = l_leg_joint_target_pos[2];
+    motor_target_pos_[getJointIndex("shin_l_rear")] = l_leg_joint_target_pos[3];
     motor_target_pos_[getJointIndex("ankle_l_roll")] = l_leg_joint_target_pos[4];
     motor_target_pos_[getJointIndex("ankle_l_yaw")] = l_leg_joint_target_pos[5];
   }
@@ -1495,15 +1495,15 @@ void OnlineWalkingModule::setFeedforwardControl()
   {
     support_leg_gain[getJointIndex("hip_r_roll")] = 1.0;
     support_leg_gain[getJointIndex("hip_r_pitch")] = 1.0;
-    support_leg_gain[getJointIndex("thigh_r_active")] = 1.0;
-    support_leg_gain[getJointIndex("shin_r_active")] = 1.0;
+    support_leg_gain[getJointIndex("knee_r_rear")] = 1.0;
+    support_leg_gain[getJointIndex("shin_r_rear")] = 1.0;
     support_leg_gain[getJointIndex("ankle_r_roll")] = 1.0;
     support_leg_gain[getJointIndex("ankle_r_yaw")] = 1.0;
 
     support_leg_gain[getJointIndex("hip_l_roll")] = 0.0;
     support_leg_gain[getJointIndex("hip_l_pitch")] = 0.0;
-    support_leg_gain[getJointIndex("thigh_l_active")] = 0.0;
-    support_leg_gain[getJointIndex("shin_l_active")] = 0.0;
+    support_leg_gain[getJointIndex("knee_l_rear")] = 0.0;
+    support_leg_gain[getJointIndex("shin_l_rear")] = 0.0;
     support_leg_gain[getJointIndex("ankle_l_roll")] = 0.0;
     support_leg_gain[getJointIndex("ankle_l_yaw")] = 0.0;
   }
@@ -1511,15 +1511,15 @@ void OnlineWalkingModule::setFeedforwardControl()
   {
     support_leg_gain[getJointIndex("hip_r_roll")] = 0.0;
     support_leg_gain[getJointIndex("hip_r_pitch")] = 0.0;
-    support_leg_gain[getJointIndex("thigh_r_active")] = 0.0;
-    support_leg_gain[getJointIndex("shin_r_active")] = 0.0;
+    support_leg_gain[getJointIndex("knee_r_rear")] = 0.0;
+    support_leg_gain[getJointIndex("shin_r_rear")] = 0.0;
     support_leg_gain[getJointIndex("ankle_r_roll")] = 0.0;
     support_leg_gain[getJointIndex("ankle_r_yaw")] = 0.0;
 
     support_leg_gain[getJointIndex("hip_l_roll")] = 1.0;
     support_leg_gain[getJointIndex("hip_l_pitch")] = 1.0;
-    support_leg_gain[getJointIndex("thigh_l_active")] = 1.0;
-    support_leg_gain[getJointIndex("shin_l_active")] = 1.0;
+    support_leg_gain[getJointIndex("knee_l_rear")] = 1.0;
+    support_leg_gain[getJointIndex("shin_l_rear")] = 1.0;
     support_leg_gain[getJointIndex("ankle_l_roll")] = 1.0;
     support_leg_gain[getJointIndex("ankle_l_yaw")] = 1.0;
   }
@@ -1535,12 +1535,12 @@ void OnlineWalkingModule::gyroFeedback(const double& roll_gyro_err, const double
   balance_angle.resize(joint_name_.size(), 0.0);
 
   balance_angle[getJointIndex("hip_r_roll")] = -1.0 * roll_gyro_err * balance_gyro_roll_gain_;
-  balance_angle[getJointIndex("thigh_r_active")] = 1.0 * pitch_gyro_err * balance_gyro_pitch_gain_;
-  balance_angle[getJointIndex("shin_r_active")] = -1.0 * pitch_gyro_err * balance_gyro_x_gain_;
+  balance_angle[getJointIndex("knee_r_rear")] = 1.0 * pitch_gyro_err * balance_gyro_pitch_gain_;
+  balance_angle[getJointIndex("shin_r_rear")] = -1.0 * pitch_gyro_err * balance_gyro_x_gain_;
   balance_angle[getJointIndex("ankle_r_roll")] = -1.0 * roll_gyro_err * balance_gyro_y_gain_;
   balance_angle[getJointIndex("hip_l_roll")] = -1.0 * roll_gyro_err * balance_gyro_roll_gain_;
-  balance_angle[getJointIndex("thigh_l_active")] = -1.0 * pitch_gyro_err * balance_gyro_pitch_gain_;
-  balance_angle[getJointIndex("shin_l_active")] = 1.0 * pitch_gyro_err * balance_gyro_x_gain_;
+  balance_angle[getJointIndex("knee_l_rear")] = -1.0 * pitch_gyro_err * balance_gyro_pitch_gain_;
+  balance_angle[getJointIndex("shin_l_rear")] = 1.0 * pitch_gyro_err * balance_gyro_x_gain_;
   balance_angle[getJointIndex("ankle_l_roll")] = -1.0 * roll_gyro_err * balance_gyro_y_gain_;
 }
 

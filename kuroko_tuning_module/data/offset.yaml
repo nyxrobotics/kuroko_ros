@@ -10,13 +10,13 @@ offset:
   elbow_l_rear: 0
   hip_r_roll: -0.03
   hip_r_pitch: 0.09
-  thigh_r_active: 0.03
-  shin_r_active: 0.01
+  knee_r_rear: 0.03
+  shin_r_rear: 0.01
   ankle_r_roll: -0.04
   ankle_r_yaw: 0
   hip_l_roll: -0.01
   hip_l_pitch: -0.09
-  thigh_l_active: 0
-  shin_l_active: 0.01
+  knee_l_rear: 0
+  shin_l_rear: 0.01
   ankle_l_roll: 0.0
   ankle_l_yaw: 0

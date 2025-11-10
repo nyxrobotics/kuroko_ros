@@ -42,30 +42,30 @@ WalkingModule::WalkingModule() : control_cycle_msec_(8), debug_(false)
   // result
   result_["hip_r_roll"] = new robotis_framework::DynamixelState();
   result_["hip_r_pitch"] = new robotis_framework::DynamixelState();
-  result_["thigh_r_active"] = new robotis_framework::DynamixelState();
-  result_["shin_r_active"] = new robotis_framework::DynamixelState();
+  result_["knee_r_rear"] = new robotis_framework::DynamixelState();
+  result_["shin_r_rear"] = new robotis_framework::DynamixelState();
   result_["ankle_r_roll"] = new robotis_framework::DynamixelState();
   result_["ankle_r_yaw"] = new robotis_framework::DynamixelState();
 
   result_["hip_l_roll"] = new robotis_framework::DynamixelState();
   result_["hip_l_pitch"] = new robotis_framework::DynamixelState();
-  result_["thigh_l_active"] = new robotis_framework::DynamixelState();
-  result_["shin_l_active"] = new robotis_framework::DynamixelState();
+  result_["knee_l_rear"] = new robotis_framework::DynamixelState();
+  result_["shin_l_rear"] = new robotis_framework::DynamixelState();
   result_["ankle_l_roll"] = new robotis_framework::DynamixelState();
   result_["ankle_l_yaw"] = new robotis_framework::DynamixelState();
 
   // joint table
   joint_table_["hip_r_roll"] = 0;
   joint_table_["hip_r_pitch"] = 1;
-  joint_table_["thigh_r_active"] = 2;
-  joint_table_["shin_r_active"] = 3;
+  joint_table_["knee_r_rear"] = 2;
+  joint_table_["shin_r_rear"] = 3;
   joint_table_["ankle_r_roll"] = 4;
   joint_table_["ankle_r_yaw"] = 5;
 
   joint_table_["hip_l_roll"] = 6;
   joint_table_["hip_l_pitch"] = 7;
-  joint_table_["thigh_l_active"] = 8;
-  joint_table_["shin_l_active"] = 9;
+  joint_table_["knee_l_rear"] = 8;
+  joint_table_["shin_l_rear"] = 9;
   joint_table_["ankle_l_roll"] = 10;
   joint_table_["ankle_l_yaw"] = 11;
 
@@ -140,8 +140,8 @@ void WalkingModule::initialize(const int control_cycle_msec, robotis_framework::
   time_ = 0;
   // TODO: set joint directions from robot model
   joint_axis_direction_ << 1, -1, 1, 1, 1,
-      -1,                    // hip_r_roll, hip_r_pitch, thigh_r_active, shin_r_active, ankle_r_roll, ankle_r_yaw
-      -1, 1, -1, -1, 1, -1;  // hip_l_roll, hip_l_pitch, thigh_l_active, shin_l_active, ankle_l_roll, ankle_l_yaw
+      -1,                    // hip_r_roll, hip_r_pitch, knee_r_rear, shin_r_rear, ankle_r_roll, ankle_r_yaw
+      -1, 1, -1, -1, 1, -1;  // hip_l_roll, hip_l_pitch, knee_l_rear, shin_l_rear, ankle_l_roll, ankle_l_yaw
   init_position_ << 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0;
   init_position_ *= DEGREE2RADIAN;
 
@@ -491,7 +491,8 @@ void WalkingModule::synchronizeStepParam()
         (time_to_change / (control_cycle_msec_ / 1000.0));
     if (fabs(target_walking_param_.roll_swing_phase - synchronized_walking_param_.roll_swing_phase) <
             fabs(roll_swing_phase_step) ||
-        (target_walking_param_.roll_swing_phase - synchronized_walking_param_.roll_swing_phase) * roll_swing_phase_step <
+        (target_walking_param_.roll_swing_phase - synchronized_walking_param_.roll_swing_phase) *
+                roll_swing_phase_step <
             0)
     {
       synchronized_walking_param_.roll_swing_phase = target_walking_param_.roll_swing_phase;
@@ -945,7 +946,8 @@ void WalkingModule::processPhase(const double& time_unit)
   synchronizeTimeParam();
   applyTimeParam();
 
-  if ((time_ > l_ssp_start_time_ && time_ <= l_ssp_end_time_) || (time_ > r_ssp_start_time_ && time_ <= r_ssp_end_time_))
+  if ((time_ > l_ssp_start_time_ && time_ <= l_ssp_end_time_) ||
+      (time_ > r_ssp_start_time_ && time_ <= r_ssp_end_time_))
   {
     // Update the robot's stride length only when one foot is off the ground
     double y_step_before = synchronized_walking_param_.y_step;

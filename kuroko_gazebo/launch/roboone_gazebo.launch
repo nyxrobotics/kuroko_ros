@@ -77,14 +77,14 @@
     -J hip_l_roll -0.17453292519943295
     -J hip_r_pitch 0.0
     -J hip_r_roll -0.17453292519943295
-    -J shin_l_active 0.0
-    -J shin_r_active 0.0
+    -J shin_l_rear 0.0
+    -J shin_r_rear 0.0
     -J shoulder_l_pitch -1.1344640137963142
     -J shoulder_l_roll -1.4311699866353502
     -J shoulder_r_pitch 1.1344640137963142
     -J shoulder_r_roll 1.4311699866353502
-    -J thigh_l_active 0.0
-    -J thigh_r_active 0.0
+    -J knee_l_rear 0.0
+    -J knee_r_rear 0.0
     "/>
 
   <group unless="$(arg use_trajectory_control)">
@@ -105,14 +105,14 @@
       elbow_l_rear_position
       hip_r_roll_position
       hip_r_pitch_position
-      thigh_r_active_position
-      shin_r_active_position
+      knee_r_rear_position
+      shin_r_rear_position
       ankle_r_roll_position
       ankle_r_yaw_position
       hip_l_roll_position
       hip_l_pitch_position
-      thigh_l_active_position
-      shin_l_active_position
+      knee_l_rear_position
+      shin_l_rear_position
       ankle_l_roll_position
       ankle_l_yaw_position
       "/>
@@ -157,14 +157,14 @@
       -J hip_l_roll -0.17453292519943295
       -J hip_r_pitch 0.0
       -J hip_r_roll -0.17453292519943295
-      -J shin_l_active 0.0
-      -J shin_r_active 0.0
+      -J shin_l_rear 0.0
+      -J shin_r_rear 0.0
       -J shoulder_l_pitch -1.1344640137963142
       -J shoulder_l_roll -1.4311699866353502
       -J shoulder_r_pitch 1.1344640137963142
       -J shoulder_r_roll 1.4311699866353502
-      -J thigh_l_active 0.0
-      -J thigh_r_active 0.0
+      -J knee_l_rear 0.0
+      -J knee_r_rear 0.0
       "/>
     <group unless="$(arg use_trajectory_control)">
       <rosparam file="$(find kuroko_gazebo)/config/joint_control_position.yaml"
@@ -184,14 +184,14 @@
       elbow_l_rear_position
       hip_r_roll_position
       hip_r_pitch_position
-      thigh_r_active_position
-      shin_r_active_position
+      knee_r_rear_position
+      shin_r_rear_position
       ankle_r_roll_position
       ankle_r_yaw_position
       hip_l_roll_position
       hip_l_pitch_position
-      thigh_l_active_position
-      shin_l_active_position
+      knee_l_rear_position
+      shin_l_rear_position
       ankle_l_roll_position
       ankle_l_yaw_position
       "/>

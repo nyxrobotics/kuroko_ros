@@ -18,13 +18,13 @@ dynamixel | /dev/ttyDynamixel | 21  | XM430-W210     | 2.0      | elbow_l_front 
 dynamixel | /dev/ttyDynamixel | 20  | XM430-W210     | 2.0      | elbow_l_rear         | present_position, position_p_gain, position_i_gain, position_d_gain
 dynamixel | /dev/ttyDynamixel | 2   | XM430-W210     | 2.0      | hip_r_roll           | present_position, position_p_gain, position_i_gain, position_d_gain
 dynamixel | /dev/ttyDynamixel | 6   | XM430-W210     | 2.0      | hip_r_pitch          | present_position, position_p_gain, position_i_gain, position_d_gain
-dynamixel | /dev/ttyDynamixel | 7   | XM540-W150     | 2.0      | thigh_r_active       | present_position, position_p_gain, position_i_gain, position_d_gain
-dynamixel | /dev/ttyDynamixel | 8   | XM540-W150     | 2.0      | shin_r_active        | present_position, position_p_gain, position_i_gain, position_d_gain
+dynamixel | /dev/ttyDynamixel | 7   | XM540-W150     | 2.0      | knee_r_rear       | present_position, position_p_gain, position_i_gain, position_d_gain
+dynamixel | /dev/ttyDynamixel | 8   | XM540-W150     | 2.0      | shin_r_rear        | present_position, position_p_gain, position_i_gain, position_d_gain
 dynamixel | /dev/ttyDynamixel | 9   | XM430-W210     | 2.0      | ankle_r_roll         | present_position, position_p_gain, position_i_gain, position_d_gain
 dynamixel | /dev/ttyDynamixel | 10  | XM430-W210     | 2.0      | ankle_r_yaw          | present_position, position_p_gain, position_i_gain, position_d_gain
 dynamixel | /dev/ttyDynamixel | 3   | XM430-W210     | 2.0      | hip_l_roll           | present_position, position_p_gain, position_i_gain, position_d_gain
 dynamixel | /dev/ttyDynamixel | 11  | XM430-W210     | 2.0      | hip_l_pitch          | present_position, position_p_gain, position_i_gain, position_d_gain
-dynamixel | /dev/ttyDynamixel | 12  | XM540-W150     | 2.0      | thigh_l_active       | present_position, position_p_gain, position_i_gain, position_d_gain
-dynamixel | /dev/ttyDynamixel | 13  | XM540-W150     | 2.0      | shin_l_active        | present_position, position_p_gain, position_i_gain, position_d_gain
+dynamixel | /dev/ttyDynamixel | 12  | XM540-W150     | 2.0      | knee_l_rear       | present_position, position_p_gain, position_i_gain, position_d_gain
+dynamixel | /dev/ttyDynamixel | 13  | XM540-W150     | 2.0      | shin_l_rear        | present_position, position_p_gain, position_i_gain, position_d_gain
 dynamixel | /dev/ttyDynamixel | 14  | XM430-W210     | 2.0      | ankle_l_roll         | present_position, position_p_gain, position_i_gain, position_d_gain
 dynamixel | /dev/ttyDynamixel | 15  | XM430-W210     | 2.0      | ankle_l_yaw          | present_position, position_p_gain, position_i_gain, position_d_gain

@@ -7,9 +7,9 @@
       gazebo_hw_interface="${gazebo_hw_interface}"/>
     <xacro:default_motor_transmission joint_name="hip_l_pitch"
       gazebo_hw_interface="${gazebo_hw_interface}"/>
-    <xacro:default_motor_transmission joint_name="thigh_l_active"
+    <xacro:default_motor_transmission joint_name="knee_l_rear"
       gazebo_hw_interface="${gazebo_hw_interface}"/>
-    <xacro:default_motor_transmission joint_name="shin_l_active"
+    <xacro:default_motor_transmission joint_name="shin_l_rear"
       gazebo_hw_interface="${gazebo_hw_interface}"/>
     <xacro:default_motor_transmission joint_name="ankle_l_roll"
       gazebo_hw_interface="${gazebo_hw_interface}"/>
@@ -34,8 +34,8 @@
       <selfCollide>false</selfCollide>
       <dampingFactor>0</dampingFactor>
     </gazebo>
-    <xacro:default_link_collision link_name="thigh_l_active_link" friction="0.0"/>
-    <xacro:default_link_collision link_name="shin_l_active_link" friction="0.01"/>
+    <xacro:default_link_collision link_name="knee_l_rear_link" friction="0.0"/>
+    <xacro:default_link_collision link_name="shin_l_rear_link" friction="0.01"/>
     <xacro:default_link_collision link_name="thigh_l_middle_passive_link" friction="0.0"/>
     <xacro:default_link_collision link_name="thigh_l_rear_passive_link" friction="0.0"/>
     <xacro:default_link_collision link_name="knee_l_passive_link" friction="0.01"/>

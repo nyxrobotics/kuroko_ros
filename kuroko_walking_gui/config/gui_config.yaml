@@ -10,14 +10,14 @@ id_joint:
   9: elbow_l_rear
   10: hip_r_roll
   11: hip_r_pitch
-  12: thigh_r_active
-  13: shin_r_active
+  12: knee_r_rear
+  13: shin_r_rear
   14: ankle_r_roll
   15: ankle_r_yaw
   16: hip_l_roll
   17: hip_l_pitch
-  18: thigh_l_active
-  19: shin_l_active
+  18: knee_l_rear
+  19: shin_l_rear
   20: ankle_l_roll
   21: ankle_l_yaw
 module_list:

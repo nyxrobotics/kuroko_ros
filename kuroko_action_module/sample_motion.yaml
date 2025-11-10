@@ -16,14 +16,14 @@ sections:
         - elbow_l_rear
         - hip_r_roll
         - hip_r_pitch
-        - thigh_r_active
-        - shin_r_active
+        - knee_r_rear
+        - shin_r_rear
         - ankle_r_roll
         - ankle_r_yaw
         - hip_l_roll
         - hip_l_pitch
-        - thigh_l_active
-        - shin_l_active
+        - knee_l_rear
+        - shin_l_rear
         - ankle_l_roll
         - ankle_l_yaw
       points:
@@ -49,14 +49,14 @@ sections:
         - elbow_l_rear
         - hip_r_roll
         - hip_r_pitch
-        - thigh_r_active
-        - shin_r_active
+        - knee_r_rear
+        - shin_r_rear
         - ankle_r_roll
         - ankle_r_yaw
         - hip_l_roll
         - hip_l_pitch
-        - thigh_l_active
-        - shin_l_active
+        - knee_l_rear
+        - shin_l_rear
         - ankle_l_roll
         - ankle_l_yaw
       points:
@@ -82,14 +82,14 @@ sections:
         - elbow_l_rear
         - hip_r_roll
         - hip_r_pitch
-        - thigh_r_active
-        - shin_r_active
+        - knee_r_rear
+        - shin_r_rear
         - ankle_r_roll
         - ankle_r_yaw
         - hip_l_roll
         - hip_l_pitch
-        - thigh_l_active
-        - shin_l_active
+        - knee_l_rear
+        - shin_l_rear
         - ankle_l_roll
         - ankle_l_yaw
       points:
@@ -115,14 +115,14 @@ sections:
         - elbow_l_rear
         - hip_r_roll
         - hip_r_pitch
-        - thigh_r_active
-        - shin_r_active
+        - knee_r_rear
+        - shin_r_rear
         - ankle_r_roll
         - ankle_r_yaw
         - hip_l_roll
         - hip_l_pitch
-        - thigh_l_active
-        - shin_l_active
+        - knee_l_rear
+        - shin_l_rear
         - ankle_l_roll
         - ankle_l_yaw
       points:

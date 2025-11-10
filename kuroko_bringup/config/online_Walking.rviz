@@ -169,7 +169,7 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        shin_l_active_link:
+        shin_l_rear_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -184,7 +184,7 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        shin_r_active_link:
+        shin_r_rear_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -219,7 +219,7 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        thigh_l_active_link:
+        knee_l_rear_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -238,7 +238,7 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-        thigh_r_active_link:
+        knee_r_rear_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false

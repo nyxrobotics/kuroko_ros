@@ -40,12 +40,12 @@ hip_r_roll_position:
 hip_r_pitch_position:
   type: position_controllers/JointPositionController
   joint: hip_r_pitch
-thigh_r_active_position:
+knee_r_rear_position:
   type: position_controllers/JointPositionController
-  joint: thigh_r_active
-shin_r_active_position:
+  joint: knee_r_rear
+shin_r_rear_position:
   type: position_controllers/JointPositionController
-  joint: shin_r_active
+  joint: shin_r_rear
 ankle_r_roll_position:
   type: position_controllers/JointPositionController
   joint: ankle_r_roll
@@ -59,12 +59,12 @@ hip_l_roll_position:
 hip_l_pitch_position:
   type: position_controllers/JointPositionController
   joint: hip_l_pitch
-thigh_l_active_position:
+knee_l_rear_position:
   type: position_controllers/JointPositionController
-  joint: thigh_l_active
-shin_l_active_position:
+  joint: knee_l_rear
+shin_l_rear_position:
   type: position_controllers/JointPositionController
-  joint: shin_l_active
+  joint: shin_l_rear
 ankle_l_roll_position:
   type: position_controllers/JointPositionController
   joint: ankle_l_roll

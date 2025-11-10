@@ -97,7 +97,7 @@ hip_r_pitch:
   position_p_gain: 900
   return_delay_time: 1
 
-thigh_r_active:
+knee_r_rear:
   max_position_limit: 4095
   min_position_limit: 0
   operating_mode: 3
@@ -106,7 +106,7 @@ thigh_r_active:
   position_p_gain: 800
   return_delay_time: 1
 
-shin_r_active:
+shin_r_rear:
   max_position_limit: 4095
   min_position_limit: 0
   operating_mode: 3
@@ -151,7 +151,7 @@ hip_l_pitch:
   position_p_gain: 900
   return_delay_time: 1
 
-thigh_l_active:
+knee_l_rear:
   max_position_limit: 4095
   min_position_limit: 0
   operating_mode: 3
@@ -160,7 +160,7 @@ thigh_l_active:
   position_p_gain: 800
   return_delay_time: 1
 
-shin_l_active:
+shin_l_rear:
   max_position_limit: 4095
   min_position_limit: 0
   operating_mode: 3

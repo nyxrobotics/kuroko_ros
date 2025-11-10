@@ -63,14 +63,14 @@ void ActionModule::initialize(const int control_cycle_msec, robotis_framework::R
   leg_joint_names_.clear();
   leg_joint_names_.push_back("hip_r_roll");
   leg_joint_names_.push_back("hip_r_pitch");
-  leg_joint_names_.push_back("thigh_r_active");
-  leg_joint_names_.push_back("shin_r_active");
+  leg_joint_names_.push_back("knee_r_rear");
+  leg_joint_names_.push_back("shin_r_rear");
   leg_joint_names_.push_back("ankle_r_roll");
   leg_joint_names_.push_back("ankle_r_yaw");
   leg_joint_names_.push_back("hip_l_roll");
   leg_joint_names_.push_back("hip_l_pitch");
-  leg_joint_names_.push_back("thigh_l_active");
-  leg_joint_names_.push_back("shin_l_active");
+  leg_joint_names_.push_back("knee_l_rear");
+  leg_joint_names_.push_back("shin_l_rear");
   leg_joint_names_.push_back("ankle_l_roll");
   leg_joint_names_.push_back("ankle_l_yaw");
   for (const auto& joint_name : leg_joint_names_)
@@ -78,7 +78,8 @@ void ActionModule::initialize(const int control_cycle_msec, robotis_framework::R
     if (std::find(animation_joint_names_.begin(), animation_joint_names_.end(), joint_name) ==
         animation_joint_names_.end())
     {
-      ROS_WARN_STREAM("[ActionModule] Leg joint " << joint_name << " not found in the animation joint names. Removing.");
+      ROS_WARN_STREAM("[ActionModule] Leg joint " << joint_name
+                                                  << " not found in the animation joint names. Removing.");
       leg_joint_names_.erase(std::remove(leg_joint_names_.begin(), leg_joint_names_.end(), joint_name),
                              leg_joint_names_.end());
     }
@@ -112,8 +113,9 @@ void ActionModule::initialize(const int control_cycle_msec, robotis_framework::R
     if (joint_name_to_dxl_id_.find(joint_name) == joint_name_to_dxl_id_.end())
     {
       ROS_WARN_STREAM("[ActionModule] Joint '" << joint_name << "' not found in the robot. Removing from the list.");
-      animation_joint_names_.erase(std::remove(animation_joint_names_.begin(), animation_joint_names_.end(), joint_name),
-                                   animation_joint_names_.end());
+      animation_joint_names_.erase(
+          std::remove(animation_joint_names_.begin(), animation_joint_names_.end(), joint_name),
+          animation_joint_names_.end());
     }
   }
   ROS_INFO_STREAM("[ActionModule] Initialization complete");
@@ -325,9 +327,9 @@ bool ActionModule::getLegRemainingTimeServiceCallback(kuroko_walking_module_msgs
         if (it != joint_name_to_dxl_id_.end())
         {
           int dxl_id = it->second;
-          size_t index = std::distance(current_trajectory_.joint_names.begin(),
-                                       std::find(current_trajectory_.joint_names.begin(),
-                                                 current_trajectory_.joint_names.end(), joint_name));
+          size_t index = std::distance(
+              current_trajectory_.joint_names.begin(),
+              std::find(current_trajectory_.joint_names.begin(), current_trajectory_.joint_names.end(), joint_name));
           leg_movement += fabs(point.positions[index] - result_[joint_name]->goal_position_);
         }
       }
@@ -547,9 +549,8 @@ void ActionModule::initialPose()
   ROS_INFO("Moving to initial pose");
 }
 
-trajectory_msgs::JointTrajectory
-ActionModule::createJointTrajectory(const std::vector<animation_system::FrameData>& frames,
-                                    const double control_cycle_msec)
+trajectory_msgs::JointTrajectory ActionModule::createJointTrajectory(
+    const std::vector<animation_system::FrameData>& frames, const double control_cycle_msec)
 {
   trajectory_msgs::JointTrajectory trajectory;
   trajectory.joint_names = animation_joint_names_;

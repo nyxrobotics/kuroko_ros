@@ -103,7 +103,7 @@ joints:
     - 0.0
     - 0.0
     position: -0.1413716694115407
-  shin_l_active:
+  shin_l_rear:
     enable: true
     feedback: ''
     pid:
@@ -111,7 +111,7 @@ joints:
     - 0.0
     - 0.0
     position: 0.4363323129985824
-  shin_r_active:
+  shin_r_rear:
     enable: true
     feedback: ''
     pid:
@@ -151,7 +151,7 @@ joints:
     - 0.0
     - 0.0
     position: -0.08726646259971647
-  thigh_l_active:
+  knee_l_rear:
     enable: true
     feedback: ''
     pid:
@@ -159,7 +159,7 @@ joints:
     - 0.0
     - 0.0
     position: 0.08726646259971647
-  thigh_r_active:
+  knee_r_rear:
     enable: true
     feedback: ''
     pid:
@@ -181,14 +181,14 @@ speed_scale:
   hip_l_roll: 1.0
   hip_r_pitch: 1.0
   hip_r_roll: 1.0
-  shin_l_active: 1.0
-  shin_r_active: 1.0
+  shin_l_rear: 1.0
+  shin_r_rear: 1.0
   shoulder_l_pitch: 1.0
   shoulder_l_roll: 1.0
   shoulder_r_pitch: 1.0
   shoulder_r_roll: 1.0
-  thigh_l_active: 1.0
-  thigh_r_active: 1.0
+  knee_l_rear: 1.0
+  knee_r_rear: 1.0
 time:
   move_duration: 0.02
   wait_duration: 0.0

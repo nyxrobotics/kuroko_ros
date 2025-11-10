@@ -1,36 +1,36 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
   <xacro:macro name="body_xacro">
-    <!-- waist -->
+    
     <link name="waist_link">
       <visual>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <origin xyz="0 0 0" rpy="0 0 0" />
         <geometry>
-          <mesh filename="${MESH_DIR}/kuroko/stl/waist.stl"/>
+          <mesh filename="${MESH_DIR}/kuroko/stl/waist.stl" />
         </geometry>
       </visual>
-      <xacro:box_collision xyz="0.0084 0.0000 -0.0483" rpy="0 0 0" size="0.1247 0.0560 0.0965"/>
-      <xacro:box_inertial xyz="0.0084 0.0000 -0.0483" rpy="0 0 0" size="0.1247 0.0560 0.0965" mass="0.388"/>
+      <xacro:box_collision xyz="0.0084 0.0000 -0.0483" rpy="0 0 0" size="0.1247 0.0560 0.0965" />
+      <xacro:box_inertial xyz="0.0084 0.0000 -0.0483" rpy="0 0 0" size="0.1247 0.0560 0.0965" mass="0.388" />
     </link>
-    <!-- Joint1 -->
+    
     <joint name="chest" type="revolute">
-      <parent link="waist_link"/>
-      <child link="chest_link"/>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <axis xyz="0 0 1"/>
-      <limit effort="3.1" lower="-3.1" upper="3.1" velocity="6.5"/>
-      <dynamics damping="4769.0" friction="0.0"/>
+      <parent link="waist_link" />
+      <child link="chest_link" />
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <axis xyz="0 0 1" />
+      <limit effort="3.1" lower="-3.1" upper="3.1" velocity="6.5" />
+      <dynamics damping="0.476923" friction="0.0" />
     </joint>
-    <!-- chest -->
+    
     <link name="chest_link">
       <visual>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <origin xyz="0 0 0" rpy="0 0 0" />
         <geometry>
-          <mesh filename="${MESH_DIR}/kuroko/stl/chest.stl"/>
+          <mesh filename="${MESH_DIR}/kuroko/stl/chest.stl" />
         </geometry>
       </visual>
-      <xacro:box_collision xyz="0.0120 0.0000 0.0635" rpy="0 0 0" size="0.1480 0.2560 0.1364"/>
-      <xacro:box_inertial xyz="0.0120 0.0000 0.0635" rpy="0 0 0" size="0.1480 0.2560 0.1364" mass="0.806"/>
+      <xacro:box_collision xyz="0.0120 0.0000 0.0635" rpy="0 0 0" size="0.1480 0.2560 0.1364" />
+      <xacro:box_inertial xyz="0.0120 0.0000 0.0635" rpy="0 0 0" size="0.1480 0.2560 0.1364" mass="0.806" />
     </link>
   </xacro:macro>
 </robot>

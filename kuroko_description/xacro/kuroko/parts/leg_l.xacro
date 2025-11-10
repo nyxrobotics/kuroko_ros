@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
   <xacro:macro name="leg_l_xacro" params="gazebo:=false">
-    <!-- Link conencts from body. Hip first. -->
+
     <joint name="hip_l_roll" type="revolute">
       <parent link="waist_link"/>
       <child link="hip_l_roll_link"/>
       <origin xyz="0 0 -0.08425" rpy="0 0 0"/>
-      <axis xyz="-1 0 0"/>
-      <limit effort="3.1" lower="-0.5550" upper="1.8640" velocity="6.5"/>
-      <dynamics damping="0.4796" friction="0.0"/>
+      <axis xyz="1 0 0"/>
+      <limit effort="3.1" lower="-1.864" upper="0.555" velocity="6.5"/>
+      <dynamics damping="0.476923" friction="0.0"/>
     </joint>
     <link name="hip_l_roll_link">
       <visual>
@@ -18,8 +18,7 @@
         </geometry>
       </visual>
       <xacro:box_collision xyz="0.00125 0.0065 -0.004125" rpy="0 0 0" size="0.092 0.041 0.03625"/>
-      <xacro:box_inertial xyz="0.00125 0.0065 -0.004125" rpy="0 0 0" size="0.092 0.041 0.03625"
-        mass="0.026"/>
+      <xacro:box_inertial xyz="0.00125 0.0065 -0.004125" rpy="0 0 0" size="0.092 0.041 0.03625" mass="0.026"/>
     </link>
     <joint name="hip_l_pitch" type="revolute">
       <parent link="hip_l_roll_link"/>
@@ -27,7 +26,7 @@
       <origin xyz="0 0.027 0" rpy="0 0 0"/>
       <axis xyz="0 1 0"/>
       <limit effort="3.1" lower="-3.1" upper="3.1" velocity="6.9"/>
-      <dynamics damping="1.290" friction="0.0"/>
+      <dynamics damping="0.449275" friction="0.0"/>
     </joint>
     <link name="hip_l_pitch_link">
       <visual>
@@ -37,16 +36,15 @@
         </geometry>
       </visual>
       <xacro:box_collision xyz="-0.00175 0.049 -0.015" rpy="0 0 0" size="0.067 0.098 0.0585"/>
-      <xacro:box_inertial xyz="-0.00175 0.049 -0.015" rpy="0 0 0" size="0.067 0.098 0.0585"
-        mass="0.478"/>
+      <xacro:box_inertial xyz="-0.00175 0.049 -0.015" rpy="0 0 0" size="0.067 0.098 0.0585" mass="0.478"/>
     </link>
     <joint name="thigh_l_active" type="revolute">
       <parent link="hip_l_pitch_link"/>
       <child link="thigh_l_active_link"/>
       <origin xyz="0.015 0.02925 -0.0305" rpy="0 -0.785398163 0"/>
-      <axis xyz="0 -1 0"/>
-      <limit effort="8.9" lower="-1.8588" upper="0.4974" velocity="6.9"/>
-      <dynamics damping="1.290" friction="0.0"/>
+      <axis xyz="0 1 0"/>
+      <limit effort="8.9" lower="-0.4974" upper="1.8588" velocity="6.9"/>
+      <dynamics damping="1.289855" friction="0.0"/>
     </joint>
     <link name="thigh_l_active_link">
       <visual>
@@ -62,9 +60,9 @@
       <parent link="hip_l_pitch_link"/>
       <child link="shin_l_active_link"/>
       <origin xyz="-0.0185 0.02925 -0.0305" rpy="0 1.047197551 0"/>
-      <axis xyz="0 -1 0"/>
-      <limit effort="8.9" lower="-0.4974" upper="1.8588" velocity="6.9"/>
-      <dynamics damping="1.290" friction="0.0"/>
+      <axis xyz="0 1 0"/>
+      <limit effort="8.9" lower="-1.8588" upper="0.4974" velocity="6.9"/>
+      <dynamics damping="1.289855" friction="0.0"/>
     </joint>
     <link name="shin_l_active_link">
       <visual>
@@ -74,22 +72,20 @@
         </geometry>
       </visual>
       <xacro:box_collision xyz="-0.004745 0 -0.015" rpy="0 0 0" size="0.02349 0.0445 0.044"/>
-      <xacro:box_inertial xyz="-0.004745 0 -0.015" rpy="0 0 0" size="0.02349 0.0445 0.044"
-        mass="0.008"/>
+      <xacro:box_inertial xyz="-0.004745 0 -0.015" rpy="0 0 0" size="0.02349 0.0445 0.044" mass="0.008"/>
     </link>
 
     <joint name="thigh_l_middle_passive" type="revolute">
       <parent link="hip_l_pitch_link"/>
       <child link="thigh_l_middle_passive_link"/>
       <origin xyz="-0.0185 0.02925 -0.0305" rpy="0 -0.785398163 0"/>
-      <axis xyz="0 -1 0"/>
-      <limit effort="0.0" lower="-3.1" upper="3.1" velocity="10.0"/>
-      <dynamics damping="0.0" friction="0.0"/>
+      <axis xyz="0 1 0"/>
+      <limit effort="0.0" lower="-3.1" upper="3.1" velocity="100.0"/>
+      <dynamics damping="0" friction="0.0"/>
       <mimic joint="thigh_l_active" multiplier="1" offset="0"/>
     </joint>
     <xacro:if value="$(arg gazebo)">
-      <xacro:gazebo_poassive_joint name="thigh_l_middle_passive_loop" xyz="-0.0335 0 0"
-        parent="knee_l_passive_link" child="thigh_l_middle_passive_link" axis="0 -1 0"/>
+      <xacro:gazebo_poassive_joint name="thigh_l_middle_passive_loop" xyz="-0.0335 0 0" parent="knee_l_passive_link" child="thigh_l_middle_passive_link" axis="0 1 0"/>
     </xacro:if>
     <link name="thigh_l_middle_passive_link">
       <visual>
@@ -107,9 +103,9 @@
         <parent link="shin_l_active_link"/>
         <child link="thigh_l_rear_passive_mimic_link"/>
         <origin xyz="0 0 -0.03" rpy="0 -1.832597551 0"/>
-        <axis xyz="0 -1 0"/>
+        <axis xyz="0 1 0"/>
         <limit effort="0.0" lower="-3.1" upper="3.1" velocity="100.0"/>
-        <dynamics damping="0.0" friction="0.0"/>
+        <dynamics damping="0" friction="0.0"/>
         <mimic joint="shin_l_active" multiplier="-1" offset="0"/>
       </joint>
       <link name="thigh_l_rear_passive_mimic_link"/>
@@ -117,9 +113,9 @@
         <parent link="thigh_l_rear_passive_mimic_link"/>
         <child link="thigh_l_rear_passive_link"/>
         <origin xyz="0 0 0" rpy="0 0 0"/>
-        <axis xyz="0 -1 0"/>
+        <axis xyz="0 1 0"/>
         <limit effort="0.0" lower="-3.1" upper="3.1" velocity="100.0"/>
-        <dynamics damping="0.0" friction="0.0"/>
+        <dynamics damping="0" friction="0.0"/>
         <mimic joint="thigh_l_active" multiplier="1" offset="0"/>
       </joint>
     </xacro:unless>
@@ -128,12 +124,11 @@
         <parent link="shin_l_active_link"/>
         <child link="thigh_l_rear_passive_link"/>
         <origin xyz="0 0 -0.03" rpy="0 -1.832597551 0"/>
-        <axis xyz="0 -1 0"/>
-        <limit effort="0.0" lower="-1.5708" upper="0.9948" velocity="100.0"/>
-        <dynamics damping="0.0" friction="0.0"/>
+        <axis xyz="0 1 0"/>
+        <limit effort="0.0" lower="-0.9948" upper="1.5708" velocity="100.0"/>
+        <dynamics damping="0" friction="0.0"/>
       </joint>
-      <xacro:gazebo_poassive_joint name="thigh_l_rear_passive_loop" xyz="-0.00765471 0 -0.02897777"
-        parent="shin_l_rear_passive_link" child="thigh_l_rear_passive_link" axis="0 -1 0"/>
+      <xacro:gazebo_poassive_joint name="thigh_l_rear_passive_loop" xyz="-0.00765471 0 -0.02897777" parent="shin_l_rear_passive_link" child="thigh_l_rear_passive_link" axis="0 1 0"/>
     </xacro:if>
     <link name="thigh_l_rear_passive_link">
       <visual>
@@ -150,9 +145,9 @@
       <parent link="thigh_l_active_link"/>
       <child link="knee_l_passive_link"/>
       <origin xyz="0 0 -0.1" rpy="0 0.785398163 0"/>
-      <axis xyz="0 -1 0"/>
-      <limit effort="0.0" lower="-0.4974" upper="1.8588" velocity="100.0"/>
-      <dynamics damping="0.0" friction="0.0"/>
+      <axis xyz="0 1 0"/>
+      <limit effort="0.0" lower="-1.8588" upper="0.4974" velocity="100.0"/>
+      <dynamics damping="0" friction="0.0"/>
       <mimic joint="thigh_l_active" multiplier="-1" offset="0"/>
     </joint>
     <link name="knee_l_passive_link">
@@ -169,9 +164,9 @@
       <parent link="knee_l_passive_link"/>
       <child link="shin_l_front_passive_link"/>
       <origin xyz="0 0 0" rpy="0 0.785398163 0"/>
-      <axis xyz="0 -1 0"/>
-      <limit effort="0.0" lower="-0.4974" upper="1.8588" velocity="100.0"/>
-      <dynamics damping="0.0" friction="0.0"/>
+      <axis xyz="0 1 0"/>
+      <limit effort="0.0" lower="-1.8588" upper="0.4974" velocity="100.0"/>
+      <dynamics damping="0" friction="0.0"/>
       <mimic joint="shin_l_active" multiplier="1" offset="0"/>
     </joint>
     <link name="shin_l_front_passive_link">
@@ -188,14 +183,13 @@
       <parent link="knee_l_passive_link"/>
       <child link="shin_l_rear_passive_link"/>
       <origin xyz="-0.0335 0 0" rpy="0 0.785398163 0"/>
-      <axis xyz="0 -1 0"/>
-      <limit effort="0.0" lower="-0.4974" upper="1.8588" velocity="100.0"/>
-      <dynamics damping="0.0" friction="0.0"/>
+      <axis xyz="0 1 0"/>
+      <limit effort="0.0" lower="-1.8588" upper="0.4974" velocity="100.0"/>
+      <dynamics damping="0" friction="0.0"/>
       <mimic joint="shin_l_active" multiplier="1" offset="0"/>
     </joint>
     <xacro:if value="$(arg gazebo)">
-      <xacro:gazebo_poassive_joint name="shin_l_rear_passive_loop" xyz="-0.0335 0 0"
-        parent="ankle_l_pitch_passive_link" child="shin_l_rear_passive_link" axis="0 -1 0"/>
+      <xacro:gazebo_poassive_joint name="shin_l_rear_passive_loop" xyz="-0.0335 0 0" parent="ankle_l_pitch_passive_link" child="shin_l_rear_passive_link" axis="0 1 0"/>
     </xacro:if>
     <link name="shin_l_rear_passive_link">
       <visual>
@@ -212,9 +206,9 @@
       <parent link="shin_l_front_passive_link"/>
       <child link="ankle_l_pitch_passive_link"/>
       <origin xyz="0 0 -0.1" rpy="0 -0.785398163 0"/>
-      <axis xyz="0 -1 0"/>
-      <limit effort="0.0" lower="-1.8588" upper="0.4974" velocity="100.0"/>
-      <dynamics damping="0.0" friction="0.0"/>
+      <axis xyz="0 1 0"/>
+      <limit effort="0.0" lower="-0.4974" upper="1.8588" velocity="100.0"/>
+      <dynamics damping="0" friction="0.0"/>
       <mimic joint="shin_l_active" multiplier="-1" offset="0"/>
     </joint>
     <link name="ankle_l_pitch_passive_link">
@@ -225,8 +219,7 @@
         </geometry>
       </visual>
       <xacro:box_collision xyz="-0.0285 0 -0.013" rpy="0 0 0" size="0.0855 0.0325 0.0465"/>
-      <xacro:box_inertial xyz="-0.0285 0 -0.013" rpy="0 0 0" size="0.0855 0.0325 0.0465"
-        mass="0.104"/>
+      <xacro:box_inertial xyz="-0.0285 0 -0.013" rpy="0 0 0" size="0.0855 0.0325 0.0465" mass="0.104"/>
     </link>
     <joint name="ankle_l_roll" type="revolute">
       <parent link="ankle_l_pitch_passive_link"/>
@@ -234,7 +227,7 @@
       <origin xyz="-0.015 0 -0.027" rpy="0 0 0"/>
       <axis xyz="1 0 0"/>
       <limit effort="3.1" lower="-1.5708" upper="0.3704" velocity="6.5"/>
-      <dynamics damping="0.4769" friction="0.0"/>
+      <dynamics damping="0.476923" friction="0.0"/>
     </joint>
     <link name="ankle_l_roll_link">
       <visual>
@@ -244,16 +237,15 @@
         </geometry>
       </visual>
       <xacro:box_collision xyz="0 0.009375 -0.01175" rpy="0 0 0" size="0.0365 0.05375 0.043"/>
-      <xacro:box_inertial xyz="0 0.009375 -0.01175" rpy="0 0 0" size="0.0365 0.05375 0.043"
-        mass="0.136"/>
+      <xacro:box_inertial xyz="0 0.009375 -0.01175" rpy="0 0 0" size="0.0365 0.05375 0.043" mass="0.136"/>
     </link>
     <joint name="ankle_l_yaw" type="revolute">
       <parent link="ankle_l_roll_link"/>
       <child link="ankle_l_yaw_link"/>
       <origin xyz="0 0 -0.03825" rpy="0 0 0"/>
-      <axis xyz="0 0 -1"/>
+      <axis xyz="0 0 1"/>
       <limit effort="3.1" lower="-3.1" upper="3.1" velocity="6.5"/>
-      <dynamics damping="0.4769" friction="0.0"/>
+      <dynamics damping="0.476923" friction="0.0"/>
     </joint>
     <link name="ankle_l_yaw_link">
       <visual>

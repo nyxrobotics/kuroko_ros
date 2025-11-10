@@ -46,6 +46,7 @@
       <axis xyz="0 1 0"/>
       <limit effort="0" lower="-0.4974" upper="1.8588" velocity="100"/>
       <dynamics damping="0" friction="0.0"/>
+      <mimic joint="knee_l_rear" multiplier="-1" offset="0"/>
     </joint>
     <link name="thigh_l_rear_link">
       <visual>
@@ -65,7 +66,7 @@
       <axis xyz="0 1 0"/>
       <limit effort="0" lower="-0.4974" upper="1.8588" velocity="100"/>
       <dynamics damping="0" friction="0"/>
-      <mimic joint="thigh_l_rear" multiplier="1" offset="0"/>
+      <mimic joint="knee_l_rear" multiplier="-1" offset="0"/>
     </joint>
     <link name="thigh_l_front_link">
       <visual>
@@ -121,13 +122,13 @@
 
     <link name="shin_l_front_link">
       <visual>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <origin xyz="0 0 0.1" rpy="0 0 0"/>
         <geometry>
           <mesh filename="${MESH_DIR}/kuroko/stl/shin_r_front_passive.stl"/>
         </geometry>
       </visual>
-      <xacro:box_collision xyz="0 0 -0.05" rpy="0 0 0" size="0.014 0.0385 0.114"/>
-      <xacro:box_inertial xyz="0 0 -0.05" rpy="0 0 0" size="0.014 0.0385 0.114" mass="0.013"/>
+      <xacro:box_collision xyz="0 0 0.05" rpy="0 0 0" size="0.014 0.0385 0.114"/>
+      <xacro:box_inertial xyz="0 0 0.05" rpy="0 0 0" size="0.014 0.0385 0.114" mass="0.013"/>
     </link>
     <xacro:if value="$(arg gazebo)">
       <xacro:gazebo_poassive_joint name="shin_l_front" xyz="0.0335 0 0" parent="knee_l_link" child="shin_l_front" axis="0 1 0"/>
@@ -155,7 +156,7 @@
     <joint name="ankle_l_pitch_front" type="revolute">
       <parent link="ankle_l_pitch_link"/>
       <child link="shin_l_front_link"/>
-      <origin xyz="0 0 0.0335" rpy="0 0.785398163 0"/>
+      <origin xyz="0.0335 0 0" rpy="0 0.785398163 0"/>
       <axis xyz="0 1 0"/>
       <limit effort="0.0" lower="-1.8588" upper="0.4974" velocity="100.0"/>
       <dynamics damping="0" friction="0.0"/>
@@ -165,7 +166,7 @@
     <joint name="ankle_l_roll" type="revolute">
       <parent link="ankle_l_pitch_link"/>
       <child link="ankle_l_roll_link"/>
-      <origin xyz="-0.015 0 -0.027" rpy="0 0 0"/>
+      <origin xyz="0.0185 0 -0.027" rpy="0 0 0"/>
       <axis xyz="1 0 0"/>
       <limit effort="3.1" lower="-1.5708" upper="0.3704" velocity="6.5"/>
       <dynamics damping="0.476923" friction="0.0"/>

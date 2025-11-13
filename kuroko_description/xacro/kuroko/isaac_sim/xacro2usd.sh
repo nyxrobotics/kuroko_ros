@@ -56,6 +56,10 @@ echo ">>> Converting usd -> usda (ASCII format)..."
 usdcat "${EXPORT_DIR}/kuroko.usd" > "${EXPORT_DIR}/kuroko.usda"
 echo "Generated: ${EXPORT_DIR}/kuroko.usda"
 
+# Edit physics parameters
+echo ">>> Edit physics parameters..."
+python3 ${SCRIPT_DIR}/scripts/postprocess_usda.py --usda "${EXPORT_DIR}/kuroko.usda" --sdf "${EXPORT_DIR}/kuroko.sdf"
+
 echo ""
 echo "✅ Conversion completed successfully!"
 echo "All exported files are available in:"

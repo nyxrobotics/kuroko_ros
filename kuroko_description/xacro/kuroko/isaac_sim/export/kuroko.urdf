@@ -524,8 +524,8 @@
     <child link="hip_r_roll_link"/>
     <origin rpy="0 0 0" xyz="0 0 -0.08425"/>
     <axis xyz="1 0 0"/>
-    <limit effort="1000.0" lower="-0.5550" upper="1.8640" velocity="10.0"/>
-    <dynamics damping="0.0" friction="0.0"/>
+    <limit effort="3.1" lower="-0.5550" upper="1.8640" velocity="6.5"/>
+    <dynamics damping="0.477" friction="0.0"/>
   </joint>
   <link name="hip_r_roll_link">
     <visual>
@@ -551,8 +551,8 @@
     <child link="hip_r_pitch_link"/>
     <origin rpy="0 0 0" xyz="0 -0.027 0"/>
     <axis xyz="0 -1 0"/>
-    <limit effort="1000.0" lower="-3.1" upper="3.1" velocity="10.0"/>
-    <dynamics damping="0.0" friction="0.0"/>
+    <limit effort="3.1" lower="-3.1" upper="3.1" velocity="6.5"/>
+    <dynamics damping="0.477" friction="0.0"/>
   </joint>
   <link name="hip_r_pitch_link">
     <visual>
@@ -627,24 +627,13 @@
       <inertia ixx="1.4976249999999999e-05" ixy="0.0" ixz="0.0" iyy="1.3192e-05" iyz="0.0" izz="1e-05"/>
     </inertial>
   </link>
-  <joint name="shin_r_front_mimic" type="revolute">
-    <parent link="thigh_r_active_link"/>
-    <child link="shin_r_front_mimic_link"/>
-    <origin rpy="0 0.785398163 0" xyz="0 0 -0.1"/>
-    <axis xyz="0 1 0"/>
-    <limit effort="0" lower="-3.1416" upper="3.1416" velocity="1000"/>
-    <dynamics damping="0.0" friction="0.0"/>
-    <mimic joint="thigh_r_active" multiplier="-1" offset="0"/>
-  </joint>
-  <link name="shin_r_front_mimic_link"/>
   <joint name="shin_r_front_passive" type="revolute">
-    <parent link="shin_r_front_mimic_link"/>
+    <parent link="thigh_r_active_link"/>
     <child link="shin_r_front_passive_link"/>
-    <origin rpy="0 0.785398163 0" xyz="0 0 0"/>
+    <origin rpy="0 1.570796327 0" xyz="0 0 -0.1"/>
     <axis xyz="0 1 0"/>
-    <limit effort="0" lower="-3.1416" upper="3.1416" velocity="1000"/>
+    <limit effort="0" lower="-1.570796327" upper="0.9948" velocity="1000.0"/>
     <dynamics damping="0.0" friction="0.0"/>
-    <mimic joint="shin_r_active" multiplier="1" offset="0"/>
   </joint>
   <link name="shin_r_front_passive_link">
     <visual>
@@ -693,24 +682,13 @@
       <inertia ixx="1.4186250000000002e-05" ixy="0.0" ixz="0.0" iyy="1.3192e-05" iyz="0.0" izz="1e-05"/>
     </inertial>
   </link>
-  <joint name="shin_r_rear_mimic" type="revolute">
-    <parent link="thigh_r_middle_passive_link"/>
-    <child link="shin_r_rear_mimic_link"/>
-    <origin rpy="0 0.785398163 0" xyz="0 0 -0.1"/>
-    <axis xyz="0 1 0"/>
-    <limit effort="0" lower="-3.1416" upper="3.1416" velocity="1000"/>
-    <dynamics damping="0.0" friction="0.0"/>
-    <mimic joint="thigh_r_active" multiplier="-1" offset="0"/>
-  </joint>
-  <link name="shin_r_rear_mimic_link"/>
   <joint name="shin_r_rear_passive" type="revolute">
-    <parent link="shin_r_rear_mimic_link"/>
+    <parent link="thigh_r_middle_passive_link"/>
     <child link="shin_r_rear_passive_link"/>
-    <origin rpy="0 0.785398163 0" xyz="0 0 0"/>
+    <origin rpy="0 1.570796327 0" xyz="0 0 -0.1"/>
     <axis xyz="0 1 0"/>
-    <limit effort="0" lower="-3.1416" upper="3.1416" velocity="1000"/>
+    <limit effort="0" lower="-1.570796327" upper="0.9948" velocity="1000.0"/>
     <dynamics damping="0.0" friction="0.0"/>
-    <mimic joint="shin_r_active" multiplier="1" offset="0"/>
   </joint>
   <link name="shin_r_rear_passive_link">
     <visual>
@@ -759,24 +737,44 @@
       <inertia ixx="1e-05" ixy="0.0" ixz="0.0" iyy="1e-05" iyz="0.0" izz="1e-05"/>
     </inertial>
   </link>
-  <joint name="thigh_r_rear_mimic" type="revolute">
-    <parent link="shin_r_rear_passive_link"/>
-    <child link="thigh_r_rear_mimic_link"/>
-    <origin rpy="0 -0.785398163 0" xyz="-0.00776457 0 -0.0289778"/>
-    <axis xyz="0 1 0"/>
-    <limit effort="0" lower="-3.1416" upper="3.1416" velocity="1000"/>
-    <dynamics damping="0.0" friction="0.0"/>
-    <mimic joint="thigh_r_active" multiplier="1" offset="0"/>
-  </joint>
-  <link name="thigh_r_rear_mimic_link"/>
+  <gazebo>
+    <joint name="knee_r_front_passive_loop" type="revolute">
+      <parent>thigh_r_active_link</parent>
+      <child>knee_r_passive_link</child>
+      <pose>0.0335 0 0 0 0 0</pose>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-1.8588</lower>
+          <upper>0.4974</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+      <physics>
+        <ode>
+          <implicit_spring_damper>1</implicit_spring_damper>
+          <cfm_damping>0</cfm_damping>
+          <cfm>1e-7</cfm>
+          <erp>0.8</erp>
+          <limit>
+            <cfm>1e-7</cfm>
+            <erp>0.8</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+  </gazebo>
   <joint name="thigh_r_rear_passive" type="revolute">
-    <parent link="thigh_r_rear_mimic_link"/>
+    <parent link="shin_r_rear_passive_link"/>
     <child link="thigh_r_rear_passive_link"/>
-    <origin rpy="0 -0.785398163 0" xyz="0 0 0"/>
+    <origin rpy="0 -1.570796327 0" xyz="-0.00776457 0 -0.0289778"/>
     <axis xyz="0 1 0"/>
-    <limit effort="0" lower="-3.1416" upper="3.1416" velocity="1000"/>
+    <limit effort="0" lower="-0.9948" upper="1.570796327" velocity="1000.0"/>
     <dynamics damping="0.0" friction="0.0"/>
-    <mimic joint="shin_r_active" multiplier="-1" offset="0"/>
   </joint>
   <link name="thigh_r_rear_passive_link">
     <visual>
@@ -797,6 +795,37 @@
       <inertia ixx="1.26575625e-05" ixy="0.0" ixz="0.0" iyy="1.2092666666666667e-05" iyz="0.0" izz="1e-05"/>
     </inertial>
   </link>
+  <gazebo>
+    <joint name="thigh_r_rear_passive_loop" type="revolute">
+      <parent>shin_r_active_link</parent>
+      <child>thigh_r_rear_passive_link</child>
+      <pose>0 0 0.1 0 1.832597551 0</pose>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-3.1416</lower>
+          <upper>3.1416</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+      <physics>
+        <ode>
+          <implicit_spring_damper>1</implicit_spring_damper>
+          <cfm_damping>0</cfm_damping>
+          <cfm>1e-7</cfm>
+          <erp>0.8</erp>
+          <limit>
+            <cfm>1e-7</cfm>
+            <erp>0.8</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+  </gazebo>
   <joint name="ankle_r_rear_passive" type="revolute">
     <parent link="shin_r_rear_passive_link"/>
     <child link="ankle_r_rear_passive_link"/>
@@ -825,13 +854,44 @@
       <inertia ixx="2.7893666666666667e-05" ixy="0.0" ixz="0.0" iyy="8.209500000000002e-05" iyz="0.0" izz="7.250966666666666e-05"/>
     </inertial>
   </link>
+  <gazebo>
+    <joint name="ankle_r_front_passive_loop" type="revolute">
+      <parent>shin_r_front_passive_link</parent>
+      <child>ankle_r_rear_passive_link</child>
+      <pose>0.0335 0 0 0 -0.785398163 0</pose>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-3.1416</lower>
+          <upper>3.1416</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+      <physics>
+        <ode>
+          <implicit_spring_damper>1</implicit_spring_damper>
+          <cfm_damping>0</cfm_damping>
+          <cfm>1e-7</cfm>
+          <erp>0.8</erp>
+          <limit>
+            <cfm>1e-7</cfm>
+            <erp>0.8</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+  </gazebo>
   <joint name="ankle_r_roll" type="revolute">
     <parent link="ankle_r_rear_passive_link"/>
     <child link="ankle_r_roll_link"/>
     <origin rpy="0 0 0" xyz="0.0185 0 -0.027"/>
     <axis xyz="1 0 0"/>
-    <limit effort="1000.0" lower="-0.3704" upper="1.5708" velocity="10.0"/>
-    <dynamics damping="0.0" friction="0.0"/>
+    <limit effort="3.1" lower="-0.3704" upper="1.5708" velocity="6.5"/>
+    <dynamics damping="0.477" friction="0.0"/>
   </joint>
   <link name="ankle_r_roll_link">
     <visual>
@@ -857,8 +917,8 @@
     <child link="ankle_r_yaw_link"/>
     <origin rpy="0 0 0" xyz="0 0 -0.03825"/>
     <axis xyz="0 0 -1"/>
-    <limit effort="1000.0" lower="-3.1" upper="3.1" velocity="10.0"/>
-    <dynamics damping="0.0" friction="0.0"/>
+    <limit effort="3.1" lower="-3.1" upper="3.1" velocity="6.5"/>
+    <dynamics damping="0.477" friction="0.0"/>
   </joint>
   <link name="ankle_r_yaw_link">
     <visual>
@@ -1270,30 +1330,19 @@
       <inertia ixx="1.4976249999999999e-05" ixy="0.0" ixz="0.0" iyy="1.3192e-05" iyz="0.0" izz="1e-05"/>
     </inertial>
   </link>
-  <joint name="shin_l_front_mimic" type="revolute">
-    <parent link="thigh_l_active_link"/>
-    <child link="shin_l_front_mimic_link"/>
-    <origin rpy="0 0.785398163 0" xyz="0 0 -0.1"/>
-    <axis xyz="0 1 0"/>
-    <limit effort="0" lower="-3.1416" upper="3.1416" velocity="1000"/>
-    <dynamics damping="0.0" friction="0.0"/>
-    <mimic joint="thigh_l_active" multiplier="1" offset="0"/>
-  </joint>
-  <link name="shin_l_front_mimic_link"/>
   <joint name="shin_l_front_passive" type="revolute">
-    <parent link="shin_l_front_mimic_link"/>
+    <parent link="thigh_l_active_link"/>
     <child link="shin_l_front_passive_link"/>
-    <origin rpy="0 0.785398163 0" xyz="0 0 0"/>
+    <origin rpy="0 1.570796327 0" xyz="0 0 -0.1"/>
     <axis xyz="0 1 0"/>
-    <limit effort="0" lower="-3.1416" upper="3.1416" velocity="1000"/>
+    <limit effort="0" lower="-1.570796327" upper="0.9948" velocity="1000.0"/>
     <dynamics damping="0.0" friction="0.0"/>
-    <mimic joint="shin_l_active" multiplier="-1" offset="0"/>
   </joint>
   <link name="shin_l_front_passive_link">
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://kuroko_description/meshes/kuroko/stl/shin_r_front_passive.stl"/>
+        <mesh filename="/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/meshes/kuroko/stl/shin_r_front_passive.stl"/>
       </geometry>
     </visual>
     <collision>
@@ -1336,24 +1385,13 @@
       <inertia ixx="1.4186250000000002e-05" ixy="0.0" ixz="0.0" iyy="1.3192e-05" iyz="0.0" izz="1e-05"/>
     </inertial>
   </link>
-  <joint name="shin_l_rear_mimic" type="revolute">
-    <parent link="thigh_l_middle_passive_link"/>
-    <child link="shin_l_rear_mimic_link"/>
-    <origin rpy="0 0.785398163 0" xyz="0 0 -0.1"/>
-    <axis xyz="0 1 0"/>
-    <limit effort="0" lower="-3.1416" upper="3.1416" velocity="1000"/>
-    <dynamics damping="0.0" friction="0.0"/>
-    <mimic joint="thigh_l_active" multiplier="1" offset="0"/>
-  </joint>
-  <link name="shin_l_rear_mimic_link"/>
   <joint name="shin_l_rear_passive" type="revolute">
-    <parent link="shin_l_rear_mimic_link"/>
+    <parent link="thigh_l_middle_passive_link"/>
     <child link="shin_l_rear_passive_link"/>
-    <origin rpy="0 0.785398163 0" xyz="0 0 0"/>
+    <origin rpy="0 1.570796327 0" xyz="0 0 -0.1"/>
     <axis xyz="0 1 0"/>
-    <limit effort="0" lower="-3.1416" upper="3.1416" velocity="1000"/>
+    <limit effort="0" lower="-1.570796327" upper="0.9948" velocity="1000.0"/>
     <dynamics damping="0.0" friction="0.0"/>
-    <mimic joint="shin_l_active" multiplier="-1" offset="0"/>
   </joint>
   <link name="shin_l_rear_passive_link">
     <visual>
@@ -1402,24 +1440,44 @@
       <inertia ixx="1e-05" ixy="0.0" ixz="0.0" iyy="1e-05" iyz="0.0" izz="1e-05"/>
     </inertial>
   </link>
-  <joint name="thigh_l_rear_mimic" type="revolute">
-    <parent link="shin_l_rear_passive_link"/>
-    <child link="thigh_l_rear_mimic_link"/>
-    <origin rpy="0 -0.785398163 0" xyz="-0.00776457 0 -0.0289778"/>
-    <axis xyz="0 1 0"/>
-    <limit effort="0" lower="-3.1416" upper="3.1416" velocity="1000"/>
-    <dynamics damping="0.0" friction="0.0"/>
-    <mimic joint="thigh_l_active" multiplier="-1" offset="0"/>
-  </joint>
-  <link name="thigh_l_rear_mimic_link"/>
+  <gazebo>
+    <joint name="knee_l_front_passive_loop" type="revolute">
+      <parent>thigh_l_active_link</parent>
+      <child>knee_l_passive_link</child>
+      <pose>0.0335 0 0 0 0 0</pose>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-1.8588</lower>
+          <upper>0.4974</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+      <physics>
+        <ode>
+          <implicit_spring_damper>1</implicit_spring_damper>
+          <cfm_damping>0</cfm_damping>
+          <cfm>1e-7</cfm>
+          <erp>0.8</erp>
+          <limit>
+            <cfm>1e-7</cfm>
+            <erp>0.8</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+  </gazebo>
   <joint name="thigh_l_rear_passive" type="revolute">
-    <parent link="thigh_l_rear_mimic_link"/>
+    <parent link="shin_l_rear_passive_link"/>
     <child link="thigh_l_rear_passive_link"/>
-    <origin rpy="0 -0.785398163 0" xyz="0 0 0"/>
+    <origin rpy="0 -1.570796327 0" xyz="-0.00776457 0 -0.0289778"/>
     <axis xyz="0 1 0"/>
-    <limit effort="0" lower="-3.1416" upper="3.1416" velocity="1000"/>
+    <limit effort="0" lower="-0.9948" upper="1.570796327" velocity="1000.0"/>
     <dynamics damping="0.0" friction="0.0"/>
-    <mimic joint="shin_l_active" multiplier="1" offset="0"/>
   </joint>
   <link name="thigh_l_rear_passive_link">
     <visual>
@@ -1440,6 +1498,37 @@
       <inertia ixx="1.26575625e-05" ixy="0.0" ixz="0.0" iyy="1.2092666666666667e-05" iyz="0.0" izz="1e-05"/>
     </inertial>
   </link>
+  <gazebo>
+    <joint name="thigh_l_rear_passive_loop" type="revolute">
+      <parent>shin_l_active_link</parent>
+      <child>thigh_l_rear_passive_link</child>
+      <pose>0 0 0.1 0 1.832597551 0</pose>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-3.1416</lower>
+          <upper>3.1416</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+      <physics>
+        <ode>
+          <implicit_spring_damper>1</implicit_spring_damper>
+          <cfm_damping>0</cfm_damping>
+          <cfm>1e-7</cfm>
+          <erp>0.8</erp>
+          <limit>
+            <cfm>1e-7</cfm>
+            <erp>0.8</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+  </gazebo>
   <joint name="ankle_l_rear_passive" type="revolute">
     <parent link="shin_l_rear_passive_link"/>
     <child link="ankle_l_rear_passive_link"/>
@@ -1468,13 +1557,44 @@
       <inertia ixx="2.7893666666666667e-05" ixy="0.0" ixz="0.0" iyy="8.209500000000002e-05" iyz="0.0" izz="7.250966666666666e-05"/>
     </inertial>
   </link>
+  <gazebo>
+    <joint name="ankle_l_front_passive_loop" type="revolute">
+      <parent>shin_l_front_passive_link</parent>
+      <child>ankle_l_rear_passive_link</child>
+      <pose>0.0335 0 0 0 -0.785398163 0</pose>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-3.1416</lower>
+          <upper>3.1416</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+      <physics>
+        <ode>
+          <implicit_spring_damper>1</implicit_spring_damper>
+          <cfm_damping>0</cfm_damping>
+          <cfm>1e-7</cfm>
+          <erp>0.8</erp>
+          <limit>
+            <cfm>1e-7</cfm>
+            <erp>0.8</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+  </gazebo>
   <joint name="ankle_l_roll" type="revolute">
     <parent link="ankle_l_rear_passive_link"/>
     <child link="ankle_l_roll_link"/>
     <origin rpy="0 0 0" xyz="0.0185 0 -0.027"/>
     <axis xyz="1 0 0"/>
-    <limit effort="1000.0" lower="-1.5708" upper="0.3704" velocity="10.0"/>
-    <dynamics damping="0.0" friction="0.0"/>
+    <limit effort="3.1" lower="-1.5708" upper="0.3704" velocity="6.5"/>
+    <dynamics damping="0.477" friction="0.0"/>
   </joint>
   <link name="ankle_l_roll_link">
     <visual>
@@ -1500,8 +1620,8 @@
     <child link="ankle_l_yaw_link"/>
     <origin rpy="0 0 0" xyz="0 0 -0.03825"/>
     <axis xyz="0 0 -1"/>
-    <limit effort="1000.0" lower="-3.1" upper="3.1" velocity="10.0"/>
-    <dynamics damping="0.0" friction="0.0"/>
+    <limit effort="3.1" lower="-3.1416" upper="3.1416" velocity="6.5"/>
+    <dynamics damping="0.477" friction="0.0"/>
   </joint>
   <link name="ankle_l_yaw_link">
     <visual>

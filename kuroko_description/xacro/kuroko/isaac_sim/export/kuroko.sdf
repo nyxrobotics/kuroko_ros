@@ -1,6 +1,7 @@
-<sdf version='1.7'>
-  <model name='kuroko'>
-    <link name='body_link'>
+<?xml version='1.0' encoding='utf-8'?>
+<sdf version="1.7">
+  <model name="kuroko">
+    <link name="body_link">
       <inertial>
         <pose>0.009948 0 -0.04774 0 -0 0</pose>
         <mass>0.398</mass>
@@ -13,7 +14,7 @@
           <izz>0.000651176</izz>
         </inertia>
       </inertial>
-      <collision name='body_link_fixed_joint_lump__waist_link_collision'>
+      <collision name="body_link_fixed_joint_lump__waist_link_collision">
         <pose>0.0084 0 -0.0483 0 -0 0</pose>
         <geometry>
           <box>
@@ -37,7 +38,7 @@
         </surface>
         <max_contacts>6</max_contacts>
       </collision>
-      <collision name='body_link_fixed_joint_lump__camera_base_link_collision_1'>
+      <collision name="body_link_fixed_joint_lump__camera_base_link_collision_1">
         <pose>0.07 0 -0.026 0 -0 0</pose>
         <geometry>
           <box>
@@ -45,7 +46,7 @@
           </box>
         </geometry>
       </collision>
-      <visual name='body_link_fixed_joint_lump__waist_link_visual'>
+      <visual name="body_link_fixed_joint_lump__waist_link_visual">
         <pose>0 0 0 0 -0 0</pose>
         <geometry>
           <mesh>
@@ -54,7 +55,7 @@
           </mesh>
         </geometry>
       </visual>
-      <visual name='body_link_fixed_joint_lump__camera_base_link_visual_1'>
+      <visual name="body_link_fixed_joint_lump__camera_base_link_visual_1">
         <pose>0.07 0 -0.026 0 -0 0</pose>
         <geometry>
           <box>
@@ -67,8 +68,8 @@
         <angular>0</angular>
       </velocity_decay>
       <self_collide>0</self_collide>
-      <sensor name='camera_camera_cam' type='camera'>
-        <camera name='camera'>
+      <sensor name="camera_camera_cam" type="camera">
+        <camera name="camera">
           <horizontal_fov>2.2</horizontal_fov>
           <image>
             <width>384</width>
@@ -87,7 +88,7 @@
             <far>100</far>
           </clip>
         </camera>
-        <plugin name='camera_camera_plugin' filename='libgazebo_ros_camera.so'>
+        <plugin name="camera_camera_plugin" filename="libgazebo_ros_camera.so">
           <alwaysOn>1</alwaysOn>
           <updateRate>30</updateRate>
           <cameraName>camera</cameraName>
@@ -101,8 +102,8 @@
         <pose>0.071 0 -0.026 0 -0 0</pose>
       </sensor>
     </link>
-    <joint name='chest' type='revolute'>
-      <pose relative_to='body_link'>0 0 0 0 -0 0</pose>
+    <joint name="chest" type="revolute">
+      <pose relative_to="body_link">0 0 0 0 -0 0</pose>
       <parent>body_link</parent>
       <child>chest_link</child>
       <axis>
@@ -131,8 +132,8 @@
         </ode>
       </physics>
     </joint>
-    <link name='chest_link'>
-      <pose relative_to='chest'>0 0 0 0 -0 0</pose>
+    <link name="chest_link">
+      <pose relative_to="chest">0 0 0 0 -0 0</pose>
       <inertial>
         <pose>0.012 0 0.0635 0 -0 0</pose>
         <mass>0.806</mass>
@@ -145,7 +146,7 @@
           <izz>0.00587305</izz>
         </inertia>
       </inertial>
-      <collision name='chest_link_collision'>
+      <collision name="chest_link_collision">
         <pose>0.012 0 0.0635 0 -0 0</pose>
         <geometry>
           <box>
@@ -169,7 +170,7 @@
         </surface>
         <max_contacts>6</max_contacts>
       </collision>
-      <visual name='chest_link_visual'>
+      <visual name="chest_link_visual">
         <pose>0 0 0 0 -0 0</pose>
         <geometry>
           <mesh>
@@ -184,8 +185,8 @@
       </velocity_decay>
       <self_collide>0</self_collide>
     </link>
-    <joint name='shoulder_l_pitch' type='revolute'>
-      <pose relative_to='chest_link'>0 0.128 0.01275 0 -0 0</pose>
+    <joint name="shoulder_l_pitch" type="revolute">
+      <pose relative_to="chest_link">0 0.128 0.01275 0 -0 0</pose>
       <parent>chest_link</parent>
       <child>shoulder_l_pitch_link</child>
       <axis>
@@ -214,8 +215,8 @@
         </ode>
       </physics>
     </joint>
-    <link name='shoulder_l_pitch_link'>
-      <pose relative_to='shoulder_l_pitch'>0 0 0 0 -0 0</pose>
+    <link name="shoulder_l_pitch_link">
+      <pose relative_to="shoulder_l_pitch">0 0 0 0 -0 0</pose>
       <inertial>
         <pose>-0.0096 0.034 0 0 -0 0</pose>
         <mass>0.165</mass>
@@ -228,7 +229,7 @@
           <izz>9.97657e-05</izz>
         </inertia>
       </inertial>
-      <collision name='shoulder_l_pitch_link_collision'>
+      <collision name="shoulder_l_pitch_link_collision">
         <pose>-0.0096 0.034 0 0 -0 0</pose>
         <geometry>
           <box>
@@ -252,7 +253,7 @@
         </surface>
         <max_contacts>6</max_contacts>
       </collision>
-      <visual name='shoulder_l_pitch_link_visual'>
+      <visual name="shoulder_l_pitch_link_visual">
         <pose>0 0 0 0 -0 0</pose>
         <geometry>
           <mesh>
@@ -267,8 +268,8 @@
       </velocity_decay>
       <self_collide>0</self_collide>
     </link>
-    <joint name='shoulder_l_roll' type='revolute'>
-      <pose relative_to='shoulder_l_pitch_link'>0 0.05425 0 1.5708 -0 0</pose>
+    <joint name="shoulder_l_roll" type="revolute">
+      <pose relative_to="shoulder_l_pitch_link">0 0.05425 0 1.5708 -0 0</pose>
       <parent>shoulder_l_pitch_link</parent>
       <child>shoulder_l_roll_link</child>
       <axis>
@@ -297,8 +298,8 @@
         </ode>
       </physics>
     </joint>
-    <link name='shoulder_l_roll_link'>
-      <pose relative_to='shoulder_l_roll'>0 0 0 0 -0 0</pose>
+    <link name="shoulder_l_roll_link">
+      <pose relative_to="shoulder_l_roll">0 0 0 0 -0 0</pose>
       <inertial>
         <pose>-0.0108 0 -0.0186 0 -0 0</pose>
         <mass>0.183</mass>
@@ -311,7 +312,7 @@
           <izz>0.000155626</izz>
         </inertia>
       </inertial>
-      <collision name='shoulder_l_roll_link_collision'>
+      <collision name="shoulder_l_roll_link_collision">
         <pose>-0.0108 0 -0.0186 0 -0 0</pose>
         <geometry>
           <box>
@@ -335,7 +336,7 @@
         </surface>
         <max_contacts>6</max_contacts>
       </collision>
-      <visual name='shoulder_l_roll_link_visual'>
+      <visual name="shoulder_l_roll_link_visual">
         <pose>0 0 0 0 -0 0</pose>
         <geometry>
           <mesh>
@@ -350,12 +351,12 @@
       </velocity_decay>
       <self_collide>0</self_collide>
     </link>
-    <joint name='elbow_l_front' type='revolute'>
-      <pose relative_to='shoulder_l_roll_link'>0 -0.023 -0.036 0 -0 0</pose>
+    <joint name="elbow_l_front" type="revolute">
+      <pose relative_to="shoulder_l_roll_link">0 -0.023 -0.036 0 -0 0</pose>
       <parent>shoulder_l_roll_link</parent>
       <child>elbow_l_front_link</child>
       <axis>
-        <xyz>0 -1 0</xyz>
+        <xyz>-0 1 -0</xyz>
         <limit>
           <lower>-2.618</lower>
           <upper>2.618</upper>
@@ -380,8 +381,8 @@
         </ode>
       </physics>
     </joint>
-    <link name='elbow_l_front_link'>
-      <pose relative_to='elbow_l_front'>0 0 0 0 -0 0</pose>
+    <link name="elbow_l_front_link">
+      <pose relative_to="elbow_l_front">0 0 0 0 -0 0</pose>
       <inertial>
         <pose>0.0043 0 -0.104 0 -0 0</pose>
         <mass>0.032</mass>
@@ -394,7 +395,7 @@
           <izz>1.41333e-05</izz>
         </inertia>
       </inertial>
-      <collision name='elbow_l_front_link_collision'>
+      <collision name="elbow_l_front_link_collision">
         <pose>0.0043 0 -0.104 0 -0 0</pose>
         <geometry>
           <box>
@@ -418,7 +419,7 @@
         </surface>
         <max_contacts>6</max_contacts>
       </collision>
-      <collision name='elbow_l_front_link_collision_1'>
+      <collision name="elbow_l_front_link_collision_1">
         <pose>-0.0206 0 -0.201 0 -0 0</pose>
         <geometry>
           <box>
@@ -442,7 +443,7 @@
         </surface>
         <max_contacts>6</max_contacts>
       </collision>
-      <visual name='elbow_l_front_link_visual'>
+      <visual name="elbow_l_front_link_visual">
         <pose>0 0 0 0 -0 0</pose>
         <geometry>
           <mesh>
@@ -457,8 +458,8 @@
       </velocity_decay>
       <self_collide>0</self_collide>
     </link>
-    <joint name='elbow_l_rear' type='revolute'>
-      <pose relative_to='shoulder_l_roll_link'>0 -0.024 -0.036 0 -0 0</pose>
+    <joint name="elbow_l_rear" type="revolute">
+      <pose relative_to="shoulder_l_roll_link">0 -0.024 -0.036 0 -0 0</pose>
       <parent>shoulder_l_roll_link</parent>
       <child>elbow_l_rear_link</child>
       <axis>
@@ -487,8 +488,8 @@
         </ode>
       </physics>
     </joint>
-    <link name='elbow_l_rear_link'>
-      <pose relative_to='elbow_l_rear'>0 0 0 0 -0 0</pose>
+    <link name="elbow_l_rear_link">
+      <pose relative_to="elbow_l_rear">0 0 0 0 -0 0</pose>
       <inertial>
         <pose>-0.0043 0 -0.1 0 -0 0</pose>
         <mass>0.031</mass>
@@ -501,7 +502,7 @@
           <izz>1.00027e-05</izz>
         </inertia>
       </inertial>
-      <collision name='elbow_l_rear_link_collision'>
+      <collision name="elbow_l_rear_link_collision">
         <pose>-0.0043 0 -0.1 0 -0 0</pose>
         <geometry>
           <box>
@@ -525,7 +526,7 @@
         </surface>
         <max_contacts>6</max_contacts>
       </collision>
-      <collision name='elbow_l_rear_link_collision_1'>
+      <collision name="elbow_l_rear_link_collision_1">
         <pose>0.0206 0 -0.193 0 -0 0</pose>
         <geometry>
           <box>
@@ -549,7 +550,7 @@
         </surface>
         <max_contacts>6</max_contacts>
       </collision>
-      <visual name='elbow_l_rear_link_visual'>
+      <visual name="elbow_l_rear_link_visual">
         <pose>0 0 0 0 -0 0</pose>
         <geometry>
           <mesh>
@@ -564,12 +565,12 @@
       </velocity_decay>
       <self_collide>0</self_collide>
     </link>
-    <joint name='shoulder_r_pitch' type='revolute'>
-      <pose relative_to='chest_link'>0 -0.128 0.01275 0 -0 0</pose>
+    <joint name="shoulder_r_pitch" type="revolute">
+      <pose relative_to="chest_link">0 -0.128 0.01275 0 -0 0</pose>
       <parent>chest_link</parent>
       <child>shoulder_r_pitch_link</child>
       <axis>
-        <xyz>0 -1 0</xyz>
+        <xyz>-0 1 -0</xyz>
         <limit>
           <lower>-3.14</lower>
           <upper>3.14</upper>
@@ -594,8 +595,8 @@
         </ode>
       </physics>
     </joint>
-    <link name='shoulder_r_pitch_link'>
-      <pose relative_to='shoulder_r_pitch'>0 0 0 0 -0 0</pose>
+    <link name="shoulder_r_pitch_link">
+      <pose relative_to="shoulder_r_pitch">0 0 0 0 -0 0</pose>
       <inertial>
         <pose>-0.0096 -0.034 0 0 -0 0</pose>
         <mass>0.165</mass>
@@ -608,7 +609,7 @@
           <izz>9.97657e-05</izz>
         </inertia>
       </inertial>
-      <collision name='shoulder_r_pitch_link_collision'>
+      <collision name="shoulder_r_pitch_link_collision">
         <pose>-0.0096 -0.034 0 0 -0 0</pose>
         <geometry>
           <box>
@@ -632,7 +633,7 @@
         </surface>
         <max_contacts>6</max_contacts>
       </collision>
-      <visual name='shoulder_r_pitch_link_visual'>
+      <visual name="shoulder_r_pitch_link_visual">
         <pose>0 0 0 0 -0 0</pose>
         <geometry>
           <mesh>
@@ -647,8 +648,8 @@
       </velocity_decay>
       <self_collide>0</self_collide>
     </link>
-    <joint name='shoulder_r_roll' type='revolute'>
-      <pose relative_to='shoulder_r_pitch_link'>0 -0.05425 0 -1.5708 0 0</pose>
+    <joint name="shoulder_r_roll" type="revolute">
+      <pose relative_to="shoulder_r_pitch_link">0 -0.05425 0 -1.5708 0 0</pose>
       <parent>shoulder_r_pitch_link</parent>
       <child>shoulder_r_roll_link</child>
       <axis>
@@ -677,8 +678,8 @@
         </ode>
       </physics>
     </joint>
-    <link name='shoulder_r_roll_link'>
-      <pose relative_to='shoulder_r_roll'>0 0 0 0 -0 0</pose>
+    <link name="shoulder_r_roll_link">
+      <pose relative_to="shoulder_r_roll">0 0 0 0 -0 0</pose>
       <inertial>
         <pose>-0.0108 0 -0.0186 0 -0 0</pose>
         <mass>0.183</mass>
@@ -691,7 +692,7 @@
           <izz>0.000155626</izz>
         </inertia>
       </inertial>
-      <collision name='shoulder_r_roll_link_collision'>
+      <collision name="shoulder_r_roll_link_collision">
         <pose>-0.0108 0 -0.0186 0 -0 0</pose>
         <geometry>
           <box>
@@ -715,7 +716,7 @@
         </surface>
         <max_contacts>6</max_contacts>
       </collision>
-      <visual name='shoulder_r_roll_link_visual'>
+      <visual name="shoulder_r_roll_link_visual">
         <pose>0 0 0 0 -0 0</pose>
         <geometry>
           <mesh>
@@ -730,8 +731,8 @@
       </velocity_decay>
       <self_collide>0</self_collide>
     </link>
-    <joint name='elbow_r_front' type='revolute'>
-      <pose relative_to='shoulder_r_roll_link'>0 0.023 -0.036 0 -0 0</pose>
+    <joint name="elbow_r_front" type="revolute">
+      <pose relative_to="shoulder_r_roll_link">0 0.023 -0.036 0 -0 0</pose>
       <parent>shoulder_r_roll_link</parent>
       <child>elbow_r_front_link</child>
       <axis>
@@ -760,8 +761,8 @@
         </ode>
       </physics>
     </joint>
-    <link name='elbow_r_front_link'>
-      <pose relative_to='elbow_r_front'>0 0 0 0 -0 0</pose>
+    <link name="elbow_r_front_link">
+      <pose relative_to="elbow_r_front">0 0 0 0 -0 0</pose>
       <inertial>
         <pose>0.0043 0 -0.104 0 -0 0</pose>
         <mass>0.032</mass>
@@ -774,7 +775,7 @@
           <izz>1.41333e-05</izz>
         </inertia>
       </inertial>
-      <collision name='elbow_r_front_link_collision'>
+      <collision name="elbow_r_front_link_collision">
         <pose>0.0043 0 -0.104 0 -0 0</pose>
         <geometry>
           <box>
@@ -798,7 +799,7 @@
         </surface>
         <max_contacts>6</max_contacts>
       </collision>
-      <collision name='elbow_r_front_link_collision_1'>
+      <collision name="elbow_r_front_link_collision_1">
         <pose>-0.0206 0 -0.201 0 -0 0</pose>
         <geometry>
           <box>
@@ -822,7 +823,7 @@
         </surface>
         <max_contacts>6</max_contacts>
       </collision>
-      <visual name='elbow_r_front_link_visual'>
+      <visual name="elbow_r_front_link_visual">
         <pose>0 0 0 0 -0 0</pose>
         <geometry>
           <mesh>
@@ -837,12 +838,12 @@
       </velocity_decay>
       <self_collide>0</self_collide>
     </link>
-    <joint name='elbow_r_rear' type='revolute'>
-      <pose relative_to='shoulder_r_roll_link'>0 0.024 -0.036 0 -0 0</pose>
+    <joint name="elbow_r_rear" type="revolute">
+      <pose relative_to="shoulder_r_roll_link">0 0.024 -0.036 0 -0 0</pose>
       <parent>shoulder_r_roll_link</parent>
       <child>elbow_r_rear_link</child>
       <axis>
-        <xyz>0 -1 0</xyz>
+        <xyz>-0 1 -0</xyz>
         <limit>
           <lower>-2.618</lower>
           <upper>2.618</upper>
@@ -867,8 +868,8 @@
         </ode>
       </physics>
     </joint>
-    <link name='elbow_r_rear_link'>
-      <pose relative_to='elbow_r_rear'>0 0 0 0 -0 0</pose>
+    <link name="elbow_r_rear_link">
+      <pose relative_to="elbow_r_rear">0 0 0 0 -0 0</pose>
       <inertial>
         <pose>-0.0043 0 -0.1 0 -0 0</pose>
         <mass>0.031</mass>
@@ -881,7 +882,7 @@
           <izz>1.00027e-05</izz>
         </inertia>
       </inertial>
-      <collision name='elbow_r_rear_link_collision'>
+      <collision name="elbow_r_rear_link_collision">
         <pose>-0.0043 0 -0.1 0 -0 0</pose>
         <geometry>
           <box>
@@ -905,7 +906,7 @@
         </surface>
         <max_contacts>6</max_contacts>
       </collision>
-      <collision name='elbow_r_rear_link_collision_1'>
+      <collision name="elbow_r_rear_link_collision_1">
         <pose>0.0206 0 -0.193 0 -0 0</pose>
         <geometry>
           <box>
@@ -929,7 +930,7 @@
         </surface>
         <max_contacts>6</max_contacts>
       </collision>
-      <visual name='elbow_r_rear_link_visual'>
+      <visual name="elbow_r_rear_link_visual">
         <pose>0 0 0 0 -0 0</pose>
         <geometry>
           <mesh>
@@ -944,15 +945,15 @@
       </velocity_decay>
       <self_collide>0</self_collide>
     </link>
-    <joint name='hip_l_roll' type='revolute'>
-      <pose relative_to='body_link'>0 0 -0.08425 0 -0 0</pose>
+    <joint name="hip_l_roll" type="revolute">
+      <pose relative_to="body_link">0 0 -0.08425 0 -0 0</pose>
       <parent>body_link</parent>
       <child>hip_l_roll_link</child>
       <axis>
-        <xyz>-1 0 0</xyz>
+        <xyz>1 -0 -0</xyz>
         <limit>
-          <lower>-0.555</lower>
-          <upper>1.864</upper>
+          <lower>-1.864</lower>
+          <upper>0.555</upper>
           <effort>3.1</effort>
           <velocity>6.5</velocity>
         </limit>
@@ -974,8 +975,8 @@
         </ode>
       </physics>
     </joint>
-    <link name='hip_l_roll_link'>
-      <pose relative_to='hip_l_roll'>0 0 0 0 -0 0</pose>
+    <link name="hip_l_roll_link">
+      <pose relative_to="hip_l_roll">0 0 0 0 -0 0</pose>
       <inertial>
         <pose>0.00125 0.0065 -0.004125 0 -0 0</pose>
         <mass>0.026</mass>
@@ -988,7 +989,7 @@
           <izz>2.19808e-05</izz>
         </inertia>
       </inertial>
-      <collision name='hip_l_roll_link_collision'>
+      <collision name="hip_l_roll_link_collision">
         <pose>0.00125 0.0065 -0.004125 0 -0 0</pose>
         <geometry>
           <box>
@@ -1012,7 +1013,7 @@
         </surface>
         <max_contacts>6</max_contacts>
       </collision>
-      <visual name='hip_l_roll_link_visual'>
+      <visual name="hip_l_roll_link_visual">
         <pose>0 0 0 0 -0 0</pose>
         <geometry>
           <mesh>
@@ -1027,8 +1028,8 @@
       </velocity_decay>
       <self_collide>0</self_collide>
     </link>
-    <joint name='hip_l_pitch' type='revolute'>
-      <pose relative_to='hip_l_roll_link'>0 0.027 0 0 -0 0</pose>
+    <joint name="hip_l_pitch" type="revolute">
+      <pose relative_to="hip_l_roll_link">0 0.027 0 0 -0 0</pose>
       <parent>hip_l_roll_link</parent>
       <child>hip_l_pitch_link</child>
       <axis>
@@ -1057,8 +1058,8 @@
         </ode>
       </physics>
     </joint>
-    <link name='hip_l_pitch_link'>
-      <pose relative_to='hip_l_pitch'>0 0 0 0 -0 0</pose>
+    <link name="hip_l_pitch_link">
+      <pose relative_to="hip_l_pitch">0 0 0 0 -0 0</pose>
       <inertial>
         <pose>-0.00175 0.049 -0.015 0 -0 0</pose>
         <mass>0.478</mass>
@@ -1071,7 +1072,7 @@
           <izz>0.000561371</izz>
         </inertia>
       </inertial>
-      <collision name='hip_l_pitch_link_collision'>
+      <collision name="hip_l_pitch_link_collision">
         <pose>-0.00175 0.049 -0.015 0 -0 0</pose>
         <geometry>
           <box>
@@ -1095,7 +1096,7 @@
         </surface>
         <max_contacts>6</max_contacts>
       </collision>
-      <visual name='hip_l_pitch_link_visual'>
+      <visual name="hip_l_pitch_link_visual">
         <pose>0 0 0 0 -0 0</pose>
         <geometry>
           <mesh>
@@ -1110,95 +1111,12 @@
       </velocity_decay>
       <self_collide>0</self_collide>
     </link>
-    <joint name='shin_l_active' type='revolute'>
-      <pose relative_to='hip_l_pitch_link'>-0.0185 0.02925 -0.0305 0 1.0472 0</pose>
+    <joint name="shin_l_active" type="revolute">
+      <pose relative_to="hip_l_pitch_link">-0.0185 0.02925 -0.0305 0 1.0472 0</pose>
       <parent>hip_l_pitch_link</parent>
       <child>shin_l_active_link</child>
       <axis>
-        <xyz>0 -1 0</xyz>
-        <limit>
-          <lower>-0.4974</lower>
-          <upper>1.8588</upper>
-          <effort>8.9</effort>
-          <velocity>6.9</velocity>
-        </limit>
-        <dynamics>
-          <damping>1.29</damping>
-          <friction>0</friction>
-          <spring_reference>0</spring_reference>
-          <spring_stiffness>0</spring_stiffness>
-        </dynamics>
-      </axis>
-      <physics>
-        <ode>
-          <implicit_spring_damper>1</implicit_spring_damper>
-          <cfm_damping>1</cfm_damping>
-          <limit>
-            <cfm>0</cfm>
-            <erp>0.2</erp>
-          </limit>
-        </ode>
-      </physics>
-    </joint>
-    <link name='shin_l_active_link'>
-      <pose relative_to='shin_l_active'>0 0 0 0 -0 0</pose>
-      <inertial>
-        <pose>-0.004745 0 -0.015 0 -0 0</pose>
-        <mass>0.008</mass>
-        <inertia>
-          <ixx>1e-05</ixx>
-          <ixy>0</ixy>
-          <ixz>0</ixz>
-          <iyy>1e-05</iyy>
-          <iyz>0</iyz>
-          <izz>1e-05</izz>
-        </inertia>
-      </inertial>
-      <collision name='shin_l_active_link_collision'>
-        <pose>-0.004745 0 -0.015 0 -0 0</pose>
-        <geometry>
-          <box>
-            <size>0.02349 0.0445 0.044</size>
-          </box>
-        </geometry>
-        <surface>
-          <contact>
-            <ode>
-              <kp>1e+06</kp>
-              <kd>100</kd>
-              <max_vel>10</max_vel>
-              <min_depth>0.0001</min_depth>
-            </ode>
-          </contact>
-          <friction>
-            <ode>
-              <mu>0.01</mu>
-            </ode>
-          </friction>
-        </surface>
-        <max_contacts>6</max_contacts>
-      </collision>
-      <visual name='shin_l_active_link_visual'>
-        <pose>0 0 0 0 -0 0</pose>
-        <geometry>
-          <mesh>
-            <scale>1 1 1</scale>
-            <uri>/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/meshes/kuroko/stl/shin_l_active.stl</uri>
-          </mesh>
-        </geometry>
-      </visual>
-      <velocity_decay>
-        <linear>0</linear>
-        <angular>0</angular>
-      </velocity_decay>
-      <self_collide>0</self_collide>
-    </link>
-    <joint name='thigh_l_active' type='revolute'>
-      <pose relative_to='hip_l_pitch_link'>0.015 0.02925 -0.0305 0 -0.785398 0</pose>
-      <parent>hip_l_pitch_link</parent>
-      <child>thigh_l_active_link</child>
-      <axis>
-        <xyz>0 -1 0</xyz>
+        <xyz>-0 1 -0</xyz>
         <limit>
           <lower>-1.8588</lower>
           <upper>0.4974</upper>
@@ -1223,8 +1141,91 @@
         </ode>
       </physics>
     </joint>
-    <link name='thigh_l_active_link'>
-      <pose relative_to='thigh_l_active'>0 0 0 0 -0 0</pose>
+    <link name="shin_l_active_link">
+      <pose relative_to="shin_l_active">0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>-0.004745 0 -0.015 0 -0 0</pose>
+        <mass>0.008</mass>
+        <inertia>
+          <ixx>1e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>1e-05</iyy>
+          <iyz>0</iyz>
+          <izz>1e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name="shin_l_active_link_collision">
+        <pose>-0.004745 0 -0.015 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.02349 0.0445 0.044</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode>
+              <kp>1e+06</kp>
+              <kd>100</kd>
+              <max_vel>10</max_vel>
+              <min_depth>0.0001</min_depth>
+            </ode>
+          </contact>
+          <friction>
+            <ode>
+              <mu>0.01</mu>
+            </ode>
+          </friction>
+        </surface>
+        <max_contacts>6</max_contacts>
+      </collision>
+      <visual name="shin_l_active_link_visual">
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/meshes/kuroko/stl/shin_l_active.stl</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <velocity_decay>
+        <linear>0</linear>
+        <angular>0</angular>
+      </velocity_decay>
+      <self_collide>0</self_collide>
+    </link>
+    <joint name="thigh_l_active" type="revolute">
+      <pose relative_to="hip_l_pitch_link">0.015 0.02925 -0.0305 0 -0.785398 0</pose>
+      <parent>hip_l_pitch_link</parent>
+      <child>thigh_l_active_link</child>
+      <axis>
+        <xyz>-0 1 -0</xyz>
+        <limit>
+          <lower>-0.4974</lower>
+          <upper>1.8588</upper>
+          <effort>8.9</effort>
+          <velocity>6.9</velocity>
+        </limit>
+        <dynamics>
+          <damping>1.29</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+      <physics>
+        <ode>
+          <implicit_spring_damper>1</implicit_spring_damper>
+          <cfm_damping>1</cfm_damping>
+          <limit>
+            <cfm>0</cfm>
+            <erp>0.2</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <link name="thigh_l_active_link">
+      <pose relative_to="thigh_l_active">0 0 0 0 -0 0</pose>
       <inertial>
         <pose>0 0 -0.05 0 -0 0</pose>
         <mass>0.012</mass>
@@ -1237,7 +1238,7 @@
           <izz>1e-05</izz>
         </inertia>
       </inertial>
-      <collision name='thigh_l_active_link_collision'>
+      <collision name="thigh_l_active_link_collision">
         <pose>0 0 -0.05 0 -0 0</pose>
         <geometry>
           <box>
@@ -1261,7 +1262,7 @@
         </surface>
         <max_contacts>6</max_contacts>
       </collision>
-      <visual name='thigh_l_active_link_visual'>
+      <visual name="thigh_l_active_link_visual">
         <pose>0 0 0 0 -0 0</pose>
         <geometry>
           <mesh>
@@ -1276,8 +1277,101 @@
       </velocity_decay>
       <self_collide>0</self_collide>
     </link>
-    <joint name='thigh_l_middle_passive' type='revolute'>
-      <pose relative_to='hip_l_pitch_link'>-0.0185 0.02925 -0.0305 0 -0.785398 0</pose>
+    <joint name="shin_l_front_passive" type="revolute">
+      <pose relative_to="thigh_l_active_link">0 0 -0.1 0 1.5708 0</pose>
+      <parent>thigh_l_active_link</parent>
+      <child>shin_l_front_passive_link</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-1.5708</lower>
+          <upper>0.9948</upper>
+          <effort>0</effort>
+          <velocity>1000</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+      <physics>
+        <ode>
+          <limit>
+            <cfm>0</cfm>
+            <erp>0.2</erp>
+          </limit>
+        </ode>
+      </physics>
+      <physics>
+        <ode>
+          <implicit_spring_damper>1</implicit_spring_damper>
+          <cfm_damping>0</cfm_damping>
+          <cfm>1e-07</cfm>
+          <erp>0.8</erp>
+          <limit>
+            <cfm>1e-07</cfm>
+            <erp>0.8</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <link name="shin_l_front_passive_link">
+      <pose relative_to="shin_l_front_passive">0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 0 -0.05 0 -0 0</pose>
+        <mass>0.013</mass>
+        <inertia>
+          <ixx>1.56848e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>1.42913e-05</iyy>
+          <iyz>0</iyz>
+          <izz>1e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name="shin_l_front_passive_link_collision">
+        <pose>0 0 -0.05 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.014 0.0385 0.114</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode>
+              <kp>1e+06</kp>
+              <kd>100</kd>
+              <max_vel>10</max_vel>
+              <min_depth>0.0001</min_depth>
+            </ode>
+          </contact>
+          <friction>
+            <ode>
+              <mu>0</mu>
+            </ode>
+          </friction>
+        </surface>
+        <max_contacts>6</max_contacts>
+      </collision>
+      <visual name="shin_l_front_passive_link_visual">
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/meshes/kuroko/stl/shin_r_front_passive.stl</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <velocity_decay>
+        <linear>0</linear>
+        <angular>0</angular>
+      </velocity_decay>
+      <self_collide>0</self_collide>
+    </link>
+    <joint name="thigh_l_middle_passive" type="revolute">
+      <pose relative_to="hip_l_pitch_link">-0.0185 0.02925 -0.0305 0 -0.785398 0</pose>
       <parent>hip_l_pitch_link</parent>
       <child>thigh_l_middle_passive_link</child>
       <axis>
@@ -1316,8 +1410,8 @@
         </ode>
       </physics>
     </joint>
-    <link name='thigh_l_middle_passive_link'>
-      <pose relative_to='thigh_l_middle_passive'>0 0 0 0 -0 0</pose>
+    <link name="thigh_l_middle_passive_link">
+      <pose relative_to="thigh_l_middle_passive">0 0 0 0 -0 0</pose>
       <inertial>
         <pose>0 0 -0.05 0 -0 0</pose>
         <mass>0.012</mass>
@@ -1330,7 +1424,7 @@
           <izz>1e-05</izz>
         </inertia>
       </inertial>
-      <collision name='thigh_l_middle_passive_link_collision'>
+      <collision name="thigh_l_middle_passive_link_collision">
         <pose>0 0 -0.05 0 -0 0</pose>
         <geometry>
           <box>
@@ -1354,7 +1448,7 @@
         </surface>
         <max_contacts>6</max_contacts>
       </collision>
-      <visual name='thigh_l_middle_passive_link_visual'>
+      <visual name="thigh_l_middle_passive_link_visual">
         <pose>0 0 0 0 -0 0</pose>
         <geometry>
           <mesh>
@@ -1369,20 +1463,165 @@
       </velocity_decay>
       <self_collide>0</self_collide>
     </link>
-    <joint name='hip_r_roll' type='revolute'>
-      <pose relative_to='body_link'>0 0 -0.08425 0 -0 0</pose>
-      <parent>body_link</parent>
-      <child>hip_r_roll_link</child>
+    <joint name="shin_l_rear_passive" type="revolute">
+      <pose relative_to="thigh_l_middle_passive_link">0 0 -0.1 0 1.5708 0</pose>
+      <parent>thigh_l_middle_passive_link</parent>
+      <child>shin_l_rear_passive_link</child>
       <axis>
-        <xyz>1 0 0</xyz>
+        <xyz>0 1 0</xyz>
         <limit>
-          <lower>-0.555</lower>
-          <upper>1.864</upper>
-          <effort>1000</effort>
-          <velocity>10</velocity>
+          <lower>-1.5708</lower>
+          <upper>0.9948</upper>
+          <effort>0</effort>
+          <velocity>1000</velocity>
         </limit>
         <dynamics>
           <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+      <physics>
+        <ode>
+          <limit>
+            <cfm>0</cfm>
+            <erp>0.2</erp>
+          </limit>
+        </ode>
+      </physics>
+      <physics>
+        <ode>
+          <implicit_spring_damper>1</implicit_spring_damper>
+          <cfm_damping>0</cfm_damping>
+          <cfm>1e-07</cfm>
+          <erp>0.8</erp>
+          <limit>
+            <cfm>1e-07</cfm>
+            <erp>0.8</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <link name="shin_l_rear_passive_link">
+      <pose relative_to="shin_l_rear_passive">0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 0 -0.05 0 -0 0</pose>
+        <mass>0.016</mass>
+        <inertia>
+          <ixx>1.99683e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>1.75893e-05</iyy>
+          <iyz>0</iyz>
+          <izz>1e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name="shin_l_rear_passive_link_collision">
+        <pose>0 0 -0.05 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.014 0.0445 0.114</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode>
+              <kp>1e+06</kp>
+              <kd>100</kd>
+              <max_vel>10</max_vel>
+              <min_depth>0.0001</min_depth>
+            </ode>
+          </contact>
+          <friction>
+            <ode>
+              <mu>0</mu>
+            </ode>
+          </friction>
+        </surface>
+        <max_contacts>6</max_contacts>
+      </collision>
+      <visual name="shin_l_rear_passive_link_visual">
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/meshes/kuroko/stl/shin_r_rear_passive.stl</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <velocity_decay>
+        <linear>0</linear>
+        <angular>0</angular>
+      </velocity_decay>
+      <self_collide>0</self_collide>
+    </link>
+    <joint name="ankle_l_rear_passive" type="revolute">
+      <pose relative_to="shin_l_rear_passive_link">0 0 -0.1 0 -0.785398 0</pose>
+      <parent>shin_l_rear_passive_link</parent>
+      <child>ankle_l_rear_passive_link</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-0.4974</lower>
+          <upper>1.8588</upper>
+          <effort>0</effort>
+          <velocity>1000</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name="ankle_l_rear_passive_link">
+      <pose relative_to="ankle_l_rear_passive">0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0.005 0 -0.013 0 -0 0</pose>
+        <mass>0.104</mass>
+        <inertia>
+          <ixx>2.78937e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>8.2095e-05</iyy>
+          <iyz>0</iyz>
+          <izz>7.25097e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name="ankle_l_rear_passive_link_collision">
+        <pose>0.005 0 -0.013 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.0855 0.0325 0.0465</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="ankle_l_rear_passive_link_visual">
+        <pose>0.0335 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/meshes/kuroko/stl/ankle_r_pitch_passive.stl</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name="ankle_l_roll" type="revolute">
+      <pose relative_to="ankle_l_rear_passive_link">0.0185 0 -0.027 0 -0 0</pose>
+      <parent>ankle_l_rear_passive_link</parent>
+      <child>ankle_l_roll_link</child>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>-1.5708</lower>
+          <upper>0.3704</upper>
+          <effort>3.1</effort>
+          <velocity>6.5</velocity>
+        </limit>
+        <dynamics>
+          <damping>0.477</damping>
           <friction>0</friction>
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
@@ -1399,8 +1638,340 @@
         </ode>
       </physics>
     </joint>
-    <link name='hip_r_roll_link'>
-      <pose relative_to='hip_r_roll'>0 0 0 0 -0 0</pose>
+    <link name="ankle_l_roll_link">
+      <pose relative_to="ankle_l_roll">0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 0.009375 -0.01175 0 -0 0</pose>
+        <mass>0.136</mass>
+        <inertia>
+          <ixx>5.3698e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>3.60542e-05</iyy>
+          <iyz>0</iyz>
+          <izz>4.78415e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name="ankle_l_roll_link_collision">
+        <pose>0 0.009375 -0.01175 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.0365 0.05375 0.043</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode>
+              <kp>1e+06</kp>
+              <kd>100</kd>
+              <max_vel>10</max_vel>
+              <min_depth>0.0001</min_depth>
+            </ode>
+          </contact>
+          <friction>
+            <ode>
+              <mu>0</mu>
+            </ode>
+          </friction>
+        </surface>
+        <max_contacts>6</max_contacts>
+      </collision>
+      <visual name="ankle_l_roll_link_visual">
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/meshes/kuroko/stl/ankle_l_roll.stl</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <velocity_decay>
+        <linear>0</linear>
+        <angular>0</angular>
+      </velocity_decay>
+      <self_collide>0</self_collide>
+    </link>
+    <joint name="ankle_l_yaw" type="revolute">
+      <pose relative_to="ankle_l_roll_link">0 0 -0.03825 0 -0 0</pose>
+      <parent>ankle_l_roll_link</parent>
+      <child>ankle_l_yaw_link</child>
+      <axis>
+        <xyz>-0 -0 1</xyz>
+        <limit>
+          <lower>-3.1416</lower>
+          <upper>3.1416</upper>
+          <effort>3.1</effort>
+          <velocity>6.5</velocity>
+        </limit>
+        <dynamics>
+          <damping>0.477</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+      <physics>
+        <ode>
+          <implicit_spring_damper>1</implicit_spring_damper>
+          <cfm_damping>1</cfm_damping>
+          <limit>
+            <cfm>0</cfm>
+            <erp>0.2</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <link name="ankle_l_yaw_link">
+      <pose relative_to="ankle_l_yaw">0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 0 -0.004 0 -0 0</pose>
+        <mass>0.043</mass>
+        <inertia>
+          <ixx>2.03856e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>5.18293e-05</iyy>
+          <iyz>0</iyz>
+          <izz>7.17562e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name="ankle_l_yaw_link_collision">
+        <pose>0 0 -0.004 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.12 0.075 0.008</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode>
+              <kp>2e+06</kp>
+              <kd>200</kd>
+              <max_vel>1</max_vel>
+              <min_depth>0.0001</min_depth>
+            </ode>
+          </contact>
+          <friction>
+            <ode>
+              <mu>1</mu>
+            </ode>
+          </friction>
+        </surface>
+        <max_contacts>10</max_contacts>
+      </collision>
+      <visual name="ankle_l_yaw_link_visual">
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/meshes/kuroko/stl/ankle_r_yaw.stl</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <velocity_decay>
+        <linear>0</linear>
+        <angular>0</angular>
+      </velocity_decay>
+      <self_collide>0</self_collide>
+    </link>
+    <joint name="knee_l_rear_passive" type="revolute">
+      <pose relative_to="shin_l_rear_passive_link">0 0 0 0 -0.785398 0</pose>
+      <parent>shin_l_rear_passive_link</parent>
+      <child>knee_l_passive_link</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-3.14159</lower>
+          <upper>3.14159</upper>
+          <effort>0</effort>
+          <velocity>1000</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name="knee_l_passive_link">
+      <pose relative_to="knee_l_rear_passive">0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0.01675 0 0 0 -0 0</pose>
+        <mass>0.007</mass>
+        <inertia>
+          <ixx>1e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>1e-05</iyy>
+          <iyz>0</iyz>
+          <izz>1e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name="knee_l_passive_link_collision">
+        <pose>0.01675 0 0 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.0475 0.0505 0.014</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode>
+              <kp>1e+06</kp>
+              <kd>100</kd>
+              <max_vel>10</max_vel>
+              <min_depth>0.0001</min_depth>
+            </ode>
+          </contact>
+          <friction>
+            <ode>
+              <mu>0.01</mu>
+            </ode>
+          </friction>
+        </surface>
+        <max_contacts>6</max_contacts>
+      </collision>
+      <visual name="knee_l_passive_link_visual">
+        <pose>0.0335 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/meshes/kuroko/stl/knee_r_passive.stl</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <velocity_decay>
+        <linear>0</linear>
+        <angular>0</angular>
+      </velocity_decay>
+      <self_collide>0</self_collide>
+    </link>
+    <joint name="thigh_l_rear_passive" type="revolute">
+      <pose relative_to="shin_l_rear_passive_link">-0.007765 0 -0.028978 0 -1.5708 0</pose>
+      <parent>shin_l_rear_passive_link</parent>
+      <child>thigh_l_rear_passive_link</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-0.9948</lower>
+          <upper>1.5708</upper>
+          <effort>0</effort>
+          <velocity>1000</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+      <physics>
+        <ode>
+          <limit>
+            <cfm>0</cfm>
+            <erp>0.2</erp>
+          </limit>
+        </ode>
+      </physics>
+      <physics>
+        <ode>
+          <implicit_spring_damper>1</implicit_spring_damper>
+          <cfm_damping>0</cfm_damping>
+          <cfm>1e-07</cfm>
+          <erp>0.8</erp>
+          <limit>
+            <cfm>1e-07</cfm>
+            <erp>0.8</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <link name="thigh_l_rear_passive_link">
+      <pose relative_to="thigh_l_rear_passive">0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 0 0.05 0 -0 0</pose>
+        <mass>0.011</mass>
+        <inertia>
+          <ixx>1.26576e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>1.20927e-05</iyy>
+          <iyz>0</iyz>
+          <izz>1e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name="thigh_l_rear_passive_link_collision">
+        <pose>0 0 0.05 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.014 0.0285 0.114</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode>
+              <kp>1e+06</kp>
+              <kd>100</kd>
+              <max_vel>10</max_vel>
+              <min_depth>0.0001</min_depth>
+            </ode>
+          </contact>
+          <friction>
+            <ode>
+              <mu>0</mu>
+            </ode>
+          </friction>
+        </surface>
+        <max_contacts>6</max_contacts>
+      </collision>
+      <visual name="thigh_l_rear_passive_link_visual">
+        <pose>0 0 0.1 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/meshes/kuroko/stl/thigh_r_rear_passive.stl</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <velocity_decay>
+        <linear>0</linear>
+        <angular>0</angular>
+      </velocity_decay>
+      <self_collide>0</self_collide>
+    </link>
+    <joint name="hip_r_roll" type="revolute">
+      <pose relative_to="body_link">0 0 -0.08425 0 -0 0</pose>
+      <parent>body_link</parent>
+      <child>hip_r_roll_link</child>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>-0.555</lower>
+          <upper>1.864</upper>
+          <effort>3.1</effort>
+          <velocity>6.5</velocity>
+        </limit>
+        <dynamics>
+          <damping>0.477</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+      <physics>
+        <ode>
+          <implicit_spring_damper>1</implicit_spring_damper>
+          <cfm_damping>1</cfm_damping>
+          <limit>
+            <cfm>0</cfm>
+            <erp>0.2</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <link name="hip_r_roll_link">
+      <pose relative_to="hip_r_roll">0 0 0 0 -0 0</pose>
       <inertial>
         <pose>0.00125 -0.0065 -0.004125 0 -0 0</pose>
         <mass>0.026</mass>
@@ -1413,7 +1984,7 @@
           <izz>2.19808e-05</izz>
         </inertia>
       </inertial>
-      <collision name='hip_r_roll_link_collision'>
+      <collision name="hip_r_roll_link_collision">
         <pose>0.00125 -0.0065 -0.004125 0 -0 0</pose>
         <geometry>
           <box>
@@ -1437,7 +2008,7 @@
         </surface>
         <max_contacts>6</max_contacts>
       </collision>
-      <visual name='hip_r_roll_link_visual'>
+      <visual name="hip_r_roll_link_visual">
         <pose>0 0 0 0 -0 0</pose>
         <geometry>
           <mesh>
@@ -1452,20 +2023,20 @@
       </velocity_decay>
       <self_collide>0</self_collide>
     </link>
-    <joint name='hip_r_pitch' type='revolute'>
-      <pose relative_to='hip_r_roll_link'>0 -0.027 0 0 -0 0</pose>
+    <joint name="hip_r_pitch" type="revolute">
+      <pose relative_to="hip_r_roll_link">0 -0.027 0 0 -0 0</pose>
       <parent>hip_r_roll_link</parent>
       <child>hip_r_pitch_link</child>
       <axis>
-        <xyz>0 -1 0</xyz>
+        <xyz>-0 1 -0</xyz>
         <limit>
           <lower>-3.1</lower>
           <upper>3.1</upper>
-          <effort>1000</effort>
-          <velocity>10</velocity>
+          <effort>3.1</effort>
+          <velocity>6.5</velocity>
         </limit>
         <dynamics>
-          <damping>0</damping>
+          <damping>0.477</damping>
           <friction>0</friction>
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
@@ -1482,8 +2053,8 @@
         </ode>
       </physics>
     </joint>
-    <link name='hip_r_pitch_link'>
-      <pose relative_to='hip_r_pitch'>0 0 0 0 -0 0</pose>
+    <link name="hip_r_pitch_link">
+      <pose relative_to="hip_r_pitch">0 0 0 0 -0 0</pose>
       <inertial>
         <pose>-0.00175 -0.049 -0.015 0 -0 0</pose>
         <mass>0.478</mass>
@@ -1496,7 +2067,7 @@
           <izz>0.000561371</izz>
         </inertia>
       </inertial>
-      <collision name='hip_r_pitch_link_collision'>
+      <collision name="hip_r_pitch_link_collision">
         <pose>-0.00175 -0.049 -0.015 0 -0 0</pose>
         <geometry>
           <box>
@@ -1520,7 +2091,7 @@
         </surface>
         <max_contacts>6</max_contacts>
       </collision>
-      <visual name='hip_r_pitch_link_visual'>
+      <visual name="hip_r_pitch_link_visual">
         <pose>0 0 0 0 -0 0</pose>
         <geometry>
           <mesh>
@@ -1535,8 +2106,8 @@
       </velocity_decay>
       <self_collide>0</self_collide>
     </link>
-    <joint name='shin_r_active' type='revolute'>
-      <pose relative_to='hip_r_pitch_link'>-0.0185 -0.02925 -0.0305 0 1.0472 0</pose>
+    <joint name="shin_r_active" type="revolute">
+      <pose relative_to="hip_r_pitch_link">-0.0185 -0.02925 -0.0305 0 1.0472 0</pose>
       <parent>hip_r_pitch_link</parent>
       <child>shin_r_active_link</child>
       <axis>
@@ -1565,8 +2136,8 @@
         </ode>
       </physics>
     </joint>
-    <link name='shin_r_active_link'>
-      <pose relative_to='shin_r_active'>0 0 0 0 -0 0</pose>
+    <link name="shin_r_active_link">
+      <pose relative_to="shin_r_active">0 0 0 0 -0 0</pose>
       <inertial>
         <pose>-0.004745 0 -0.015 0 -0 0</pose>
         <mass>0.008</mass>
@@ -1579,7 +2150,7 @@
           <izz>1e-05</izz>
         </inertia>
       </inertial>
-      <collision name='shin_r_active_link_collision'>
+      <collision name="shin_r_active_link_collision">
         <pose>-0.004745 0 -0.015 0 -0 0</pose>
         <geometry>
           <box>
@@ -1603,7 +2174,7 @@
         </surface>
         <max_contacts>6</max_contacts>
       </collision>
-      <visual name='shin_r_active_link_visual'>
+      <visual name="shin_r_active_link_visual">
         <pose>0 0 0 0 -0 0</pose>
         <geometry>
           <mesh>
@@ -1618,8 +2189,8 @@
       </velocity_decay>
       <self_collide>0</self_collide>
     </link>
-    <joint name='thigh_r_active' type='revolute'>
-      <pose relative_to='hip_r_pitch_link'>0.015 -0.02925 -0.0305 0 -0.785398 0</pose>
+    <joint name="thigh_r_active" type="revolute">
+      <pose relative_to="hip_r_pitch_link">0.015 -0.02925 -0.0305 0 -0.785398 0</pose>
       <parent>hip_r_pitch_link</parent>
       <child>thigh_r_active_link</child>
       <axis>
@@ -1648,8 +2219,8 @@
         </ode>
       </physics>
     </joint>
-    <link name='thigh_r_active_link'>
-      <pose relative_to='thigh_r_active'>0 0 0 0 -0 0</pose>
+    <link name="thigh_r_active_link">
+      <pose relative_to="thigh_r_active">0 0 0 0 -0 0</pose>
       <inertial>
         <pose>0 0 -0.05 0 -0 0</pose>
         <mass>0.012</mass>
@@ -1662,7 +2233,7 @@
           <izz>1e-05</izz>
         </inertia>
       </inertial>
-      <collision name='thigh_r_active_link_collision'>
+      <collision name="thigh_r_active_link_collision">
         <pose>0 0 -0.05 0 -0 0</pose>
         <geometry>
           <box>
@@ -1686,7 +2257,7 @@
         </surface>
         <max_contacts>6</max_contacts>
       </collision>
-      <visual name='thigh_r_active_link_visual'>
+      <visual name="thigh_r_active_link_visual">
         <pose>0 0 0 0 -0 0</pose>
         <geometry>
           <mesh>
@@ -1701,8 +2272,101 @@
       </velocity_decay>
       <self_collide>0</self_collide>
     </link>
-    <joint name='thigh_r_middle_passive' type='revolute'>
-      <pose relative_to='hip_r_pitch_link'>-0.0185 -0.02925 -0.0305 0 -0.785398 0</pose>
+    <joint name="shin_r_front_passive" type="revolute">
+      <pose relative_to="thigh_r_active_link">0 0 -0.1 0 1.5708 0</pose>
+      <parent>thigh_r_active_link</parent>
+      <child>shin_r_front_passive_link</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-1.5708</lower>
+          <upper>0.9948</upper>
+          <effort>0</effort>
+          <velocity>1000</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+      <physics>
+        <ode>
+          <limit>
+            <cfm>0</cfm>
+            <erp>0.2</erp>
+          </limit>
+        </ode>
+      </physics>
+      <physics>
+        <ode>
+          <implicit_spring_damper>1</implicit_spring_damper>
+          <cfm_damping>0</cfm_damping>
+          <cfm>1e-07</cfm>
+          <erp>0.8</erp>
+          <limit>
+            <cfm>1e-07</cfm>
+            <erp>0.8</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <link name="shin_r_front_passive_link">
+      <pose relative_to="shin_r_front_passive">0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 0 -0.05 0 -0 0</pose>
+        <mass>0.013</mass>
+        <inertia>
+          <ixx>1.56848e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>1.42913e-05</iyy>
+          <iyz>0</iyz>
+          <izz>1e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name="shin_r_front_passive_link_collision">
+        <pose>0 0 -0.05 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.014 0.0385 0.114</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode>
+              <kp>1e+06</kp>
+              <kd>100</kd>
+              <max_vel>10</max_vel>
+              <min_depth>0.0001</min_depth>
+            </ode>
+          </contact>
+          <friction>
+            <ode>
+              <mu>0</mu>
+            </ode>
+          </friction>
+        </surface>
+        <max_contacts>6</max_contacts>
+      </collision>
+      <visual name="shin_r_front_passive_link_visual">
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/meshes/kuroko/stl/shin_r_front_passive.stl</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <velocity_decay>
+        <linear>0</linear>
+        <angular>0</angular>
+      </velocity_decay>
+      <self_collide>0</self_collide>
+    </link>
+    <joint name="thigh_r_middle_passive" type="revolute">
+      <pose relative_to="hip_r_pitch_link">-0.0185 -0.02925 -0.0305 0 -0.785398 0</pose>
       <parent>hip_r_pitch_link</parent>
       <child>thigh_r_middle_passive_link</child>
       <axis>
@@ -1741,8 +2405,8 @@
         </ode>
       </physics>
     </joint>
-    <link name='thigh_r_middle_passive_link'>
-      <pose relative_to='thigh_r_middle_passive'>0 0 0 0 -0 0</pose>
+    <link name="thigh_r_middle_passive_link">
+      <pose relative_to="thigh_r_middle_passive">0 0 0 0 -0 0</pose>
       <inertial>
         <pose>0 0 -0.05 0 -0 0</pose>
         <mass>0.012</mass>
@@ -1755,7 +2419,7 @@
           <izz>1e-05</izz>
         </inertia>
       </inertial>
-      <collision name='thigh_r_middle_passive_link_collision'>
+      <collision name="thigh_r_middle_passive_link_collision">
         <pose>0 0 -0.05 0 -0 0</pose>
         <geometry>
           <box>
@@ -1779,7 +2443,7 @@
         </surface>
         <max_contacts>6</max_contacts>
       </collision>
-      <visual name='thigh_r_middle_passive_link_visual'>
+      <visual name="thigh_r_middle_passive_link_visual">
         <pose>0 0 0 0 -0 0</pose>
         <geometry>
           <mesh>
@@ -1794,8 +2458,485 @@
       </velocity_decay>
       <self_collide>0</self_collide>
     </link>
-    <joint name='imu_joint' type='fixed'>
-      <pose relative_to='body_link'>-0.04 0 -0.01 0 -0 0</pose>
+    <joint name="shin_r_rear_passive" type="revolute">
+      <pose relative_to="thigh_r_middle_passive_link">0 0 -0.1 0 1.5708 0</pose>
+      <parent>thigh_r_middle_passive_link</parent>
+      <child>shin_r_rear_passive_link</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-1.5708</lower>
+          <upper>0.9948</upper>
+          <effort>0</effort>
+          <velocity>1000</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+      <physics>
+        <ode>
+          <limit>
+            <cfm>0</cfm>
+            <erp>0.2</erp>
+          </limit>
+        </ode>
+      </physics>
+      <physics>
+        <ode>
+          <implicit_spring_damper>1</implicit_spring_damper>
+          <cfm_damping>0</cfm_damping>
+          <cfm>1e-07</cfm>
+          <erp>0.8</erp>
+          <limit>
+            <cfm>1e-07</cfm>
+            <erp>0.8</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <link name="shin_r_rear_passive_link">
+      <pose relative_to="shin_r_rear_passive">0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 0 -0.05 0 -0 0</pose>
+        <mass>0.016</mass>
+        <inertia>
+          <ixx>1.99683e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>1.75893e-05</iyy>
+          <iyz>0</iyz>
+          <izz>1e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name="shin_r_rear_passive_link_collision">
+        <pose>0 0 -0.05 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.014 0.0445 0.114</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode>
+              <kp>1e+06</kp>
+              <kd>100</kd>
+              <max_vel>10</max_vel>
+              <min_depth>0.0001</min_depth>
+            </ode>
+          </contact>
+          <friction>
+            <ode>
+              <mu>0</mu>
+            </ode>
+          </friction>
+        </surface>
+        <max_contacts>6</max_contacts>
+      </collision>
+      <visual name="shin_r_rear_passive_link_visual">
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/meshes/kuroko/stl/shin_r_rear_passive.stl</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <velocity_decay>
+        <linear>0</linear>
+        <angular>0</angular>
+      </velocity_decay>
+      <self_collide>0</self_collide>
+    </link>
+    <joint name="ankle_r_rear_passive" type="revolute">
+      <pose relative_to="shin_r_rear_passive_link">0 0 -0.1 0 -0.785398 0</pose>
+      <parent>shin_r_rear_passive_link</parent>
+      <child>ankle_r_rear_passive_link</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-0.4974</lower>
+          <upper>1.8588</upper>
+          <effort>0</effort>
+          <velocity>1000</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name="ankle_r_rear_passive_link">
+      <pose relative_to="ankle_r_rear_passive">0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0.005 0 -0.013 0 -0 0</pose>
+        <mass>0.104</mass>
+        <inertia>
+          <ixx>2.78937e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>8.2095e-05</iyy>
+          <iyz>0</iyz>
+          <izz>7.25097e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name="ankle_r_rear_passive_link_collision">
+        <pose>0.005 0 -0.013 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.0855 0.0325 0.0465</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="ankle_r_rear_passive_link_visual">
+        <pose>0.0335 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/meshes/kuroko/stl/ankle_r_pitch_passive.stl</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name="ankle_r_roll" type="revolute">
+      <pose relative_to="ankle_r_rear_passive_link">0.0185 0 -0.027 0 -0 0</pose>
+      <parent>ankle_r_rear_passive_link</parent>
+      <child>ankle_r_roll_link</child>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>-0.3704</lower>
+          <upper>1.5708</upper>
+          <effort>3.1</effort>
+          <velocity>6.5</velocity>
+        </limit>
+        <dynamics>
+          <damping>0.477</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+      <physics>
+        <ode>
+          <implicit_spring_damper>1</implicit_spring_damper>
+          <cfm_damping>1</cfm_damping>
+          <limit>
+            <cfm>0</cfm>
+            <erp>0.2</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <link name="ankle_r_roll_link">
+      <pose relative_to="ankle_r_roll">0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 -0.009375 -0.01175 0 -0 0</pose>
+        <mass>0.136</mass>
+        <inertia>
+          <ixx>5.3698e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>3.60542e-05</iyy>
+          <iyz>0</iyz>
+          <izz>4.78415e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name="ankle_r_roll_link_collision">
+        <pose>0 -0.009375 -0.01175 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.0365 0.05375 0.043</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode>
+              <kp>1e+06</kp>
+              <kd>100</kd>
+              <max_vel>10</max_vel>
+              <min_depth>0.0001</min_depth>
+            </ode>
+          </contact>
+          <friction>
+            <ode>
+              <mu>0</mu>
+            </ode>
+          </friction>
+        </surface>
+        <max_contacts>6</max_contacts>
+      </collision>
+      <visual name="ankle_r_roll_link_visual">
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/meshes/kuroko/stl/ankle_r_roll.stl</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <velocity_decay>
+        <linear>0</linear>
+        <angular>0</angular>
+      </velocity_decay>
+      <self_collide>0</self_collide>
+    </link>
+    <joint name="ankle_r_yaw" type="revolute">
+      <pose relative_to="ankle_r_roll_link">0 0 -0.03825 0 -0 0</pose>
+      <parent>ankle_r_roll_link</parent>
+      <child>ankle_r_yaw_link</child>
+      <axis>
+        <xyz>-0 -0 1</xyz>
+        <limit>
+          <lower>-3.1</lower>
+          <upper>3.1</upper>
+          <effort>3.1</effort>
+          <velocity>6.5</velocity>
+        </limit>
+        <dynamics>
+          <damping>0.477</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+      <physics>
+        <ode>
+          <implicit_spring_damper>1</implicit_spring_damper>
+          <cfm_damping>1</cfm_damping>
+          <limit>
+            <cfm>0</cfm>
+            <erp>0.2</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <link name="ankle_r_yaw_link">
+      <pose relative_to="ankle_r_yaw">0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 0 -0.004 0 -0 0</pose>
+        <mass>0.043</mass>
+        <inertia>
+          <ixx>2.03856e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>5.18293e-05</iyy>
+          <iyz>0</iyz>
+          <izz>7.17562e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name="ankle_r_yaw_link_collision">
+        <pose>0 0 -0.004 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.12 0.075 0.008</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode>
+              <kp>2e+06</kp>
+              <kd>200</kd>
+              <max_vel>1</max_vel>
+              <min_depth>0.0001</min_depth>
+            </ode>
+          </contact>
+          <friction>
+            <ode>
+              <mu>1</mu>
+            </ode>
+          </friction>
+        </surface>
+        <max_contacts>10</max_contacts>
+      </collision>
+      <visual name="ankle_r_yaw_link_visual">
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/meshes/kuroko/stl/ankle_r_yaw.stl</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <velocity_decay>
+        <linear>0</linear>
+        <angular>0</angular>
+      </velocity_decay>
+      <self_collide>0</self_collide>
+    </link>
+    <joint name="knee_r_rear_passive" type="revolute">
+      <pose relative_to="shin_r_rear_passive_link">0 0 0 0 -0.785398 0</pose>
+      <parent>shin_r_rear_passive_link</parent>
+      <child>knee_r_passive_link</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-3.14159</lower>
+          <upper>3.14159</upper>
+          <effort>0</effort>
+          <velocity>1000</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name="knee_r_passive_link">
+      <pose relative_to="knee_r_rear_passive">0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0.01675 0 0 0 -0 0</pose>
+        <mass>0.007</mass>
+        <inertia>
+          <ixx>1e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>1e-05</iyy>
+          <iyz>0</iyz>
+          <izz>1e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name="knee_r_passive_link_collision">
+        <pose>0.01675 0 0 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.0475 0.0505 0.014</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode>
+              <kp>1e+06</kp>
+              <kd>100</kd>
+              <max_vel>10</max_vel>
+              <min_depth>0.0001</min_depth>
+            </ode>
+          </contact>
+          <friction>
+            <ode>
+              <mu>0.01</mu>
+            </ode>
+          </friction>
+        </surface>
+        <max_contacts>6</max_contacts>
+      </collision>
+      <visual name="knee_r_passive_link_visual">
+        <pose>0.0335 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/meshes/kuroko/stl/knee_r_passive.stl</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <velocity_decay>
+        <linear>0</linear>
+        <angular>0</angular>
+      </velocity_decay>
+      <self_collide>0</self_collide>
+    </link>
+    <joint name="thigh_r_rear_passive" type="revolute">
+      <pose relative_to="shin_r_rear_passive_link">-0.007765 0 -0.028978 0 -1.5708 0</pose>
+      <parent>shin_r_rear_passive_link</parent>
+      <child>thigh_r_rear_passive_link</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-0.9948</lower>
+          <upper>1.5708</upper>
+          <effort>0</effort>
+          <velocity>1000</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+      <physics>
+        <ode>
+          <limit>
+            <cfm>0</cfm>
+            <erp>0.2</erp>
+          </limit>
+        </ode>
+      </physics>
+      <physics>
+        <ode>
+          <implicit_spring_damper>1</implicit_spring_damper>
+          <cfm_damping>0</cfm_damping>
+          <cfm>1e-07</cfm>
+          <erp>0.8</erp>
+          <limit>
+            <cfm>1e-07</cfm>
+            <erp>0.8</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <link name="thigh_r_rear_passive_link">
+      <pose relative_to="thigh_r_rear_passive">0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 0 0.05 0 -0 0</pose>
+        <mass>0.011</mass>
+        <inertia>
+          <ixx>1.26576e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>1.20927e-05</iyy>
+          <iyz>0</iyz>
+          <izz>1e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name="thigh_r_rear_passive_link_collision">
+        <pose>0 0 0.05 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.014 0.0285 0.114</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode>
+              <kp>1e+06</kp>
+              <kd>100</kd>
+              <max_vel>10</max_vel>
+              <min_depth>0.0001</min_depth>
+            </ode>
+          </contact>
+          <friction>
+            <ode>
+              <mu>0</mu>
+            </ode>
+          </friction>
+        </surface>
+        <max_contacts>6</max_contacts>
+      </collision>
+      <visual name="thigh_r_rear_passive_link_visual">
+        <pose>0 0 0.1 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>/home/nyx/lib/isaaclab/kuroko_ros/kuroko_description/meshes/kuroko/stl/thigh_r_rear_passive.stl</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <velocity_decay>
+        <linear>0</linear>
+        <angular>0</angular>
+      </velocity_decay>
+      <self_collide>0</self_collide>
+    </link>
+    <joint name="imu_joint" type="fixed">
+      <pose relative_to="body_link">-0.04 0 -0.01 0 -0 0</pose>
       <parent>body_link</parent>
       <child>imu_link</child>
       <axis>
@@ -1818,8 +2959,8 @@
         </ode>
       </physics>
     </joint>
-    <link name='imu_link'>
-      <pose relative_to='imu_joint'>0 0 0 0 -0 0</pose>
+    <link name="imu_link">
+      <pose relative_to="imu_joint">0 0 0 0 -0 0</pose>
       <inertial>
         <pose>0 0 0 0 -0 0</pose>
         <mass>0.013</mass>
@@ -1832,7 +2973,7 @@
           <izz>1e-05</izz>
         </inertia>
       </inertial>
-      <collision name='imu_link_collision'>
+      <collision name="imu_link_collision">
         <pose>0 0 0 0 -0 0</pose>
         <geometry>
           <box>
@@ -1841,14 +2982,14 @@
         </geometry>
         <surface>
           <contact>
-            <ode/>
+            <ode />
           </contact>
           <friction>
-            <ode/>
+            <ode />
           </friction>
         </surface>
       </collision>
-      <visual name='imu_link_visual'>
+      <visual name="imu_link_visual">
         <pose>0 0 0 0 -0 0</pose>
         <geometry>
           <box>
@@ -1863,8 +3004,8 @@
         </material>
       </visual>
     </link>
-    <joint name='tfluna_joint' type='fixed'>
-      <pose relative_to='body_link'>0.07 0 -0.044 0 -0 0</pose>
+    <joint name="tfluna_joint" type="fixed">
+      <pose relative_to="body_link">0.07 0 -0.044 0 -0 0</pose>
       <parent>body_link</parent>
       <child>tfluna_link</child>
       <axis>
@@ -1887,8 +3028,8 @@
         </ode>
       </physics>
     </joint>
-    <link name='tfluna_link'>
-      <pose relative_to='tfluna_joint'>0 0 0 0 -0 0</pose>
+    <link name="tfluna_link">
+      <pose relative_to="tfluna_joint">0 0 0 0 -0 0</pose>
       <inertial>
         <pose>0 0 0 0 -0 0</pose>
         <mass>0.01</mass>
@@ -1901,7 +3042,7 @@
           <izz>1e-05</izz>
         </inertia>
       </inertial>
-      <collision name='tfluna_link_collision'>
+      <collision name="tfluna_link_collision">
         <pose>0 0 0 0 -0 0</pose>
         <geometry>
           <box>
@@ -1910,14 +3051,14 @@
         </geometry>
         <surface>
           <contact>
-            <ode/>
+            <ode />
           </contact>
           <friction>
-            <ode/>
+            <ode />
           </friction>
         </surface>
       </collision>
-      <visual name='tfluna_link_visual'>
+      <visual name="tfluna_link_visual">
         <pose>0 0 0 0 -0 0</pose>
         <geometry>
           <box>
@@ -1925,7 +3066,7 @@
           </box>
         </geometry>
       </visual>
-      <sensor name='tfluna' type='ray'>
+      <sensor name="tfluna" type="ray">
         <always_on>1</always_on>
         <update_rate>10</update_rate>
         <pose>0 0 0 0 -0 0</pose>
@@ -1951,7 +3092,7 @@
             <resolution>0.01</resolution>
           </range>
         </ray>
-        <plugin name='gazebo_ros_tfluna_controller' filename='libgazebo_ros_range.so'>
+        <plugin name="gazebo_ros_tfluna_controller" filename="libgazebo_ros_range.so">
           <gaussianNoise>0.005</gaussianNoise>
           <alwaysOn>1</alwaysOn>
           <updateRate>10</updateRate>
@@ -1962,7 +3103,181 @@
         </plugin>
       </sensor>
     </link>
-    <plugin name='imu_controller' filename='libhector_gazebo_ros_imu.so'>
+    <joint name="knee_r_front_passive_loop" type="revolute">
+      <parent>thigh_r_active_link</parent>
+      <child>knee_r_passive_link</child>
+      <pose>0.0335 0 0 0 -0 0</pose>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-1.8588</lower>
+          <upper>0.4974</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+      <physics>
+        <ode>
+          <implicit_spring_damper>1</implicit_spring_damper>
+          <cfm_damping>0</cfm_damping>
+          <cfm>1e-07</cfm>
+          <erp>0.8</erp>
+          <limit>
+            <cfm>1e-07</cfm>
+            <erp>0.8</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <joint name="thigh_r_rear_passive_loop" type="revolute">
+      <parent>shin_r_active_link</parent>
+      <child>thigh_r_rear_passive_link</child>
+      <pose>0 0 0.1 3.14159 1.30899 3.14159</pose>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-3.1416</lower>
+          <upper>3.1416</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+      <physics>
+        <ode>
+          <implicit_spring_damper>1</implicit_spring_damper>
+          <cfm_damping>0</cfm_damping>
+          <cfm>1e-07</cfm>
+          <erp>0.8</erp>
+          <limit>
+            <cfm>1e-07</cfm>
+            <erp>0.8</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <joint name="ankle_r_front_passive_loop" type="revolute">
+      <parent>shin_r_front_passive_link</parent>
+      <child>ankle_r_rear_passive_link</child>
+      <pose>0.0335 0 0 0 -0.785398 0</pose>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-3.1416</lower>
+          <upper>3.1416</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+      <physics>
+        <ode>
+          <implicit_spring_damper>1</implicit_spring_damper>
+          <cfm_damping>0</cfm_damping>
+          <cfm>1e-07</cfm>
+          <erp>0.8</erp>
+          <limit>
+            <cfm>1e-07</cfm>
+            <erp>0.8</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <joint name="knee_l_front_passive_loop" type="revolute">
+      <parent>thigh_l_active_link</parent>
+      <child>knee_l_passive_link</child>
+      <pose>0.0335 0 0 0 -0 0</pose>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-1.8588</lower>
+          <upper>0.4974</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+      <physics>
+        <ode>
+          <implicit_spring_damper>1</implicit_spring_damper>
+          <cfm_damping>0</cfm_damping>
+          <cfm>1e-07</cfm>
+          <erp>0.8</erp>
+          <limit>
+            <cfm>1e-07</cfm>
+            <erp>0.8</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <joint name="thigh_l_rear_passive_loop" type="revolute">
+      <parent>shin_l_active_link</parent>
+      <child>thigh_l_rear_passive_link</child>
+      <pose>0 0 0.1 3.14159 1.30899 3.14159</pose>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-3.1416</lower>
+          <upper>3.1416</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+      <physics>
+        <ode>
+          <implicit_spring_damper>1</implicit_spring_damper>
+          <cfm_damping>0</cfm_damping>
+          <cfm>1e-07</cfm>
+          <erp>0.8</erp>
+          <limit>
+            <cfm>1e-07</cfm>
+            <erp>0.8</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <joint name="ankle_l_front_passive_loop" type="revolute">
+      <parent>shin_l_front_passive_link</parent>
+      <child>ankle_l_rear_passive_link</child>
+      <pose>0.0335 0 0 0 -0.785398 0</pose>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-3.1416</lower>
+          <upper>3.1416</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+      <physics>
+        <ode>
+          <implicit_spring_damper>1</implicit_spring_damper>
+          <cfm_damping>0</cfm_damping>
+          <cfm>1e-07</cfm>
+          <erp>0.8</erp>
+          <limit>
+            <cfm>1e-07</cfm>
+            <erp>0.8</erp>
+          </limit>
+        </ode>
+      </physics>
+    </joint>
+    <plugin name="imu_controller" filename="libhector_gazebo_ros_imu.so">
       <alwaysOn>1</alwaysOn>
       <updateRate>400</updateRate>
       <bodyName>imu_link</bodyName>
@@ -1974,7 +3289,7 @@
       <rateOffset>0 0 0</rateOffset>
       <rpyOffset>0 0 0</rpyOffset>
     </plugin>
-    <plugin name='magnetic_controller' filename='libhector_gazebo_ros_magnetic.so'>
+    <plugin name="magnetic_controller" filename="libhector_gazebo_ros_magnetic.so">
       <alwaysOn>1</alwaysOn>
       <updateRate>400</updateRate>
       <bodyName>imu_link</bodyName>
@@ -1990,7 +3305,7 @@
       <gaussianNoise>0 0 0</gaussianNoise>
     </plugin>
     <static>0</static>
-    <plugin name='gazebo_ros_control' filename='libgazebo_dc_motor.so'>
+    <plugin name="gazebo_ros_control" filename="libgazebo_dc_motor.so">
       <robotNamespace>kuroko</robotNamespace>
       <robotSimType>gazebo_dc_motor/DefaultRobotHWSim</robotSimType>
       <legacyModeNS>0</legacyModeNS>

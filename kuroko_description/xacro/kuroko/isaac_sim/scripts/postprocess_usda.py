@@ -11,6 +11,7 @@ try:
 except Exception:
     PXRC_AVAILABLE = False
 
+MIN_INERTIA=0.0002
 
 def parse_args():
     ap = argparse.ArgumentParser()
@@ -112,7 +113,7 @@ def set_robot_level_attrs(robot_prim):
 
 
 def clamp_diagonal_inertia(prim):
-    """Clamp physics:diagonalInertia components to >= 1e-4 if present."""
+    """Clamp physics:diagonalInertia components to >= MIN_INERTIA if present."""
     attr = prim.GetAttribute("physics:diagonalInertia")
     if not attr:
         return False
@@ -124,7 +125,7 @@ def clamp_diagonal_inertia(prim):
     except Exception:
         return False
     changed = False
-    eps = 1e-4
+    eps = MIN_INERTIA
     nx, ny, nz = max(x, eps), max(y, eps), max(z, eps)
     if (nx, ny, nz) != (x, y, z):
         attr.Set(Gf.Vec3f(nx, ny, nz))
@@ -261,12 +262,12 @@ def set_joint_drive_params(prim, max_vel_deg_per_sec):
 
 
 def add_physics_scene(stage):
-    """Create /World/PhysicsScene and set requested PhysX scene attributes."""
-    world = stage.GetPrimAtPath("/World")
+    """Create /PhysicsScene and set requested PhysX scene attributes."""
+    world = stage.GetPrimAtPath("/")
     if not world or not world.IsValid():
-        world = UsdGeom.Xform.Define(stage, "/World").GetPrim()
+        world = UsdGeom.Xform.Define(stage, "/").GetPrim()
 
-    scene = UsdPhysics.Scene.Define(stage, "/World/PhysicsScene")
+    scene = UsdPhysics.Scene.Define(stage, "/PhysicsScene")
     prim = scene.GetPrim()
 
     ensure_attr(prim, "physxScene:enableGPUDynamics", Sdf.ValueTypeNames.Bool, False).Set(False)

@@ -46,6 +46,11 @@ echo ">>> Converting urdf -> sdf ..."
 gz sdf -p "${EXPORT_DIR}/kuroko.urdf" > "${EXPORT_DIR}/kuroko.sdf"
 echo "Generated: ${EXPORT_DIR}/kuroko.sdf"
 
+# Normalize joint axes (flip negative axes to positive and adjust limits)
+echo ">>> Normalizing joint axes in SDF (flip negative axes, adjust limits)..."
+python3 "${SCRIPT_DIR}/scripts/fix_sdf_axes.py" --in "${EXPORT_DIR}/kuroko.sdf"
+echo "Normalized: ${EXPORT_DIR}/kuroko.sdf"
+
 # Convert sdf to usd
 echo ">>> Converting sdf -> usd ..."
 sdf2usd "${EXPORT_DIR}/kuroko.sdf" "${EXPORT_DIR}/kuroko.usd"

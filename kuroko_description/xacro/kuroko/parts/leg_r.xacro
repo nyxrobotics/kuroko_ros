@@ -7,8 +7,8 @@
       <child link="hip_r_roll_link"/>
       <origin xyz="0 0 -0.08425" rpy="0 0 0"/>
       <axis xyz="1 0 0"/>
-      <limit effort="1000.0" lower="-0.5550" upper="1.8640" velocity="10.0"/>
-      <dynamics damping="0.0" friction="0.0"/>
+      <limit effort="3.1" lower="-0.5550" upper="1.8640" velocity="6.5"/>
+      <dynamics damping="0.477" friction="0.0"/>
     </joint>
     <link name="hip_r_roll_link">
       <xacro:unless value="$(arg box_visual)">
@@ -31,8 +31,8 @@
       <child link="hip_r_pitch_link"/>
       <origin xyz="0 -0.027 0" rpy="0 0 0"/>
       <axis xyz="0 -1 0"/>
-      <limit effort="1000.0" lower="-3.1" upper="3.1" velocity="10.0"/>
-      <dynamics damping="0.0" friction="0.0"/>
+      <limit effort="3.1" lower="-3.1" upper="3.1" velocity="6.5"/>
+      <dynamics damping="0.477" friction="0.0"/>
     </joint>
     <link name="hip_r_pitch_link">
       <xacro:unless value="$(arg box_visual)">
@@ -332,8 +332,8 @@
       <child link="ankle_r_roll_link"/>
       <origin xyz="0.0185 0 -0.027" rpy="0 0 0"/>
       <axis xyz="1 0 0"/>
-      <limit effort="1000.0" lower="-0.3704" upper="1.5708" velocity="10.0"/>
-      <dynamics damping="0.0" friction="0.0"/>
+      <limit effort="3.1" lower="-0.3704" upper="1.5708" velocity="6.5"/>
+      <dynamics damping="0.477" friction="0.0"/>
     </joint>
     <link name="ankle_r_roll_link">
       <xacro:unless value="$(arg box_visual)">
@@ -356,8 +356,8 @@
       <child link="ankle_r_yaw_link"/>
       <origin xyz="0 0 -0.03825" rpy="0 0 0"/>
       <axis xyz="0 0 -1"/>
-      <limit effort="1000.0" lower="-3.1" upper="3.1" velocity="10.0"/>
-      <dynamics damping="0.0" friction="0.0"/>
+      <limit effort="3.1" lower="-3.1" upper="3.1" velocity="6.5"/>
+      <dynamics damping="0.477" friction="0.0"/>
     </joint>
     <link name="ankle_r_yaw_link">
       <xacro:unless value="$(arg box_visual)">

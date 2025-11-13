@@ -7,8 +7,8 @@
                 double radius = 5
             }
             dictionary Perspective = {
-                double3 position = (-0.04744850057170995, 0.3995322328775694, -0.25856856733686734)
-                double3 target = (0.02210455545377084, -0.0627467228346354, -0.2770866144852488)
+                double3 position = (0.37782108255350216, 0.5865337814292346, 0.01811094184665584)
+                double3 target = (-0.22495764638032406, -0.11191686165239056, -0.11114700091841626)
             }
             dictionary Right = {
                 double3 position = (0, -5, 0)
@@ -38,7 +38,7 @@ def Xform "kuroko" (
     custom float physics:angularDamping = 0.01
     custom bool physics:enableSelfCollisions = 0
     custom float physics:linearDamping = 0.01
-    bool physxArticulation:enabledSelfCollisions = 0
+    bool physxArticulation:enabledSelfCollisions = 1
     custom bool physxArticulation:selfCollision = 0
     custom bool physxArticulation:selfCollisionEnabled = 0
     custom float physxArticulation:sleepThreshold = 0.001
@@ -56,7 +56,7 @@ def Xform "kuroko" (
     uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
 
     def Xform "body_link" (
-        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "PhysxRigidBodyAPI"]
     )
     {
         custom float physics:angularDamping = 0.01
@@ -70,6 +70,7 @@ def Xform "kuroko" (
         custom float physxRigidBody:maxAngularVelocity = 1000
         custom float physxRigidBody:maxLinearVelocity = 10
         custom float physxRigidBody:sleepThreshold = 0.001
+        bool physxRigidBody:solveContact = 0
         float3 xformOp:rotateXYZ = (0, 0, 0)
         double3 xformOp:translate = (0, 0, 0)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
@@ -292,7 +293,7 @@ def Xform "kuroko" (
     }
 
     def Xform "shoulder_l_pitch_link" (
-        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "PhysxRigidBodyAPI"]
     )
     {
         custom float physics:angularDamping = 0.01
@@ -306,6 +307,7 @@ def Xform "kuroko" (
         custom float physxRigidBody:maxAngularVelocity = 1000
         custom float physxRigidBody:maxLinearVelocity = 10
         custom float physxRigidBody:sleepThreshold = 0.001
+        bool physxRigidBody:solveContact = 0
         float3 xformOp:rotateXYZ = (0, 0, 0)
         double3 xformOp:translate = (0, 0.128, 0.01275)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
@@ -456,7 +458,7 @@ def Xform "kuroko" (
     }
 
     def Xform "elbow_l_front_link" (
-        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "PhysxRigidBodyAPI"]
     )
     {
         custom float physics:angularDamping = 0.01
@@ -470,6 +472,7 @@ def Xform "kuroko" (
         custom float physxRigidBody:maxAngularVelocity = 1000
         custom float physxRigidBody:maxLinearVelocity = 10
         custom float physxRigidBody:sleepThreshold = 0.001
+        bool physxRigidBody:solveContact = 0
         float3 xformOp:rotateXYZ = (90.00021, -0, 0)
         double3 xformOp:translate = (0, 0.21825008448347452, -0.01024986776446112)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
@@ -600,7 +603,7 @@ def Xform "kuroko" (
     }
 
     def Xform "elbow_l_rear_link" (
-        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "PhysxRigidBodyAPI"]
     )
     {
         custom float physics:angularDamping = 0.01
@@ -614,6 +617,7 @@ def Xform "kuroko" (
         custom float physxRigidBody:maxAngularVelocity = 1000
         custom float physxRigidBody:maxLinearVelocity = 10
         custom float physxRigidBody:sleepThreshold = 0.001
+        bool physxRigidBody:solveContact = 0
         float3 xformOp:rotateXYZ = (90.00021, -0, 0)
         double3 xformOp:translate = (0, 0.21825008815667962, -0.011249867764454373)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
@@ -744,7 +748,7 @@ def Xform "kuroko" (
     }
 
     def Xform "shoulder_r_pitch_link" (
-        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "PhysxRigidBodyAPI"]
     )
     {
         custom float physics:angularDamping = 0.01
@@ -758,6 +762,7 @@ def Xform "kuroko" (
         custom float physxRigidBody:maxAngularVelocity = 1000
         custom float physxRigidBody:maxLinearVelocity = 10
         custom float physxRigidBody:sleepThreshold = 0.001
+        bool physxRigidBody:solveContact = 0
         float3 xformOp:rotateXYZ = (0, 0, 0)
         double3 xformOp:translate = (0, -0.128, 0.01275)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
@@ -908,7 +913,7 @@ def Xform "kuroko" (
     }
 
     def Xform "elbow_r_front_link" (
-        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "PhysxRigidBodyAPI"]
     )
     {
         custom float physics:angularDamping = 0.01
@@ -922,6 +927,7 @@ def Xform "kuroko" (
         custom float physxRigidBody:maxAngularVelocity = 1000
         custom float physxRigidBody:maxLinearVelocity = 10
         custom float physxRigidBody:sleepThreshold = 0.001
+        bool physxRigidBody:solveContact = 0
         float3 xformOp:rotateXYZ = (-90.00021, 0, 0)
         double3 xformOp:translate = (0, -0.21825008448347452, -0.01024986776446112)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
@@ -1052,7 +1058,7 @@ def Xform "kuroko" (
     }
 
     def Xform "elbow_r_rear_link" (
-        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "PhysxRigidBodyAPI"]
     )
     {
         custom float physics:angularDamping = 0.01
@@ -1066,6 +1072,7 @@ def Xform "kuroko" (
         custom float physxRigidBody:maxAngularVelocity = 1000
         custom float physxRigidBody:maxLinearVelocity = 10
         custom float physxRigidBody:sleepThreshold = 0.001
+        bool physxRigidBody:solveContact = 0
         float3 xformOp:rotateXYZ = (-90.00021, 0, 0)
         double3 xformOp:translate = (0, -0.21825008815667962, -0.011249867764454373)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
@@ -1196,7 +1203,7 @@ def Xform "kuroko" (
     }
 
     def Xform "hip_l_roll_link" (
-        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "PhysxRigidBodyAPI"]
     )
     {
         custom float physics:angularDamping = 0.01
@@ -1210,6 +1217,7 @@ def Xform "kuroko" (
         custom float physxRigidBody:maxAngularVelocity = 1000
         custom float physxRigidBody:maxLinearVelocity = 10
         custom float physxRigidBody:sleepThreshold = 0.001
+        bool physxRigidBody:solveContact = 0
         float3 xformOp:rotateXYZ = (0, 0, 0)
         double3 xformOp:translate = (0, 0, -0.08425)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
@@ -1360,7 +1368,7 @@ def Xform "kuroko" (
     }
 
     def Xform "shin_l_active_link" (
-        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "PhysxRigidBodyAPI"]
     )
     {
         custom float physics:angularDamping = 0.01
@@ -1374,6 +1382,7 @@ def Xform "kuroko" (
         custom float physxRigidBody:maxAngularVelocity = 1000
         custom float physxRigidBody:maxLinearVelocity = 10
         custom float physxRigidBody:sleepThreshold = 0.001
+        bool physxRigidBody:solveContact = 0
         float3 xformOp:rotateXYZ = (0, 60.00014, 0)
         double3 xformOp:translate = (-0.0185, 0.05625, -0.11475)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
@@ -1442,7 +1451,7 @@ def Xform "kuroko" (
     }
 
     def Xform "thigh_l_active_link" (
-        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "PhysxRigidBodyAPI"]
     )
     {
         custom float physics:angularDamping = 0.01
@@ -1456,6 +1465,7 @@ def Xform "kuroko" (
         custom float physxRigidBody:maxAngularVelocity = 1000
         custom float physxRigidBody:maxLinearVelocity = 10
         custom float physxRigidBody:sleepThreshold = 0.001
+        bool physxRigidBody:solveContact = 0
         float3 xformOp:rotateXYZ = (0, -44.999992, 0)
         double3 xformOp:translate = (0.015, 0.05625, -0.11475)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
@@ -1524,7 +1534,7 @@ def Xform "kuroko" (
     }
 
     def Xform "shin_l_front_passive_link" (
-        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "PhysxRigidBodyAPI"]
     )
     {
         custom float physics:angularDamping = 0.01
@@ -1538,6 +1548,7 @@ def Xform "kuroko" (
         custom float physxRigidBody:maxAngularVelocity = 1000
         custom float physxRigidBody:maxLinearVelocity = 10
         custom float physxRigidBody:sleepThreshold = 0.001
+        bool physxRigidBody:solveContact = 0
         float3 xformOp:rotateXYZ = (0, 45.00022, 0)
         double3 xformOp:translate = (0.08571066656470944, 0.05625, -0.1854606896725982)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
@@ -1606,7 +1617,7 @@ def Xform "kuroko" (
     }
 
     def Xform "thigh_l_middle_passive_link" (
-        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "PhysxRigidBodyAPI"]
     )
     {
         custom float physics:angularDamping = 0.01
@@ -1620,6 +1631,7 @@ def Xform "kuroko" (
         custom float physxRigidBody:maxAngularVelocity = 1000
         custom float physxRigidBody:maxLinearVelocity = 10
         custom float physxRigidBody:sleepThreshold = 0.001
+        bool physxRigidBody:solveContact = 0
         float3 xformOp:rotateXYZ = (0, -44.999992, 0)
         double3 xformOp:translate = (-0.0185, 0.05625, -0.11475)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
@@ -1688,7 +1700,7 @@ def Xform "kuroko" (
     }
 
     def Xform "shin_l_rear_passive_link" (
-        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "PhysxRigidBodyAPI"]
     )
     {
         custom float physics:angularDamping = 0.01
@@ -1702,6 +1714,7 @@ def Xform "kuroko" (
         custom float physxRigidBody:maxAngularVelocity = 1000
         custom float physxRigidBody:maxLinearVelocity = 10
         custom float physxRigidBody:sleepThreshold = 0.001
+        bool physxRigidBody:solveContact = 0
         float3 xformOp:rotateXYZ = (0, 45.00022, 0)
         double3 xformOp:translate = (0.052210666564709435, 0.05625, -0.1854606896725982)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
@@ -1770,7 +1783,7 @@ def Xform "kuroko" (
     }
 
     def Xform "ankle_l_rear_passive_link" (
-        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "PhysxRigidBodyAPI"]
     )
     {
         custom float physics:angularDamping = 0.01
@@ -1784,6 +1797,7 @@ def Xform "kuroko" (
         custom float physxRigidBody:maxAngularVelocity = 1000
         custom float physxRigidBody:maxLinearVelocity = 10
         custom float physxRigidBody:sleepThreshold = 0.001
+        bool physxRigidBody:solveContact = 0
         float3 xformOp:rotateXYZ = (0, 0.00022918312, 0)
         double3 xformOp:translate = (-0.018500282842192992, 0.05625, -0.25617109650196446)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
@@ -1852,7 +1866,7 @@ def Xform "kuroko" (
     }
 
     def Xform "ankle_l_roll_link" (
-        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "PhysxRigidBodyAPI"]
     )
     {
         custom float physics:angularDamping = 0.01
@@ -1866,6 +1880,7 @@ def Xform "kuroko" (
         custom float physxRigidBody:maxAngularVelocity = 1000
         custom float physxRigidBody:maxLinearVelocity = 10
         custom float physxRigidBody:sleepThreshold = 0.001
+        bool physxRigidBody:solveContact = 0
         float3 xformOp:rotateXYZ = (0, 0.00022918312, 0)
         double3 xformOp:translate = (-3.908423410088624e-7, 0.05625, -0.28317117050174845)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
@@ -2098,7 +2113,7 @@ def Xform "kuroko" (
     }
 
     def Xform "thigh_l_rear_passive_link" (
-        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "PhysxRigidBodyAPI"]
     )
     {
         custom float physics:angularDamping = 0.01
@@ -2112,6 +2127,7 @@ def Xform "kuroko" (
         custom float physxRigidBody:maxAngularVelocity = 1000
         custom float physxRigidBody:maxLinearVelocity = 10
         custom float physxRigidBody:sleepThreshold = 0.001
+        bool physxRigidBody:solveContact = 0
         float3 xformOp:rotateXYZ = (0, -44.999992, 0)
         double3 xformOp:translate = (0.026229384555276968, 0.05625, -0.20046044614216596)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
@@ -2180,7 +2196,7 @@ def Xform "kuroko" (
     }
 
     def Xform "hip_r_roll_link" (
-        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "PhysxRigidBodyAPI"]
     )
     {
         custom float physics:angularDamping = 0.01
@@ -2194,6 +2210,7 @@ def Xform "kuroko" (
         custom float physxRigidBody:maxAngularVelocity = 1000
         custom float physxRigidBody:maxLinearVelocity = 10
         custom float physxRigidBody:sleepThreshold = 0.001
+        bool physxRigidBody:solveContact = 0
         float3 xformOp:rotateXYZ = (0, 0, 0)
         double3 xformOp:translate = (0, 0, -0.08425)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
@@ -2344,7 +2361,7 @@ def Xform "kuroko" (
     }
 
     def Xform "shin_r_active_link" (
-        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "PhysxRigidBodyAPI"]
     )
     {
         custom float physics:angularDamping = 0.01
@@ -2358,6 +2375,7 @@ def Xform "kuroko" (
         custom float physxRigidBody:maxAngularVelocity = 1000
         custom float physxRigidBody:maxLinearVelocity = 10
         custom float physxRigidBody:sleepThreshold = 0.001
+        bool physxRigidBody:solveContact = 0
         float3 xformOp:rotateXYZ = (0, 60.00014, 0)
         double3 xformOp:translate = (-0.0185, -0.05625, -0.11475)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
@@ -2426,7 +2444,7 @@ def Xform "kuroko" (
     }
 
     def Xform "thigh_r_active_link" (
-        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "PhysxRigidBodyAPI"]
     )
     {
         custom float physics:angularDamping = 0.01
@@ -2440,6 +2458,7 @@ def Xform "kuroko" (
         custom float physxRigidBody:maxAngularVelocity = 1000
         custom float physxRigidBody:maxLinearVelocity = 10
         custom float physxRigidBody:sleepThreshold = 0.001
+        bool physxRigidBody:solveContact = 0
         float3 xformOp:rotateXYZ = (0, -44.999992, 0)
         double3 xformOp:translate = (0.015, -0.05625, -0.11475)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
@@ -2508,7 +2527,7 @@ def Xform "kuroko" (
     }
 
     def Xform "shin_r_front_passive_link" (
-        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "PhysxRigidBodyAPI"]
     )
     {
         custom float physics:angularDamping = 0.01
@@ -2522,6 +2541,7 @@ def Xform "kuroko" (
         custom float physxRigidBody:maxAngularVelocity = 1000
         custom float physxRigidBody:maxLinearVelocity = 10
         custom float physxRigidBody:sleepThreshold = 0.001
+        bool physxRigidBody:solveContact = 0
         float3 xformOp:rotateXYZ = (0, 45.00022, 0)
         double3 xformOp:translate = (0.08571066656470944, -0.05625, -0.1854606896725982)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
@@ -2590,7 +2610,7 @@ def Xform "kuroko" (
     }
 
     def Xform "thigh_r_middle_passive_link" (
-        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "PhysxRigidBodyAPI"]
     )
     {
         custom float physics:angularDamping = 0.01
@@ -2604,6 +2624,7 @@ def Xform "kuroko" (
         custom float physxRigidBody:maxAngularVelocity = 1000
         custom float physxRigidBody:maxLinearVelocity = 10
         custom float physxRigidBody:sleepThreshold = 0.001
+        bool physxRigidBody:solveContact = 0
         float3 xformOp:rotateXYZ = (0, -44.999992, 0)
         double3 xformOp:translate = (-0.0185, -0.05625, -0.11475)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
@@ -2672,7 +2693,7 @@ def Xform "kuroko" (
     }
 
     def Xform "shin_r_rear_passive_link" (
-        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "PhysxRigidBodyAPI"]
     )
     {
         custom float physics:angularDamping = 0.01
@@ -2686,6 +2707,7 @@ def Xform "kuroko" (
         custom float physxRigidBody:maxAngularVelocity = 1000
         custom float physxRigidBody:maxLinearVelocity = 10
         custom float physxRigidBody:sleepThreshold = 0.001
+        bool physxRigidBody:solveContact = 0
         float3 xformOp:rotateXYZ = (0, 45.00022, 0)
         double3 xformOp:translate = (0.052210666564709435, -0.05625, -0.1854606896725982)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
@@ -2754,7 +2776,7 @@ def Xform "kuroko" (
     }
 
     def Xform "ankle_r_rear_passive_link" (
-        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "PhysxRigidBodyAPI"]
     )
     {
         custom float physics:angularDamping = 0.01
@@ -2768,6 +2790,7 @@ def Xform "kuroko" (
         custom float physxRigidBody:maxAngularVelocity = 1000
         custom float physxRigidBody:maxLinearVelocity = 10
         custom float physxRigidBody:sleepThreshold = 0.001
+        bool physxRigidBody:solveContact = 0
         float3 xformOp:rotateXYZ = (0, 0.00022918312, 0)
         double3 xformOp:translate = (-0.018500282842192992, -0.05625, -0.25617109650196446)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
@@ -2836,7 +2859,7 @@ def Xform "kuroko" (
     }
 
     def Xform "ankle_r_roll_link" (
-        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "PhysxRigidBodyAPI"]
     )
     {
         custom float physics:angularDamping = 0.01
@@ -2850,6 +2873,7 @@ def Xform "kuroko" (
         custom float physxRigidBody:maxAngularVelocity = 1000
         custom float physxRigidBody:maxLinearVelocity = 10
         custom float physxRigidBody:sleepThreshold = 0.001
+        bool physxRigidBody:solveContact = 0
         float3 xformOp:rotateXYZ = (0, 0.00022918312, 0)
         double3 xformOp:translate = (-3.908423410088624e-7, -0.05625, -0.28317117050174845)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]
@@ -3082,7 +3106,7 @@ def Xform "kuroko" (
     }
 
     def Xform "thigh_r_rear_passive_link" (
-        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "PhysxRigidBodyAPI"]
     )
     {
         custom float physics:angularDamping = 0.01
@@ -3096,6 +3120,7 @@ def Xform "kuroko" (
         custom float physxRigidBody:maxAngularVelocity = 1000
         custom float physxRigidBody:maxLinearVelocity = 10
         custom float physxRigidBody:sleepThreshold = 0.001
+        bool physxRigidBody:solveContact = 0
         float3 xformOp:rotateXYZ = (0, -44.999992, 0)
         double3 xformOp:translate = (0.026229384555276968, -0.05625, -0.20046044614216596)
         uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ"]

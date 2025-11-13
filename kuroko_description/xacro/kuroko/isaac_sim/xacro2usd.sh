@@ -38,7 +38,7 @@ sed -i -e "s|package://kuroko_description/meshes|${KUROKO_DESCRIPTION_DIR}/meshe
 
 # Convert xacro to urdf
 echo ">>> Converting xacro -> urdf ..."
-xacro "${EXPORT_DIR}/kuroko_abs.xacro" > "${EXPORT_DIR}/kuroko.urdf"
+xacro "${EXPORT_DIR}/kuroko_abs.xacro" gazebo:=true > "${EXPORT_DIR}/kuroko.urdf"
 echo "Generated: ${EXPORT_DIR}/kuroko.urdf"
 
 # Convert urdf to sdf

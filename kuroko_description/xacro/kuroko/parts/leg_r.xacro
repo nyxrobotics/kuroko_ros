@@ -15,7 +15,7 @@
         <visual>
           <origin xyz="0 0 0" rpy="0 0 0"/>
           <geometry>
-            <mesh filename="package://kuroko_description/meshes/kuroko/obj/hip_r_roll.obj"/>
+            <mesh filename="${MESH_DIR}/kuroko/obj/hip_r_roll.obj"/>
           </geometry>
         </visual>
       </xacro:unless>
@@ -39,7 +39,7 @@
         <visual>
           <origin xyz="0 0 0" rpy="0 0 0"/>
           <geometry>
-            <mesh filename="package://kuroko_description/meshes/kuroko/obj/hip_r_pitch.obj"/>
+            <mesh filename="${MESH_DIR}/kuroko/obj/hip_r_pitch.obj"/>
           </geometry>
         </visual>
       </xacro:unless>
@@ -64,7 +64,7 @@
         <visual>
           <origin xyz="0 0 0" rpy="0 0 0"/>
           <geometry>
-            <mesh filename="package://kuroko_description/meshes/kuroko/obj/shin_r_active.obj"/>
+            <mesh filename="${MESH_DIR}/kuroko/obj/shin_r_active.obj"/>
           </geometry>
         </visual>
       </xacro:unless>
@@ -89,7 +89,7 @@
         <visual>
           <origin xyz="0 0 0" rpy="0 0 0"/>
           <geometry>
-            <mesh filename="package://kuroko_description/meshes/kuroko/obj/thigh_r_active.obj"/>
+            <mesh filename="${MESH_DIR}/kuroko/obj/thigh_r_active.obj"/>
           </geometry>
         </visual>
       </xacro:unless>
@@ -135,7 +135,7 @@
         <visual>
           <origin xyz="0 0 0" rpy="0 0 0"/>
           <geometry>
-            <mesh filename="package://kuroko_description/meshes/kuroko/obj/shin_r_front_passive.obj"/>
+            <mesh filename="${MESH_DIR}/kuroko/obj/shin_r_front_passive.obj"/>
           </geometry>
         </visual>
       </xacro:unless>
@@ -160,7 +160,7 @@
         <visual>
           <origin xyz="0 0 0" rpy="0 0 0"/>
           <geometry>
-            <mesh filename="package://kuroko_description/meshes/kuroko/obj/thigh_r_middle_passive.obj"/>
+            <mesh filename="${MESH_DIR}/kuroko/obj/thigh_r_middle_passive.obj"/>
           </geometry>
         </visual>
       </xacro:unless>
@@ -206,7 +206,7 @@
         <visual>
           <origin xyz="0 0 0" rpy="0 0 0"/>
           <geometry>
-            <mesh filename="package://kuroko_description/meshes/kuroko/obj/shin_r_rear_passive.obj"/>
+            <mesh filename="${MESH_DIR}/kuroko/obj/shin_r_rear_passive.obj"/>
           </geometry>
         </visual>
       </xacro:unless>
@@ -231,7 +231,7 @@
         <visual>
           <origin xyz="0.0335 0 0" rpy="0 0 0"/>
           <geometry>
-            <mesh filename="package://kuroko_description/meshes/kuroko/obj/knee_r_passive.obj"/>
+            <mesh filename="${MESH_DIR}/kuroko/obj/knee_r_passive.obj"/>
           </geometry>
         </visual>
       </xacro:unless>
@@ -282,7 +282,7 @@
         <visual>
           <origin xyz="0 0 0.1" rpy="0 0 0"/>
           <geometry>
-            <mesh filename="package://kuroko_description/meshes/kuroko/obj/thigh_r_rear_passive.obj"/>
+            <mesh filename="${MESH_DIR}/kuroko/obj/thigh_r_rear_passive.obj"/>
           </geometry>
         </visual>
       </xacro:unless>
@@ -311,7 +311,7 @@
         <visual>
           <origin xyz="0.0335 0 0" rpy="0 0 0"/>
           <geometry>
-            <mesh filename="package://kuroko_description/meshes/kuroko/obj/ankle_r_pitch_passive.obj"/>
+            <mesh filename="${MESH_DIR}/kuroko/obj/ankle_r_pitch_passive.obj"/>
           </geometry>
         </visual>
       </xacro:unless>
@@ -340,7 +340,7 @@
         <visual>
           <origin xyz="0 0 0" rpy="0 0 0"/>
           <geometry>
-            <mesh filename="package://kuroko_description/meshes/kuroko/obj/ankle_r_roll.obj"/>
+            <mesh filename="${MESH_DIR}/kuroko/obj/ankle_r_roll.obj"/>
           </geometry>
         </visual>
       </xacro:unless>
@@ -364,7 +364,7 @@
         <visual>
           <origin xyz="0 0 0" rpy="0 0 0"/>
           <geometry>
-            <mesh filename="package://kuroko_description/meshes/kuroko/obj/ankle_r_yaw.obj"/>
+            <mesh filename="${MESH_DIR}/kuroko/obj/ankle_r_yaw.obj"/>
           </geometry>
         </visual>
       </xacro:unless>

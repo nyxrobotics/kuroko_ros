@@ -15,7 +15,7 @@
         <visual>
           <origin xyz="0 0 0" rpy="0 0 0"/>
           <geometry>
-            <mesh filename="package://kuroko_description/meshes/kuroko/obj/shoulder_l_pitch.obj"/>
+            <mesh filename="${MESH_DIR}/kuroko/obj/shoulder_l_pitch.obj"/>
           </geometry>
         </visual>
       </xacro:unless>
@@ -38,7 +38,7 @@
         <visual>
           <origin xyz="0 0 0" rpy="0 0 0"/>
           <geometry>
-            <mesh filename="package://kuroko_description/meshes/kuroko/obj/shoulder_l_roll.obj"/>
+            <mesh filename="${MESH_DIR}/kuroko/obj/shoulder_l_roll.obj"/>
           </geometry>
         </visual>
       </xacro:unless>
@@ -61,7 +61,7 @@
         <visual>
           <origin xyz="0 0 0" rpy="0 0 0"/>
           <geometry>
-            <mesh filename="package://kuroko_description/meshes/kuroko/obj/elbow_l_front.obj"/>
+            <mesh filename="${MESH_DIR}/kuroko/obj/elbow_l_front.obj"/>
           </geometry>
         </visual>
       </xacro:unless>
@@ -86,7 +86,7 @@
         <visual>
           <origin xyz="0 0 0" rpy="0 0 0"/>
           <geometry>
-            <mesh filename="package://kuroko_description/meshes/kuroko/obj/elbow_l_rear.obj"/>
+            <mesh filename="${MESH_DIR}/kuroko/obj/elbow_l_rear.obj"/>
           </geometry>
         </visual>
       </xacro:unless>

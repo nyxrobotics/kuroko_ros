@@ -8,7 +8,7 @@
         <visual>
           <origin xyz="0 0 0" rpy="0 0 0"/>
           <geometry>
-            <mesh filename="package://kuroko_description/meshes/kuroko/obj/waist.obj"/>
+            <mesh filename="${MESH_DIR}/kuroko/obj/waist.obj"/>
           </geometry>
         </visual>
       </xacro:unless>
@@ -33,7 +33,7 @@
         <visual>
           <origin xyz="0 0 0" rpy="0 0 0"/>
           <geometry>
-            <mesh filename="package://kuroko_description/meshes/kuroko/obj/chest.obj"/>
+            <mesh filename="${MESH_DIR}/kuroko/obj/chest.obj"/>
           </geometry>
         </visual>
       </xacro:unless>

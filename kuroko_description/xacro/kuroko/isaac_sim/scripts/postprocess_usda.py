@@ -86,8 +86,8 @@ def set_stage_units(stage):
 
 
 def set_robot_level_attrs(robot_prim):
-    """Apply articulation/rigid-body level defaults on the robot root prim."""
-    # Iterations (OK in your result, keep as-is)
+    """Apply articulation/rigid-body defaults on the robot root prim."""
+    # Iterations
     ensure_attr(robot_prim, "physxRigidBody:solverPositionIterationCount", Sdf.ValueTypeNames.Int, 32).Set(32)
     ensure_attr(robot_prim, "physxRigidBody:solverVelocityIterationCount", Sdf.ValueTypeNames.Int, 1).Set(1)
 
@@ -97,14 +97,18 @@ def set_robot_level_attrs(robot_prim):
     except Exception:
         pass
 
-    # Articulation-level attributes (fixed here)
-    ensure_attr(robot_prim, "physxArticulation:sleepThreshold", Sdf.ValueTypeNames.Float, 0.001).Set(0.001)
-    ensure_attr(robot_prim, "physxArticulation:stabilizationThreshold", Sdf.ValueTypeNames.Float, 0.0001).Set(0.0001)
+    # Articulation-level: write both names for compatibility
     ensure_attr(robot_prim, "physxArticulation:selfCollisionEnabled", Sdf.ValueTypeNames.Bool, False).Set(False)
+    ensure_attr(robot_prim, "physxArticulation:selfCollision",        Sdf.ValueTypeNames.Bool, False).Set(False)
 
-    # (Keep rigid-body copies for UI robustness)
-    ensure_attr(robot_prim, "physxRigidBody:sleepThreshold", Sdf.ValueTypeNames.Float, 0.001).Set(0.001)
-    ensure_attr(robot_prim, "physxRigidBody:stabilizationThreshold", Sdf.ValueTypeNames.Float, 0.0001).Set(0.0001)
+    # Sleep/Stabilization (articulation + rigid-body copies for UI robustness)
+    ensure_attr(robot_prim, "physxArticulation:sleepThreshold",        Sdf.ValueTypeNames.Float, 0.001).Set(0.001)
+    ensure_attr(robot_prim, "physxArticulation:stabilizationThreshold",Sdf.ValueTypeNames.Float, 0.0001).Set(0.0001)
+    ensure_attr(robot_prim, "physxRigidBody:sleepThreshold",           Sdf.ValueTypeNames.Float, 0.001).Set(0.001)
+    ensure_attr(robot_prim, "physxRigidBody:stabilizationThreshold",   Sdf.ValueTypeNames.Float, 0.0001).Set(0.0001)
+
+    # Also author generic flag at robot root to avoid UI showing True from elsewhere
+    ensure_attr(robot_prim, "physics:enableSelfCollisions", Sdf.ValueTypeNames.Bool, False).Set(False)
 
 
 def clamp_diagonal_inertia(prim):
@@ -191,42 +195,69 @@ def set_joint_drive_params(prim, max_vel_deg_per_sec):
     """Set physxJoint:maxJointVelocity (deg/s) and tune drive stiffness/damping based on maxForce."""
     ensure_attr(prim, "physxJoint:maxJointVelocity", Sdf.ValueTypeNames.Float, float(max_vel_deg_per_sec)).Set(float(max_vel_deg_per_sec))
 
-    # Ensure angular drive instance exists
+    # Ensure angular drive instance exists (UI shows values under Angular)
     api = get_or_create_drive_api(prim, "angular")
 
-    # Read maxForce from common places
-    max_force = 0.0
-    for key in ("drive:angular:maxForce", "drive:maxForce", "drive:linear:maxForce"):
-        a = prim.GetAttribute(key)
-        if a:
-            v = a.Get()
-            if v is not None:
-                try:
+    # 1) Try DriveAPI attrs first
+    max_force = None
+    try:
+        if api:
+            a = api.GetMaxForceAttr()
+            if a:
+                v = a.Get()
+                if v is not None:
                     max_force = float(v)
-                    break
+    except Exception:
+        pass
+
+    # 2) Fallback to common raw attributes (angular -> linear -> generic)
+    if max_force is None:
+        for key in ("drive:angular:maxForce", "drive:linear:maxForce", "drive:maxForce"):
+            a = prim.GetAttribute(key)
+            if a:
+                v = a.Get()
+                if v is not None:
+                    try:
+                        max_force = float(v); break
+                    except Exception:
+                        pass
+
+    # 3) As a last resort, scan all drive-related properties for *:maxForce
+    if max_force is None:
+        for prop in prim.GetProperties():
+            n = prop.GetName()
+            if "drive" in n and n.endswith(":maxForce"):
+                try:
+                    v = prop.Get()
+                    if v is not None:
+                        max_force = float(v); break
                 except Exception:
                     pass
 
-    # Also write back maxForce to the angular instance so UI sees it there
-    ensure_attr(prim, "drive:angular:maxForce", Sdf.ValueTypeNames.Float, max_force).Set(max_force)
+    # If max_force is missing or zero, do NOT overwrite stiffness/damping to 0
+    if not max_force or max_force == 0.0:
+        return
 
+    # Compute stiffness/damping
     stiffness = 100.0 * max_force
     vmax = max(1e-6, float(max_vel_deg_per_sec))
     damping = 10.0 * stiffness / vmax
 
-    # Prefer DriveAPI attribute writers when available
+    # Write back to DriveAPI when available
     try:
         if api:
+            api.CreateMaxForceAttr().Set(max_force)
             api.CreateStiffnessAttr().Set(stiffness)
             api.CreateDampingAttr().Set(damping)
     except Exception:
         pass
 
-    # Also set raw attributes for compatibility
-    ensure_attr(prim, "drive:angular:stiffness", Sdf.ValueTypeNames.Float, stiffness).Set(stiffness)
-    ensure_attr(prim, "drive:angular:damping", Sdf.ValueTypeNames.Float, damping).Set(damping)
-    ensure_attr(prim, "drive:stiffness", Sdf.ValueTypeNames.Float, stiffness).Set(stiffness)
-    ensure_attr(prim, "drive:damping", Sdf.ValueTypeNames.Float, damping).Set(damping)
+    # Also set raw attributes for broader UI compatibility
+    ensure_attr(prim, "drive:angular:maxForce",   Sdf.ValueTypeNames.Float, max_force).Set(max_force)
+    ensure_attr(prim, "drive:angular:stiffness",  Sdf.ValueTypeNames.Float, stiffness).Set(stiffness)
+    ensure_attr(prim, "drive:angular:damping",    Sdf.ValueTypeNames.Float, damping).Set(damping)
+    ensure_attr(prim, "drive:stiffness",          Sdf.ValueTypeNames.Float, stiffness).Set(stiffness)
+    ensure_attr(prim, "drive:damping",            Sdf.ValueTypeNames.Float, damping).Set(damping)
 
 
 def add_physics_scene(stage):
@@ -247,13 +278,21 @@ def add_physics_scene(stage):
     ensure_attr(prim, "physxScene:minPositionIterationCount", Sdf.ValueTypeNames.Int, 32).Set(32)
     ensure_attr(prim, "physxScene:minVelocityIterationCount", Sdf.ValueTypeNames.Int, 1).Set(1)
 
-    # Ensure physics:timeStepsPerSecond = 200 (Scene-level)
-    ensure_attr(prim, "physics:timeStepsPerSecond", Sdf.ValueTypeNames.Float, 200.0).Set(200.0)
-    # Some builds treat it as double; author both if needed
-    try:
-        ensure_attr(prim, "physics:timeStepsPerSecond", Sdf.ValueTypeNames.Double, 200.0).Set(200.0)
-    except Exception:
-        pass
+    # Time steps per second: author multiple compatible variants
+    for t, v in (
+        (Sdf.ValueTypeNames.Float, 200.0),
+        (Sdf.ValueTypeNames.Double, 200.0),
+        (Sdf.ValueTypeNames.Int, 200),
+    ):
+        ensure_attr(prim, "physics:timeStepsPerSecond", t, v).Set(v)
+
+    # Some builds expose a physxScene-local override; set it too just in case
+    for t, v in (
+        (Sdf.ValueTypeNames.Float, 200.0),
+        (Sdf.ValueTypeNames.Double, 200.0),
+        (Sdf.ValueTypeNames.Int, 200),
+    ):
+        ensure_attr(prim, "physxScene:timeStepsPerSecond", t, v).Set(v)
 
 
 def main():

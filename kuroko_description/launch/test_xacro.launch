@@ -1,9 +1,11 @@
 <?xml version="1.0"?>
 <launch>
   <arg name="gui" default="True"/>
+  <arg name="box_visual" default="False"/>
   <param name="robot_description"
-    command="$(find xacro)/xacro '$(find kuroko_description)/xacro/kuroko/kuroko.xacro' gazebo:=false"/>
+    command="$(find xacro)/xacro '$(find kuroko_description)/xacro/kuroko/kuroko.xacro' gazebo:=false box_visual:=$(arg box_visual)"/>
   <param name="use_gui" value="$(arg gui)"/>
+
 
   <!-- <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"/> -->
   <node if="$(arg gui)" name="joint_state_publisher_gui" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui"/>

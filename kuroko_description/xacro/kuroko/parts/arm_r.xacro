@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-  <xacro:macro name="arm_r_xacro">
+  <xacro:macro name="arm_r_xacro" params="box_visual:=false">
     <!-- Link conencts from body. Shoulder first. -->
     <joint name="shoulder_r_pitch" type="revolute">
       <parent link="chest_link"/>
@@ -11,12 +11,17 @@
       <dynamics damping="0.477" friction="0.0"/>
     </joint>
     <link name="shoulder_r_pitch_link">
-      <visual>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <geometry>
-          <mesh filename="package://kuroko_description/meshes/kuroko/obj/shoulder_r_pitch.obj"/>
-        </geometry>
-      </visual>
+      <xacro:unless value="$(arg box_visual)">
+        <visual>
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+          <geometry>
+            <mesh filename="package://kuroko_description/meshes/kuroko/obj/shoulder_r_pitch.obj"/>
+          </geometry>
+        </visual>
+      </xacro:unless>
+      <xacro:if value="$(arg box_visual)">
+        <xacro:box_visual xyz="-0.0096 -0.0340 0.0000" rpy="0 0 0" size="0.0513 0.0680 0.0475"/>
+      </xacro:if>
       <xacro:box_collision xyz="-0.0096 -0.0340 0.0000" rpy="0 0 0" size="0.0513 0.0680 0.0475"/>
       <xacro:box_inertial xyz="-0.0096 -0.0340 0.0000" rpy="0 0 0" size="0.0513 0.0680 0.0475" mass="0.165"/>
     </link>
@@ -29,12 +34,17 @@
       <dynamics damping="1.29" friction="0.0"/>
     </joint>
     <link name="shoulder_r_roll_link">
-      <visual>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <geometry>
-          <mesh filename="package://kuroko_description/meshes/kuroko/obj/shoulder_r_roll.obj"/>
-        </geometry>
-      </visual>
+      <xacro:unless value="$(arg box_visual)">
+        <visual>
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+          <geometry>
+            <mesh filename="package://kuroko_description/meshes/kuroko/obj/shoulder_r_roll.obj"/>
+          </geometry>
+        </visual>
+      </xacro:unless>
+      <xacro:if value="$(arg box_visual)">
+        <xacro:box_visual xyz="-0.0108 0.0000 -0.0186" rpy="0 0 0" size="0.0530 0.0860 0.0633"/>
+      </xacro:if>
       <xacro:box_collision xyz="-0.0108 0.0000 -0.0186" rpy="0 0 0" size="0.0530 0.0860 0.0633"/>
       <xacro:box_inertial xyz="-0.0108 0.0000 -0.0186" rpy="0 0 0" size="0.0530 0.0860 0.0633" mass="0.183"/>
     </link>
@@ -47,12 +57,18 @@
       <dynamics damping="0.477" friction="0.0"/>
     </joint>
     <link name="elbow_r_front_link">
-      <visual>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <geometry>
-          <mesh filename="package://kuroko_description/meshes/kuroko/obj/elbow_r_front.obj"/>
-        </geometry>
-      </visual>
+      <xacro:unless value="$(arg box_visual)">
+        <visual>
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+          <geometry>
+            <mesh filename="package://kuroko_description/meshes/kuroko/obj/elbow_r_front.obj"/>
+          </geometry>
+        </visual>
+      </xacro:unless>
+      <xacro:if value="$(arg box_visual)">
+        <xacro:box_visual xyz="0.0043 0 -0.104" rpy="0 0 0" size="0.01085 0.058 0.208"/>
+        <xacro:box_visual xyz="-0.0206 0 -0.201" rpy="0 0 0" size="0.039 0.058 0.014"/>
+      </xacro:if>
       <xacro:box_collision xyz="0.0043 0 -0.104" rpy="0 0 0" size="0.01085 0.058 0.208"/>
       <xacro:box_collision xyz="-0.0206 0 -0.201" rpy="0 0 0" size="0.039 0.058 0.014"/>
       <xacro:box_inertial xyz="0.0043 0 -0.104" rpy="0 0 0" size="0.044 0.058 0.208" mass="0.032"/>
@@ -66,12 +82,18 @@
       <dynamics damping="0.477" friction="0.0"/>
     </joint>
     <link name="elbow_r_rear_link">
-      <visual>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <geometry>
-          <mesh filename="package://kuroko_description/meshes/kuroko/obj/elbow_r_rear.obj"/>
-        </geometry>
-      </visual>
+      <xacro:unless value="$(arg box_visual)">
+        <visual>
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+          <geometry>
+            <mesh filename="package://kuroko_description/meshes/kuroko/obj/elbow_r_rear.obj"/>
+          </geometry>
+        </visual>
+      </xacro:unless>
+      <xacro:if value="$(arg box_visual)">
+        <xacro:box_visual xyz="-0.0043 0 -0.1" rpy="0 0 0" size="0.01085 0.044 0.2"/>
+        <xacro:box_visual xyz="0.0206 0 -0.193" rpy="0 0 0" size="0.039 0.044 0.014"/>
+      </xacro:if>
       <xacro:box_collision xyz="-0.0043 0 -0.1" rpy="0 0 0" size="0.01085 0.044 0.2"/>
       <xacro:box_collision xyz="0.0206 0 -0.193" rpy="0 0 0" size="0.039 0.044 0.014"/>
       <xacro:box_inertial xyz="-0.0043 0 -0.1" rpy="0 0 0" size="0.044 0.044 0.2" mass="0.031"/>

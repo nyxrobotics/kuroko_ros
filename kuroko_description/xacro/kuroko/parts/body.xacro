@@ -1,15 +1,20 @@
 <?xml version="1.0"?>
 
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-  <xacro:macro name="body_xacro">
+  <xacro:macro name="body_xacro" params="box_visual:=false">
     <!-- waist -->
     <link name="waist_link">
-      <visual>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <geometry>
-          <mesh filename="package://kuroko_description/meshes/kuroko/obj/waist.obj"/>
-        </geometry>
-      </visual>
+      <xacro:unless value="$(arg box_visual)">
+        <visual>
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+          <geometry>
+            <mesh filename="package://kuroko_description/meshes/kuroko/obj/waist.obj"/>
+          </geometry>
+        </visual>
+      </xacro:unless>
+      <xacro:if value="$(arg box_visual)">
+        <xacro:box_visual xyz="0.0084 0.0000 -0.0483" rpy="0 0 0" size="0.1247 0.0560 0.0965"/>
+      </xacro:if>
       <xacro:box_collision xyz="0.0084 0.0000 -0.0483" rpy="0 0 0" size="0.1247 0.0560 0.0965"/>
       <xacro:box_inertial xyz="0.0084 0.0000 -0.0483" rpy="0 0 0" size="0.1247 0.0560 0.0965" mass="0.388"/>
     </link>
@@ -24,12 +29,17 @@
     </joint>
     <!-- chest -->
     <link name="chest_link">
-      <visual>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <geometry>
-          <mesh filename="package://kuroko_description/meshes/kuroko/obj/chest.obj"/>
-        </geometry>
-      </visual>
+      <xacro:unless value="$(arg box_visual)">
+        <visual>
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+          <geometry>
+            <mesh filename="package://kuroko_description/meshes/kuroko/obj/chest.obj"/>
+          </geometry>
+        </visual>
+      </xacro:unless>
+      <xacro:if value="$(arg box_visual)">
+        <xacro:box_visual xyz="0.0120 0.0000 0.0635" rpy="0 0 0" size="0.1480 0.2560 0.1364"/>
+      </xacro:if>
       <xacro:box_collision xyz="0.0120 0.0000 0.0635" rpy="0 0 0" size="0.1480 0.2560 0.1364"/>
       <xacro:box_inertial xyz="0.0120 0.0000 0.0635" rpy="0 0 0" size="0.1480 0.2560 0.1364" mass="0.806"/>
     </link>

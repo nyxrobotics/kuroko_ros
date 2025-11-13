@@ -1,17 +1,44 @@
 #usda 1.0
 (
+    customLayerData = {
+        dictionary cameraSettings = {
+            dictionary Front = {
+                double3 position = (5, 0, 0)
+                double radius = 5
+            }
+            dictionary Perspective = {
+                double3 position = (-0.04744850057170995, 0.3995322328775694, -0.25856856733686734)
+                double3 target = (0.02210455545377084, -0.0627467228346354, -0.2770866144852488)
+            }
+            dictionary Right = {
+                double3 position = (0, -5, 0)
+                double radius = 5
+            }
+            dictionary Top = {
+                double3 position = (0, 0, 5)
+                double radius = 5
+            }
+            string boundCamera = "/OmniverseKit_Persp"
+        }
+        dictionary omni_layer = {
+            string authoring_layer = "./kuroko_box.usda"
+        }
+        dictionary renderSettings = {
+        }
+    }
     kilogramsPerUnit = 1
     metersPerUnit = 1
     upAxis = "Z"
 )
 
 def Xform "kuroko" (
-    prepend apiSchemas = ["PhysicsArticulationRootAPI"]
+    prepend apiSchemas = ["PhysicsArticulationRootAPI", "PhysxArticulationAPI"]
 )
 {
     custom float physics:angularDamping = 0.01
     custom bool physics:enableSelfCollisions = 0
     custom float physics:linearDamping = 0.01
+    bool physxArticulation:enabledSelfCollisions = 0
     custom bool physxArticulation:selfCollision = 0
     custom bool physxArticulation:selfCollisionEnabled = 0
     custom float physxArticulation:sleepThreshold = 0.001
@@ -3137,6 +3164,7 @@ def Xform "kuroko" (
     }
 
     def Xform "imu_link" (
+        active = false
         prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
     )
     {
@@ -3220,6 +3248,7 @@ def Xform "kuroko" (
     }
 
     def Xform "tfluna_link" (
+        active = false
         prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
     )
     {
@@ -3312,7 +3341,7 @@ def Xform "kuroko" (
     }
 
     def PhysicsRevoluteJoint "chest" (
-        prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        prepend apiSchemas = ["PhysicsDriveAPI:angular", "PhysxJointAPI"]
     )
     {
         custom float drive:angular:damping = 8.3241625
@@ -3330,13 +3359,13 @@ def Xform "kuroko" (
         point3f physics:localPos1 = (0, 0, 0)
         quatf physics:localRot0 = (1, 0, 0, 0)
         quatf physics:localRot1 = (1, 0, 0, 0)
-        float physics:lowerLimit = -179.90875
-        float physics:upperLimit = 179.90875
-        custom float physxJoint:maxJointVelocity = 372.40985
+        float physics:lowerLimit = -inf
+        float physics:upperLimit = inf
+        custom float physxJoint:maxJointVelocity = 372
     }
 
     def PhysicsRevoluteJoint "shoulder_l_pitch" (
-        prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        prepend apiSchemas = ["PhysicsDriveAPI:angular", "PhysxJointAPI"]
     )
     {
         custom float drive:angular:damping = 8.3241625
@@ -3354,13 +3383,13 @@ def Xform "kuroko" (
         point3f physics:localPos1 = (0, 0, 0)
         quatf physics:localRot0 = (0.70710677, 0, 0, 0.70710677)
         quatf physics:localRot1 = (0.70710677, 0, 0, 0.70710677)
-        float physics:lowerLimit = -179.90875
-        float physics:upperLimit = 179.90875
-        custom float physxJoint:maxJointVelocity = 372.40985
+        float physics:lowerLimit = -inf
+        float physics:upperLimit = inf
+        custom float physxJoint:maxJointVelocity = 372
     }
 
     def PhysicsRevoluteJoint "shoulder_l_roll" (
-        prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        prepend apiSchemas = ["PhysicsDriveAPI:angular", "PhysxJointAPI"]
     )
     {
         custom float drive:angular:damping = 22.512985
@@ -3378,13 +3407,13 @@ def Xform "kuroko" (
         point3f physics:localPos1 = (0, 1.3877788e-17, -2.7755576e-17)
         quatf physics:localRot0 = (0.70710546, 0.7071081, 0, 0)
         quatf physics:localRot1 = (1, 0, 0, 0)
-        float physics:lowerLimit = -179.90875
-        float physics:upperLimit = 179.90875
-        custom float physxJoint:maxJointVelocity = 395.32736
+        float physics:lowerLimit = -inf
+        float physics:upperLimit = inf
+        custom float physxJoint:maxJointVelocity = 395
     }
 
     def PhysicsRevoluteJoint "elbow_l_front" (
-        prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        prepend apiSchemas = ["PhysicsDriveAPI:angular", "PhysxJointAPI"]
     )
     {
         custom float drive:angular:damping = 8.3241625
@@ -3404,11 +3433,11 @@ def Xform "kuroko" (
         quatf physics:localRot1 = (0.70710677, 0, 0, 0.70710677)
         float physics:lowerLimit = -150.00035
         float physics:upperLimit = 150.00035
-        custom float physxJoint:maxJointVelocity = 372.40985
+        custom float physxJoint:maxJointVelocity = 372
     }
 
     def PhysicsRevoluteJoint "elbow_l_rear" (
-        prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        prepend apiSchemas = ["PhysicsDriveAPI:angular", "PhysxJointAPI"]
     )
     {
         custom float drive:angular:damping = 8.3241625
@@ -3428,11 +3457,11 @@ def Xform "kuroko" (
         quatf physics:localRot1 = (0.70710677, 0, 0, 0.70710677)
         float physics:lowerLimit = -150.00035
         float physics:upperLimit = 150.00035
-        custom float physxJoint:maxJointVelocity = 372.40985
+        custom float physxJoint:maxJointVelocity = 372
     }
 
     def PhysicsRevoluteJoint "shoulder_r_pitch" (
-        prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        prepend apiSchemas = ["PhysicsDriveAPI:angular", "PhysxJointAPI"]
     )
     {
         custom float drive:angular:damping = 8.3241625
@@ -3450,13 +3479,13 @@ def Xform "kuroko" (
         point3f physics:localPos1 = (0, 0, 0)
         quatf physics:localRot0 = (0.70710677, 0, 0, 0.70710677)
         quatf physics:localRot1 = (0.70710677, 0, 0, 0.70710677)
-        float physics:lowerLimit = -179.90875
-        float physics:upperLimit = 179.90875
-        custom float physxJoint:maxJointVelocity = 372.40985
+        float physics:lowerLimit = -inf
+        float physics:upperLimit = inf
+        custom float physxJoint:maxJointVelocity = 372
     }
 
     def PhysicsRevoluteJoint "shoulder_r_roll" (
-        prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        prepend apiSchemas = ["PhysicsDriveAPI:angular", "PhysxJointAPI"]
     )
     {
         custom float drive:angular:damping = 22.512985
@@ -3474,13 +3503,13 @@ def Xform "kuroko" (
         point3f physics:localPos1 = (0, -1.3877788e-17, -2.7755576e-17)
         quatf physics:localRot0 = (0.70710546, -0.7071081, 0, 0)
         quatf physics:localRot1 = (1, 0, 0, 0)
-        float physics:lowerLimit = -179.90875
-        float physics:upperLimit = 179.90875
-        custom float physxJoint:maxJointVelocity = 395.32736
+        float physics:lowerLimit = -inf
+        float physics:upperLimit = inf
+        custom float physxJoint:maxJointVelocity = 395
     }
 
     def PhysicsRevoluteJoint "elbow_r_front" (
-        prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        prepend apiSchemas = ["PhysicsDriveAPI:angular", "PhysxJointAPI"]
     )
     {
         custom float drive:angular:damping = 8.3241625
@@ -3500,11 +3529,11 @@ def Xform "kuroko" (
         quatf physics:localRot1 = (0.70710677, 0, 0, 0.70710677)
         float physics:lowerLimit = -150.00035
         float physics:upperLimit = 150.00035
-        custom float physxJoint:maxJointVelocity = 372.40985
+        custom float physxJoint:maxJointVelocity = 372
     }
 
     def PhysicsRevoluteJoint "elbow_r_rear" (
-        prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        prepend apiSchemas = ["PhysicsDriveAPI:angular", "PhysxJointAPI"]
     )
     {
         custom float drive:angular:damping = 8.3241625
@@ -3524,11 +3553,11 @@ def Xform "kuroko" (
         quatf physics:localRot1 = (0.70710677, 0, 0, 0.70710677)
         float physics:lowerLimit = -150.00035
         float physics:upperLimit = 150.00035
-        custom float physxJoint:maxJointVelocity = 372.40985
+        custom float physxJoint:maxJointVelocity = 372
     }
 
     def PhysicsRevoluteJoint "hip_l_roll" (
-        prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        prepend apiSchemas = ["PhysicsDriveAPI:angular", "PhysxJointAPI"]
     )
     {
         custom float drive:angular:damping = 8.3241625
@@ -3548,11 +3577,11 @@ def Xform "kuroko" (
         quatf physics:localRot1 = (1, 0, 0, 0)
         float physics:lowerLimit = -106.79933
         float physics:upperLimit = 31.799158
-        custom float physxJoint:maxJointVelocity = 372.40985
+        custom float physxJoint:maxJointVelocity = 372
     }
 
     def PhysicsRevoluteJoint "hip_l_pitch" (
-        prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        prepend apiSchemas = ["PhysicsDriveAPI:angular", "PhysxJointAPI"]
     )
     {
         custom float drive:angular:damping = 8.3241625
@@ -3563,20 +3592,20 @@ def Xform "kuroko" (
         custom float drive:angular:stiffness = 310
         custom float drive:damping = 8.3241625
         custom float drive:stiffness = 310
-        uniform token physics:axis = "X"
+        uniform token physics:axis = "Y"
         prepend rel physics:body0 = </kuroko/hip_l_roll_link>
         prepend rel physics:body1 = </kuroko/hip_l_pitch_link>
         point3f physics:localPos0 = (0, 0.027, 0)
         point3f physics:localPos1 = (0, 0, 0)
-        quatf physics:localRot0 = (0.70710677, 0, 0, 0.70710677)
-        quatf physics:localRot1 = (0.70710677, 0, 0, 0.70710677)
-        float physics:lowerLimit = -179.90875
-        float physics:upperLimit = 179.90875
-        custom float physxJoint:maxJointVelocity = 372.40985
+        quatf physics:localRot0 = (1, 0, 0, 0)
+        quatf physics:localRot1 = (1, 0, 0, 0)
+        float physics:lowerLimit = -inf
+        float physics:upperLimit = inf
+        custom float physxJoint:maxJointVelocity = 372
     }
 
     def PhysicsRevoluteJoint "shin_l_active" (
-        prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        prepend apiSchemas = ["PhysicsDriveAPI:angular", "PhysxJointAPI"]
     )
     {
         custom float drive:angular:damping = 22.512985
@@ -3587,20 +3616,20 @@ def Xform "kuroko" (
         custom float drive:angular:stiffness = 889.99994
         custom float drive:damping = 22.512985
         custom float drive:stiffness = 889.99994
-        uniform token physics:axis = "X"
+        uniform token physics:axis = "Y"
         prepend rel physics:body0 = </kuroko/hip_l_pitch_link>
         prepend rel physics:body1 = </kuroko/shin_l_active_link>
         point3f physics:localPos0 = (-0.0185, 0.02925, -0.0305)
-        point3f physics:localPos1 = (2.7755576e-17, 6.938894e-18, -1.3877788e-17)
-        quatf physics:localRot0 = (-0.612372, -0.612372, -0.35355413, -0.35355413)
-        quatf physics:localRot1 = (0.70710677, 0, 0, 0.70710677)
+        point3f physics:localPos1 = (2.7755576e-17, 6.938894e-18, 0)
+        quatf physics:localRot0 = (0.8660254, 0, 0.5, 0)
+        quatf physics:localRot1 = (1, 0, 0, 0)
         float physics:lowerLimit = -106.501396
         float physics:upperLimit = 28.49892
-        custom float physxJoint:maxJointVelocity = 395.32736
+        custom float physxJoint:maxJointVelocity = 395
     }
 
     def PhysicsRevoluteJoint "thigh_l_active" (
-        prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        prepend apiSchemas = ["PhysicsDriveAPI:angular", "PhysxJointAPI"]
     )
     {
         custom float drive:angular:damping = 22.512985
@@ -3611,16 +3640,16 @@ def Xform "kuroko" (
         custom float drive:angular:stiffness = 889.99994
         custom float drive:damping = 22.512985
         custom float drive:stiffness = 889.99994
-        uniform token physics:axis = "X"
+        uniform token physics:axis = "Y"
         prepend rel physics:body0 = </kuroko/hip_l_pitch_link>
         prepend rel physics:body1 = </kuroko/thigh_l_active_link>
         point3f physics:localPos0 = (0.015, 0.02925, -0.0305)
-        point3f physics:localPos1 = (0, 0, -1.3877788e-17)
-        quatf physics:localRot0 = (-0.6532815, -0.6532815, 0.270598, 0.270598)
-        quatf physics:localRot1 = (0.70710677, 0, 0, 0.70710677)
+        point3f physics:localPos1 = (0, 0, 0)
+        quatf physics:localRot0 = (0.9238795, 0, -0.38268343, 0)
+        quatf physics:localRot1 = (1, 0, 0, 0)
         float physics:lowerLimit = -28.49892
         float physics:upperLimit = 106.501396
-        custom float physxJoint:maxJointVelocity = 395.32736
+        custom float physxJoint:maxJointVelocity = 395
     }
 
     def PhysicsRevoluteJoint "shin_l_front_passive" (
@@ -3630,13 +3659,13 @@ def Xform "kuroko" (
         float drive:angular:physics:damping = 0
         float drive:angular:physics:maxForce = 0
         float drive:angular:physics:stiffness = 100000000
-        uniform token physics:axis = "X"
+        uniform token physics:axis = "Y"
         prepend rel physics:body0 = </kuroko/thigh_l_active_link>
         prepend rel physics:body1 = </kuroko/shin_l_front_passive_link>
         point3f physics:localPos0 = (-1.3877788e-17, 0, -0.1)
-        point3f physics:localPos1 = (5.551115e-17, -6.938894e-18, 2.7755576e-17)
-        quatf physics:localRot0 = (-0.49999908, -0.49999908, -0.5000009, -0.5000009)
-        quatf physics:localRot1 = (0.70710677, 0, 0, 0.70710677)
+        point3f physics:localPos1 = (5.551115e-17, 0, 2.7755576e-17)
+        quatf physics:localRot0 = (0.70710677, 0, 0.70710677, 0)
+        quatf physics:localRot1 = (1, 0, 0, 0)
         float physics:lowerLimit = -90.00021
         float physics:upperLimit = 56.99784
     }
@@ -3648,13 +3677,13 @@ def Xform "kuroko" (
         float drive:angular:physics:damping = 0
         float drive:angular:physics:maxForce = 0
         float drive:angular:physics:stiffness = 100000000
-        uniform token physics:axis = "X"
+        uniform token physics:axis = "Y"
         prepend rel physics:body0 = </kuroko/hip_l_pitch_link>
         prepend rel physics:body1 = </kuroko/thigh_l_middle_passive_link>
         point3f physics:localPos0 = (-0.0185, 0.02925, -0.0305)
         point3f physics:localPos1 = (0, 0, 0)
-        quatf physics:localRot0 = (-0.6532815, -0.6532815, 0.270598, 0.270598)
-        quatf physics:localRot1 = (0.70710677, 0, 0, 0.70710677)
+        quatf physics:localRot0 = (0.9238795, 0, -0.38268343, 0)
+        quatf physics:localRot1 = (1, 0, 0, 0)
         float physics:lowerLimit = -28.49892
         float physics:upperLimit = 106.501396
     }
@@ -3666,13 +3695,13 @@ def Xform "kuroko" (
         float drive:angular:physics:damping = 0
         float drive:angular:physics:maxForce = 0
         float drive:angular:physics:stiffness = 100000000
-        uniform token physics:axis = "X"
+        uniform token physics:axis = "Y"
         prepend rel physics:body0 = </kuroko/thigh_l_middle_passive_link>
         prepend rel physics:body1 = </kuroko/shin_l_rear_passive_link>
         point3f physics:localPos0 = (0, 0, -0.1)
         point3f physics:localPos1 = (2.7755576e-17, -6.938894e-18, 0)
-        quatf physics:localRot0 = (-0.49999908, -0.49999908, -0.5000009, -0.5000009)
-        quatf physics:localRot1 = (0.70710677, 0, 0, 0.70710677)
+        quatf physics:localRot0 = (0.70710677, 0, 0.70710677, 0)
+        quatf physics:localRot1 = (1, 0, 0, 0)
         float physics:lowerLimit = -90.00021
         float physics:upperLimit = 56.99784
     }
@@ -3684,19 +3713,19 @@ def Xform "kuroko" (
         float drive:angular:physics:damping = 0
         float drive:angular:physics:maxForce = 0
         float drive:angular:physics:stiffness = 100000000
-        uniform token physics:axis = "X"
+        uniform token physics:axis = "Y"
         prepend rel physics:body0 = </kuroko/shin_l_rear_passive_link>
         prepend rel physics:body1 = </kuroko/ankle_l_rear_passive_link>
         point3f physics:localPos0 = (2.7755576e-17, -6.938894e-18, -0.1)
         point3f physics:localPos1 = (0, 0, 5.551115e-17)
-        quatf physics:localRot0 = (-0.6532815, -0.6532815, 0.270598, 0.270598)
-        quatf physics:localRot1 = (0.70710677, 0, 0, 0.70710677)
+        quatf physics:localRot0 = (0.9238795, 0, -0.38268343, 0)
+        quatf physics:localRot1 = (1, 0, 0, 0)
         float physics:lowerLimit = -28.49892
         float physics:upperLimit = 106.501396
     }
 
     def PhysicsRevoluteJoint "ankle_l_roll" (
-        prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        prepend apiSchemas = ["PhysicsDriveAPI:angular", "PhysxJointAPI"]
     )
     {
         custom float drive:angular:damping = 8.3241625
@@ -3716,11 +3745,11 @@ def Xform "kuroko" (
         quatf physics:localRot1 = (1, 0, 0, 0)
         float physics:lowerLimit = -90.00021
         float physics:upperLimit = 21.222357
-        custom float physxJoint:maxJointVelocity = 372.40985
+        custom float physxJoint:maxJointVelocity = 372
     }
 
     def PhysicsRevoluteJoint "ankle_l_yaw" (
-        prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        prepend apiSchemas = ["PhysicsDriveAPI:angular", "PhysxJointAPI"]
     )
     {
         custom float drive:angular:damping = 8.3241625
@@ -3738,9 +3767,9 @@ def Xform "kuroko" (
         point3f physics:localPos1 = (3.1763736e-22, 0, 0)
         quatf physics:localRot0 = (1, 0, 0, 0)
         quatf physics:localRot1 = (1, 0, 0, 0)
-        float physics:lowerLimit = -180.00043
-        float physics:upperLimit = 180.00043
-        custom float physxJoint:maxJointVelocity = 372.40985
+        float physics:lowerLimit = -inf
+        float physics:upperLimit = inf
+        custom float physxJoint:maxJointVelocity = 372
     }
 
     def PhysicsRevoluteJoint "knee_l_rear_passive" (
@@ -3750,15 +3779,15 @@ def Xform "kuroko" (
         float drive:angular:physics:damping = 0
         float drive:angular:physics:maxForce = 0
         float drive:angular:physics:stiffness = 100000000
-        uniform token physics:axis = "X"
+        uniform token physics:axis = "Y"
         prepend rel physics:body0 = </kuroko/shin_l_rear_passive_link>
         prepend rel physics:body1 = </kuroko/knee_l_passive_link>
         point3f physics:localPos0 = (2.7755576e-17, -6.938894e-18, 0)
         point3f physics:localPos1 = (6.938894e-18, 0, 2.7755576e-17)
-        quatf physics:localRot0 = (-0.6532815, -0.6532815, 0.270598, 0.270598)
-        quatf physics:localRot1 = (0.70710677, 0, 0, 0.70710677)
-        float physics:lowerLimit = -179.99985
-        float physics:upperLimit = 179.99985
+        quatf physics:localRot0 = (0.9238795, 0, -0.38268343, 0)
+        quatf physics:localRot1 = (1, 0, 0, 0)
+        float physics:lowerLimit = -inf
+        float physics:upperLimit = inf
     }
 
     def PhysicsRevoluteJoint "thigh_l_rear_passive" (
@@ -3768,19 +3797,19 @@ def Xform "kuroko" (
         float drive:angular:physics:damping = 0
         float drive:angular:physics:maxForce = 0
         float drive:angular:physics:stiffness = 100000000
-        uniform token physics:axis = "X"
+        uniform token physics:axis = "Y"
         prepend rel physics:body0 = </kuroko/shin_l_rear_passive_link>
         prepend rel physics:body1 = </kuroko/thigh_l_rear_passive_link>
         point3f physics:localPos0 = (-0.007765, -6.938894e-18, -0.028978)
-        point3f physics:localPos1 = (-9.7144515e-17, 0, -2.7755576e-17)
-        quatf physics:localRot0 = (-0.49999908, -0.49999908, 0.5000009, 0.5000009)
-        quatf physics:localRot1 = (0.70710677, -3.925231e-17, 3.925231e-17, 0.70710677)
+        point3f physics:localPos1 = (0, 0, -2.7755576e-17)
+        quatf physics:localRot0 = (0.70710677, 0, -0.70710677, 0)
+        quatf physics:localRot1 = (1, 0, 0, 0)
         float physics:lowerLimit = -56.99784
         float physics:upperLimit = 90.00021
     }
 
     def PhysicsRevoluteJoint "hip_r_roll" (
-        prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        prepend apiSchemas = ["PhysicsDriveAPI:angular", "PhysxJointAPI"]
     )
     {
         custom float drive:angular:damping = 8.3241625
@@ -3800,11 +3829,11 @@ def Xform "kuroko" (
         quatf physics:localRot1 = (1, 0, 0, 0)
         float physics:lowerLimit = -31.799158
         float physics:upperLimit = 106.79933
-        custom float physxJoint:maxJointVelocity = 372.40985
+        custom float physxJoint:maxJointVelocity = 372
     }
 
     def PhysicsRevoluteJoint "hip_r_pitch" (
-        prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        prepend apiSchemas = ["PhysicsDriveAPI:angular", "PhysxJointAPI"]
     )
     {
         custom float drive:angular:damping = 8.3241625
@@ -3815,20 +3844,20 @@ def Xform "kuroko" (
         custom float drive:angular:stiffness = 310
         custom float drive:damping = 8.3241625
         custom float drive:stiffness = 310
-        uniform token physics:axis = "X"
+        uniform token physics:axis = "Y"
         prepend rel physics:body0 = </kuroko/hip_r_roll_link>
         prepend rel physics:body1 = </kuroko/hip_r_pitch_link>
         point3f physics:localPos0 = (0, -0.027, 0)
         point3f physics:localPos1 = (0, 0, 0)
-        quatf physics:localRot0 = (0.70710677, 0, 0, 0.70710677)
-        quatf physics:localRot1 = (0.70710677, 0, 0, 0.70710677)
-        float physics:lowerLimit = -177.61691
-        float physics:upperLimit = 177.61691
-        custom float physxJoint:maxJointVelocity = 372.40985
+        quatf physics:localRot0 = (1, 0, 0, 0)
+        quatf physics:localRot1 = (1, 0, 0, 0)
+        float physics:lowerLimit = -inf
+        float physics:upperLimit = inf
+        custom float physxJoint:maxJointVelocity = 372
     }
 
     def PhysicsRevoluteJoint "shin_r_active" (
-        prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        prepend apiSchemas = ["PhysicsDriveAPI:angular", "PhysxJointAPI"]
     )
     {
         custom float drive:angular:damping = 22.512985
@@ -3839,20 +3868,20 @@ def Xform "kuroko" (
         custom float drive:angular:stiffness = 889.99994
         custom float drive:damping = 22.512985
         custom float drive:stiffness = 889.99994
-        uniform token physics:axis = "X"
+        uniform token physics:axis = "Y"
         prepend rel physics:body0 = </kuroko/hip_r_pitch_link>
         prepend rel physics:body1 = </kuroko/shin_r_active_link>
         point3f physics:localPos0 = (-0.0185, -0.02925, -0.0305)
         point3f physics:localPos1 = (2.7755576e-17, -6.938894e-18, -1.3877788e-17)
-        quatf physics:localRot0 = (-0.612372, -0.612372, -0.35355413, -0.35355413)
-        quatf physics:localRot1 = (0.70710677, 0, 0, 0.70710677)
+        quatf physics:localRot0 = (0.8660254, 0, 0.5, 0)
+        quatf physics:localRot1 = (1, 0, 0, 0)
         float physics:lowerLimit = -106.501396
         float physics:upperLimit = 28.49892
-        custom float physxJoint:maxJointVelocity = 395.32736
+        custom float physxJoint:maxJointVelocity = 395
     }
 
     def PhysicsRevoluteJoint "thigh_r_active" (
-        prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        prepend apiSchemas = ["PhysicsDriveAPI:angular", "PhysxJointAPI"]
     )
     {
         custom float drive:angular:damping = 22.512985
@@ -3863,16 +3892,16 @@ def Xform "kuroko" (
         custom float drive:angular:stiffness = 889.99994
         custom float drive:damping = 22.512985
         custom float drive:stiffness = 889.99994
-        uniform token physics:axis = "X"
+        uniform token physics:axis = "Y"
         prepend rel physics:body0 = </kuroko/hip_r_pitch_link>
         prepend rel physics:body1 = </kuroko/thigh_r_active_link>
         point3f physics:localPos0 = (0.015, -0.02925, -0.0305)
-        point3f physics:localPos1 = (0, 0, -1.3877788e-17)
-        quatf physics:localRot0 = (-0.6532815, -0.6532815, 0.270598, 0.270598)
-        quatf physics:localRot1 = (0.70710677, 0, 0, 0.70710677)
+        point3f physics:localPos1 = (0, 0, 0)
+        quatf physics:localRot0 = (0.9238795, 0, -0.38268343, 0)
+        quatf physics:localRot1 = (1, 0, 0, 0)
         float physics:lowerLimit = -28.49892
         float physics:upperLimit = 106.501396
-        custom float physxJoint:maxJointVelocity = 395.32736
+        custom float physxJoint:maxJointVelocity = 395
     }
 
     def PhysicsRevoluteJoint "shin_r_front_passive" (
@@ -3882,13 +3911,13 @@ def Xform "kuroko" (
         float drive:angular:physics:damping = 0
         float drive:angular:physics:maxForce = 0
         float drive:angular:physics:stiffness = 100000000
-        uniform token physics:axis = "X"
+        uniform token physics:axis = "Y"
         prepend rel physics:body0 = </kuroko/thigh_r_active_link>
         prepend rel physics:body1 = </kuroko/shin_r_front_passive_link>
         point3f physics:localPos0 = (-1.3877788e-17, 0, -0.1)
         point3f physics:localPos1 = (5.551115e-17, 6.938894e-18, 2.7755576e-17)
-        quatf physics:localRot0 = (-0.49999908, -0.49999908, -0.5000009, -0.5000009)
-        quatf physics:localRot1 = (0.70710677, 0, 0, 0.70710677)
+        quatf physics:localRot0 = (0.70710677, 0, 0.70710677, 0)
+        quatf physics:localRot1 = (1, 0, 0, 0)
         float physics:lowerLimit = -90.00021
         float physics:upperLimit = 56.99784
     }
@@ -3900,13 +3929,13 @@ def Xform "kuroko" (
         float drive:angular:physics:damping = 0
         float drive:angular:physics:maxForce = 0
         float drive:angular:physics:stiffness = 100000000
-        uniform token physics:axis = "X"
+        uniform token physics:axis = "Y"
         prepend rel physics:body0 = </kuroko/hip_r_pitch_link>
         prepend rel physics:body1 = </kuroko/thigh_r_middle_passive_link>
         point3f physics:localPos0 = (-0.0185, -0.02925, -0.0305)
         point3f physics:localPos1 = (0, 0, 0)
-        quatf physics:localRot0 = (-0.6532815, -0.6532815, 0.270598, 0.270598)
-        quatf physics:localRot1 = (0.70710677, 0, 0, 0.70710677)
+        quatf physics:localRot0 = (0.9238795, 0, -0.38268343, 0)
+        quatf physics:localRot1 = (1, 0, 0, 0)
         float physics:lowerLimit = -28.49892
         float physics:upperLimit = 106.501396
     }
@@ -3918,13 +3947,13 @@ def Xform "kuroko" (
         float drive:angular:physics:damping = 0
         float drive:angular:physics:maxForce = 0
         float drive:angular:physics:stiffness = 100000000
-        uniform token physics:axis = "X"
+        uniform token physics:axis = "Y"
         prepend rel physics:body0 = </kuroko/thigh_r_middle_passive_link>
         prepend rel physics:body1 = </kuroko/shin_r_rear_passive_link>
         point3f physics:localPos0 = (0, 0, -0.1)
         point3f physics:localPos1 = (2.7755576e-17, 6.938894e-18, 0)
-        quatf physics:localRot0 = (-0.49999908, -0.49999908, -0.5000009, -0.5000009)
-        quatf physics:localRot1 = (0.70710677, 0, 0, 0.70710677)
+        quatf physics:localRot0 = (0.70710677, 0, 0.70710677, 0)
+        quatf physics:localRot1 = (1, 0, 0, 0)
         float physics:lowerLimit = -90.00021
         float physics:upperLimit = 56.99784
     }
@@ -3936,19 +3965,19 @@ def Xform "kuroko" (
         float drive:angular:physics:damping = 0
         float drive:angular:physics:maxForce = 0
         float drive:angular:physics:stiffness = 100000000
-        uniform token physics:axis = "X"
+        uniform token physics:axis = "Y"
         prepend rel physics:body0 = </kuroko/shin_r_rear_passive_link>
         prepend rel physics:body1 = </kuroko/ankle_r_rear_passive_link>
         point3f physics:localPos0 = (2.7755576e-17, 6.938894e-18, -0.1)
         point3f physics:localPos1 = (0, 0, 5.551115e-17)
-        quatf physics:localRot0 = (-0.6532815, -0.6532815, 0.270598, 0.270598)
-        quatf physics:localRot1 = (0.70710677, 0, 0, 0.70710677)
+        quatf physics:localRot0 = (0.9238795, 0, -0.38268343, 0)
+        quatf physics:localRot1 = (1, 0, 0, 0)
         float physics:lowerLimit = -28.49892
         float physics:upperLimit = 106.501396
     }
 
     def PhysicsRevoluteJoint "ankle_r_roll" (
-        prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        prepend apiSchemas = ["PhysicsDriveAPI:angular", "PhysxJointAPI"]
     )
     {
         custom float drive:angular:damping = 8.3241625
@@ -3968,11 +3997,11 @@ def Xform "kuroko" (
         quatf physics:localRot1 = (1, 0, 0, 0)
         float physics:lowerLimit = -21.222357
         float physics:upperLimit = 90.00021
-        custom float physxJoint:maxJointVelocity = 372.40985
+        custom float physxJoint:maxJointVelocity = 372
     }
 
     def PhysicsRevoluteJoint "ankle_r_yaw" (
-        prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+        prepend apiSchemas = ["PhysicsDriveAPI:angular", "PhysxJointAPI"]
     )
     {
         custom float drive:angular:damping = 8.3241625
@@ -3990,9 +4019,9 @@ def Xform "kuroko" (
         point3f physics:localPos1 = (3.1763736e-22, 0, 0)
         quatf physics:localRot0 = (1, 0, 0, 0)
         quatf physics:localRot1 = (1, 0, 0, 0)
-        float physics:lowerLimit = -177.61691
-        float physics:upperLimit = 177.61691
-        custom float physxJoint:maxJointVelocity = 372.40985
+        float physics:lowerLimit = -inf
+        float physics:upperLimit = inf
+        custom float physxJoint:maxJointVelocity = 372
     }
 
     def PhysicsRevoluteJoint "knee_r_rear_passive" (
@@ -4002,15 +4031,15 @@ def Xform "kuroko" (
         float drive:angular:physics:damping = 0
         float drive:angular:physics:maxForce = 0
         float drive:angular:physics:stiffness = 100000000
-        uniform token physics:axis = "X"
+        uniform token physics:axis = "Y"
         prepend rel physics:body0 = </kuroko/shin_r_rear_passive_link>
         prepend rel physics:body1 = </kuroko/knee_r_passive_link>
         point3f physics:localPos0 = (2.7755576e-17, 6.938894e-18, 0)
         point3f physics:localPos1 = (6.938894e-18, 0, 2.7755576e-17)
-        quatf physics:localRot0 = (-0.6532815, -0.6532815, 0.270598, 0.270598)
-        quatf physics:localRot1 = (0.70710677, 0, 0, 0.70710677)
-        float physics:lowerLimit = -179.99985
-        float physics:upperLimit = 179.99985
+        quatf physics:localRot0 = (0.9238795, 0, -0.38268343, 0)
+        quatf physics:localRot1 = (1, 0, 0, 0)
+        float physics:lowerLimit = -inf
+        float physics:upperLimit = inf
     }
 
     def PhysicsRevoluteJoint "thigh_r_rear_passive" (
@@ -4020,18 +4049,20 @@ def Xform "kuroko" (
         float drive:angular:physics:damping = 0
         float drive:angular:physics:maxForce = 0
         float drive:angular:physics:stiffness = 100000000
-        uniform token physics:axis = "X"
+        uniform token physics:axis = "Y"
         prepend rel physics:body0 = </kuroko/shin_r_rear_passive_link>
         prepend rel physics:body1 = </kuroko/thigh_r_rear_passive_link>
         point3f physics:localPos0 = (-0.007765, 6.938894e-18, -0.028978)
         point3f physics:localPos1 = (-9.7144515e-17, 0, -2.7755576e-17)
-        quatf physics:localRot0 = (-0.49999908, -0.49999908, 0.5000009, 0.5000009)
-        quatf physics:localRot1 = (0.70710677, -3.925231e-17, 3.925231e-17, 0.70710677)
+        quatf physics:localRot0 = (0.70710677, 0, -0.70710677, 0)
+        quatf physics:localRot1 = (1, 0, 0, 0)
         float physics:lowerLimit = -56.99784
         float physics:upperLimit = 90.00021
     }
 
-    def PhysicsFixedJoint "imu_joint"
+    def PhysicsFixedJoint "imu_joint" (
+        active = false
+    )
     {
         prepend rel physics:body0 = </kuroko/body_link>
         prepend rel physics:body1 = </kuroko/imu_link>
@@ -4041,7 +4072,9 @@ def Xform "kuroko" (
         quatf physics:localRot1 = (1, 0, 0, 0)
     }
 
-    def PhysicsFixedJoint "tfluna_joint"
+    def PhysicsFixedJoint "tfluna_joint" (
+        active = false
+    )
     {
         prepend rel physics:body0 = </kuroko/body_link>
         prepend rel physics:body1 = </kuroko/tfluna_link>
@@ -4058,14 +4091,14 @@ def Xform "kuroko" (
         float drive:angular:physics:damping = 0
         float drive:angular:physics:maxForce = inf
         float drive:angular:physics:stiffness = 100000000
-        uniform token physics:axis = "X"
+        uniform token physics:axis = "Y"
         prepend rel physics:body0 = </kuroko/thigh_r_active_link>
         prepend rel physics:body1 = </kuroko/knee_r_passive_link>
         uniform bool physics:excludeFromArticulation = 1
         point3f physics:localPos0 = (-9.475248e-8, 0, -0.1000001)
         point3f physics:localPos1 = (0.0335, 0, 5.551115e-17)
-        quatf physics:localRot0 = (-0.653281, -0.653281, -0.2705993, -0.2705993)
-        quatf physics:localRot1 = (0.70710677, 0, 0, 0.70710677)
+        quatf physics:localRot0 = (0.9238795, 0, 0.38268343, 0)
+        quatf physics:localRot1 = (1, 0, 0, 0)
         float physics:lowerLimit = -106.501396
         float physics:upperLimit = 28.49892
         custom bool physxJoint:excludeFromArticulation = 1
@@ -4078,16 +4111,16 @@ def Xform "kuroko" (
         float drive:angular:physics:damping = 0
         float drive:angular:physics:maxForce = inf
         float drive:angular:physics:stiffness = 100000000
-        uniform token physics:axis = "X"
+        uniform token physics:axis = "Y"
         prepend rel physics:body0 = </kuroko/shin_r_active_link>
         prepend rel physics:body1 = </kuroko/thigh_r_rear_passive_link>
         uniform bool physics:excludeFromArticulation = 1
         point3f physics:localPos0 = (-3.9738657e-7, -6.938894e-18, -0.030000329)
         point3f physics:localPos1 = (-6.938894e-17, 0, 0.1)
-        quatf physics:localRot0 = (0.70710653, -0.0000016772611, 0.0000016133231, 0.707107)
-        quatf physics:localRot1 = (0.4304572, -0.5609869, 0.5609872, 0.43045756)
-        float physics:lowerLimit = -180.00043
-        float physics:upperLimit = 180.00043
+        quatf physics:localRot0 = (0.6087614, 0, -0.7933533, 0)
+        quatf physics:localRot1 = (1, 0, 0, 0)
+        float physics:lowerLimit = -inf
+        float physics:upperLimit = inf
         custom bool physxJoint:excludeFromArticulation = 1
     }
 
@@ -4098,16 +4131,16 @@ def Xform "kuroko" (
         float drive:angular:physics:damping = 0
         float drive:angular:physics:maxForce = inf
         float drive:angular:physics:stiffness = 100000000
-        uniform token physics:axis = "X"
+        uniform token physics:axis = "Y"
         prepend rel physics:body0 = </kuroko/shin_r_front_passive_link>
         prepend rel physics:body1 = </kuroko/ankle_r_rear_passive_link>
         uniform bool physics:excludeFromArticulation = 1
         point3f physics:localPos0 = (9.475248e-8, 6.938894e-18, -0.1000001)
         point3f physics:localPos1 = (0.0335, 0, 5.551115e-17)
-        quatf physics:localRot0 = (-0.50000006, -0.50000006, 0.4999999, 0.4999999)
-        quatf physics:localRot1 = (0.6532815, 0.270598, -0.270598, 0.6532815)
-        float physics:lowerLimit = -180.00043
-        float physics:upperLimit = 180.00043
+        quatf physics:localRot0 = (0.9238795, 0, -0.38268343, 0)
+        quatf physics:localRot1 = (1, 0, 0, 0)
+        float physics:lowerLimit = -inf
+        float physics:upperLimit = inf
         custom bool physxJoint:excludeFromArticulation = 1
     }
 
@@ -4118,14 +4151,14 @@ def Xform "kuroko" (
         float drive:angular:physics:damping = 0
         float drive:angular:physics:maxForce = inf
         float drive:angular:physics:stiffness = 100000000
-        uniform token physics:axis = "X"
+        uniform token physics:axis = "Y"
         prepend rel physics:body0 = </kuroko/thigh_l_active_link>
         prepend rel physics:body1 = </kuroko/knee_l_passive_link>
         uniform bool physics:excludeFromArticulation = 1
         point3f physics:localPos0 = (-9.475248e-8, 0, -0.1000001)
         point3f physics:localPos1 = (0.0335, 0, 5.551115e-17)
-        quatf physics:localRot0 = (-0.653281, -0.653281, -0.2705993, -0.2705993)
-        quatf physics:localRot1 = (0.70710677, 0, 0, 0.70710677)
+        quatf physics:localRot0 = (0.9238795, 0, 0.38268343, 0)
+        quatf physics:localRot1 = (1, 0, 0, 0)
         float physics:lowerLimit = -106.501396
         float physics:upperLimit = 28.49892
         custom bool physxJoint:excludeFromArticulation = 1
@@ -4138,16 +4171,16 @@ def Xform "kuroko" (
         float drive:angular:physics:damping = 0
         float drive:angular:physics:maxForce = inf
         float drive:angular:physics:stiffness = 100000000
-        uniform token physics:axis = "X"
+        uniform token physics:axis = "Y"
         prepend rel physics:body0 = </kuroko/shin_l_active_link>
         prepend rel physics:body1 = </kuroko/thigh_l_rear_passive_link>
         uniform bool physics:excludeFromArticulation = 1
         point3f physics:localPos0 = (-3.9738657e-7, 6.938894e-18, -0.030000329)
         point3f physics:localPos1 = (-6.938894e-17, 0, 0.1)
-        quatf physics:localRot0 = (0.70710653, -0.0000016772611, 0.0000016133231, 0.707107)
-        quatf physics:localRot1 = (0.4304572, -0.5609869, 0.5609872, 0.43045756)
-        float physics:lowerLimit = -180.00043
-        float physics:upperLimit = 180.00043
+        quatf physics:localRot0 = (0.6087614, 0, -0.7933533, 0)
+        quatf physics:localRot1 = (1, 0, 0, 0)
+        float physics:lowerLimit = -inf
+        float physics:upperLimit = inf
         custom bool physxJoint:excludeFromArticulation = 1
     }
 
@@ -4158,14 +4191,14 @@ def Xform "kuroko" (
         float drive:angular:physics:damping = 0
         float drive:angular:physics:maxForce = inf
         float drive:angular:physics:stiffness = 100000000
-        uniform token physics:axis = "X"
+        uniform token physics:axis = "Y"
         prepend rel physics:body0 = </kuroko/shin_l_front_passive_link>
         prepend rel physics:body1 = </kuroko/ankle_l_rear_passive_link>
         uniform bool physics:excludeFromArticulation = 1
         point3f physics:localPos0 = (9.475248e-8, -6.938894e-18, -0.1000001)
         point3f physics:localPos1 = (0.0335, 0, 5.551115e-17)
-        quatf physics:localRot0 = (-0.50000006, -0.50000006, 0.4999999, 0.4999999)
-        quatf physics:localRot1 = (0.6532815, 0.270598, -0.270598, 0.6532815)
+        quatf physics:localRot0 = (0.9238795, 0, -0.38268343, 0)
+        quatf physics:localRot1 = (1, 0, 0, 0)
         float physics:lowerLimit = -180.00043
         float physics:upperLimit = 180.00043
         custom bool physxJoint:excludeFromArticulation = 1

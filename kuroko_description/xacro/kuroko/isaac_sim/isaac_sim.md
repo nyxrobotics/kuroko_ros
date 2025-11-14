@@ -3,6 +3,7 @@
 
 # Install dependency
 ```sudo apt install libgl1 libglu1-mesa-dev```
+```pip install usd-core```
 
 # Install anaconda
 ```bash

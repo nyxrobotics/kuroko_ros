@@ -8,7 +8,7 @@
             }
             dictionary Perspective = {
                 double3 position = (0.37782108255350216, 0.5865337814292346, 0.01811094184665584)
-                double3 target = (-0.22495764638032406, -0.11191686165239056, -0.11114700091841626)
+                double3 target = (-0.22495764638032417, -0.11191686165239068, -0.11114700091841626)
             }
             dictionary Right = {
                 double3 position = (0, -5, 0)
@@ -42,6 +42,7 @@ def Xform "kuroko" (
     custom bool physxArticulation:selfCollision = 0
     custom bool physxArticulation:selfCollisionEnabled = 0
     custom float physxArticulation:sleepThreshold = 0.001
+    int physxArticulation:solverPositionIterationCount = 64
     custom float physxArticulation:stabilizationThreshold = 0.0001
     custom float physxRigidBody:angularDamping = 0.01
     custom float physxRigidBody:linearDamping = 0.01

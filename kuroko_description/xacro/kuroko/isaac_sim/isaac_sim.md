@@ -48,7 +48,23 @@ isaacsim
 
 # isaac lab
 ```bash
-git clone git@github.com:isaac-sim/IsaacLab.git
+git clone git@github.com:nyxrobotics/IsaacLab.git
+git checkout feature/beyond_mimic
+./isaaclab.sh --install
+./isaaclab.sh -i rsl_rl
+pip install torch==2.7.0 torchvision==0.22.0 --index-url https://download.pytorch.org/whl/cu128
+# Test
+# ./isaaclab.sh -p scripts/tutorials/00_sim/create_empty.py
+# Show samples
+#  ./isaaclab.sh -p scripts/environments/list_envs.py | grep -i G1
+
+```
+
+# Run isaac lab sample
+```bash
+# --headless: without GUI
+./isaaclab.sh -p scripts/reinforcement_learning/rsl_rl/train.py --task Isaac-Velocity-Flat-G1-v0 --headless
+./isaaclab.sh -p scripts/reinforcement_learning/rsl_rl/train.py --task Isaac-Velocity-Rough-G1-v0 --headless
 ```
 
 # Remove env_isaaclab

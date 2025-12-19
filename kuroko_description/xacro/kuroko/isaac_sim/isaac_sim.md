@@ -63,10 +63,12 @@ pip install torch==2.7.0 torchvision==0.22.0 --index-url https://download.pytorc
 # Run isaac lab sample
 ```bash
 # --headless: without GUI
+# Train
 ./isaaclab.sh -p scripts/reinforcement_learning/rsl_rl/train.py --task Isaac-Velocity-Flat-G1-v0 --headless
 ./isaaclab.sh -p scripts/reinforcement_learning/rsl_rl/train.py --task Isaac-Velocity-Rough-G1-v0 --headless
 bash isaaclab.sh -p scripts/reinforcement_learning/rsl_rl/train.py --task Isaac-Velocity-Flat-Kuroko-v0 --headless --max_iterations=10000
-./isaaclab.sh -p scripts/reinforcement_learning/rsl_rl/play.py --task Isaac-Velocity-Flat-Kuroko-v0 --num_envs 16
+# Play
+./isaaclab.sh -p scripts/reinforcement_learning/rsl_rl/play.py --task Isaac-Velocity-Flat-Kuroko-Play-v0 --num_envs 16
 ```
 
 # Remove env_isaaclab

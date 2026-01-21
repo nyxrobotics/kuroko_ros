@@ -25,7 +25,7 @@ fi
 # Disable Conda base startup
 ```conda config --set auto_activate_base false #Disable conda autostart (base)```
 
-# Install Isaac Sim 4.5.0
+# Install Isaac Sim 4.5.0 (isaac lab 2.1.0)
 - Reference: [Robot Simulation (2): Configuring IsaacSim and IsaacLab with RTX 5090 on Ubuntu 24.04](https://blog.csdn.net/qq_45709806/article/details/149648493)
 - Reference: [Isaac Sim 4.5.0 Python Environment Installation](https://isaac-sim.github.io/IsaacLab/v2.1.0/source/setup/installation/pip_installation.html)
 - Reference: [Installation using Isaac Sim Pip Package](https://isaac-sim.github.io/IsaacLab/main/source/setup/installation/pip_installation.html)
@@ -40,14 +40,14 @@ pip install pyyaml typeguard
 pip install "isaacsim[all,extscache]==4.5.0" --extra-index-url https://pypi.nvidia.com
 ```
 
-# Optional: Install Isaac Sim 5.1.0
+# Optional: Install Isaac Sim 5.1.0 (isaac lab 2.3.0)
 - Reference: [Isaac Sim 5.1.0 Python Environment Installation](https://isaac-sim.github.io/IsaacLab/v2.3.0/source/setup/installation/pip_installation.html)
 
 ```bash
 mkdir -p ~/lib/isaaclab; cd ~/lib/isaaclab
 conda create -n env_isaaclab python=3.11 -y;conda activate env_isaaclab
 pip install torch==2.7.0 torchvision==0.22.0 --index-url https://download.pytorch.org/whl/cu128
-pip install pyyaml typeguard
+pip install pyyaml typeguard==4.4.0 typing_extensions==4.12.2
 pip install "isaacsim[all,extscache]==5.1.0" --extra-index-url https://pypi.nvidia.com
 ```
 
